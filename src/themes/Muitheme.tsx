@@ -1,5 +1,3 @@
-'use client'
-
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import React, { useState } from 'react'
 import { lightTheme } from './light-theme'

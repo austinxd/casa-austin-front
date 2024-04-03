@@ -67,6 +67,7 @@ export const SecondaryInput = forwardRef(function SecondaryInput(
             }}
         >
             <CssTextField
+                autoComplete="off"
                 fullWidth
                 variant="outlined"
                 placeholder={placeholder}

@@ -8,6 +8,7 @@ const CssTextField = styled(TextField)({
             borderColor: 'white', // Cambiado de "color" a "borderColor"
             background: 'transparent',
             borderRadius: '5px',
+            color: 'white',
         },
     },
     '& input': {
@@ -54,6 +55,7 @@ export const InputPrimary = forwardRef(function InputPrimary(
                 flexDirection: 'column',
                 width: '100%',
                 height: 85,
+                color: 'white',
             }}
         >
             <CssTextField
