@@ -7,4 +7,5 @@ export default defineConfig({
         port: 3000, // Cambiado a 3000
     },
     plugins: [react()],
+    build: { chunkSizeWarningLimit: 2300 },
 })
