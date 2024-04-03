@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+}
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 8px;
+    height: 120px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #929292;
+    border-radius: 5px;
+    height: 120px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #777777;
+}
+/* Estilos para la paginacion */
+.pagination-item-selected {
+    color: white;
+    background: #0e6191;
+}

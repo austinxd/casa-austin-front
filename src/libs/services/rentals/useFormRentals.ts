@@ -1,0 +1,96 @@
+import { useForm } from 'react-hook-form'
+import { IRecipts, IRegisterRental, IRentalClient } from '../../../interfaces/rental/registerRental'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { reservationsForm, editReservationsForm, deleteRecipesForm } from './rental'
+
+export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, refetchEdit: any) => {
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        control,
+        setValue,
+    } = useForm<IRegisterRental>()
+
+    const [imageReceived, setImageReceived] = useState<IRecipts[] | []>([])
+    const [imageSend, setImageSend] = useState<File[] | []>([])
+
+    const [successRegister, setSuccessRegister] = useState(false)
+    const [successEdit, setSuccessEdit] = useState(false)
+
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [openErrorModal, setOpenErrorModal] = useState(false)
+
+    const [idsDeleteImage, setIdsDeleteImage] = useState<{ id: string }[]>([])
+    const formData = new FormData()
+
+    const onRegisterUser = async (data: any) => {
+        try {
+            setIsLoading(true)
+            formData.append('property', data.property)
+            formData.append('client', data.client)
+            formData.append('check_in_date', dayjs(data.check_in_date).format('YYYY-MM-DD'))
+            formData.append('check_out_date', dayjs(data.check_out_date).format('YYYY-MM-DD'))
+            formData.append('guests', data.guests)
+            formData.append('price_usd', data.price_usd)
+            formData.append('price_sol', data.price_sol)
+            formData.append('advance_payment', data.advance_payment)
+            formData.append('advance_payment_currency', data.advance_payment_currency)
+
+            if (imageSend.length > 0) {
+                imageSend.forEach((image: File) => {
+                    formData.append('file', image)
+                })
+            }
+
+            if (dataEdit?.id) {
+                formData.append('seller', dataEdit.seller.id)
+                if (idsDeleteImage.length > 0) {
+                    idsDeleteImage.forEach(async (idDeleteImage) => {
+                        await deleteRecipesForm(idDeleteImage.id)
+                    })
+                }
+                const response = await editReservationsForm(formData, dataEdit?.id)
+
+                if (response.status === 200) {
+                    setSuccessEdit(true)
+                    refetchEdit()
+                    refetch()
+                }
+                return
+            }
+
+            const response = await reservationsForm(formData)
+
+            if (response.status === 201) {
+                setSuccessRegister(true)
+                refetch()
+            }
+        } catch (error: any) {
+            setErrorMessage(error.response.data)
+            setOpenErrorModal(true)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+    return {
+        register,
+        control,
+        handleSubmit: handleSubmit(onRegisterUser),
+        errors,
+        setImageSend,
+        imageSend,
+        isLoading,
+        successRegister,
+        successEdit,
+        errorMessage,
+        setValue,
+        setIdsDeleteImage,
+        imageReceived,
+        setImageReceived,
+        openErrorModal,
+        setOpenErrorModal,
+    }
+}

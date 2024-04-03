@@ -1,0 +1,11 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(282px, 1fr));
+    gap: 20px;
+}
+
+.container > .item {
+    width: 100%;
+    height: auto;
+    margin: auto;
+}

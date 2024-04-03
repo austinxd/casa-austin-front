@@ -1,0 +1,70 @@
+export interface IRegisterRental {
+    property: string
+    client: string
+    check_in_date: any
+    check_out_date: any
+    guests: number
+    price_usd: number
+    price_sol: number
+    advance_payment: number
+    advance_payment_currency: string
+    file: File | File[]
+}
+
+export interface IRental {
+    actual: number
+    count: number
+    next: string
+    previous: string
+    results: IRentalClient[]
+    total_paginas: number
+}
+
+export interface IRentalClient {
+    advance_payment: number
+    advance_payment_currency: string
+    check_in_date: any
+    check_out_date: any
+    guests: number
+    id: string
+    price_sol: number
+    price_usd: number
+    property: IProperty
+    seller: ISeller
+    client: ISeller
+    recipts: IRecipts[] | []
+}
+
+export interface IRecipts {
+    id: string
+    file: string
+}
+export interface ISeller {
+    first_name: string
+    id: string
+    last_name: string
+}
+export interface IPropertyRental {
+    actual: number
+    count: number
+    next: string
+    previous: string
+    results: IProperty[]
+    total_paginas: number
+}
+
+export interface IProperty {
+    airbnb_url: string
+    capacity_max: number
+    id: string
+    location: number
+    name: string
+}
+
+export interface IEventoCalendario {
+    title: string
+    start: string
+    end: string
+    color: string
+    image: string
+}
