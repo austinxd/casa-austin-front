@@ -17,3 +17,22 @@ export interface IListClients {
     results: IRegisterClient[]
     total_paginas: number
 }
+export interface IListClientsByBD {
+    status: number
+    message: string
+    data: IUserData
+}
+
+export interface IUserData {
+    pais: string
+    departamento: string | null
+    provincia: string | null
+    distrito: string | null
+    razonsocial: string | null
+    direccion: string | null
+    nombres: string
+    apellidoMaterno: string
+    apellidoPaterno: string
+    fechaNacimiento: string
+    sexo: string
+}

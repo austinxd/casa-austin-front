@@ -34,7 +34,16 @@ export default function Login() {
                     },
                 }}
             >
-                <img src="../../../../public/img/icons/logo.svg" className={style.imgLogo} />
+                <Box
+                    className={style.imgLogo}
+                    sx={{
+                        mx: 'auto',
+                        backgroundImage: 'url(/img/icons/logo.svg)',
+                        backgroundSize: '66%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                    }}
+                ></Box>
                 <form onSubmit={handleSubmit}>
                     <InputPrimary
                         color="secondary"

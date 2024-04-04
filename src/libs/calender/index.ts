@@ -1,16 +1,10 @@
-// ** MUI imports
 import { styled } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
-
-// ** Hooks Imports
-
-// ** utilities
 
 import useBgColor, { UseBgColorType } from '../../hook/useBgColor'
 import { hexToRGBA } from '../utils/hex-to-rgba'
 
 const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
-    // ** Hook
     const bgColors: UseBgColorType = useBgColor()
 
     return {
@@ -23,7 +17,9 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
         padding: '0px',
         '& .fc': {
             zIndex: 1,
-
+            '& .fc-daygrid-body-unbalanced .fc-daygrid-day-events': {
+                maxHeight: '30px',
+            },
             '.fc-col-header, .fc-daygrid-body, .fc-scrollgrid-sync-table, .fc-timegrid-body, .fc-timegrid-body table':
                 {
                     maxWidth: '1200px',
@@ -31,7 +27,6 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                     width: '100% !important',
                 },
 
-            // ** Toolbar
             '& .fc-toolbar': {
                 flexWrap: 'wrap',
                 flexDirection: 'row !important',
@@ -147,10 +142,6 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 },
             },
 
-            // ** Calendar head & body common
-            '& tbody': {
-                border: '8px solid blue',
-            },
             '& tbody td, & thead th': {
                 borderColor: theme.palette.divider,
 
@@ -163,7 +154,6 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 },
             },
 
-            // ** Event Colors
             '& .fc-event': {
                 '&:not(.fc-list-event)': {
                     '&.bg-primary': {
@@ -255,7 +245,16 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 '&.fc-daygrid-event': {
                     margin: '4px',
                     padding: '12px',
-                    borderRadius: '24px',
+                    marginBottom: '0px',
+                },
+            },
+            '& .fc-day ': {
+                '& .fc-day-wed': {
+                    '& .fc-day-today ': {
+                        '& .fc-daygrid-day': {
+                            minHeight: '120px',
+                        },
+                    },
                 },
             },
 
@@ -263,7 +262,6 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 minHeight: '650px',
             },
 
-            // ** Calendar Head
             '& .fc-col-header': {
                 '& .fc-col-header-cell': {
                     fontWeight: 500,
@@ -276,7 +274,6 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 },
             },
 
-            // ** Daygrid
             '& .fc-scrollgrid-section-liquid > td': {
                 borderRight: '1px solid red',
                 maxWidth: '1200px',
@@ -285,35 +282,32 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                 '& .fc-event': {
                     marginTop: 0,
                     fontWeight: 400,
-                    marginBottom: 6,
-                    borderRadius: 20,
-                    padding: theme.spacing(1, 1),
+                    marginBottom: 1,
+                    borderRadius: '12px',
+                    padding: 0,
                     fontSize: theme.typography.body2.fontSize,
                 },
                 '&:not(:last-of-type)': {
-                    marginBottom: theme.spacing(2),
+                    marginRight: theme.spacing(-3),
+                    marginLeft: theme.spacing(1),
                 },
             },
             '& .fc-daygrid-day-bottom': {
-                marginTop: theme.spacing(1.2),
+                marginTop: 1,
             },
+
             '& .fc-daygrid-day': {
                 padding: '5px',
-                '& .fc-daygrid-day-top': {
-                    flexDirection: 'row',
-                },
+                '& .fc-daygrid-day-top': { flexDirection: 'row' },
             },
             '& .fc-scrollgrid': {
-                borderRight: '1px solid red',
+                border: '1px solid red',
                 borderColor: theme.palette.divider,
                 margin: 'auto',
             },
             '& .fc-day-past, & .fc-day-future': {
                 '&.fc-daygrid-day-number': {
-                    color: 'theme.palette.text.disabled',
-                },
-                '& .css-1f6e3nv .fc .fc-day-future': {
-                    border: '1px solid red',
+                    color: 'theme.palette.text. disabled',
                 },
             },
 
@@ -325,6 +319,7 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
             '& .fc-daygrid-day-number, & .fc-timegrid-slot-label-cushion, & .fc-list-event-time': {
                 color: '#A1A5B7',
                 fontWeight: 600,
+                marginTop: '2px',
             },
             '& .fc-day-today:not(.fc-popover):not(.fc-col-header-cell)': {
                 backgroundColor: 'white',
@@ -332,6 +327,8 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
             },
             '& .fc-day-today .fc-daygrid-day-frame': {
                 border: '1px solid #0E6191',
+                minHeigth: '80%',
+                paddingTop: '4px',
             },
 
             // ** WeekView
@@ -469,9 +466,15 @@ const CalendarWrapper = styled(Box)<BoxProps>(({ theme }) => {
                     marginLeft: 0,
                 },
             },
-            '@media (max-width:610px)': {
+            '@media (max-width:710px)': {
                 '& .fc-header-toolbar .fc-toolbar-chunk:last-of-type': {
                     marginTop: theme.spacing(4),
+                },
+                '& .fc-daygrid-body-unbalanced .fc-daygrid-day-events': {
+                    maxHeight: '20px',
+                },
+                '& .fc-daygrid-event-harness': {
+                    '& .fc-event': { marginBottom: 3, borderRadius: '12px' },
                 },
             },
         },

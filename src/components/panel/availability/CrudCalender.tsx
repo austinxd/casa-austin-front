@@ -6,6 +6,7 @@ import CalendarWrapper from '../../../libs/calender'
 import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
+
 const getColorHouse = (house: string): string => {
     switch (house) {
         case 'Casa 1':
@@ -45,20 +46,41 @@ export default function CrudCalender() {
 
     const renderEventContent = (eventInfo: any) => {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                <img
-                    src={eventInfo.event.extendedProps.image}
-                    alt="Event Image"
-                    style={{
-                        height: '22px',
-                        width: '22px',
-                        borderRadius: '100%',
-                        marginRight: '12px',
-                        objectFit: 'cover',
+            <Box
+                borderRadius={'16px'}
+                padding={'2px'}
+                style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}
+            >
+                <Box
+                    sx={{
+                        display: { md: 'flex' },
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '20px',
                     }}
-                />
-                <p style={{ width: '90%', padding: 0, margin: 2 }}>{eventInfo.event.title}</p>
-            </div>
+                >
+                    <img
+                        src={eventInfo.event.extendedProps.image}
+                        alt="Event Image"
+                        style={{
+                            margin: 'auto',
+                            height: '20px',
+                            width: '20px',
+                            borderRadius: '100%',
+                            marginRight: '4px',
+                            objectFit: 'cover',
+                            marginLeft: '1px',
+                        }}
+                    />
+                </Box>
+
+                <Typography
+                    sx={{ color: 'white', fontSize: { md: '12px', sm: '10px', xs: '10px' } }}
+                    style={{ width: '90%', padding: 0, margin: 2 }}
+                >
+                    {eventInfo.event.title}
+                </Typography>
+            </Box>
         )
     }
 
@@ -158,9 +180,6 @@ export default function CrudCalender() {
                                 <div style={{ textDecoration: 'line-through' }}>
                                     {arg.dayNumberText}
                                 </div>
-                                <Typography sx={{ color: '#173E83', mt: 1, fontWeight: 400 }}>
-                                    80$
-                                </Typography>
                             </div>
                         )
                     }}

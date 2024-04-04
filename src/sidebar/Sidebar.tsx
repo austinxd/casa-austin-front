@@ -23,6 +23,7 @@ import { Link, useLocation } from 'react-router-dom'
 import useBoxShadow from '../hook/useBoxShadow'
 import BasicModal from '../components/common/modal/BasicModal'
 import LogOut from '../components/ui/logout/LogOut'
+
 const drawerWidth = 236
 const menuItems = [
     {
@@ -86,6 +87,7 @@ export default function Sidebar(props: Props) {
 
     const drawer = (
         <div>
+            {/*             <img src={Logo} alt="logo-austin" height={107} width={140} /> */}
             <Box
                 width={140}
                 height={107}

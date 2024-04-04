@@ -16,6 +16,8 @@ import SuccessIcon from '../../../common/icons/SuccessIcon'
 import { IRegisterClient } from '../../../../interfaces/clients/registerClients'
 import SuccessCard from '../card/SuccessCard'
 import SuccessEditIcon from '../../../common/icons/SucessEditIcon'
+import { useEffect, useState } from 'react'
+import { useGetClientsByBDQuery } from '../../../../libs/services/clients/clientesofBdService'
 
 interface Props {
     onCancel: () => void
@@ -43,6 +45,25 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         setSelectedOption(event.target.value)
     }
 
+    const [typeDocument, setTypeDocument] = useState('')
+    const [numberDocument, setNumberDocument] = useState('')
+    const { data: ClientBD } = useGetClientsByBDQuery({
+        numberDocument: numberDocument,
+        typeDocument: typeDocument,
+        token: '20483ac1-702f-41c7-80f2-f98205acd11a',
+    })
+    const onDocumentNumber = (event: any) => {
+        console.log(event.target.value)
+        setNumberDocument(event.target.value)
+    }
+
+    const onSelectDocument = (event: any) => {
+        console.log(event.target.value)
+        setTypeDocument(event.target.value)
+    }
+    useEffect(() => {
+        console.log(ClientBD)
+    })
     return (
         <div>
             <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
@@ -98,10 +119,15 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                                         label: 'Carnet de extranjeria',
                                                     },
                                                     { value: 'pas', label: 'Pasaporte' },
+                                                    { value: 'ruc', label: 'RUC' },
                                                 ]}
                                                 label="Elija tipo de documento"
                                                 value={value}
-                                                onChange={onChange}
+                                                onChange={(selectedValue) => {
+                                                    onSelectDocument &&
+                                                        onSelectDocument(selectedValue)
+                                                    onChange(selectedValue)
+                                                }}
                                                 messageError={
                                                     (errors.document_type?.message ??
                                                         null) as string
@@ -116,6 +142,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             required: 'Numbero de documento obligatorio',
                                         })}
                                         type="number"
+                                        onChange={onDocumentNumber}
                                         label={'Número de documento'}
                                         messageError={
                                             (errors.number_doc?.message ?? null) as string

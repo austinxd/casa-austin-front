@@ -14,7 +14,7 @@ import SearchClient from './form/SearchClient'
 export default function CrudClients() {
     const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({})
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize] = useState<number>(6)
+    const [pageSize] = useState<number>(10)
 
     const [search, setSearch] = useState('')
     const { data, isLoading, refetch } = useGetAllClientsQuery({

@@ -662,7 +662,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     height: '48px',
                                     fontWeight: 500,
                                     width: '100%',
-                                    marginTop: '4px',
+                                    marginTop: '16px',
                                     marginBottom: '4px',
                                 }}
                             >
