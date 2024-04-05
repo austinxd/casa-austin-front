@@ -34,7 +34,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
         }
     }, [successEdit])
 
-    const onDeleteClient = async (data: IRegisterClient) => {
+    const onCreateClient = async (data: IRegisterClient) => {
         try {
             setIsLoading(true)
             formData.append('document_type', data.document_type)
@@ -75,7 +75,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
     return {
         register,
         control,
-        handleSubmit: handleSubmit(onDeleteClient),
+        handleSubmit: handleSubmit(onCreateClient),
         errors,
         setSelectedOption,
         selectedOption,

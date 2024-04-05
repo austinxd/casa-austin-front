@@ -12,12 +12,10 @@ import { Controller } from 'react-hook-form'
 import { useFormClients } from '../../../../libs/services/clients/useFormClients'
 import ButtonPrimary from '../../../common/button/ButtonPrimary'
 import SuccessIcon from '../../../common/icons/SuccessIcon'
-
 import { IRegisterClient } from '../../../../interfaces/clients/registerClients'
 import SuccessCard from '../card/SuccessCard'
 import SuccessEditIcon from '../../../common/icons/SucessEditIcon'
 import { useEffect, useState } from 'react'
-import { useGetClientsByBDQuery } from '../../../../libs/services/clients/clientesofBdService'
 
 interface Props {
     onCancel: () => void
@@ -47,11 +45,12 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
 
     const [typeDocument, setTypeDocument] = useState('')
     const [numberDocument, setNumberDocument] = useState('')
-    const { data: ClientBD } = useGetClientsByBDQuery({
+    /*     const { data: ClientBD } = useGetClientsByBDQuery({
         numberDocument: numberDocument,
         typeDocument: typeDocument,
         token: '20483ac1-702f-41c7-80f2-f98205acd11a',
     })
+ */
     const onDocumentNumber = (event: any) => {
         console.log(event.target.value)
         setNumberDocument(event.target.value)
@@ -62,7 +61,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         setTypeDocument(event.target.value)
     }
     useEffect(() => {
-        console.log(ClientBD)
+        console.log(numberDocument, typeDocument)
     })
     return (
         <div>
@@ -285,6 +284,23 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                         }
                                     />
                                 </Grid>
+                                {/*                                 <Grid item md={6} xs={12}>
+                                    <Controller
+                                        name="tel_number"
+                                        control={control}
+                                        defaultValue=""
+                                        rules={{ required: 'El celular es obligatorio' }}
+                                        render={({ field }) => (
+                                            <InputPhone
+                                                label={'Número de teléfono'}
+                                                messageError={
+                                                    (errors.tel_number?.message ?? null) as string
+                                                }
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                </Grid> */}
                                 <Grid
                                     item
                                     md={12}

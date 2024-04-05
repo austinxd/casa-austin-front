@@ -4,6 +4,14 @@ export const reservationsForm = async (payload: FormData) => {
     return await casaApi.post('/reservations/', payload)
 }
 
+export const checkReservationDate = async (payload: FormData) => {
+    return await casaApi.post('/prop/check-avaible/', payload)
+}
+
+export const checkEditReservationDate = async (payload: FormData) => {
+    return await casaApi.patch('/prop/check-avaible/', payload)
+}
+
 export const editReservationsForm = async (payload: FormData, id: string) => {
     return await casaApi.patch(`/reservations/${id}/`, payload)
 }

@@ -25,3 +25,20 @@ body {
     color: white;
     background: #0e6191;
 }
+
+.imgCalender {
+    height: 16px;
+    width: 16px;
+    border-radius: 100%;
+    margin-right: 4px;
+    object-fit: cover;
+    margin-left: 1px;
+}
+
+@media (max-width: 900px) {
+    .imgCalender {
+        height: 5px;
+        width: 5px;
+        margin-left: 1px;
+    }
+}

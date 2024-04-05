@@ -68,6 +68,9 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         setImageReceived,
         openErrorModal,
         setOpenErrorModal,
+        setHouseSeletc,
+        setCheckInSelect,
+        setCheckOutSelect,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -82,6 +85,9 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('property', dataEdit.property.id)
             setValue('client', dataEdit.client.id)
             setImageReceived(dataEdit.recipts)
+            setHouseSeletc(dataEdit.property.id)
+            setCheckInSelect(dataEdit.check_in_date)
+            setCheckOutSelect(dataEdit.check_out_date)
         }
     }, [isEditLoading, dataEdit])
 
@@ -147,6 +153,9 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         onCancel()
     }
 
+    const onSelectHouse = (event: any) => {
+        setHouseSeletc(event.target.value)
+    }
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -203,7 +212,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                 messageError={
                                                     (errors.property?.message ?? null) as string
                                                 }
-                                                onChange={onChange}
+                                                onChange={(selectedValue) => {
+                                                    onSelectHouse && onSelectHouse(selectedValue)
+                                                    onChange(selectedValue)
+                                                }}
                                             />
                                         )}
                                     />
@@ -377,6 +389,15 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             fontWeight: 600,
                                                         },
                                                     }}
+                                                    onChange={(newDate) => {
+                                                        // Convierte la fecha seleccionada a cadena en el formato deseado
+                                                        const formattedDate = newDate
+                                                            ? dayjs(newDate).format('YYYY-MM-DD')
+                                                            : ''
+                                                        setCheckInSelect(formattedDate)
+                                                        // Pasa la fecha formateada al otro componente usando setValue
+                                                        field.onChange(formattedDate)
+                                                    }}
                                                 />
                                             </LocalizationProvider>
                                         )}
@@ -462,6 +483,15 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             fontSize: '16px',
                                                             fontWeight: 600,
                                                         },
+                                                    }}
+                                                    onChange={(newDate) => {
+                                                        // Convierte la fecha seleccionada a cadena en el formato deseado
+                                                        const formattedDate = newDate
+                                                            ? dayjs(newDate).format('YYYY-MM-DD')
+                                                            : ''
+                                                        setCheckOutSelect(formattedDate)
+                                                        // Pasa la fecha formateada al otro componente usando setValue
+                                                        field.onChange(formattedDate)
                                                     }}
                                                 />
                                             </LocalizationProvider>

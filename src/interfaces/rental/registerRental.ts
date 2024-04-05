@@ -57,8 +57,9 @@ export interface IProperty {
     airbnb_url: string
     capacity_max: number
     id: string
-    location: number
+    location: string
     name: string
+    background_color: string
 }
 
 export interface IEventoCalendario {

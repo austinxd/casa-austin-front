@@ -32,7 +32,7 @@ export default function ModalErrors({ onCancel, title, data }: Props) {
                 {title}
             </Typography>
             <Typography variant="body2" fontSize={16} fontWeight={400} textAlign={'center'}>
-                {data.detail ? data.detail : data.property}
+                {data.detail ? data.detail : data.message}
             </Typography>
 
             <Box display={'flex'} mt={2} gap={2} justifyContent={'center'}>

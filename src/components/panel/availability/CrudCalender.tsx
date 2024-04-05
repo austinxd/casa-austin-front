@@ -2,33 +2,38 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
 import { Box, Typography } from '@mui/material'
-import CalendarWrapper from '../../../libs/calender'
 import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
+import CalendarWrappers from '../../../libs/calender'
 
-const getColorHouse = (house: string): string => {
-    switch (house) {
-        case 'Casa 1':
-            return '#0E6191'
-        case 'Casa 2':
-            return '#82C9E2'
-        case 'Casa 3':
-            return '#7367F0'
-        case 'Casa 4':
-            return '#C466A1'
-        default:
-            return 'transparent'
-    }
-}
 const generarEventos = (data: IRental): IEventoCalendario[] => {
     if (!data || !data.results) return []
+    /*     return data.results.map((rental) => {
+        // Parsear las fechas de inicio y finalización
+        const startDate = new Date(rental.check_in_date)
+        const endDate = new Date(rental.check_out_date)
 
+        // Calcular la mitad del día para la fecha de inicio y finalización
+        const startMedioDia = new Date(startDate)
+        startMedioDia.setHours(0, 0, 0, 0) // Establecer a las 12:00 PM (mediodía)
+
+        const endMedioDia = new Date(endDate)
+        endMedioDia.setHours(12, 0, 0, 0) // Establecer a las 12:00 PM (mediodía)
+
+        return {
+            title: `${rental.client.first_name} +${rental.guests}`,
+            start: startMedioDia.toISOString(),
+            end: endMedioDia.toISOString(),
+            color: rental.property.background_color,
+            image: '/logo.svg',
+        }
+    }) */
     return data.results.map((rental) => ({
         title: `${rental.client.first_name} +${rental.guests}`,
         start: rental.check_in_date,
         end: rental.check_out_date,
-        color: getColorHouse(rental.property.name),
+        color: rental.property.background_color,
         image: '/logo.svg',
     }))
 }
@@ -48,42 +53,38 @@ export default function CrudCalender() {
         return (
             <Box
                 borderRadius={'16px'}
-                padding={'2px'}
-                style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}
+                padding={{ md: '2px', sm: '1px', xs: '0px' }}
+                display={'flex'}
+                alignItems={'center'}
             >
                 <Box
                     sx={{
-                        display: { md: 'flex' },
+                        display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: '20px',
+                        height: { md: '12px', sm: '1px', xs: '4px' },
                     }}
                 >
                     <img
                         src={eventInfo.event.extendedProps.image}
                         alt="Event Image"
-                        style={{
-                            margin: 'auto',
-                            height: '20px',
-                            width: '20px',
-                            borderRadius: '100%',
-                            marginRight: '4px',
-                            objectFit: 'cover',
-                            marginLeft: '1px',
-                        }}
+                        className="imgCalender"
                     />
                 </Box>
 
                 <Typography
-                    sx={{ color: 'white', fontSize: { md: '12px', sm: '10px', xs: '10px' } }}
-                    style={{ width: '90%', padding: 0, margin: 2 }}
+                    sx={{
+                        color: 'white',
+                        display: { md: 'flex', sm: 'none', xs: 'none' },
+                        fontSize: { md: '12px', sm: '10px', xs: '10px' },
+                    }}
+                    style={{ width: '90%', padding: 0, margin: 0.5 }}
                 >
                     {eventInfo.event.title}
                 </Typography>
             </Box>
         )
     }
-
     return (
         <div>
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
@@ -160,11 +161,16 @@ export default function CrudCalender() {
                 <Typography sx={{ flex: 1 }}>S</Typography>
                 <Typography sx={{ flex: 1 }}>D</Typography>
             </Box>
-            <CalendarWrapper>
+
+            <CalendarWrappers>
                 <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
+                    eventDragMinDistance={12}
                     events={eventos}
+                    progressiveEventRendering={true}
+                    dayCellClassNames={'ccsssss'}
+                    contentHeight={'auto'}
                     headerToolbar={{
                         left: 'title',
                     }}
@@ -184,7 +190,7 @@ export default function CrudCalender() {
                         )
                     }}
                 />
-            </CalendarWrapper>
+            </CalendarWrappers>
         </div>
     )
 }

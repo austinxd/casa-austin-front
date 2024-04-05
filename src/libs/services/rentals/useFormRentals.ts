@@ -1,8 +1,14 @@
 import { useForm } from 'react-hook-form'
 import { IRecipts, IRegisterRental, IRentalClient } from '../../../interfaces/rental/registerRental'
 import dayjs from 'dayjs'
-import { useState } from 'react'
-import { reservationsForm, editReservationsForm, deleteRecipesForm } from './rental'
+import { useEffect, useState } from 'react'
+import {
+    reservationsForm,
+    editReservationsForm,
+    deleteRecipesForm,
+    checkReservationDate,
+    checkEditReservationDate,
+} from './rental'
 
 export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, refetchEdit: any) => {
     const {
@@ -24,6 +30,54 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [openErrorModal, setOpenErrorModal] = useState(false)
 
     const [idsDeleteImage, setIdsDeleteImage] = useState<{ id: string }[]>([])
+
+    const [houseSelect, setHouseSeletc] = useState('')
+    const [checkInSelect, setCheckInSelect] = useState('')
+    const [checkOutSelect, setCheckOutSelect] = useState('')
+
+    useEffect(() => {
+        if (dataEdit?.id) {
+            const formDataCheck = new FormData()
+            if (houseSelect && checkInSelect && checkOutSelect) {
+                console.log(houseSelect, checkInSelect, checkOutSelect, 'vas a editar')
+                formDataCheck.append('property', houseSelect)
+                formDataCheck.append('check_in_date', checkInSelect)
+                formDataCheck.append('check_out_date', checkOutSelect)
+                formDataCheck.append('reservation_id', dataEdit.id)
+                const fetchData = async () => {
+                    try {
+                        const response = await checkEditReservationDate(formDataCheck)
+                        if (response.status === 200) {
+                        }
+                    } catch (error: any) {
+                        setErrorMessage(error.response.data)
+                        setOpenErrorModal(true)
+                    }
+                }
+                fetchData()
+            }
+        } else {
+            const formDataCheck = new FormData()
+            if (houseSelect && checkInSelect && checkOutSelect) {
+                formDataCheck.append('property', houseSelect)
+                formDataCheck.append('check_in_date', checkInSelect)
+                formDataCheck.append('check_out_date', checkOutSelect)
+                const fetchData = async () => {
+                    try {
+                        const response = await checkReservationDate(formDataCheck)
+                        if (response.status === 200) {
+                        }
+                    } catch (error: any) {
+                        setErrorMessage(error.response.data)
+                        setOpenErrorModal(true)
+                    }
+                }
+
+                fetchData()
+            }
+        }
+    }, [houseSelect, checkInSelect, checkOutSelect])
+
     const formData = new FormData()
 
     const onRegisterUser = async (data: any) => {
@@ -92,5 +146,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         setImageReceived,
         openErrorModal,
         setOpenErrorModal,
+        setHouseSeletc,
+        setCheckInSelect,
+        setCheckOutSelect,
     }
 }

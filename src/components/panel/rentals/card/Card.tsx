@@ -31,29 +31,12 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
             'Nov',
             'Dic',
         ]
-
         const dateObj = new Date(`${date}T00:00:00`)
-
         const day = dateObj.toLocaleString('es-ES', { day: '2-digit' })
         const month = months[dateObj.getMonth()]
         const year = dateObj.getFullYear()
 
         return `${day} ${month} ${year}`
-    }
-
-    const borderLeft = (house: string) => {
-        switch (house) {
-            case 'Casa 1':
-                return '#0E6191'
-            case 'Casa 2':
-                return '#82C9E2'
-            case 'Casa 3':
-                return '#7367F0'
-            case 'Casa 4':
-                return '#C466A1'
-            default:
-                return 'transparent'
-        }
     }
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,13 +55,13 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                 border={'1px solid #D1D0D4'}
                 borderRadius={'8px'}
                 sx={{
-                    borderLeft: `24px solid ${borderLeft(item.property.name)}`,
+                    borderLeft: `24px solid ${item.property.background_color}`,
                     pl: '10px',
                     pr: '40px',
                     py: 1.4,
                     '@media (max-width: 1400px)': {
                         flexDirection: 'column',
-                        borderLeft: `16px solid ${borderLeft(item.property.name)}`,
+                        borderLeft: `16px solid ${item.property.background_color}`,
                         pr: '10px',
                         pl: '4px',
                         py: 2,
