@@ -45,7 +45,10 @@ export default function CardResponsive({
                 return id
         }
     }
-
+    const handlePhoneClick = () => {
+        const formattedPhoneNumber = tel_number.replace(/\D/g, '')
+        window.open(`https://wa.me/${formattedPhoneNumber}?text=`, '_blank')
+    }
     return (
         <div>
             <Box
@@ -55,7 +58,7 @@ export default function CardResponsive({
                 flexDirection={'column'}
                 border={'1px solid #D1D0D4'}
                 borderRadius={'8px'}
-                px={'20px'}
+                px={'12px'}
                 py={'12px'}
             >
                 <Typography variant="subtitle1">{first_name}</Typography>
@@ -63,7 +66,13 @@ export default function CardResponsive({
                     <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                         {email}{' '}
                     </Typography>
-                    <Box display={'flex'} alignItems={'center'} gap={1}>
+                    <Box
+                        display={'flex'}
+                        sx={{ cursor: 'pointer' }}
+                        onClick={handlePhoneClick}
+                        alignItems={'center'}
+                        gap={1}
+                    >
                         <PhoneIcon />
                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                             {tel_number}

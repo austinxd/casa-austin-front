@@ -9,26 +9,6 @@ import CalendarWrappers from '../../../libs/calender'
 
 const generarEventos = (data: IRental): IEventoCalendario[] => {
     if (!data || !data.results) return []
-    /*     return data.results.map((rental) => {
-        // Parsear las fechas de inicio y finalización
-        const startDate = new Date(rental.check_in_date)
-        const endDate = new Date(rental.check_out_date)
-
-        // Calcular la mitad del día para la fecha de inicio y finalización
-        const startMedioDia = new Date(startDate)
-        startMedioDia.setHours(0, 0, 0, 0) // Establecer a las 12:00 PM (mediodía)
-
-        const endMedioDia = new Date(endDate)
-        endMedioDia.setHours(12, 0, 0, 0) // Establecer a las 12:00 PM (mediodía)
-
-        return {
-            title: `${rental.client.first_name} +${rental.guests}`,
-            start: startMedioDia.toISOString(),
-            end: endMedioDia.toISOString(),
-            color: rental.property.background_color,
-            image: '/logo.svg',
-        }
-    }) */
     return data.results.map((rental) => ({
         title: `${rental.client.first_name} +${rental.guests}`,
         start: rental.check_in_date,
@@ -50,41 +30,111 @@ export default function CrudCalender() {
     }, [data])
 
     const renderEventContent = (eventInfo: any) => {
-        return (
-            <Box
-                borderRadius={'16px'}
-                padding={{ md: '2px', sm: '1px', xs: '0px' }}
-                display={'flex'}
-                alignItems={'center'}
-            >
+        if (eventInfo.isStart) {
+            return (
                 <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: { md: '12px', sm: '1px', xs: '4px' },
-                    }}
+                    borderRadius={'16px'}
+                    padding={{ md: '2px', sm: '1px', xs: '0px' }}
+                    display={'flex'}
+                    alignItems={'center'}
                 >
-                    <img
-                        src={eventInfo.event.extendedProps.image}
-                        alt="Event Image"
-                        className="imgCalender"
-                    />
-                </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: { md: '12px', sm: '1px', xs: '4px' },
+                        }}
+                    >
+                        <img
+                            src={eventInfo.event.extendedProps.image}
+                            alt="Event Image"
+                            className="imgCalender"
+                        />
+                    </Box>
 
-                <Typography
-                    sx={{
-                        color: 'white',
-                        display: { md: 'flex', sm: 'none', xs: 'none' },
-                        fontSize: { md: '12px', sm: '10px', xs: '10px' },
-                    }}
-                    style={{ width: '90%', padding: 0, margin: 0.5 }}
+                    <Typography
+                        sx={{
+                            color: 'white',
+                            display: { md: 'flex', sm: 'none', xs: 'none' },
+                            fontSize: { md: '12px', sm: '10px', xs: '10px' },
+                        }}
+                        style={{ width: '90%', padding: 0, margin: 0.5 }}
+                    >
+                        {eventInfo.event.title}
+                    </Typography>
+                </Box>
+            )
+        } else {
+            return (
+                <Box
+                    borderRadius={'16px'}
+                    padding={{ md: '2px', sm: '1px', xs: '0px' }}
+                    display={'flex'}
+                    alignItems={'center'}
                 >
-                    {eventInfo.event.title}
-                </Typography>
-            </Box>
-        )
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: { md: '17px', sm: '1px', xs: '4px' },
+                        }}
+                    ></Box>
+                </Box>
+            )
+        }
     }
+    const eventDidMount = (info: any) => {
+        // Aplica estilos específicos al primer día de cada evento
+        if (info.isStart) {
+            const firstDayCell = info.el.closest('.fc-event')
+            if (firstDayCell) {
+                firstDayCell.style.background = 'innerth'
+                const parentRow = firstDayCell.closest('.fc-scrollgrid-section')
+                if (parentRow) {
+                    const firstDayOfRow = parentRow.querySelector('.fc-day')
+                    if (firstDayOfRow === info.el) {
+                        firstDayCell.style.marginLeft = '14px'
+                    }
+                }
+            }
+        } else {
+            info.el.style.background = 'innerth'
+            info.el.style.marginLeft = '0px'
+            info.el.style.borderTopLeftRadius = '0px'
+            info.el.style.borderBottomLeftRadius = '0px'
+        }
+
+        if (info.isEnd) {
+            const endDate = info.event.end // Obteniendo la fecha de finalización del evento
+
+            // Buscar la celda correspondiente a la fecha de finalización del evento
+            const endDayCell = document.querySelector(
+                `.fc-day[data-date="${endDate.toISOString().slice(0, 10)}"]:first-of-type .fc-daygrid-day-events`
+            )
+
+            // Si se encontró la celda correspondiente, agregar el Box con el color del evento
+            if (endDayCell) {
+                const box = document.createElement('div')
+                box.style.height = '25px'
+                box.style.width = '12px'
+                box.style.backgroundColor = info.event.backgroundColor // Usamos el color del evento
+                box.style.borderTopRightRadius = '12px' // Establecemos el radio de borde superior derecho
+                box.style.borderBottomRightRadius = '12px' // Establecemos el radio de borde inferior derecho
+                box.style.marginTop = '2px'
+                // Verificar el tamaño de la pantalla y ajustar el tamaño del Box
+                if (window.innerWidth < 900) {
+                    box.style.height = '6px'
+                    box.style.width = '4px'
+                    box.style.marginTop = '1px'
+                }
+
+                endDayCell.appendChild(box)
+            }
+        }
+    }
+
     return (
         <div>
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
@@ -161,16 +211,13 @@ export default function CrudCalender() {
                 <Typography sx={{ flex: 1 }}>S</Typography>
                 <Typography sx={{ flex: 1 }}>D</Typography>
             </Box>
-
             <CalendarWrappers>
                 <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
-                    eventDragMinDistance={12}
                     events={eventos}
-                    progressiveEventRendering={true}
-                    dayCellClassNames={'ccsssss'}
                     contentHeight={'auto'}
+                    nextDayThreshold={'00:00:00'}
                     headerToolbar={{
                         left: 'title',
                     }}
@@ -180,12 +227,11 @@ export default function CrudCalender() {
                     }}
                     locale={esLocale}
                     eventContent={renderEventContent}
+                    eventDidMount={eventDidMount}
                     dayCellContent={function (arg) {
                         return (
                             <div style={{ textAlign: 'center' }}>
-                                <div style={{ textDecoration: 'line-through' }}>
-                                    {arg.dayNumberText}
-                                </div>
+                                <div>{arg.dayNumberText}</div>
                             </div>
                         )
                     }}

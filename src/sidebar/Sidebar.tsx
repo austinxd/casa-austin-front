@@ -18,7 +18,7 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import useBoxShadow from '../hook/useBoxShadow'
 import BasicModal from '../components/common/modal/BasicModal'
@@ -69,7 +69,9 @@ export default function Sidebar(props: Props) {
     const [isClosing, setIsClosing] = useState(false)
     const params = useLocation()
     const [logOut, setLogout] = useState(false)
-
+    useEffect(() => {
+        setMobileOpen(false)
+    }, [params.pathname])
     const handleDrawerClose = () => {
         setIsClosing(true)
         setMobileOpen(false)

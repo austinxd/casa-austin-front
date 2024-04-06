@@ -8,8 +8,15 @@ import ClockIcon from '../../common/icons/ClockIcon'
 import useBoxShadow from '../../../hook/useBoxShadow'
 import BarCharts from '../../common/charts/BarChart'
 import PersonIcon from '@mui/icons-material/Person'
+import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
+import { useEffect } from 'react'
 
 export default function CrudDashboard() {
+    const { data } = useGetDashboardQuery('')
+
+    useEffect(() => {
+        console.log(data, 'dddddddddddd')
+    })
     return (
         <div>
             <Typography variant="h1" mb={3}>

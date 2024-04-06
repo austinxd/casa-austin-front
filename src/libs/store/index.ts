@@ -1,18 +1,24 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authReducer } from '../services/auth/authSlice'
 import { clientApi } from '../services/clients/clientsService'
-import { rentalService } from '../services/rentals/rentalService'
+import { rentalApi } from '../services/rentals/rentalService'
+import { dashboardApi } from '../services/dashboard/dashboardSlice'
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
 
-        [rentalService.reducerPath]: rentalService.reducer,
+        [rentalApi.reducerPath]: rentalApi.reducer,
         [clientApi.reducerPath]: clientApi.reducer,
+        [dashboardApi.reducerPath]: dashboardApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(rentalService.middleware, clientApi.middleware),
+        getDefaultMiddleware().concat(
+            rentalApi.middleware,
+            clientApi.middleware,
+            dashboardApi.middleware
+        ),
 })
 
 export type RootState = ReturnType<typeof store.getState>

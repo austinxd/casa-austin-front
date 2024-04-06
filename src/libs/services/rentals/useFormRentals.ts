@@ -9,6 +9,7 @@ import {
     checkReservationDate,
     checkEditReservationDate,
 } from './rental'
+import { useGetSearchRentalQuery } from './rentalService'
 
 export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, refetchEdit: any) => {
     const {
@@ -34,6 +35,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [houseSelect, setHouseSeletc] = useState('')
     const [checkInSelect, setCheckInSelect] = useState('')
     const [checkOutSelect, setCheckOutSelect] = useState('')
+    const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
 
     useEffect(() => {
         if (dataEdit?.id) {
@@ -112,6 +114,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                     setSuccessEdit(true)
                     refetchEdit()
                     refetch()
+                    refectchForCalender()
                 }
                 return
             }
@@ -121,6 +124,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             if (response.status === 201) {
                 setSuccessRegister(true)
                 refetch()
+                refectchForCalender()
             }
         } catch (error: any) {
             setErrorMessage(error.response.data)

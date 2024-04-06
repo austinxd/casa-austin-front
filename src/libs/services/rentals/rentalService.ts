@@ -3,8 +3,8 @@ import { ENV } from '../../constants/config'
 import { cookiesGetString } from '../../utils/cookie-storage'
 import { IPropertyRental, IRental, IRentalClient } from '../../../interfaces/rental/registerRental'
 
-export const rentalService = createApi({
-    reducerPath: 'rentalService',
+export const rentalApi = createApi({
+    reducerPath: 'rentalApi',
     baseQuery: fetchBaseQuery({
         baseUrl: ENV.API_URL,
         prepareHeaders: (headers: any) => {
@@ -53,4 +53,4 @@ export const {
     useGetAllRentalsQuery,
     useGetAllPropertiesQuery,
     useGetSearchRentalQuery,
-} = rentalService
+} = rentalApi

@@ -156,6 +156,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const onSelectHouse = (event: any) => {
         setHouseSeletc(event.target.value)
     }
+    const tomorrow = dayjs().add(1, 'day')
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -224,7 +225,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     <Controller
                                         name="client"
                                         control={control}
-                                        rules={{ required: 'Elige un nombre si o si' }}
+                                        rules={{ required: 'Elige un nombre' }}
                                         render={({ field }) => {
                                             const { onChange, value } = field
 
@@ -349,20 +350,34 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                     backgroundColor: 'white',
                                                                 },
                                                                 '& .MuiPickersDay-root': {
+                                                                    color: '#5C5C5C',
+                                                                    fontWeight: 600,
                                                                     '&.Mui-selected': {
-                                                                        backgroundColor: '#0E6191',
+                                                                        backgroundColor:
+                                                                            '#0E6191 !important',
                                                                         color: 'white',
                                                                     },
                                                                 },
+                                                                '& .MuiButtonBase-root': {
+                                                                    '&.MuiPickersDay-today': {
+                                                                        border: '1px solid #0E6191 !important',
+                                                                        background:
+                                                                            'white !important',
+                                                                        color: '#0E6191',
+                                                                    },
+                                                                },
                                                                 '& .MuiPickersYear-yearButton': {
+                                                                    background: 'red',
                                                                     '&.Mui-selected': {
                                                                         backgroundColor: '#0E6191',
                                                                         color: 'white',
+                                                                        border: '1px solid blue',
                                                                     },
                                                                 },
                                                             },
                                                         },
                                                     }}
+                                                    disablePast
                                                     label={'Fecha de ingreso'}
                                                     {...field}
                                                     sx={{
@@ -417,8 +432,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                 <Grid item md={6} xs={6}>
                                     <Controller
                                         name="check_out_date"
-                                        defaultValue={null}
                                         control={control}
+                                        defaultValue={undefined}
                                         rules={{
                                             required: 'La fecha de salida es obligatoria',
                                         }}
@@ -430,7 +445,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                 <DatePicker
                                                     slotProps={{
                                                         textField: {},
-
                                                         layout: {
                                                             sx: {
                                                                 '.MuiDateCalendar-root': {
@@ -444,20 +458,34 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                     backgroundColor: 'white',
                                                                 },
                                                                 '& .MuiPickersDay-root': {
+                                                                    color: '#5C5C5C',
+                                                                    fontWeight: 600,
                                                                     '&.Mui-selected': {
-                                                                        backgroundColor: '#0E6191',
+                                                                        backgroundColor:
+                                                                            '#0E6191 !important',
                                                                         color: 'white',
                                                                     },
                                                                 },
+                                                                '& .MuiButtonBase-root': {
+                                                                    '&.MuiPickersDay-today': {
+                                                                        border: '1px solid #0E6191 !important',
+                                                                        background:
+                                                                            'white !important',
+                                                                        color: '#0E6191',
+                                                                    },
+                                                                },
                                                                 '& .MuiPickersYear-yearButton': {
+                                                                    background: 'red',
                                                                     '&.Mui-selected': {
                                                                         backgroundColor: '#0E6191',
                                                                         color: 'white',
+                                                                        border: '1px solid blue',
                                                                     },
                                                                 },
                                                             },
                                                         },
                                                     }}
+                                                    disablePast
                                                     label={'Fecha de salida'}
                                                     {...field}
                                                     sx={{
@@ -484,19 +512,18 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             fontWeight: 600,
                                                         },
                                                     }}
+                                                    minDate={tomorrow}
                                                     onChange={(newDate) => {
-                                                        // Convierte la fecha seleccionada a cadena en el formato deseado
                                                         const formattedDate = newDate
                                                             ? dayjs(newDate).format('YYYY-MM-DD')
                                                             : ''
                                                         setCheckOutSelect(formattedDate)
-                                                        // Pasa la fecha formateada al otro componente usando setValue
                                                         field.onChange(formattedDate)
                                                     }}
                                                 />
                                             </LocalizationProvider>
                                         )}
-                                    />{' '}
+                                    />
                                     <Typography
                                         color={'error'}
                                         fontSize={11}

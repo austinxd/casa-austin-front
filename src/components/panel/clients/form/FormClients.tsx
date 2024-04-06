@@ -16,7 +16,9 @@ import { IRegisterClient } from '../../../../interfaces/clients/registerClients'
 import SuccessCard from '../card/SuccessCard'
 import SuccessEditIcon from '../../../common/icons/SucessEditIcon'
 import { useEffect, useState } from 'react'
-
+import 'react-phone-input-2/lib/style.css'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/material.css'
 interface Props {
     onCancel: () => void
     title: string
@@ -37,6 +39,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         successRegister,
         errorMessage,
         successEdit,
+        phoneNumber,
+        handlePhoneNumberChange,
     } = useFormClients(data, refetch)
 
     const handleOptionChange = (event: any) => {
@@ -63,6 +67,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
     useEffect(() => {
         console.log(numberDocument, typeDocument)
     })
+
     return (
         <div>
             <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
@@ -177,15 +182,28 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                                                     backgroundColor: 'white',
                                                                 },
                                                                 '& .MuiPickersDay-root': {
+                                                                    color: '#5C5C5C',
+                                                                    fontWeight: 600,
                                                                     '&.Mui-selected': {
-                                                                        backgroundColor: '#0E6191',
+                                                                        backgroundColor:
+                                                                            '#0E6191 !important',
                                                                         color: 'white',
                                                                     },
                                                                 },
+                                                                '& .MuiButtonBase-root': {
+                                                                    '&.MuiPickersDay-today': {
+                                                                        border: '1px solid #0E6191 !important',
+                                                                        background:
+                                                                            'white !important',
+                                                                        color: '#0E6191',
+                                                                    },
+                                                                },
                                                                 '& .MuiPickersYear-yearButton': {
+                                                                    background: 'red',
                                                                     '&.Mui-selected': {
                                                                         backgroundColor: '#0E6191',
                                                                         color: 'white',
+                                                                        border: '1px solid blue',
                                                                     },
                                                                 },
                                                             },
@@ -273,34 +291,24 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                     />
                                 </Grid>
                                 <Grid item md={6} xs={12}>
-                                    <SecondaryInput
-                                        {...register('tel_number', {
-                                            required: 'El celular es obligatorio',
-                                        })}
-                                        type="number"
-                                        label={'Número de teléfono'}
-                                        messageError={
-                                            (errors.tel_number?.message ?? null) as string
-                                        }
+                                    <PhoneInput
+                                        value={phoneNumber}
+                                        specialLabel={phoneNumber && 'Número telefónico'}
+                                        country={'pe'}
+                                        placeholder="Número telefónico"
+                                        inputStyle={{
+                                            border: '1px solid #D1D0D4',
+                                            borderRadius: '8px',
+                                            color: '#2F2B3D',
+                                            height: '55px',
+                                            outline: 'none',
+                                            width: '100%',
+                                        }}
+                                        inputProps={{ className: 'input-phone-number' }}
+                                        onChange={handlePhoneNumberChange}
                                     />
                                 </Grid>
-                                {/*                                 <Grid item md={6} xs={12}>
-                                    <Controller
-                                        name="tel_number"
-                                        control={control}
-                                        defaultValue=""
-                                        rules={{ required: 'El celular es obligatorio' }}
-                                        render={({ field }) => (
-                                            <InputPhone
-                                                label={'Número de teléfono'}
-                                                messageError={
-                                                    (errors.tel_number?.message ?? null) as string
-                                                }
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Grid> */}
+
                                 <Grid
                                     item
                                     md={12}
@@ -308,6 +316,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                     display={'flex'}
                                     alignItems={'start'}
                                     flexDirection={'column'}
+                                    mt={{ md: 0, sm: 1, xs: 3 }}
                                 >
                                     <Box>
                                         <FormControlLabel
@@ -393,7 +402,6 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                     height: '48px',
                                     fontWeight: 500,
                                     width: '100%',
-                                    marginTop: '4px',
                                     marginBottom: '4px',
                                 }}
                             >

@@ -18,6 +18,13 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
     const [successRegister, setSuccessRegister] = useState(false)
     const [successEdit, setSuccessEdit] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [phoneNumber, setPhoneNumber] = useState('')
+
+    const handlePhoneNumberChange = (value: string) => {
+        console.log('Phone Number:', value)
+        setValue('tel_number', value)
+        setPhoneNumber(value)
+    }
     const formData = new FormData()
 
     useEffect(() => {
@@ -31,10 +38,12 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
             setValue('tel_number', dataEdit.tel_number)
             setValue('sex', dataEdit.sex)
             setSelectedOption(dataEdit.sex)
+            setPhoneNumber(dataEdit.tel_number)
         }
     }, [successEdit])
 
     const onCreateClient = async (data: IRegisterClient) => {
+        console.log(data, 'ffffffff')
         try {
             setIsLoading(true)
             formData.append('document_type', data.document_type)
@@ -83,5 +92,9 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
         successRegister,
         errorMessage,
         successEdit,
+        setValue,
+        handlePhoneNumberChange,
+        phoneNumber,
+        setPhoneNumber,
     }
 }

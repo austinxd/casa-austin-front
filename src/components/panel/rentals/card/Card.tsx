@@ -56,15 +56,16 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                 borderRadius={'8px'}
                 sx={{
                     borderLeft: `24px solid ${item.property.background_color}`,
-                    pl: '10px',
+                    pl: '16px',
                     pr: '40px',
                     py: 1.4,
                     '@media (max-width: 1400px)': {
                         flexDirection: 'column',
                         borderLeft: `16px solid ${item.property.background_color}`,
                         pr: '10px',
-                        pl: '4px',
+                        pl: '10px',
                         py: 2,
+                        pb: '6px',
                     },
                 }}
             >
@@ -92,7 +93,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 ml: { md: 2, xs: 1 },
                             }}
                         >
-                            <GroupOutlinedIcon /> + {item.guests}
+                            <GroupOutlinedIcon fontSize={'small'} /> + {item.guests}
                         </Box>
                     </Box>
                     <Box
@@ -101,7 +102,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                         mt={4}
                         sx={{
                             '@media (max-width: 1400px)': {
-                                mt: 2,
+                                mt: 1.5,
                             },
                         }}
                     >
@@ -137,7 +138,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                     display={'flex'}
                     sx={{
                         '@media (max-width: 1400px)': {
-                            justifyContent: 'end',
+                            justifyContent: 'start',
                         },
                     }}
                 >
@@ -161,7 +162,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 flexDirection: 'row',
                                 gap: 1,
                                 justifyContent: 'end',
-                                mt: 1,
+                                mt: 2,
                             },
                         }}
                     >
@@ -181,14 +182,21 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 <Typography variant="subtitle1">
                                     {convertDate(item.check_in_date)}
                                 </Typography>
-                                <Typography variant="subtitle1" fontSize={12} sx={{ opacity: 0.7 }}>
+                                <Typography
+                                    variant="subtitle1"
+                                    fontSize={12}
+                                    sx={{
+                                        opacity: 0.7,
+                                        fontSize: { md: '14px', sm: '12px', xs: '12px' },
+                                    }}
+                                >
                                     Fecha de ingreso
                                 </Typography>
                             </Box>
                         </Box>
                         <Box
                             display={'flex'}
-                            mt={1}
+                            mt={{ md: 1, sm: 0, xs: 0 }}
                             justifyContent={'center'}
                             alignItems={'center'}
                         >
@@ -207,7 +215,14 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 <Typography variant="subtitle1">
                                     {convertDate(item.check_out_date)}
                                 </Typography>
-                                <Typography variant="subtitle1" fontSize={12} sx={{ opacity: 0.7 }}>
+                                <Typography
+                                    variant="subtitle1"
+                                    fontSize={12}
+                                    sx={{
+                                        opacity: 0.7,
+                                        fontSize: { md: '14px', sm: '12px', xs: '12px' },
+                                    }}
+                                >
                                     Fecha de salida
                                 </Typography>
                             </Box>

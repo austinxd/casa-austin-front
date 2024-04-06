@@ -13,8 +13,10 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
         padding: '0px',
         '& .fc': {
             zIndex: 1,
+
             '.fc-daygrid-day-events': {
                 marginBottom: '10px',
+                /*                 display: 'flex', */
             },
             '.fc-col-header, .fc-daygrid-body, .fc-scrollgrid-sync-table, .fc-timegrid-body, .fc-timegrid-body table':
                 {
@@ -136,7 +138,14 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                     display: 'none',
                 },
             },
-
+            '& .fc-event': {
+                '&:first-of-type': {
+                    marginLeft: '20px',
+                },
+                '&:last-child': {
+                    marginRight: '-9px',
+                },
+            },
             '& tbody td, & thead th': {
                 borderColor: theme.palette.divider,
 
@@ -153,6 +162,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                 borderColor: theme.palette.divider,
                 margin: 'auto',
             },
+
             '& .fc-daygrid-event-harness': {
                 '& .fc-event': {
                     marginTop: 2,
@@ -160,12 +170,11 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                     marginBottom: 0,
                     borderRadius: '12px',
                     padding: 0,
-                    fontSize: theme.typography.body2.fontSize,
                 },
-                '&:not(:last-of-type)': {
-                    marginRight: theme.spacing(-2),
+                /*                 '&:not(:last-of-type)': {
+                    marginRight: theme.spacing(-1.5),
                     marginLeft: theme.spacing(2),
-                },
+                }, */
             },
             '& .fc-daygrid-day-number': {
                 margin: 'auto',
@@ -190,6 +199,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
             '@media (max-width:800px)': {
                 '.fc-daygrid-day-events': {
                     marginBottom: '3px',
+                    display: 'flex',
                 },
                 '& .fc-daygrid-day-number': {
                     marginTop: '0px',
@@ -205,10 +215,6 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                         borderRadius: '8px',
                         padding: 0,
                         fontSize: theme.typography.body2.fontSize,
-                    },
-                    '&:not(:last-of-type)': {
-                        marginRight: theme.spacing(-1),
-                        marginLeft: theme.spacing(1),
                     },
                 },
             },

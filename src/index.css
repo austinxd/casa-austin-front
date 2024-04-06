@@ -35,6 +35,14 @@ body {
     margin-left: 1px;
 }
 
+/* Estilos para el input phone react */
+.input-phone-number {
+    padding-left: 60px;
+}
+.input-phone-number::focus {
+    border-color: transparent;
+}
+
 @media (max-width: 900px) {
     .imgCalender {
         height: 5px;
