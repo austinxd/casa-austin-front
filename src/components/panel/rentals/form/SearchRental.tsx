@@ -6,9 +6,10 @@ interface Props {
     onSave: () => void
     setSearch: any
     setCurrentPage: any
+    onClick: () => void
 }
 
-export default function SearchRental({ onSave, setSearch, setCurrentPage }: Props) {
+export default function SearchRental({ onSave, setSearch, setCurrentPage, onClick }: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 400)
 
@@ -96,7 +97,8 @@ export default function SearchRental({ onSave, setSearch, setCurrentPage }: Prop
                     />
                 </Box>
 
-                <Box>
+                <Box gap={1} display={'flex'}>
+                    <button onClick={onClick}>filtarar</button>
                     <Button
                         sx={{
                             height: 38,

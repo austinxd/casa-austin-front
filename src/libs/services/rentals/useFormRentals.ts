@@ -7,7 +7,6 @@ import {
     editReservationsForm,
     deleteRecipesForm,
     checkReservationDate,
-    checkEditReservationDate,
 } from './rental'
 import { useGetSearchRentalQuery } from './rentalService'
 
@@ -39,9 +38,9 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     useEffect(() => {
         if (dataEdit?.id) {
-            const formDataCheck = new FormData()
+            return
+            /*             const formDataCheck = new FormData()
             if (houseSelect && checkInSelect && checkOutSelect) {
-                console.log(houseSelect, checkInSelect, checkOutSelect, 'vas a editar')
                 formDataCheck.append('property', houseSelect)
                 formDataCheck.append('check_in_date', checkInSelect)
                 formDataCheck.append('check_out_date', checkOutSelect)
@@ -57,7 +56,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                     }
                 }
                 fetchData()
-            }
+            } */
         } else {
             const formDataCheck = new FormData()
             if (houseSelect && checkInSelect && checkOutSelect) {

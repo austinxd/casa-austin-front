@@ -27,6 +27,7 @@ export interface IRentalClient {
     check_out_date: any
     guests: number
     id: string
+    origin: string
     price_sol: number
     price_usd: number
     property: IProperty
@@ -43,6 +44,7 @@ export interface ISeller {
     first_name: string
     id: string
     last_name: string
+    tel_number: string
 }
 export interface IPropertyRental {
     actual: number

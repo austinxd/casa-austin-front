@@ -13,13 +13,16 @@ export default function TableAustin({ columns, rows, isLoading }: Props) {
             sx={{
                 maxWidth: 1200,
                 display: 'flex',
+                minWidth: '100%',
                 width: '100%',
                 minHeight: '100px',
                 mx: 'auto',
                 background: 'white',
                 borderRadius: '0px',
                 '@media (max-width: 1000px)': {
-                    display: 'none',
+                    visibility: 'hidden',
+                    height: '0px',
+                    minHeight: '0px',
                 },
             }}
         >
@@ -37,6 +40,7 @@ export default function TableAustin({ columns, rows, isLoading }: Props) {
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
+                    minWidth: '100%',
                     width: '100%',
                     '.MuiDataGrid-columnSeparator': {
                         display: 'none',

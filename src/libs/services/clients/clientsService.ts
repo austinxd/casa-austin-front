@@ -19,6 +19,12 @@ export const clientApi = createApi({
                 method: 'GET',
             }),
         }),
+        getTokenForClient: builder.query<{ token: string }, string>({
+            query: () => ({
+                url: `/get-api-token-clients/`,
+                method: 'GET',
+            }),
+        }),
         getAllClients: builder.query<
             IListClients,
             { page?: number; page_size?: number | string; search: string }
@@ -36,4 +42,5 @@ export const clientApi = createApi({
     }),
 })
 
-export const { useGetClientsByIdQuery, useGetAllClientsQuery } = clientApi
+export const { useGetClientsByIdQuery, useGetAllClientsQuery, useGetTokenForClientQuery } =
+    clientApi

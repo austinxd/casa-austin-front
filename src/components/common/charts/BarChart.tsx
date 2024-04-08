@@ -1,11 +1,15 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import ApexChart from 'react-apexcharts'
 
 interface Props {
     title: string
+    categories: any
+    data: any
+    colors: any
+    isLoading: boolean
 }
 
-function BarCharts({ title }: Props) {
+function BarCharts({ title, categories, colors, data, isLoading }: Props) {
     const options: any = {
         chart: {
             id: 'apexchart-example',
@@ -56,7 +60,7 @@ function BarCharts({ title }: Props) {
                     return val + '%'
                 },
             },
-            categories: ['1', '2', '3', '4'],
+            categories: categories,
         },
         yaxis: {
             labels: {
@@ -83,7 +87,7 @@ function BarCharts({ title }: Props) {
         stroke: {
             width: 1,
         },
-        colors: ['#0E6191', '#82C9E2', '#7367F0', '#C466A1'],
+        colors: colors,
         dataLabels: {
             enabled: true,
             style: {
@@ -102,17 +106,31 @@ function BarCharts({ title }: Props) {
     const series = [
         {
             name: 'Casa',
-            data: [12, 10, 38, 40],
+            data: data,
         },
     ]
 
     return (
         <Box
             boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
-            sx={{ background: 'white', p: { md: 3, sm: 2, xs: 2 }, borderRadius: 3 }}
+            sx={{ background: 'white', p: { md: 3, sm: 2, xs: 1.5 }, borderRadius: 3 }}
         >
             <Typography variant="h2">{title}</Typography>
-            <ApexChart type="bar" options={options} series={series} height={310} width={'100%'} />
+            {isLoading ? (
+                <Skeleton
+                    variant="rounded"
+                    sx={{ width: '100%', bgcolor: '#DADADA' }}
+                    height={310}
+                />
+            ) : (
+                <ApexChart
+                    type="bar"
+                    options={options}
+                    series={series}
+                    height={310}
+                    width={'100%'}
+                />
+            )}
         </Box>
     )
 }

@@ -377,7 +377,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             },
                                                         },
                                                     }}
-                                                    disablePast
+                                                    disablePast={dataEdit?.id ? false : true}
                                                     label={'Fecha de ingreso'}
                                                     {...field}
                                                     sx={{
@@ -485,7 +485,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             },
                                                         },
                                                     }}
-                                                    disablePast
+                                                    disablePast={dataEdit?.id ? false : true}
+                                                    minDate={dataEdit?.id ? null : tomorrow}
                                                     label={'Fecha de salida'}
                                                     {...field}
                                                     sx={{
@@ -512,7 +513,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             fontWeight: 600,
                                                         },
                                                     }}
-                                                    minDate={tomorrow}
                                                     onChange={(newDate) => {
                                                         const formattedDate = newDate
                                                             ? dayjs(newDate).format('YYYY-MM-DD')

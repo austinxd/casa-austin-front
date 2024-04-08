@@ -36,3 +36,23 @@ export interface IUserData {
     fechaNacimiento: string
     sexo: string
 }
+
+export interface IDataClienbyApi {
+    status: number
+    message: string
+    data: IClientInformation
+}
+
+export interface IClientInformation {
+    apellidoMaterno: string | null
+    apellidoPaterno: string | null
+    departamento: string | null
+    direccion: string | null
+    distrito: string | null
+    fechaNacimiento: string | null
+    nombres: string | null
+    pais: string | null
+    provincia: string | null
+    razonsocial: string | null
+    sexo: string | null
+}

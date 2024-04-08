@@ -3,7 +3,7 @@ import style from './rental.module.css'
 import Card from './card/Card'
 import BasicModal from '../../common/modal/BasicModal'
 import FormRental from './form/FormRental'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DetailRental from './form/DetailRental'
 import DeleteRental from './form/DeleteRental'
 import { useGetAllRentalsQuery } from '../../../libs/services/rentals/rentalService'
@@ -20,7 +20,7 @@ export default function CrudRentals() {
     const [title, setTitle] = useState('')
     const [btn, setBtn] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize] = useState<number>(8)
+    const [pageSize] = useState<number | string>(8)
     const [search, setSearch] = useState('')
 
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
@@ -29,6 +29,11 @@ export default function CrudRentals() {
         search: search,
     })
 
+    const fuc = () => {}
+
+    useEffect(() => {
+        console.log(data)
+    }, [])
     const onSave = () => {
         setOpen(true)
         setTitle('Añadir Alquiler')
@@ -57,7 +62,12 @@ export default function CrudRentals() {
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
                 Alquileres
             </Typography>
-            <SearchRental setSearch={setSearch} setCurrentPage={setCurrentPage} onSave={onSave} />
+            <SearchRental
+                onClick={fuc}
+                setSearch={setSearch}
+                setCurrentPage={setCurrentPage}
+                onSave={onSave}
+            />
 
             {isLoading ? (
                 <SkeletonCard />
@@ -79,7 +89,7 @@ export default function CrudRentals() {
             <div className={style.container} style={{ marginTop: '12px' }}></div>
             {data && (
                 <PaginationAustin
-                    pageSize={pageSize}
+                    pageSize={Number(pageSize)}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     totalPages={data?.total_paginas}

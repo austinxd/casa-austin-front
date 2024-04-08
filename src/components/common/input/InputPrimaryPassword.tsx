@@ -42,6 +42,15 @@ export const InputPrimaryPassword = forwardRef(function InputPrimaryPassword(
                 display: 'none',
             },
         },
+        '& input::placeholder': {
+            color: 'white', // Cambiar el color del placeholder a blanco
+        },
+        '& input:-moz-selection': {
+            color: 'white', // Cambiar el color del placeholder a blanco
+        },
+        '& input::selection': {
+            color: 'white', // Cambiar el color del placeholder a blanco
+        },
         '& input:-webkit-autofill': {
             WebkitBoxShadow: '0 0 0px 1000px red inset',
             boxShadow: '0 0 0px 1000px red inset',

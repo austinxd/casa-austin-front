@@ -19,6 +19,9 @@ import { useEffect, useState } from 'react'
 import 'react-phone-input-2/lib/style.css'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/material.css'
+import { useGetDataClient } from '../../../../libs/services/clients/useGetDataClient'
+
+import dayjs from 'dayjs'
 interface Props {
     onCancel: () => void
     title: string
@@ -40,33 +43,69 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         errorMessage,
         successEdit,
         phoneNumber,
+        setValue,
         handlePhoneNumberChange,
     } = useFormClients(data, refetch)
 
     const handleOptionChange = (event: any) => {
         setSelectedOption(event.target.value)
     }
+    const { setDocumentNumber, documentNumber, setSelecTypeDocument, isLoadingClient, dataByApi } =
+        useGetDataClient()
 
-    const [typeDocument, setTypeDocument] = useState('')
-    const [numberDocument, setNumberDocument] = useState('')
-    /*     const { data: ClientBD } = useGetClientsByBDQuery({
-        numberDocument: numberDocument,
-        typeDocument: typeDocument,
-        token: '20483ac1-702f-41c7-80f2-f98205acd11a',
-    })
- */
     const onDocumentNumber = (event: any) => {
-        console.log(event.target.value)
-        setNumberDocument(event.target.value)
+        setDocumentNumber(event.target.value)
     }
 
     const onSelectDocument = (event: any) => {
-        console.log(event.target.value)
-        setTypeDocument(event.target.value)
+        setSelecTypeDocument(event.target.value)
     }
+
+    const [apiName, setApiName] = useState<string>()
+    const [apiSurnames, setApiSurnames] = useState<string>()
     useEffect(() => {
-        console.log(numberDocument, typeDocument)
-    })
+        if (dataByApi) {
+            if (dataByApi.message === 'Exito' || dataByApi.status === 0) {
+                setValue(
+                    'first_name',
+                    dataByApi.data.nombres
+                        ? dataByApi.data.nombres
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+                setApiName(
+                    dataByApi.data.nombres
+                        ? dataByApi.data.nombres
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+                setValue(
+                    'last_name',
+                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
+                        ? `${dataByApi.data.apellidoMaterno} ${dataByApi.data.apellidoPaterno}`
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+                setApiSurnames(
+                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
+                        ? `${dataByApi.data.apellidoMaterno} ${dataByApi.data.apellidoPaterno}`
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+                setValue(
+                    'date',
+                    dataByApi.data.fechaNacimiento ? dayjs(dataByApi.data.fechaNacimiento) : ''
+                )
+                setValue('number_doc', documentNumber)
+                setValue('sex', dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
+                setSelectedOption(dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
+            }
+        }
+    }, [dataByApi])
 
     return (
         <div>
@@ -100,314 +139,323 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                         }
                     />
                 ) : (
-                    <div>
-                        <Typography mb={2}>{title}</Typography>
+                    <div style={{ position: 'relative' }}>
+                        <>
+                            <Typography mb={2}>{title}</Typography>
 
-                        <form onSubmit={handleSubmit}>
-                            <Grid container columnSpacing={2}>
-                                <Grid item md={6} xs={12}>
-                                    <Controller
-                                        name="document_type"
-                                        defaultValue=""
-                                        rules={{
-                                            required: 'El tipo de documento es obligatorio',
-                                        }}
-                                        control={control}
-                                        render={({ field: { onChange, value } }) => (
-                                            <SelectInputPrimary
-                                                variant="outlined"
-                                                options={[
-                                                    { value: 'dni', label: 'DNI' },
-                                                    {
-                                                        value: 'cex',
-                                                        label: 'Carnet de extranjeria',
-                                                    },
-                                                    { value: 'pas', label: 'Pasaporte' },
-                                                    { value: 'ruc', label: 'RUC' },
-                                                ]}
-                                                label="Elija tipo de documento"
-                                                value={value}
-                                                onChange={(selectedValue) => {
-                                                    onSelectDocument &&
-                                                        onSelectDocument(selectedValue)
-                                                    onChange(selectedValue)
-                                                }}
-                                                messageError={
-                                                    (errors.document_type?.message ??
-                                                        null) as string
-                                                }
-                                            />
-                                        )}
-                                    />
-                                </Grid>
-                                <Grid item md={6} xs={12}>
-                                    <SecondaryInput
-                                        {...register('number_doc', {
-                                            required: 'Numbero de documento obligatorio',
-                                        })}
-                                        type="number"
-                                        onChange={onDocumentNumber}
-                                        label={'Número de documento'}
-                                        messageError={
-                                            (errors.number_doc?.message ?? null) as string
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item md={12} xs={12}>
-                                    <Controller
-                                        name="date"
-                                        defaultValue={null}
-                                        control={control}
-                                        rules={{ required: 'La fecha es obligatoria' }}
-                                        render={({ field }) => (
-                                            <LocalizationProvider
-                                                dateAdapter={AdapterDayjs}
-                                                adapterLocale="es"
-                                            >
-                                                <DatePicker
-                                                    label={'Elija una fecha'}
-                                                    {...field}
-                                                    slotProps={{
-                                                        textField: {},
-                                                        layout: {
-                                                            sx: {
-                                                                '.MuiDateCalendar-root': {
-                                                                    color: '#0E6191',
-                                                                    textTransform: 'capitalize',
-                                                                    borderRadius: 0,
-                                                                    borderWidth: 0,
-                                                                    backgroundColor: 'white',
-                                                                },
-                                                                '.MuiDialogContent-root': {
-                                                                    backgroundColor: 'white',
-                                                                },
-                                                                '& .MuiPickersDay-root': {
-                                                                    color: '#5C5C5C',
-                                                                    fontWeight: 600,
-                                                                    '&.Mui-selected': {
-                                                                        backgroundColor:
-                                                                            '#0E6191 !important',
-                                                                        color: 'white',
-                                                                    },
-                                                                },
-                                                                '& .MuiButtonBase-root': {
-                                                                    '&.MuiPickersDay-today': {
-                                                                        border: '1px solid #0E6191 !important',
-                                                                        background:
-                                                                            'white !important',
+                            <form onSubmit={handleSubmit}>
+                                <Grid container columnSpacing={2}>
+                                    <Grid item md={6} xs={12}>
+                                        <Controller
+                                            name="document_type"
+                                            defaultValue=""
+                                            rules={{
+                                                required: 'El tipo de documento es obligatorio',
+                                            }}
+                                            control={control}
+                                            render={({ field: { onChange, value } }) => (
+                                                <SelectInputPrimary
+                                                    variant="outlined"
+                                                    options={[
+                                                        { value: 'dni', label: 'DNI' },
+                                                        {
+                                                            value: 'cex',
+                                                            label: 'Carnet de extranjeria',
+                                                        },
+                                                        { value: 'pas', label: 'Pasaporte' },
+                                                        { value: 'ruc', label: 'RUC' },
+                                                    ]}
+                                                    label={'Elija tipo de documento'}
+                                                    value={value}
+                                                    onChange={(selectedValue) => {
+                                                        onSelectDocument &&
+                                                            onSelectDocument(selectedValue)
+                                                        onChange(selectedValue)
+                                                    }}
+                                                    messageError={
+                                                        (errors.document_type?.message ??
+                                                            null) as string
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6} xs={12}>
+                                        <SecondaryInput
+                                            {...register('number_doc', {
+                                                required: 'Numbero de documento obligatorio',
+                                            })}
+                                            defaultValue={documentNumber}
+                                            type="number"
+                                            onChange={onDocumentNumber}
+                                            label={'Número de documento'}
+                                            messageError={
+                                                (errors.number_doc?.message ?? null) as string
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} xs={12}>
+                                        <Controller
+                                            name="date"
+                                            defaultValue={null}
+                                            control={control}
+                                            rules={{ required: 'La fecha es obligatoria' }}
+                                            render={({ field }) => (
+                                                <LocalizationProvider
+                                                    dateAdapter={AdapterDayjs}
+                                                    adapterLocale="es"
+                                                >
+                                                    <DatePicker
+                                                        label={
+                                                            isLoadingClient
+                                                                ? 'Cargando...'
+                                                                : 'Elija una fecha'
+                                                        }
+                                                        {...field}
+                                                        slotProps={{
+                                                            textField: {},
+                                                            layout: {
+                                                                sx: {
+                                                                    '.MuiDateCalendar-root': {
                                                                         color: '#0E6191',
+                                                                        textTransform: 'capitalize',
+                                                                        borderRadius: 0,
+                                                                        borderWidth: 0,
+                                                                        backgroundColor: 'white',
                                                                     },
-                                                                },
-                                                                '& .MuiPickersYear-yearButton': {
-                                                                    background: 'red',
-                                                                    '&.Mui-selected': {
-                                                                        backgroundColor: '#0E6191',
-                                                                        color: 'white',
-                                                                        border: '1px solid blue',
+                                                                    '.MuiDialogContent-root': {
+                                                                        backgroundColor: 'white',
                                                                     },
+                                                                    '& .MuiPickersDay-root': {
+                                                                        color: '#5C5C5C',
+                                                                        fontWeight: 600,
+                                                                        '&.Mui-selected': {
+                                                                            backgroundColor:
+                                                                                '#0E6191 !important',
+                                                                            color: 'white',
+                                                                        },
+                                                                    },
+                                                                    '& .MuiButtonBase-root': {
+                                                                        '&.MuiPickersDay-today': {
+                                                                            border: '1px solid #0E6191 !important',
+                                                                            background:
+                                                                                'white !important',
+                                                                            color: '#0E6191',
+                                                                        },
+                                                                    },
+                                                                    '& .MuiPickersYear-yearButton':
+                                                                        {
+                                                                            background: 'red',
+                                                                            '&.Mui-selected': {
+                                                                                backgroundColor:
+                                                                                    '#0E6191',
+                                                                                color: 'white',
+                                                                                border: '1px solid blue',
+                                                                            },
+                                                                        },
                                                                 },
                                                             },
-                                                        },
-                                                    }}
-                                                    sx={{
-                                                        width: '100%',
-                                                        '.MuiOutlinedInput-root': {
-                                                            height: '55px',
-                                                            color: '#2F2B3D',
-                                                            opacity: 0.9,
-                                                            '& fieldset': {
-                                                                borderRadius: '8px',
-                                                                border: '1px solid #D1D0D4',
-                                                                background: 'transparent',
+                                                        }}
+                                                        sx={{
+                                                            width: '100%',
+                                                            '.MuiOutlinedInput-root': {
+                                                                height: '55px',
+                                                                color: '#2F2B3D',
+                                                                opacity: 0.9,
+                                                                '& fieldset': {
+                                                                    borderRadius: '8px',
+                                                                    border: '1px solid #D1D0D4',
+                                                                    background: 'transparent',
+                                                                },
+                                                                '&:hover fieldset': {
+                                                                    border: '1px solid #D1D0D4',
+                                                                },
+                                                                '&.Mui-focused fieldset': {
+                                                                    border: '1px solid #D1D0D4',
+                                                                },
                                                             },
-                                                            '&:hover fieldset': {
-                                                                border: '1px solid #D1D0D4',
+                                                            '.MuiInputBase-input': {
+                                                                color: '#2F2B3D',
+                                                                fontSize: '16px',
+                                                                fontWeight: 600,
                                                             },
-                                                            '&.Mui-focused fieldset': {
-                                                                border: '1px solid #D1D0D4',
-                                                            },
-                                                        },
-                                                        '.MuiInputBase-input': {
-                                                            color: '#2F2B3D',
-                                                            fontSize: '16px',
-                                                            fontWeight: 600,
-                                                        },
-                                                    }}
-                                                />
-                                            </LocalizationProvider>
-                                        )}
-                                    />
-                                    <Typography
-                                        color={'error'}
-                                        fontSize={11}
-                                        ml={1.5}
-                                        mt={0.2}
-                                        textAlign={'start'}
-                                        variant="subtitle2"
-                                        height={26}
-                                    >
-                                        {(errors.date?.message ?? null) as string}
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={12} xs={12}>
-                                    <SecondaryInput
-                                        {...register('first_name', {
-                                            required: 'El nombre es obligatorio',
-                                        })}
-                                        type="text"
-                                        label={'Nombres'}
-                                        messageError={
-                                            (errors.first_name?.message ?? null) as string
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item md={12} xs={12}>
-                                    <SecondaryInput
-                                        {...register('last_name', {
-                                            required: 'El apellido es obligatorio',
-                                        })}
-                                        type="text"
-                                        label={'Apellidos'}
-                                        messageError={(errors.last_name?.message ?? null) as string}
-                                    />
-                                </Grid>
-                                <Grid item md={6} xs={12}>
-                                    <SecondaryInput
-                                        {...register('email', {
-                                            required: 'El correo es obligatorio',
-                                            pattern: {
-                                                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
-                                                message: 'El correo no es valido    ',
-                                            },
-                                            maxLength: {
-                                                value: 100,
-                                                message:
-                                                    'El correo electrónico debe tener como máximo 100 caracteres',
-                                            },
-                                        })}
-                                        type="text"
-                                        label={'Correo electrónico'}
-                                        messageError={(errors.email?.message ?? null) as string}
-                                    />
-                                </Grid>
-                                <Grid item md={6} xs={12}>
-                                    <PhoneInput
-                                        value={phoneNumber}
-                                        specialLabel={phoneNumber && 'Número telefónico'}
-                                        country={'pe'}
-                                        placeholder="Número telefónico"
-                                        inputStyle={{
-                                            border: '1px solid #D1D0D4',
-                                            borderRadius: '8px',
-                                            color: '#2F2B3D',
-                                            height: '55px',
-                                            outline: 'none',
-                                            width: '100%',
-                                        }}
-                                        inputProps={{ className: 'input-phone-number' }}
-                                        onChange={handlePhoneNumberChange}
-                                    />
-                                </Grid>
+                                                        }}
+                                                    />
+                                                </LocalizationProvider>
+                                            )}
+                                        />
+                                        <Typography
+                                            color={'error'}
+                                            fontSize={11}
+                                            ml={1.5}
+                                            mt={0.2}
+                                            textAlign={'start'}
+                                            variant="subtitle2"
+                                            height={26}
+                                        >
+                                            {(errors.date?.message ?? null) as string}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item md={12} xs={12}>
+                                        <SecondaryInput
+                                            {...register('first_name', {
+                                                required: 'El nombre es obligatorio',
+                                            })}
+                                            focused={apiName ? true : false}
+                                            defaultValue={apiName}
+                                            type="text"
+                                            label={'Nombres'}
+                                            messageError={
+                                                (errors.first_name?.message ?? null) as string
+                                            }
+                                            isloading={isLoadingClient}
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} xs={12}>
+                                        <SecondaryInput
+                                            {...register('last_name', {
+                                                required: 'El apellido es obligatorio',
+                                            })}
+                                            type="text"
+                                            focused={apiSurnames ? true : false}
+                                            defaultValue={apiSurnames}
+                                            label={'Apellidos'}
+                                            messageError={
+                                                (errors.last_name?.message ?? null) as string
+                                            }
+                                            isloading={isLoadingClient}
+                                        />
+                                    </Grid>
 
-                                <Grid
-                                    item
-                                    md={12}
-                                    xs={12}
-                                    display={'flex'}
-                                    alignItems={'start'}
-                                    flexDirection={'column'}
-                                    mt={{ md: 0, sm: 1, xs: 3 }}
-                                >
-                                    <Box>
-                                        <FormControlLabel
-                                            sx={{
-                                                '& .MuiTypography-body1': {
-                                                    color: '#2F2B3D',
-                                                    opacity: 0.9,
-                                                    fontSize: '16px',
-                                                    fontWeight: 500,
-                                                    mr: 2,
-                                                },
-                                            }}
-                                            control={
-                                                <Checkbox
-                                                    {...register('sex', {
-                                                        required: 'El genero es obligatorio',
-                                                    })}
-                                                    checked={selectedOption === 'm'}
-                                                    onChange={handleOptionChange}
-                                                    value="m"
-                                                    icon={<CheckBoxIcon />}
-                                                    checkedIcon={<CheckBoxSelected />}
-                                                />
-                                            }
-                                            label="Masculino"
+                                    <Grid item md={6} xs={12}>
+                                        <SecondaryInput
+                                            {...register('email')}
+                                            type="text"
+                                            label={'Correo electrónico'}
+                                            messageError={(errors.email?.message ?? null) as string}
                                         />
-                                        <FormControlLabel
-                                            sx={{
-                                                '& .MuiTypography-body1': {
-                                                    color: '#2F2B3D',
-                                                    opacity: 0.9,
-                                                    fontSize: '16px',
-                                                    fontWeight: 500,
-                                                    mr: 2,
-                                                },
+                                    </Grid>
+                                    <Grid item md={6} xs={12}>
+                                        <PhoneInput
+                                            value={phoneNumber}
+                                            specialLabel={phoneNumber && 'Número telefónico'}
+                                            country={'pe'}
+                                            placeholder="Número telefónico"
+                                            inputStyle={{
+                                                border: '1px solid #D1D0D4',
+                                                borderRadius: '8px',
+                                                color: '#2F2B3D',
+                                                height: '55px',
+                                                outline: 'none',
+                                                width: '100%',
+                                                fontFamily: 'Public Sans',
+                                                fontWeight: 600,
                                             }}
-                                            control={
-                                                <Checkbox
-                                                    {...register('sex', {
-                                                        required: 'El genero es obligatorio',
-                                                    })}
-                                                    checked={selectedOption === 'f'}
-                                                    onChange={handleOptionChange}
-                                                    value="f"
-                                                    icon={<CheckBoxIcon />}
-                                                    checkedIcon={<CheckBoxSelected />}
-                                                />
-                                            }
-                                            label="Femenino"
+                                            inputProps={{ className: 'input-phone-number' }}
+                                            onChange={handlePhoneNumberChange}
                                         />
-                                    </Box>
+                                    </Grid>
+
+                                    <Grid
+                                        item
+                                        md={12}
+                                        xs={12}
+                                        display={'flex'}
+                                        alignItems={'start'}
+                                        flexDirection={'column'}
+                                        mt={{ md: 0, sm: 1, xs: 3 }}
+                                    >
+                                        <Box>
+                                            <FormControlLabel
+                                                sx={{
+                                                    '& .MuiTypography-body1': {
+                                                        color: '#2F2B3D',
+                                                        opacity: 0.9,
+                                                        fontSize: '16px',
+                                                        fontWeight: 500,
+                                                        mr: 2,
+                                                    },
+                                                }}
+                                                control={
+                                                    <Checkbox
+                                                        {...register('sex', {
+                                                            required: 'El genero es obligatorio',
+                                                        })}
+                                                        checked={selectedOption === 'm'}
+                                                        onChange={handleOptionChange}
+                                                        value="m"
+                                                        icon={<CheckBoxIcon />}
+                                                        checkedIcon={<CheckBoxSelected />}
+                                                    />
+                                                }
+                                                label="Masculino"
+                                            />
+                                            <FormControlLabel
+                                                sx={{
+                                                    '& .MuiTypography-body1': {
+                                                        color: '#2F2B3D',
+                                                        opacity: 0.9,
+                                                        fontSize: '16px',
+                                                        fontWeight: 500,
+                                                        mr: 2,
+                                                    },
+                                                }}
+                                                control={
+                                                    <Checkbox
+                                                        {...register('sex', {
+                                                            required: 'El genero es obligatorio',
+                                                        })}
+                                                        checked={selectedOption === 'f'}
+                                                        onChange={handleOptionChange}
+                                                        value="f"
+                                                        icon={<CheckBoxIcon />}
+                                                        checkedIcon={<CheckBoxSelected />}
+                                                    />
+                                                }
+                                                label="Femenino"
+                                            />
+                                        </Box>
+                                        <Typography
+                                            color={'error'}
+                                            fontSize={11}
+                                            ml={1.5}
+                                            mt={-2.2}
+                                            textAlign={'start'}
+                                            variant="subtitle2"
+                                            height={21}
+                                        >
+                                            {errors.sex && <p>{errors.sex.message}</p>}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Box>
                                     <Typography
                                         color={'error'}
-                                        fontSize={11}
-                                        ml={1.5}
-                                        mt={-2.2}
-                                        textAlign={'start'}
+                                        fontSize={13}
+                                        textAlign={'center'}
                                         variant="subtitle2"
-                                        height={21}
+                                        height={24}
+                                        mt={0.5}
                                     >
-                                        {errors.sex && <p>{errors.sex.message}</p>}
+                                        {errorMessage}
                                     </Typography>
-                                </Grid>
-                            </Grid>
-                            <Box>
-                                <Typography
-                                    color={'error'}
-                                    fontSize={13}
-                                    textAlign={'center'}
-                                    variant="subtitle2"
-                                    height={24}
-                                    mt={0.5}
+                                </Box>
+                                <ButtonPrimary
+                                    type="submit"
+                                    isLoading={isLoading}
+                                    style={{
+                                        background: '#0E6191',
+                                        color: 'white',
+                                        height: '48px',
+                                        fontWeight: 500,
+                                        width: '100%',
+                                        marginBottom: '4px',
+                                    }}
                                 >
-                                    {errorMessage}
-                                </Typography>
-                            </Box>
-                            <ButtonPrimary
-                                type="submit"
-                                isLoading={isLoading}
-                                style={{
-                                    background: '#0E6191',
-                                    color: 'white',
-                                    height: '48px',
-                                    fontWeight: 500,
-                                    width: '100%',
-                                    marginBottom: '4px',
-                                }}
-                            >
-                                {btn}
-                            </ButtonPrimary>
-                        </form>
+                                    {btn}
+                                </ButtonPrimary>
+                            </form>
+                        </>
                     </div>
                 )}
             </Box>

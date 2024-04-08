@@ -33,6 +33,13 @@ export const rentalApi = createApi({
                 },
             }),
         }),
+
+        getRentalForFilter: builder.query<IRental, {}>({
+            query: () => ({
+                url: '/reservations/',
+                method: 'GET',
+            }),
+        }),
         getSearchRental: builder.query<IRental, string>({
             query: () => ({
                 url: '/reservations/',
@@ -53,4 +60,5 @@ export const {
     useGetAllRentalsQuery,
     useGetAllPropertiesQuery,
     useGetSearchRentalQuery,
+    useGetRentalForFilterQuery,
 } = rentalApi

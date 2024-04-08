@@ -1,8 +1,8 @@
 import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import PhoneIcon from '../../../common/icons/PhoneIcon'
-
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined'
 interface Props {
     handleEdit: () => void
     handleDelete: (id: string) => void
@@ -64,16 +64,17 @@ export default function CardResponsive({
                 <Typography variant="subtitle1">{first_name}</Typography>
                 <Box display={'flex'} justifyContent={'space-between'}>
                     <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
-                        {email}{' '}
+                        {email ? email : '-'}
                     </Typography>
                     <Box
                         display={'flex'}
                         sx={{ cursor: 'pointer' }}
                         onClick={handlePhoneClick}
                         alignItems={'center'}
-                        gap={1}
+                        gap={0.2}
                     >
-                        <PhoneIcon />
+                        <LocalPhoneOutlinedIcon fontSize="small" />
+                        <WhatsAppIcon fontSize="small" />
                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                             {tel_number}
                         </Typography>

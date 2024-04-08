@@ -45,7 +45,19 @@ export default function CrudClients() {
 
     const columns = [
         { field: 'first_name', headerName: 'NOMBRE', flex: 1, sortable: false },
-        { field: 'email', headerName: 'CORREO ELECTRÓNICO', flex: 1, sortable: false },
+        {
+            field: 'email',
+            headerName: 'CORREO ELECTRÓNICO',
+            flex: 1,
+            valueGetter: (params: any) => {
+                if (params.value === '') {
+                    return '-'
+                } else {
+                    return params.value
+                }
+            },
+            sortable: false,
+        },
         { field: 'tel_number', headerName: 'NÚMERO DE TELÉFONO', flex: 1, sortable: false },
         {
             field: 'document_type',

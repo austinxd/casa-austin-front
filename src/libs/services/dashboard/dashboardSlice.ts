@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ENV } from '../../constants/config'
 import { cookiesGetString } from '../../utils/cookie-storage'
+import { IDataDash } from '../../../interfaces/dashboard/dashboard'
 
 export const dashboardApi = createApi({
     reducerPath: 'dashboardApi',
@@ -12,7 +13,7 @@ export const dashboardApi = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getDashboard: builder.query<any, string>({
+        getDashboard: builder.query<IDataDash, string>({
             query: () => ({
                 url: `/dashboard/`,
                 method: 'GET',

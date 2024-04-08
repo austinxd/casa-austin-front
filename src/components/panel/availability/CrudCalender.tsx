@@ -10,11 +10,12 @@ import CalendarWrappers from '../../../libs/calender'
 const generarEventos = (data: IRental): IEventoCalendario[] => {
     if (!data || !data.results) return []
     return data.results.map((rental) => ({
-        title: `${rental.client.first_name} +${rental.guests}`,
+        title:
+            rental.origin === 'aus' ? `${rental.client.first_name} + ${rental.guests}` : 'Airbnb',
         start: rental.check_in_date,
         end: rental.check_out_date,
         color: rental.property.background_color,
-        image: '/logo.svg',
+        image: rental.origin === 'aus' ? '/logo.svg' : '/airbnb.png',
     }))
 }
 
@@ -29,12 +30,14 @@ export default function CrudCalender() {
         }
     }, [data])
 
+    const currentDate = new Date()
+
     const renderEventContent = (eventInfo: any) => {
         if (eventInfo.isStart) {
             return (
                 <Box
                     borderRadius={'16px'}
-                    padding={{ md: '2px', sm: '1px', xs: '0px' }}
+                    padding={{ md: '1px', sm: '1px', xs: '0px' }}
                     display={'flex'}
                     alignItems={'center'}
                 >
@@ -85,8 +88,8 @@ export default function CrudCalender() {
             )
         }
     }
+    let usedColors: any = []
     const eventDidMount = (info: any) => {
-        // Aplica estilos específicos al primer día de cada evento
         if (info.isStart) {
             const firstDayCell = info.el.closest('.fc-event')
             if (firstDayCell) {
@@ -105,35 +108,60 @@ export default function CrudCalender() {
             info.el.style.borderTopLeftRadius = '0px'
             info.el.style.borderBottomLeftRadius = '0px'
         }
+        const currentDate = new Date()
+        currentDate.setHours(0, 0, 0, 0)
+
+        const eventDate = new Date(info.event.end)
+        eventDate.setHours(0, 0, 0, 0)
+
+        const isPastDate = eventDate < currentDate
+        if (isPastDate) {
+            info.el.style.backgroundColor = info.event.backgroundColor
+            info.el.style.opacity = '0.35'
+        }
 
         if (info.isEnd) {
-            const endDate = info.event.end // Obteniendo la fecha de finalización del evento
+            const endDate = info.event.end
 
-            // Buscar la celda correspondiente a la fecha de finalización del evento
             const endDayCell = document.querySelector(
                 `.fc-day[data-date="${endDate.toISOString().slice(0, 10)}"]:first-of-type .fc-daygrid-day-events`
             )
-
-            // Si se encontró la celda correspondiente, agregar el Box con el color del evento
             if (endDayCell) {
-                const box = document.createElement('div')
-                box.style.height = '25px'
-                box.style.width = '12px'
-                box.style.backgroundColor = info.event.backgroundColor // Usamos el color del evento
-                box.style.borderTopRightRadius = '12px' // Establecemos el radio de borde superior derecho
-                box.style.borderBottomRightRadius = '12px' // Establecemos el radio de borde inferior derecho
-                box.style.marginTop = '2px'
-                // Verificar el tamaño de la pantalla y ajustar el tamaño del Box
-                if (window.innerWidth < 900) {
-                    box.style.height = '6px'
-                    box.style.width = '4px'
-                    box.style.marginTop = '1px'
-                }
+                const eventColor = info.event.backgroundColor
+                if (!usedColors.includes(eventColor)) {
+                    const box = document.createElement('div')
+                    box.style.height = '25px'
+                    box.style.width = '12px'
+                    box.style.backgroundColor = eventColor
+                    box.style.borderTopRightRadius = '12px'
+                    box.style.borderBottomRightRadius = '12px'
+                    box.style.marginTop = '2px'
+                    if (isPastDate) {
+                        box.style.opacity = '0.4'
+                    }
+                    if (window.innerWidth < 900) {
+                        box.style.height = '6px'
+                        box.style.width = '4px'
+                        box.style.marginTop = '1px'
+                    }
 
-                endDayCell.appendChild(box)
+                    endDayCell.appendChild(box)
+                    usedColors.push(eventColor)
+                }
             }
         }
     }
+    const currentDates = new Date()
+    const currentYear = currentDates.getFullYear()
+    const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+
+    const monthStartDates = months.map((month) => `${currentYear}-${month}-01`)
+    const monthEndDates = months.map((_month: string, index) => {
+        // Si es diciembre, el mes siguiente es enero del próximo año
+        const nextMonth = index === 11 ? '01' : months[index + 1]
+        const nextYear = index === 11 ? currentYear + 1 : currentYear
+        return `${nextYear}-${nextMonth}-01`
+    })
 
     return (
         <div>
@@ -212,30 +240,44 @@ export default function CrudCalender() {
                 <Typography sx={{ flex: 1 }}>D</Typography>
             </Box>
             <CalendarWrappers>
-                <FullCalendar
-                    plugins={[dayGridPlugin]}
-                    initialView="dayGridMonth"
-                    events={eventos}
-                    contentHeight={'auto'}
-                    nextDayThreshold={'00:00:00'}
-                    headerToolbar={{
-                        left: 'title',
-                    }}
-                    titleFormat={{
-                        year: 'numeric',
-                        month: 'long',
-                    }}
-                    locale={esLocale}
-                    eventContent={renderEventContent}
-                    eventDidMount={eventDidMount}
-                    dayCellContent={function (arg) {
-                        return (
-                            <div style={{ textAlign: 'center' }}>
-                                <div>{arg.dayNumberText}</div>
-                            </div>
-                        )
-                    }}
-                />
+                {months.map((month, index) => (
+                    <FullCalendar
+                        key={month}
+                        plugins={[dayGridPlugin]}
+                        initialView="dayGridMonth"
+                        initialDate={monthStartDates[index]}
+                        events={eventos}
+                        contentHeight={'auto'}
+                        nextDayThreshold={'00:00:00'}
+                        headerToolbar={{
+                            left: 'title',
+                        }}
+                        titleFormat={{
+                            year: 'numeric',
+                            month: 'long',
+                        }}
+                        locale={esLocale}
+                        eventContent={renderEventContent}
+                        eventDidMount={eventDidMount}
+                        dayCellContent={function (arg) {
+                            return (
+                                <div style={{ textAlign: 'center' }}>
+                                    <div
+                                        style={{
+                                            opacity: arg.date < currentDate ? 0.5 : 1,
+                                        }}
+                                    >
+                                        {arg.dayNumberText}
+                                    </div>
+                                </div>
+                            )
+                        }}
+                        validRange={{
+                            start: monthStartDates[index],
+                            end: monthEndDates[index],
+                        }}
+                    />
+                ))}
             </CalendarWrappers>
         </div>
     )

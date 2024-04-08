@@ -13,7 +13,16 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
         padding: '0px',
         '& .fc': {
             zIndex: 1,
-
+            '.fc-day-disabled': {
+                backgroundColor: '#FBFBFB',
+                border: 'none',
+            },
+            '.fc-day-past': {
+                backgroundColor: 'white',
+                '.fc-event-main': {
+                    opacity: 0.4,
+                },
+            },
             '.fc-daygrid-day-events': {
                 marginBottom: '10px',
                 /*                 display: 'flex', */
@@ -26,6 +35,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                 },
             '& .fc-toolbar': {
                 flexWrap: 'wrap',
+
                 flexDirection: 'row !important',
                 '&.fc-header-toolbar': {
                     marginBottom: '0px',
@@ -34,7 +44,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                     display: 'none',
                 },
                 '.fc-prev-button, & .fc-next-button': {
-                    display: 'inline-block',
+                    display: 'none', // eliominar si no quiere que se scroller
                     borderColor: 'transparent',
                     backgroundColor: 'transparent',
                     '& .fc-icon': {
@@ -130,9 +140,10 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                 '& .fc-toolbar-title': {
                     ...theme.typography.h5,
                     color: '#0E6191',
-                    fontSize: '18px',
+                    marginTop: '20px',
+                    fontSize: '16px',
                     fontWeight: 'bold',
-                    textTransform: 'capitalize',
+                    textTransform: 'uppercase',
                 },
                 '.fc-button:empty:not(.fc-sidebarToggle-button), & .fc-toolbar-chunk:empty': {
                     display: 'none',
@@ -143,7 +154,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                     marginLeft: '20px',
                 },
                 '&:last-child': {
-                    marginRight: '-9px',
+                    marginRight: '-12px',
                 },
             },
             '& tbody td, & thead th': {
@@ -199,13 +210,17 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
             '@media (max-width:800px)': {
                 '.fc-daygrid-day-events': {
                     marginBottom: '3px',
-                    display: 'flex',
                 },
                 '& .fc-daygrid-day-number': {
                     marginTop: '0px',
                     fontSize: '12px',
                     padding: '0px',
                     fontWeight: 400,
+                },
+                '& .fc-toolbar-title': {
+                    color: '#0E6191',
+                    marginTop: '12px',
+                    fontSize: '13px',
                 },
                 '& .fc-daygrid-event-harness': {
                     '& .fc-event': {

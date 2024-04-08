@@ -4,6 +4,8 @@ import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { IRentalClient } from '../../../../interfaces/rental/registerRental'
+import AirbnbIcon from '../../../common/icons/AitbnbIcon'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 
 interface Props {
     handleView: () => void
@@ -45,6 +47,11 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
     const handleClose = () => {
         setAnchorEl(null)
     }
+
+    const handlePhoneClick = () => {
+        const formattedPhoneNumber = item.client.tel_number.replace(/\D/g, '')
+        window.open(`https://wa.me/${formattedPhoneNumber}?text=`, '_blank')
+    }
     return (
         <div>
             <Box
@@ -77,23 +84,80 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                     }}
                 >
                     <Box display={'flex'}>
-                        <Typography variant="subtitle1">
-                            {item.client.first_name} {item.client.last_name}
-                        </Typography>
-
-                        <Box
-                            sx={{
-                                background: '#0E6191',
-                                borderRadius: '4px',
-                                color: 'white',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                p: 0.5,
-                                ml: { md: 2, xs: 1 },
-                            }}
+                        <Typography
+                            variant="subtitle1"
+                            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}
                         >
-                            <GroupOutlinedIcon fontSize={'small'} /> + {item.guests}
+                            <span style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}>
+                                {item.client.first_name ? item.client.first_name : ''}
+                                {item.client.last_name ? item.client.last_name : 'Airbnb'}
+                            </span>
+                            {/*                             <span
+                                style={{
+                                    fontSize: '13px',
+                                    marginTop: '2px',
+                                    opacity: 0.7,
+                                    lineHeight: '14px',
+                                }}
+                            >
+                                {'Celular: ' + item.client.tel_number}
+                            </span> */}
+                        </Typography>
+                        <Box
+                            display={'flex'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            gap={1}
+                            ml={1.5}
+                        >
+                            <Box
+                                onClick={handleView}
+                                sx={{
+                                    background: item.origin === 'air' ? '#FF5A5F' : '#0E6191',
+                                    borderRadius: '4px',
+                                    color: 'white',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    cursor: 'pointer',
+                                    p: 0.5,
+                                    height: '24px',
+                                }}
+                            >
+                                {item.origin === 'air' ? (
+                                    <>
+                                        <AirbnbIcon />{' '}
+                                        <span style={{ fontSize: '13px' }}> +{item.guests}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <GroupOutlinedIcon
+                                            fontSize={'small'}
+                                            sx={{ fontSize: '16px', padding: 0, margin: 0 }}
+                                        />
+                                        <span style={{ fontSize: '13px', lineHeight: '1px' }}>
+                                            +{item.guests}
+                                        </span>
+                                    </>
+                                )}
+                            </Box>
+
+                            {item.guests && (
+                                <IconButton
+                                    sx={{
+                                        padding: 0.5,
+                                        borderRadius: '4px',
+                                        background: '#65D072',
+                                        ':hover': { background: '#65D072' },
+                                    }}
+                                    onClick={handlePhoneClick}
+                                >
+                                    <WhatsAppIcon
+                                        fontSize="small"
+                                        sx={{ fontSize: '18px', color: 'white' }}
+                                    />
+                                </IconButton>
+                            )}
                         </Box>
                     </Box>
                     <Box
@@ -117,7 +181,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 fontWeight: 400,
                             }}
                         >
-                            $ {item.price_usd}
+                            $ {item.origin === 'air' ? ' -' : item.price_usd}
                         </Typography>
                         <Typography
                             fontSize={13}
@@ -130,7 +194,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 fontWeight: 400,
                             }}
                         >
-                            S./ {item.price_sol}
+                            S./ {item.origin === 'air' ? ' -' : item.price_sol}
                         </Typography>
                     </Box>
                 </Box>
@@ -197,7 +261,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                         <Box
                             display={'flex'}
                             mt={{ md: 1, sm: 0, xs: 0 }}
-                            justifyContent={'center'}
+                            justifyContent={'start'}
                             alignItems={'center'}
                         >
                             <Box

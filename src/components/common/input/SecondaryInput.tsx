@@ -19,6 +19,7 @@ const CssTextField = styled(TextField)({
         },
         '&.Mui-focused fieldset': {
             border: '1px solid #D1D0D4',
+            color: 'red',
         },
     },
 
@@ -49,12 +50,13 @@ type BaseProps = {
     placeholder?: string
     messageError?: string
     type: 'number' | 'text'
+    isloading?: boolean
 }
 
 type Props = BaseProps & TextFieldProps
 
 export const SecondaryInput = forwardRef(function SecondaryInput(
-    { placeholder, label, messageError, type, ...textFieldProps }: Props,
+    { placeholder, label, messageError, type, isloading, ...textFieldProps }: Props,
     ref: ((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement> | null | undefined
 ) {
     return (
@@ -67,6 +69,7 @@ export const SecondaryInput = forwardRef(function SecondaryInput(
             }}
         >
             <CssTextField
+                InputLabelProps={{ style: { color: 'rgba(0, 0, 0, 0.6)' } }}
                 autoComplete="off"
                 fullWidth
                 variant="outlined"
@@ -74,7 +77,7 @@ export const SecondaryInput = forwardRef(function SecondaryInput(
                 {...textFieldProps}
                 ref={ref}
                 type={type}
-                label={label}
+                label={isloading ? 'Cargando...' : label}
             />
 
             <Typography

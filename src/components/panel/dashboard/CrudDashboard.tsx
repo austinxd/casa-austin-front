@@ -1,4 +1,4 @@
-import { Box, Divider, Typography } from '@mui/material'
+import { Box, Divider, Skeleton, Typography } from '@mui/material'
 import Card from './cards/Card'
 import TruckIcon from '../../common/icons/TruckIcon'
 import style from './dashboard.module.css'
@@ -9,14 +9,51 @@ import useBoxShadow from '../../../hook/useBoxShadow'
 import BarCharts from '../../common/charts/BarChart'
 import PersonIcon from '@mui/icons-material/Person'
 import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { ISellerDashboard } from '../../../interfaces/dashboard/dashboard'
 
 export default function CrudDashboard() {
-    const { data } = useGetDashboardQuery('')
+    const { data, isLoading } = useGetDashboardQuery('')
+    const [colorData, setColorData] = useState<string[]>([])
+    const [percentageData, setPercentageData] = useState<number[]>([])
+    const [categoryData, setCategoryData] = useState<string[]>([])
+    const [sellerOrder, setSellerOrder] = useState<ISellerDashboard[]>([])
 
     useEffect(() => {
-        console.log(data, 'dddddddddddd')
-    })
+        console.log(data)
+        if (data) {
+            const fullChartt = () => {
+                const sortedData = [...data.properties_more_reserved].sort((a, b) => {
+                    const numA = parseInt(a.property__name.match(/\d+/)?.[0] || '0')
+                    const numB = parseInt(b.property__name.match(/\d+/)?.[0] || '0')
+                    return numA - numB // Ordenar ascendente
+                })
+                const colors = sortedData.map((item) => item.property__background_color)
+                const percent = sortedData.map((item) => parseFloat(item.percentage.toFixed(1)))
+                const category = sortedData.map((item) => {
+                    const number = item.property__name.match(/\d+/)
+
+                    if (number) {
+                        return number.toString()
+                    } else {
+                        return ''
+                    }
+                })
+                setColorData(colors)
+                setPercentageData(percent)
+                setCategoryData(category)
+
+                const sellerNewOrder = [...data.seller_more_reserved].sort((a, b) => {
+                    const numA = a.seller
+                    const numB = b.seller
+                    return numB - numA // Ordenar ascendente
+                })
+
+                setSellerOrder(sellerNewOrder)
+            }
+            fullChartt()
+        }
+    }, [data])
     return (
         <div>
             <Typography variant="h1" mb={3}>
@@ -79,17 +116,24 @@ export default function CrudDashboard() {
                     sx={{
                         background: 'white',
                         flex: 2,
-                        height: 122,
+                        height: 'auto',
                         borderRadius: '8px',
                         boxShadow: useBoxShadow(true),
                     }}
                 >
-                    <BarCharts title="Ventas por casas" />
+                    <BarCharts
+                        isLoading={isLoading}
+                        colors={colorData}
+                        data={percentageData}
+                        categories={categoryData}
+                        title="Ventas por casas"
+                    />
                 </Box>
                 <Box
                     sx={{
                         background: 'white',
                         flex: 1,
+                        height: 'fit-content',
                         borderRadius: '8px',
                         boxShadow: useBoxShadow(true),
                         pb: 2,
@@ -108,74 +152,67 @@ export default function CrudDashboard() {
                         </Typography>
                     </Box>
                     <Divider />
-                    <Box
-                        display={'flex'}
-                        justifyContent={'space-between'}
-                        alignItems={'center'}
-                        px={3}
-                        py={2}
-                    >
-                        <Box display={'flex'} justifyContent={'center'}>
+                    {isLoading ? (
+                        <>
+                            <Skeleton
+                                variant="rounded"
+                                sx={{ width: '80%', mx: 'auto', mt: 2, bgcolor: '#DADADA' }}
+                                height={56}
+                            />{' '}
+                            <Skeleton
+                                variant="rounded"
+                                sx={{ width: '80%', mx: 'auto', mt: 2, bgcolor: '#DADADA' }}
+                                height={56}
+                            />
+                            <Skeleton
+                                variant="rounded"
+                                sx={{ width: '80%', mx: 'auto', mt: 2, bgcolor: '#DADADA' }}
+                                height={56}
+                            />
+                        </>
+                    ) : (
+                        sellerOrder.map((item, index) => (
                             <Box
-                                sx={{
-                                    height: 34,
-                                    width: 34,
-                                    background: '#EFEFEF',
-                                    borderRadius: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
+                                key={index}
+                                display={'flex'}
+                                justifyContent={'space-between'}
+                                alignItems={'center'}
+                                px={3}
+                                py={2}
                             >
-                                <PersonIcon fontSize="medium" />
-                            </Box>
-                            <Box display={'flex'} flexDirection={'column'} ml={1}>
-                                <Typography variant="h2" fontSize={15}>
-                                    Titulo
-                                </Typography>
-                                <Typography variant="h2" fontSize={13} sx={{ opacity: 0.7 }}>
-                                    Subtitulo
-                                </Typography>
-                            </Box>
-                        </Box>
-                        <Typography variant="h2" fontWeight={500}>
-                            33
-                        </Typography>
-                    </Box>
-                    <Box
-                        display={'flex'}
-                        justifyContent={'space-between'}
-                        alignItems={'center'}
-                        px={3}
-                        py={1}
-                    >
-                        <Box display={'flex'} justifyContent={'center'}>
-                            <Box
-                                sx={{
-                                    height: 34,
-                                    width: 34,
-                                    background: '#EFEFEF',
-                                    borderRadius: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <PersonIcon fontSize="medium" />
-                            </Box>
-                            <Box display={'flex'} flexDirection={'column'} ml={1}>
-                                <Typography variant="h2" fontSize={15}>
-                                    Titulo
-                                </Typography>
-                                <Typography variant="h2" fontSize={13} sx={{ opacity: 0.7 }}>
-                                    Subtitulo
+                                <Box display={'flex'} justifyContent={'center'}>
+                                    <Box
+                                        sx={{
+                                            height: 34,
+                                            width: 34,
+                                            background: '#EFEFEF',
+                                            borderRadius: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <PersonIcon fontSize="medium" />
+                                    </Box>
+                                    <Box display={'flex'} flexDirection={'column'} ml={1}>
+                                        <Typography variant="h2" fontSize={15}>
+                                            {item.seller__first_name}
+                                        </Typography>
+                                        <Typography
+                                            variant="h2"
+                                            fontSize={13}
+                                            sx={{ opacity: 0.7 }}
+                                        >
+                                            {item.seller__last_name}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h2" fontWeight={500}>
+                                    {item.seller}
                                 </Typography>
                             </Box>
-                        </Box>
-                        <Typography variant="h2" fontWeight={500}>
-                            33
-                        </Typography>
-                    </Box>
+                        ))
+                    )}
                 </Box>
             </Box>
         </div>

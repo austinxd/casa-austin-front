@@ -27,12 +27,12 @@ body {
 }
 
 .imgCalender {
-    height: 16px;
-    width: 16px;
+    height: 19px;
+    width: 18px;
     border-radius: 100%;
     margin-right: 4px;
     object-fit: cover;
-    margin-left: 1px;
+    margin-right: 12px;
 }
 
 /* Estilos para el input phone react */
@@ -42,11 +42,51 @@ body {
 .input-phone-number::focus {
     border-color: transparent;
 }
+.input-phone-number::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+}
+.input-phone-number .special-label {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.spinner-client {
+    border: 7px solid rgba(155, 155, 155, 0.726);
+    border-radius: 50%;
+    border-top: 7px solid #5f5f5f;
+    width: 65px;
+    height: 65px;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 @media (max-width: 900px) {
     .imgCalender {
-        height: 5px;
-        width: 5px;
-        margin-left: 1px;
+        height: 4px;
+        width: 4px;
+        margin-left: 0px;
+    }
+    ::-webkit-scrollbar {
+        background-color: transparent;
+        width: 4px;
+        height: 20px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #929292;
+        border-radius: 5px;
+        height: 100px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #777777;
     }
 }
