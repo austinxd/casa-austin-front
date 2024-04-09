@@ -22,6 +22,9 @@ import 'react-phone-input-2/lib/material.css'
 import { useGetDataClient } from '../../../../libs/services/clients/useGetDataClient'
 
 import dayjs from 'dayjs'
+import BasicModal from '../../../common/modal/BasicModal'
+import ModalErrors from '../../../common/modal/ModalErrors'
+
 interface Props {
     onCancel: () => void
     title: string
@@ -45,6 +48,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         phoneNumber,
         setValue,
         handlePhoneNumberChange,
+        openErrorModal,
+        setOpenErrorModal,
     } = useFormClients(data, refetch)
 
     const handleOptionChange = (event: any) => {
@@ -73,14 +78,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
     const [apiSocialName, setApiSocialName] = useState<string>()
 
     useEffect(() => {
-        console.log(dataByApi, 'client-data')
-
         if (dataByApi) {
-            if (dataByApi.data.fechaNacimiento) {
-                console.log(dayjs(dataByApi.data.fechaNacimiento, 'DD/MM/YYYY'))
-            } else {
-                console.log('aaaa')
-            }
             if (dataByApi.message === 'Exito' || dataByApi.status === 0) {
                 setValue(
                     'first_name',
@@ -489,18 +487,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                         </Grid>
                                     )}
                                 </Grid>
-                                <Box>
-                                    <Typography
-                                        color={'error'}
-                                        fontSize={13}
-                                        textAlign={'center'}
-                                        variant="subtitle2"
-                                        height={24}
-                                        mt={0.5}
-                                    >
-                                        {errorMessage}
-                                    </Typography>
-                                </Box>
+
                                 <ButtonPrimary
                                     type="submit"
                                     isLoading={isLoading}
@@ -511,11 +498,20 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                         fontWeight: 500,
                                         width: '100%',
                                         marginBottom: '4px',
+                                        marginTop: '12px',
                                     }}
                                 >
                                     {btn}
                                 </ButtonPrimary>
                             </form>
+
+                            <BasicModal open={openErrorModal}>
+                                <ModalErrors
+                                    title="Ups! ocurrio un problema"
+                                    data={errorMessage}
+                                    onCancel={() => setOpenErrorModal(false)}
+                                />
+                            </BasicModal>
                         </>
                     </div>
                 )}

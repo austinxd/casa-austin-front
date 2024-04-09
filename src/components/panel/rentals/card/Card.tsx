@@ -89,19 +89,17 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                             sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}
                         >
                             <span style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}>
-                                {item.client.first_name ? item.client.first_name + ' ' : ''}
-                                {item.client.last_name ? item.client.last_name : 'Airbnb'}
+                                {(
+                                    (item.client.first_name ? item.client.first_name + ' ' : '') +
+                                    (item.client.last_name ? item.client.last_name : 'Airbnb')
+                                ).slice(0, 15)}
+                                {(
+                                    (item.client.first_name ? item.client.first_name + ' ' : '') +
+                                    (item.client.last_name ? item.client.last_name : 'Airbnb')
+                                ).length > 15
+                                    ? '...'
+                                    : ''}
                             </span>
-                            {/*                             <span
-                                style={{
-                                    fontSize: '13px',
-                                    marginTop: '2px',
-                                    opacity: 0.7,
-                                    lineHeight: '14px',
-                                }}
-                            >
-                                {'Celular: ' + item.client.tel_number}
-                            </span> */}
                         </Typography>
                         <Box
                             display={'flex'}

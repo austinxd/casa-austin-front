@@ -3,7 +3,7 @@ import style from './rental.module.css'
 import Card from './card/Card'
 import BasicModal from '../../common/modal/BasicModal'
 import FormRental from './form/FormRental'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DetailRental from './form/DetailRental'
 import DeleteRental from './form/DeleteRental'
 import { useGetAllRentalsQuery } from '../../../libs/services/rentals/rentalService'
@@ -27,13 +27,11 @@ export default function CrudRentals() {
         page: currentPage,
         page_size: pageSize,
         search: search,
+        from: 'air',
     })
 
     const fuc = () => {}
 
-    useEffect(() => {
-        console.log(data)
-    }, [])
     const onSave = () => {
         setOpen(true)
         setTitle('Añadir Alquiler')

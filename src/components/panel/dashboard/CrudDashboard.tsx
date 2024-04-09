@@ -20,7 +20,6 @@ export default function CrudDashboard() {
     const [sellerOrder, setSellerOrder] = useState<ISellerDashboard[]>([])
 
     useEffect(() => {
-        console.log(data)
         if (data) {
             const fullChartt = () => {
                 const sortedData = [...data.properties_more_reserved].sort((a, b) => {

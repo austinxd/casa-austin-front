@@ -3,7 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
 import { AppBar, Box, Typography } from '@mui/material'
 import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
 
@@ -23,7 +23,6 @@ export default function CrudCalender() {
     const { data } = useGetSearchRentalQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
-    const firstCalendarRef = useRef<FullCalendar>(null)
 
     useEffect(() => {
         if (data) {
@@ -245,7 +244,6 @@ export default function CrudCalender() {
             <CalendarWrappers>
                 {months.map((month, index) => (
                     <FullCalendar
-                        ref={index === 0 ? firstCalendarRef : null}
                         key={month}
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"

@@ -14,7 +14,10 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
     } = useForm<IRegisterClient>()
 
     const [selectedOption, setSelectedOption] = useState('')
+
     const [errorMessage, setErrorMessage] = useState('')
+    const [openErrorModal, setOpenErrorModal] = useState(false)
+
     const [successRegister, setSuccessRegister] = useState(false)
     const [successEdit, setSuccessEdit] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +46,6 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
     }, [successEdit])
 
     const onCreateClient = async (data: IRegisterClient) => {
-        console.log(data, 'ffffffff')
         try {
             setIsLoading(true)
             formData.append('document_type', data.document_type)
@@ -72,11 +74,8 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
                 refetch()
             }
         } catch (error: any) {
-            setErrorMessage('Hubo un error')
-            console.log(error)
-            setTimeout(() => {
-                setErrorMessage('')
-            }, 4000)
+            setErrorMessage(error.response.data)
+            setOpenErrorModal(true)
         } finally {
             setIsLoading(false)
         }
@@ -96,5 +95,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
         handlePhoneNumberChange,
         phoneNumber,
         setPhoneNumber,
+        openErrorModal,
+        setOpenErrorModal,
     }
 }

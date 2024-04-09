@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDebounce } from '../../../common/useDebounce'
 
@@ -98,7 +98,32 @@ export default function SearchRental({ onSave, setSearch, setCurrentPage, onClic
                 </Box>
 
                 <Box gap={1} display={'flex'}>
-                    <button onClick={onClick}>filtarar</button>
+                    <Box>
+                        <FormControlLabel
+                            onClick={onClick}
+                            control={
+                                <Checkbox
+                                    sx={{
+                                        mr: 0,
+                                        p: 0.5,
+
+                                        color: 'red',
+                                        '&.Mui-checked': {
+                                            color: 'blue',
+                                        },
+                                        '&.MuiFormControlLabel-label': {
+                                            color: 'red',
+                                        },
+                                    }}
+                                />
+                            }
+                            label="Airbnb"
+                        />
+                        <FormControlLabel
+                            control={<Checkbox sx={{ mr: 0, p: 0.5 }} />}
+                            label="Check in hoy"
+                        />
+                    </Box>
                     <Button
                         sx={{
                             height: 38,

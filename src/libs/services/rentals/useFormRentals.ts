@@ -40,7 +40,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
 
     const handlePhoneNumberChange = (value: string) => {
-        console.log('Phone Number:', value)
         setValue('tel_number', value)
         setPhoneNumber(value)
     }

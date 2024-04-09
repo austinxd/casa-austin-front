@@ -33,7 +33,6 @@ export const useLoginForm = () => {
                 navigate('/panel/inicio')
             }
         } catch (error: any) {
-            console.log(error)
             if (error.response.request.status == 401) {
                 setErrorMessage('Las credenciales son incorrectas')
             }
