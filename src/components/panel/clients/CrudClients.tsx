@@ -58,7 +58,21 @@ export default function CrudClients() {
             },
             sortable: false,
         },
-        { field: 'tel_number', headerName: 'NÚMERO DE TELÉFONO', flex: 1, sortable: false },
+        {
+            field: 'tel_number',
+            headerName: 'NÚMERO DE TELÉFONO',
+            flex: 1,
+            sortable: false,
+            valueGetter: (params: any) => {
+                const phoneNumber = params.value
+                if (phoneNumber) {
+                    const formattedPhoneNumber = `+${phoneNumber}`
+                    return formattedPhoneNumber
+                } else {
+                    return '-'
+                }
+            },
+        },
         {
             field: 'document_type',
             headerName: 'TIPO DE DOCUMENTO',
@@ -156,7 +170,12 @@ export default function CrudClients() {
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
                 Clientes
             </Typography>
-            <SearchClient onSave={onCreate} setCurrentPage={setCurrentPage} setSearch={setSearch} />
+            <SearchClient
+                text={'Añadir Clientes'}
+                onSave={onCreate}
+                setCurrentPage={setCurrentPage}
+                setSearch={setSearch}
+            />
 
             <Box
                 sx={{

@@ -34,7 +34,16 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [houseSelect, setHouseSeletc] = useState('')
     const [checkInSelect, setCheckInSelect] = useState('')
     const [checkOutSelect, setCheckOutSelect] = useState('')
+
+    const [phoneNumber, setPhoneNumber] = useState('')
+
     const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
+
+    const handlePhoneNumberChange = (value: string) => {
+        console.log('Phone Number:', value)
+        setValue('tel_number', value)
+        setPhoneNumber(value)
+    }
 
     useEffect(() => {
         if (dataEdit?.id) {
@@ -152,5 +161,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         setHouseSeletc,
         setCheckInSelect,
         setCheckOutSelect,
+        phoneNumber,
+        handlePhoneNumberChange,
+        setPhoneNumber,
     }
 }

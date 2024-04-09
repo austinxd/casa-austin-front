@@ -56,3 +56,20 @@ export interface IClientInformation {
     razonsocial: string | null
     sexo: string | null
 }
+
+export interface IDataRucbyApi {
+    status: number
+    message: string
+    data: IRucInformation
+}
+
+export interface IRucInformation {
+    nombrecomercial: string | null
+    estado: string | null
+    departamento: string | null
+    direccion: string | null
+    distrito: string | null
+    razonsocial: string | null
+    pais: string | null
+    provincia: string | null
+}

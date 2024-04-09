@@ -8,6 +8,7 @@ export interface IRegisterRental {
     price_sol: number
     advance_payment: number
     advance_payment_currency: string
+    tel_number: string
     file: File | File[]
 }
 

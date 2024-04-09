@@ -19,10 +19,10 @@ import {
     Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useBoxShadow from '../hook/useBoxShadow'
-import BasicModal from '../components/common/modal/BasicModal'
-import LogOut from '../components/ui/logout/LogOut'
+import { useDispatch } from 'react-redux'
+import { logout } from '../libs/services/auth/authSlice'
 
 const drawerWidth = 236
 const menuItems = [
@@ -68,7 +68,9 @@ export default function Sidebar(props: Props) {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [isClosing, setIsClosing] = useState(false)
     const params = useLocation()
-    const [logOut, setLogout] = useState(false)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     useEffect(() => {
         setMobileOpen(false)
     }, [params.pathname])
@@ -86,7 +88,10 @@ export default function Sidebar(props: Props) {
             setMobileOpen(!mobileOpen)
         }
     }
-
+    const onLogOut = () => {
+        dispatch(logout())
+        navigate('/')
+    }
     const drawer = (
         <div>
             {/*             <img src={Logo} alt="logo-austin" height={107} width={140} /> */}
@@ -162,7 +167,7 @@ export default function Sidebar(props: Props) {
                                 },
                             },
                         }}
-                        onClick={() => setLogout(true)}
+                        onClick={onLogOut}
                     >
                         <Icon fontSize="small" sx={{ mr: 1.2, ml: 0 }} />
                         <Typography
@@ -262,7 +267,6 @@ export default function Sidebar(props: Props) {
             <Box
                 component="main"
                 sx={{
-                    flexGrow: 1,
                     p: { md: 3, xs: 2 },
                     width: { sm: `calc(100% - ${drawerWidth}px)` },
                 }}
@@ -271,10 +275,6 @@ export default function Sidebar(props: Props) {
                     {children}
                 </Box>
             </Box>
-
-            <BasicModal open={logOut}>
-                <LogOut onCancel={() => setLogout(false)} />
-            </BasicModal>
         </Box>
     )
 }

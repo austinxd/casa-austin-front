@@ -89,7 +89,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                             sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}
                         >
                             <span style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}>
-                                {item.client.first_name ? item.client.first_name : ''}
+                                {item.client.first_name ? item.client.first_name + ' ' : ''}
                                 {item.client.last_name ? item.client.last_name : 'Airbnb'}
                             </span>
                             {/*                             <span

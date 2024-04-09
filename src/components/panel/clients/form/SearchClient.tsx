@@ -6,9 +6,10 @@ interface Props {
     onSave: () => void
     setSearch: any
     setCurrentPage: any
+    text: string
 }
 
-export default function SearchClient({ onSave, setSearch, setCurrentPage }: Props) {
+export default function SearchClient({ onSave, setSearch, setCurrentPage, text }: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 450)
 
@@ -116,7 +117,7 @@ export default function SearchClient({ onSave, setSearch, setCurrentPage }: Prop
                         }}
                         onClick={onSave}
                     >
-                        Añadir Alquiler
+                        {text}
                     </Button>
                 </Box>
             </Box>

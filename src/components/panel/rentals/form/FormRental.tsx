@@ -24,6 +24,7 @@ import dayjs from 'dayjs'
 import SkeletonFormRental from './SkeletonFormRental'
 import BasicModal from '../../../common/modal/BasicModal'
 import ModalErrors from '../../../common/modal/ModalErrors'
+import PhoneInput from 'react-phone-input-2'
 
 interface Props {
     onCancel: () => void
@@ -38,6 +39,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [currentPage] = useState(1)
     const [pageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
+    const [getNumber, setGetNumber] = useState<string | undefined>('')
     const { data: optionClients } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
@@ -71,6 +73,9 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         setHouseSeletc,
         setCheckInSelect,
         setCheckOutSelect,
+        phoneNumber,
+        handlePhoneNumberChange,
+        setPhoneNumber,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -84,10 +89,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('advance_payment_currency', dataEdit.advance_payment_currency)
             setValue('property', dataEdit.property.id)
             setValue('client', dataEdit.client.id)
+            setValue('tel_number', dataEdit.client.tel_number)
             setImageReceived(dataEdit.recipts)
             setHouseSeletc(dataEdit.property.id)
             setCheckInSelect(dataEdit.check_in_date)
             setCheckOutSelect(dataEdit.check_out_date)
+            setPhoneNumber(dataEdit.client.tel_number)
         }
     }, [isEditLoading, dataEdit])
 
@@ -100,10 +107,11 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         })) || []
 
     const optionsClients =
-        optionClients?.results.map((property) => ({
-            value: property.id,
-            label: property.first_name,
-            email: property.email,
+        optionClients?.results.map((client) => ({
+            value: client.id,
+            label: client.first_name,
+            email: client.email,
+            phone: client.tel_number,
         })) || []
 
     const handleAddClick = () => {
@@ -156,6 +164,14 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const onSelectHouse = (event: any) => {
         setHouseSeletc(event.target.value)
     }
+
+    useEffect(() => {
+        if (getNumber) {
+            console.log('obtenido')
+            setPhoneNumber(getNumber)
+            handlePhoneNumberChange(getNumber)
+        }
+    }, [getNumber])
     const tomorrow = dayjs().add(1, 'day')
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
@@ -293,6 +309,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             onChange(
                                                                 newValue ? newValue.value : null
                                                             )
+                                                            setGetNumber(newValue?.phone)
                                                         }}
                                                         getOptionLabel={(option) => option.label}
                                                         renderInput={(params) => (
@@ -536,7 +553,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         {(errors.check_out_date?.message ?? null) as string}
                                     </Typography>
                                 </Grid>
-                                <Grid item md={12} xs={12}>
+                                <Grid item md={6} xs={12}>
                                     <SecondaryInput
                                         {...register('guests', {
                                             required: 'El numero de huespedes es obligatorios',
@@ -545,6 +562,53 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         label={'Cantidad de huéspedes'}
                                         messageError={(errors.guests?.message ?? null) as string}
                                     />
+                                </Grid>
+                                <Grid
+                                    item
+                                    md={6}
+                                    xs={12}
+                                    sx={{ marginBottom: { md: '0px', xs: '20px' } }}
+                                >
+                                    <PhoneInput
+                                        {...register('tel_number', {
+                                            required: 'El celular es obligatorios',
+                                        })}
+                                        value={phoneNumber}
+                                        specialLabel={phoneNumber ? 'Número telefónico' : ''}
+                                        country={'pe'}
+                                        buttonStyle={{
+                                            backgroundColor: '#FAFAFA',
+                                            borderTopLeftRadius: '10px',
+                                            borderBottomLeftRadius: '10px',
+                                        }}
+                                        dropdownStyle={{
+                                            textAlign: 'start',
+                                            color: 'black',
+                                        }}
+                                        placeholder="Número telefónico"
+                                        inputStyle={{
+                                            border: '1px solid #D1D0D4',
+                                            borderRadius: '8px',
+                                            color: '#2F2B3D',
+                                            height: '55px',
+                                            outline: 'none',
+                                            width: '100%',
+                                            fontFamily: 'Public Sans',
+                                            fontWeight: 600,
+                                        }}
+                                        inputProps={{ className: 'input-phone-number' }}
+                                        onChange={handlePhoneNumberChange}
+                                    />
+                                    <Typography
+                                        color={'error'}
+                                        fontSize={11}
+                                        ml={1.5}
+                                        mt={0.2}
+                                        textAlign={'start'}
+                                        variant="subtitle2"
+                                    >
+                                        {(errors.tel_number?.message ?? null) as string}
+                                    </Typography>
                                 </Grid>
                                 <Grid item md={6} xs={6}>
                                     <SecondaryInput

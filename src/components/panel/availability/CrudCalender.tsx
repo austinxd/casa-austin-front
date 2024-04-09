@@ -1,9 +1,9 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
-import { Box, Typography } from '@mui/material'
+import { AppBar, Box, Typography } from '@mui/material'
 import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
 
@@ -23,6 +23,7 @@ export default function CrudCalender() {
     const { data } = useGetSearchRentalQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
+    const firstCalendarRef = useRef<FullCalendar>(null)
 
     useEffect(() => {
         if (data) {
@@ -157,7 +158,6 @@ export default function CrudCalender() {
 
     const monthStartDates = months.map((month) => `${currentYear}-${month}-01`)
     const monthEndDates = months.map((_month: string, index) => {
-        // Si es diciembre, el mes siguiente es enero del próximo año
         const nextMonth = index === 11 ? '01' : months[index + 1]
         const nextYear = index === 11 ? currentYear + 1 : currentYear
         return `${nextYear}-${nextMonth}-01`
@@ -222,26 +222,30 @@ export default function CrudCalender() {
                     </Typography>
                 </Box>
             </Box>
-            <Box
-                sx={{
-                    background: '#82C9E2',
-                    display: 'flex',
-                    textAlign: 'center',
-                    p: 1,
-                    borderRadius: 1.5,
-                }}
-            >
-                <Typography sx={{ flex: 1 }}>L</Typography>
-                <Typography sx={{ flex: 1 }}>M</Typography>
-                <Typography sx={{ flex: 1 }}>M</Typography>
-                <Typography sx={{ flex: 1 }}>J</Typography>
-                <Typography sx={{ flex: 1 }}>V</Typography>
-                <Typography sx={{ flex: 1 }}>S</Typography>
-                <Typography sx={{ flex: 1 }}>D</Typography>
-            </Box>
+            <AppBar position="sticky" sx={{ boxShadow: 'none', backgroundColor: 'transparent' }}>
+                <Box
+                    sx={{
+                        background: '#82C9E2',
+                        display: 'flex',
+                        textAlign: 'center',
+                        p: 1,
+                        borderRadius: 1.5,
+                    }}
+                >
+                    <Typography sx={{ flex: 1 }}>L</Typography>
+                    <Typography sx={{ flex: 1 }}>M</Typography>
+                    <Typography sx={{ flex: 1 }}>M</Typography>
+                    <Typography sx={{ flex: 1 }}>J</Typography>
+                    <Typography sx={{ flex: 1 }}>V</Typography>
+                    <Typography sx={{ flex: 1 }}>S</Typography>
+                    <Typography sx={{ flex: 1 }}>D</Typography>
+                </Box>
+            </AppBar>
+
             <CalendarWrappers>
                 {months.map((month, index) => (
                     <FullCalendar
+                        ref={index === 0 ? firstCalendarRef : null}
                         key={month}
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"

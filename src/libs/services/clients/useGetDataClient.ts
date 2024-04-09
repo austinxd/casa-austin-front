@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IDataClienbyApi } from '../../../interfaces/clients/registerClients'
+import { IDataClienbyApi, IDataRucbyApi } from '../../../interfaces/clients/registerClients'
 import { useDebounce } from '../../../components/common/useDebounce'
 import { useGetTokenForClientQuery } from './clientsService'
 
@@ -8,6 +8,7 @@ export const useGetDataClient = () => {
     const [documentNumber, setDocumentNumber] = useState('')
     const [tokenDni, setTokenDni] = useState('20483ac1-702f-41c7-80f2-f98205acd11a')
     const [dataByApi, setDataByApi] = useState<IDataClienbyApi>()
+    const [dataRucByApi, setDataRucByApi] = useState<IDataRucbyApi>()
     const [isLoadingClient, setIsLoadingClient] = useState(false)
     const numberDocDebounce: string = useDebounce(documentNumber, 800)
     const typeDocDebounce: string = useDebounce(typeDocument, 500)
@@ -17,24 +18,31 @@ export const useGetDataClient = () => {
         const fetchData = async () => {
             if (data) {
                 setTokenDni(data?.token)
-                console.log(data)
             }
             try {
                 if (typeDocument && documentNumber && tokenDni) {
-                    if (typeDocument === 'dni' || typeDocument === 'ruc') {
+                    if (typeDocument === 'dni') {
                         setIsLoadingClient(true)
                         const response = await fetch(
                             `https://script.google.com/macros/s/AKfycbyoBhxuklU5D3LTguTcYAS85klwFINHxxd-FroauC4CmFVvS0ua/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
                         )
-                        console.log(response, 'ssssssssssssssss')
                         const data = await response.json()
-                        console.log(data)
+
                         if (data.message === 'Exito' || data.status === 0) {
                             setDataByApi(data)
-                            console.log(data)
                         }
-                    } else {
-                        return
+                    }
+
+                    if (typeDocument === 'ruc') {
+                        setIsLoadingClient(true)
+                        const response = await fetch(
+                            `https://script.google.com/macros/s/AKfycbyoBhxuklU5D3LTguTcYAS85klwFINHxxd-FroauC4CmFVvS0ua/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
+                        )
+                        const data = await response.json()
+
+                        if (data.message === 'Exito' || data.status === 0) {
+                            setDataRucByApi(data)
+                        }
                     }
                 }
             } catch (error) {
@@ -53,5 +61,7 @@ export const useGetDataClient = () => {
         setTokenDni,
         dataByApi,
         isLoadingClient,
+        typeDocument,
+        dataRucByApi,
     }
 }
