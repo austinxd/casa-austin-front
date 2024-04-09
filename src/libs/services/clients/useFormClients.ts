@@ -24,7 +24,6 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
     const [phoneNumber, setPhoneNumber] = useState('')
 
     const handlePhoneNumberChange = (value: string) => {
-        console.log('Phone Number:', value)
         setValue('tel_number', value)
         setPhoneNumber(value)
     }

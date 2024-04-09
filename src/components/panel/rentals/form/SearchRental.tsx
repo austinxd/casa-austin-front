@@ -1,6 +1,8 @@
-import { Box, Button, Checkbox, FormControlLabel, TextField } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDebounce } from '../../../common/useDebounce'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 
 interface Props {
     onSave: () => void
@@ -34,11 +36,9 @@ export default function SearchRental({
     }
 
     const onCheckAirbnb = () => {
-        // Cambia el estado de filterAirbnb a 'air' si actualmente está vacío o a '', si ya tiene el valor 'air'
         setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
     }
     const onCheckToday = () => {
-        // Cambia el estado de filterAirbnb a 'air' si actualmente está vacío o a '', si ya tiene el valor 'air'
         setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
     }
 
@@ -48,32 +48,43 @@ export default function SearchRental({
                 sx={{
                     border: '1px solid #E6E6E8',
                     borderRadius: 1,
-                    height: { md: 88, sm: 54, xs: 54 },
+                    height: { md: 88, sm: 54, xs: 'auto' },
                     width: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     px: 3,
-                    '@media (max-width: 900px)': {
+                    '@media (max-width: 1000px)': {
                         px: 0,
+                        gap: 1,
                         border: 'none',
+                        flexDirection: 'column-reverse',
+                        alignItems: ' ',
+                    },
+                    '@media (max-width: 900px)': {
+                        mt: 6,
+                    },
+                    '@media (max-width: 600px)': {
+                        mt: 1,
                     },
                 }}
             >
                 <Box
                     sx={{
-                        '@media (max-width: 700px)': {
-                            width: 180,
+                        width: '240px',
+                        '@media (max-width: 1000px)': {
+                            width: '100%',
                         },
                     }}
                 >
                     <TextField
+                        fullWidth
                         onChange={handleSearchChange}
                         sx={{
                             '& .MuiOutlinedInput-root': {
+                                width: '100%',
                                 height: '45px',
                                 color: '#2F2B3D',
-
                                 opacity: 0.9,
                                 '& fieldset': {
                                     color: '#2F2B3D',
@@ -118,38 +129,83 @@ export default function SearchRental({
                     />
                 </Box>
 
-                <Box gap={1} display={'flex'}>
+                <Box
+                    gap={1}
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    sx={{
+                        '@media (max-width: 1000px)': {
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            pl: 1,
+                        },
+                    }}
+                >
                     <Box>
                         <FormControlLabel
                             onClick={onCheckAirbnb}
                             control={
                                 <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
                                     checked={filterAirbnb === 'air'}
                                     sx={{
                                         mr: 0,
                                         p: 0.5,
-
-                                        color: 'red',
+                                        color: '#EB4C60',
                                         '&.Mui-checked': {
-                                            color: 'blue',
-                                        },
-                                        '&.MuiFormControlLabel-label': {
-                                            color: 'red',
+                                            color: '#EB4C60',
                                         },
                                     }}
                                 />
                             }
-                            label="Airbnb"
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    Airbnb
+                                </Typography>
+                            }
                         />
                         <FormControlLabel
                             onClick={onCheckToday}
                             control={
                                 <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
                                     checked={filterToday === 'today'}
-                                    sx={{ mr: 0, p: 0.5 }}
+                                    sx={{
+                                        mr: 0,
+                                        p: 0.5,
+                                        color: '#0E6191',
+                                        '&.Mui-checked': {
+                                            color: '#0E6191',
+                                        },
+                                        '&.MuiFormControlLabel-label': {
+                                            color: '#0E6191',
+                                        },
+                                    }}
                                 />
                             }
-                            label="Check in hoy"
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    {' '}
+                                    Check-in hoy
+                                </Typography>
+                            }
                         />
                     </Box>
                     <Button

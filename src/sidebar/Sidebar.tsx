@@ -198,7 +198,7 @@ export default function Sidebar(props: Props) {
                     ml: { sm: `${drawerWidth}px` },
                     background: 'white',
                     mb: 2,
-                    boxShadow: useBoxShadow(true),
+                    boxShadow: '3px 7px 30px 0px rgba(0,0,0,0.06)',
                 }}
             >
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -267,6 +267,7 @@ export default function Sidebar(props: Props) {
             <Box
                 component="main"
                 sx={{
+                    flexGrow: 1,
                     p: { md: 3, xs: 2 },
                     width: { sm: `calc(100% - ${drawerWidth}px)` },
                 }}

@@ -53,7 +53,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
         window.open(`https://wa.me/${formattedPhoneNumber}?text=`, '_blank')
     }
     return (
-        <div>
+        <Box>
             <Box
                 display={'flex'}
                 width={'100%'}
@@ -74,6 +74,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                         py: 2,
                         pb: '6px',
                     },
+                    position: 'relative',
                 }}
             >
                 <Box
@@ -291,7 +292,6 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                         </Box>
                     </Box>
                 </Box>
-
                 <IconButton
                     id="basic-button"
                     size="small"
@@ -324,6 +324,6 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                     </MenuItem>
                 </Menu>
             </Box>
-        </div>
+        </Box>
     )
 }

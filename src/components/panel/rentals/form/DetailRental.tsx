@@ -39,6 +39,14 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
         setImageExpanded((prevState) => !prevState)
         setImageSelect('')
     }
+    const truncateName = (name: string) => {
+        if (name.length > 30) {
+            return name.slice(0, 27) + '...'
+        } else {
+            return name
+        }
+    }
+
     return (
         <div>
             {!imageExpanded && (
@@ -69,6 +77,7 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
                             flexDirection={'column'}
                             gap={1}
                             height={'100%'}
+                            alignItems={'flex-end'}
                         >
                             <Typography variant="body2">Casa:</Typography>
                             <Typography variant="body2">Nombre :</Typography>
@@ -90,34 +99,41 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
                             gap={1}
                         >
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.property.name}
+                                {dataRental.property.name ? dataRental.property.name : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.client.first_name} {dataRental.client.last_name}
+                                {truncateName(
+                                    dataRental.client.first_name
+                                        ? dataRental.client.first_name
+                                        : '-'
+                                )}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.check_in_date}
+                                {dataRental.check_in_date ? dataRental.check_in_date : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.check_out_date}
+                                {dataRental.check_out_date ? dataRental.check_out_date : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.guests}
+                                {dataRental.guests ? dataRental.guests : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.price_sol}
+                                {dataRental.price_sol ? dataRental.price_sol : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.price_usd}
+                                {dataRental.price_usd ? dataRental.price_usd : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.advance_payment}
+                                {dataRental.advance_payment ? dataRental.advance_payment : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {onTypeMoney(dataRental.advance_payment_currency)}
+                                {onTypeMoney(dataRental.advance_payment_currency)
+                                    ? onTypeMoney(dataRental.advance_payment_currency)
+                                    : '-'}
                             </Typography>
                         </Box>
                     </Box>
+
                     <Divider sx={{ my: 2 }} />
                     <Box
                         display="flex"
@@ -137,6 +153,7 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
                                         borderRadius: '5px',
                                         marginRight: '10px',
                                         cursor: 'pointer',
+                                        objectFit: 'contain',
                                     }}
                                     height={80}
                                     width={80}

@@ -167,7 +167,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     useEffect(() => {
         if (getNumber) {
-            console.log('obtenido')
             setPhoneNumber(getNumber)
             handlePhoneNumberChange(getNumber)
         }
@@ -318,7 +317,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                 onChange={(e) => {
                                                                     setSearch(e.target.value)
                                                                 }}
-                                                                label="Elija un nombre o correo electrónico"
+                                                                label="Buscar por nombre, apellido o documento"
                                                             />
                                                         )}
                                                     />

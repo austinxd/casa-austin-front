@@ -6,6 +6,7 @@ import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalSe
 import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
+import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
 
 const generarEventos = (data: IRental): IEventoCalendario[] => {
     if (!data || !data.results) return []
@@ -15,12 +16,14 @@ const generarEventos = (data: IRental): IEventoCalendario[] => {
         start: rental.check_in_date,
         end: rental.check_out_date,
         color: rental.property.background_color,
-        image: rental.origin === 'aus' ? '/logo.svg' : '/airbnb.png',
+        image: rental.origin === 'aus' ? rental.property.name : '/airbnb.png',
+        type: rental.origin,
     }))
 }
 
 export default function CrudCalender() {
     const { data } = useGetSearchRentalQuery('')
+    const { data: dataHouse } = useGetDashboardQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
 
@@ -29,6 +32,15 @@ export default function CrudCalender() {
             setEventos(generarEventos(data))
         }
     }, [data])
+
+    useEffect(() => {
+        const currentMonth = currentDate.getMonth()
+
+        const scrollonMonth = () => {
+            window.scroll(0, 500 * currentMonth)
+        }
+        scrollonMonth()
+    }, [])
 
     const currentDate = new Date()
 
@@ -46,14 +58,35 @@ export default function CrudCalender() {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            height: { md: '12px', sm: '1px', xs: '4px' },
+                            height: { md: '12px', sm: '4px', xs: '4px' },
                         }}
                     >
-                        <img
-                            src={eventInfo.event.extendedProps.image}
-                            alt="Event Image"
-                            className="imgCalender"
-                        />
+                        {eventInfo.event.extendedProps.type === 'aus' ? (
+                            <Box
+                                sx={{
+                                    height: { md: '16px', sm: '4px', xs: '4px' },
+                                    width: { md: '16px', sm: '4px', xs: '4px' },
+                                    background: 'white',
+                                    fontWeight: 600,
+                                    color: '#0E6191',
+                                    borderRadius: '100%',
+                                    fontSize: { md: '12px', sm: '3.5px', xs: '3.5px' },
+                                    marginRight: '12px',
+                                    display: 'flex',
+                                    lineHeight: { md: '4px', sm: '2px', xs: '2px' },
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                {eventInfo.event.extendedProps.image.match(/\d+/)}
+                            </Box>
+                        ) : (
+                            <img
+                                src={eventInfo.event.extendedProps.image}
+                                alt="Event Image"
+                                className="imgCalender"
+                            />
+                        )}
                     </Box>
 
                     <Typography
@@ -164,64 +197,35 @@ export default function CrudCalender() {
 
     return (
         <div>
-            <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
+            <Typography variant="h1" mb={{ md: 1, sm: 1, xs: 1 }}>
                 Disponibilidad
             </Typography>
 
-            <AppBar position="sticky" sx={{ boxShadow: 'none', backgroundColor: 'white' }}>
-                <Box display={'flex'} gap={2} my={3}>
-                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
+            <AppBar
+                position="sticky"
+                sx={{ boxShadow: 'none', backgroundColor: 'white', width: '100%' }}
+            >
+                <Box display={'flex'} gap={2} my={{ md: 3, sm: 2, xs: 2 }}>
+                    {dataHouse?.properties_more_reserved.map((item) => (
                         <Box
-                            sx={{
-                                background: '#0E6191',
-                                borderRadius: '100%',
-                                height: '15px',
-                                width: '15px',
-                            }}
-                        ></Box>
-                        <Typography fontSize={15} fontWeight={400}>
-                            Casa 1
-                        </Typography>
-                    </Box>
-                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                        <Box
-                            sx={{
-                                background: '#82C9E2',
-                                borderRadius: '100%',
-                                height: '15px',
-                                width: '15px',
-                            }}
-                        ></Box>
-                        <Typography fontSize={15} fontWeight={400}>
-                            Casa 2
-                        </Typography>
-                    </Box>
-                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                        <Box
-                            sx={{
-                                background: '#7367F0',
-                                borderRadius: '100%',
-                                height: '15px',
-                                width: '15px',
-                            }}
-                        ></Box>
-                        <Typography fontSize={15} fontWeight={400}>
-                            Casa 3
-                        </Typography>
-                    </Box>
-                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                        <Box
-                            sx={{
-                                background: '#C466A1',
-                                borderRadius: '100%',
-                                height: '15px',
-                                width: '15px',
-                            }}
-                        ></Box>
-                        <Typography fontSize={15} fontWeight={400}>
-                            Casa 4
-                        </Typography>
-                    </Box>
+                            key={item.property__background_color}
+                            display={'flex'}
+                            gap={0.5}
+                            alignItems={'center'}
+                        >
+                            <Box
+                                sx={{
+                                    background: item.property__background_color,
+                                    borderRadius: '100%',
+                                    height: '15px',
+                                    width: '15px',
+                                }}
+                            ></Box>
+                            <Typography fontSize={15} fontWeight={400}>
+                                {item.property__name}
+                            </Typography>
+                        </Box>
+                    ))}
                 </Box>
                 <Box
                     sx={{
