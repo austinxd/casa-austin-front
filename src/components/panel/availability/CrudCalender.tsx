@@ -167,61 +167,62 @@ export default function CrudCalender() {
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
                 Disponibilidad
             </Typography>
-            <Box display={'flex'} gap={2} my={3}>
-                <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                    <Box
-                        sx={{
-                            background: '#0E6191',
-                            borderRadius: '100%',
-                            height: '15px',
-                            width: '15px',
-                        }}
-                    ></Box>
-                    <Typography fontSize={15} fontWeight={400}>
-                        Casa 1
-                    </Typography>
+
+            <AppBar position="sticky" sx={{ boxShadow: 'none', backgroundColor: 'white' }}>
+                <Box display={'flex'} gap={2} my={3}>
+                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
+                        <Box
+                            sx={{
+                                background: '#0E6191',
+                                borderRadius: '100%',
+                                height: '15px',
+                                width: '15px',
+                            }}
+                        ></Box>
+                        <Typography fontSize={15} fontWeight={400}>
+                            Casa 1
+                        </Typography>
+                    </Box>
+                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
+                        <Box
+                            sx={{
+                                background: '#82C9E2',
+                                borderRadius: '100%',
+                                height: '15px',
+                                width: '15px',
+                            }}
+                        ></Box>
+                        <Typography fontSize={15} fontWeight={400}>
+                            Casa 2
+                        </Typography>
+                    </Box>
+                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
+                        <Box
+                            sx={{
+                                background: '#7367F0',
+                                borderRadius: '100%',
+                                height: '15px',
+                                width: '15px',
+                            }}
+                        ></Box>
+                        <Typography fontSize={15} fontWeight={400}>
+                            Casa 3
+                        </Typography>
+                    </Box>
+                    <Box display={'flex'} gap={0.5} alignItems={'center'}>
+                        <Box
+                            sx={{
+                                background: '#C466A1',
+                                borderRadius: '100%',
+                                height: '15px',
+                                width: '15px',
+                            }}
+                        ></Box>
+                        <Typography fontSize={15} fontWeight={400}>
+                            Casa 4
+                        </Typography>
+                    </Box>
                 </Box>
-                <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                    <Box
-                        sx={{
-                            background: '#82C9E2',
-                            borderRadius: '100%',
-                            height: '15px',
-                            width: '15px',
-                        }}
-                    ></Box>
-                    <Typography fontSize={15} fontWeight={400}>
-                        Casa 2
-                    </Typography>
-                </Box>
-                <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                    <Box
-                        sx={{
-                            background: '#7367F0',
-                            borderRadius: '100%',
-                            height: '15px',
-                            width: '15px',
-                        }}
-                    ></Box>
-                    <Typography fontSize={15} fontWeight={400}>
-                        Casa 3
-                    </Typography>
-                </Box>
-                <Box display={'flex'} gap={0.5} alignItems={'center'}>
-                    <Box
-                        sx={{
-                            background: '#C466A1',
-                            borderRadius: '100%',
-                            height: '15px',
-                            width: '15px',
-                        }}
-                    ></Box>
-                    <Typography fontSize={15} fontWeight={400}>
-                        Casa 4
-                    </Typography>
-                </Box>
-            </Box>
-            <AppBar position="sticky" sx={{ boxShadow: 'none', backgroundColor: 'transparent' }}>
                 <Box
                     sx={{
                         background: '#82C9E2',
@@ -266,7 +267,7 @@ export default function CrudCalender() {
                                 <div style={{ textAlign: 'center' }}>
                                     <div
                                         style={{
-                                            opacity: arg.date < currentDate ? 0.5 : 1,
+                                            opacity: arg.date < currentDate ? 0.32 : 1,
                                         }}
                                     >
                                         {arg.dayNumberText}

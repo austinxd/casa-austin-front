@@ -21,9 +21,15 @@ export const rentalApi = createApi({
         }),
         getAllRentals: builder.query<
             IRental,
-            { page?: number; page_size?: number | string; search: string; from: string }
+            {
+                page?: number
+                page_size?: number | string
+                search: string
+                from: string
+                type: string
+            }
         >({
-            query: ({ page = 1, page_size = 10, search = '', from = '' }) => ({
+            query: ({ page = 1, page_size = 10, search = '', from = '', type = '' }) => ({
                 url: '/reservations/',
                 method: 'GET',
                 params: {
@@ -31,6 +37,7 @@ export const rentalApi = createApi({
                     page_size: page_size.toString(),
                     search: search,
                     from: from,
+                    type: type,
                 },
             }),
         }),

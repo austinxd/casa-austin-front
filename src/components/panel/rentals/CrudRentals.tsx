@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import style from './rental.module.css'
 import Card from './card/Card'
 import BasicModal from '../../common/modal/BasicModal'
@@ -22,15 +22,15 @@ export default function CrudRentals() {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize] = useState<number | string>(8)
     const [search, setSearch] = useState('')
-
+    const [filterAirbnb, setFilterAirbnb] = useState('')
+    const [filterToday, setFilterToday] = useState('')
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
-        from: 'air',
+        from: filterToday,
+        type: filterAirbnb,
     })
-
-    const fuc = () => {}
 
     const onSave = () => {
         setOpen(true)
@@ -61,26 +61,49 @@ export default function CrudRentals() {
                 Alquileres
             </Typography>
             <SearchRental
-                onClick={fuc}
                 setSearch={setSearch}
                 setCurrentPage={setCurrentPage}
                 onSave={onSave}
+                filterAirbnb={filterAirbnb}
+                setFilterAirbnb={setFilterAirbnb}
+                setFilterToday={setFilterToday}
+                filterToday={filterToday}
             />
 
             {isLoading ? (
                 <SkeletonCard />
             ) : (
-                <div className={style.container} style={{ marginTop: '12px' }}>
-                    {data?.results?.map((item) => (
-                        <div key={item.id} className={style.item}>
-                            <Card
-                                item={item}
-                                handleDelete={() => onDelete(item)}
-                                handleEdit={() => onEdit(item)}
-                                handleView={() => onView(item)}
-                            />
+                <div>
+                    {data?.results && data.results.length > 0 ? (
+                        <div className={style.container} style={{ marginTop: '12px' }}>
+                            {data.results.map((item) => (
+                                <div key={item.id} className={style.item}>
+                                    <Card
+                                        item={item}
+                                        handleDelete={() => onDelete(item)}
+                                        handleEdit={() => onEdit(item)}
+                                        handleView={() => onView(item)}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    ) : (
+                        <Box
+                            sx={{
+                                border: '1px solid #E6E6E8',
+                                borderRadius: 1,
+                                mt: 3,
+                                height: 200,
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                px: 3,
+                            }}
+                        >
+                            <p>Sin informacion para mostrar</p>
+                        </Box>
+                    )}
                 </div>
             )}
 

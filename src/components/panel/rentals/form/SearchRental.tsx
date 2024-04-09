@@ -4,12 +4,23 @@ import { useDebounce } from '../../../common/useDebounce'
 
 interface Props {
     onSave: () => void
-    setSearch: any
-    setCurrentPage: any
-    onClick: () => void
+    setSearch: React.Dispatch<React.SetStateAction<string>>
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+    setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>
+    filterAirbnb: string
+    setFilterToday: React.Dispatch<React.SetStateAction<string>>
+    filterToday: string
 }
 
-export default function SearchRental({ onSave, setSearch, setCurrentPage, onClick }: Props) {
+export default function SearchRental({
+    onSave,
+    setSearch,
+    setCurrentPage,
+    setFilterAirbnb,
+    filterAirbnb,
+    filterToday,
+    setFilterToday,
+}: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 400)
 
@@ -21,6 +32,16 @@ export default function SearchRental({ onSave, setSearch, setCurrentPage, onClic
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputText(event.target.value)
     }
+
+    const onCheckAirbnb = () => {
+        // Cambia el estado de filterAirbnb a 'air' si actualmente está vacío o a '', si ya tiene el valor 'air'
+        setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
+    }
+    const onCheckToday = () => {
+        // Cambia el estado de filterAirbnb a 'air' si actualmente está vacío o a '', si ya tiene el valor 'air'
+        setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
+    }
+
     return (
         <>
             <Box
@@ -100,9 +121,10 @@ export default function SearchRental({ onSave, setSearch, setCurrentPage, onClic
                 <Box gap={1} display={'flex'}>
                     <Box>
                         <FormControlLabel
-                            onClick={onClick}
+                            onClick={onCheckAirbnb}
                             control={
                                 <Checkbox
+                                    checked={filterAirbnb === 'air'}
                                     sx={{
                                         mr: 0,
                                         p: 0.5,
@@ -120,7 +142,13 @@ export default function SearchRental({ onSave, setSearch, setCurrentPage, onClic
                             label="Airbnb"
                         />
                         <FormControlLabel
-                            control={<Checkbox sx={{ mr: 0, p: 0.5 }} />}
+                            onClick={onCheckToday}
+                            control={
+                                <Checkbox
+                                    checked={filterToday === 'today'}
+                                    sx={{ mr: 0, p: 0.5 }}
+                                />
+                            }
                             label="Check in hoy"
                         />
                     </Box>
