@@ -206,7 +206,13 @@ export default function CrudDashboard() {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Typography variant="h2" fontWeight={500}>
+                                <Typography
+                                    variant="h2"
+                                    textAlign={'center'}
+                                    sx={{ opacity: 0.8 }}
+                                    mr={3}
+                                    fontWeight={500}
+                                >
                                     {item.seller}
                                 </Typography>
                             </Box>
