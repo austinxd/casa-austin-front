@@ -40,7 +40,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [pageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
     const [getNumber, setGetNumber] = useState<string | undefined>('')
-    const { data: optionClients } = useGetAllClientsQuery({
+
+    const { data: optionClientsData } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
@@ -107,11 +108,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         })) || []
 
     const optionsClients =
-        optionClients?.results.map((client) => ({
+        optionClientsData?.results.map((client) => ({
             value: client.id,
             label: client.first_name,
-            email: client.email,
             phone: client.tel_number,
+            lastName: client.last_name,
+            dni: client.number_doc,
         })) || []
 
     const handleAddClick = () => {
@@ -243,7 +245,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         rules={{ required: 'Elige un nombre' }}
                                         render={({ field }) => {
                                             const { onChange, value } = field
-
                                             return (
                                                 <>
                                                     <Autocomplete
@@ -303,6 +304,31 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                 fontWeight: 600,
                                                             },
                                                         }}
+                                                        filterOptions={(options, { inputValue }) =>
+                                                            options.filter((option) => {
+                                                                const labelMatches = option.label
+                                                                    .toLowerCase()
+                                                                    .includes(
+                                                                        inputValue.toLowerCase()
+                                                                    )
+                                                                const lastNameMatches =
+                                                                    option.lastName
+                                                                        .toLowerCase()
+                                                                        .includes(
+                                                                            inputValue.toLowerCase()
+                                                                        )
+                                                                const dniMatches = option.dni
+                                                                    .toLowerCase()
+                                                                    .includes(
+                                                                        inputValue.toLowerCase()
+                                                                    )
+                                                                return (
+                                                                    labelMatches ||
+                                                                    lastNameMatches ||
+                                                                    dniMatches
+                                                                )
+                                                            })
+                                                        }
                                                         options={optionsClients}
                                                         onChange={(_event: any, newValue) => {
                                                             onChange(
@@ -315,6 +341,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             <TextField
                                                                 {...params}
                                                                 onChange={(e) => {
+                                                                    console.log(e.target.value)
                                                                     setSearch(e.target.value)
                                                                 }}
                                                                 label="Buscar por nombre, apellido o documento"

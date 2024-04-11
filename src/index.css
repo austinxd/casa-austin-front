@@ -70,8 +70,8 @@ body {
 
 @media (max-width: 900px) {
     .imgCalender {
-        height: 4px;
-        width: 4px;
+        height: 6px;
+        width: 6px;
         margin-left: 0px;
     }
     ::-webkit-scrollbar {

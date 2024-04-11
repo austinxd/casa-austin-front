@@ -37,7 +37,8 @@ export default function CrudCalender() {
         const currentMonth = currentDate.getMonth()
 
         const scrollonMonth = () => {
-            window.scroll(0, 500 * currentMonth)
+            const scrollHeight = window.innerWidth < 1000 ? 320 : 520
+            window.scroll(0, scrollHeight * currentMonth)
         }
         scrollonMonth()
     }, [])
@@ -58,22 +59,22 @@ export default function CrudCalender() {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            height: { md: '12px', sm: '4px', xs: '4px' },
+                            height: { md: '12px', sm: '6px', xs: '6px' },
                         }}
                     >
                         {eventInfo.event.extendedProps.type === 'aus' ? (
                             <Box
                                 sx={{
-                                    height: { md: '16px', sm: '4px', xs: '4px' },
-                                    width: { md: '16px', sm: '4px', xs: '4px' },
+                                    height: { md: '16px', sm: '6px', xs: '6px' },
+                                    width: { md: '16px', sm: '6px', xs: '6px' },
                                     background: 'white',
                                     fontWeight: 600,
                                     color: '#0E6191',
                                     borderRadius: '100%',
-                                    fontSize: { md: '12px', sm: '3.5px', xs: '3.5px' },
+                                    fontSize: { md: '12px', sm: '4.5px', xs: '4.5px' },
                                     marginRight: '12px',
                                     display: 'flex',
-                                    lineHeight: { md: '4px', sm: '2px', xs: '2px' },
+                                    lineHeight: { md: '4px', sm: '3px', xs: '3px' },
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}
