@@ -130,7 +130,7 @@ export default function SearchRental({
                 </Box>
 
                 <Box
-                    gap={1}
+                    gap={{ md: 1, sm: 0.5, xs: 0.3 }}
                     display={'flex'}
                     justifyContent={'center'}
                     alignItems={'center'}
@@ -202,8 +202,7 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    {' '}
-                                    Check-in hoy
+                                    Check-in proximos
                                 </Typography>
                             }
                         />

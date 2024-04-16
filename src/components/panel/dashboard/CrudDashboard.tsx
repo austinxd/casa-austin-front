@@ -53,6 +53,13 @@ export default function CrudDashboard() {
             fullChartt()
         }
     }, [data])
+
+    useEffect(() => {
+        console.log(data, 'ddddddd')
+    }, [data])
+
+    const currentDate = new Date()
+    const currentMonth = currentDate.toLocaleString('es-ES', { month: 'long' })
     return (
         <div>
             <Typography variant="h1" mb={3}>
@@ -125,7 +132,9 @@ export default function CrudDashboard() {
                         colors={colorData}
                         data={percentageData}
                         categories={categoryData}
-                        title="Ventas por casas"
+                        title="Ventas"
+                        title2="Disponibilidad"
+                        title3="Ocupacion"
                     />
                 </Box>
                 <Box
@@ -139,7 +148,8 @@ export default function CrudDashboard() {
                     }}
                 >
                     <Typography variant="h2" p={3}>
-                        Vendedores populares
+                        Ranking de{' '}
+                        <span style={{ textTransform: 'capitalize' }}>{currentMonth}</span>
                     </Typography>
                     <Divider />
                     <Box display={'flex'} justifyContent={'space-between'} px={3} py={2}>

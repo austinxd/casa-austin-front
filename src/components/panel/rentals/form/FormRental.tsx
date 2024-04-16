@@ -46,6 +46,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         page_size: pageSize,
         search: search,
     })
+
     const {
         data: dataEdit,
         isLoading: isEditLoading,
@@ -77,6 +78,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         phoneNumber,
         handlePhoneNumberChange,
         setPhoneNumber,
+        checkInSelect,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -110,7 +112,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const optionsClients =
         optionClientsData?.results.map((client) => ({
             value: client.id,
-            label: client.first_name,
+            label: client.first_name + ' ' + client.last_name,
             phone: client.tel_number,
             lastName: client.last_name,
             dni: client.number_doc,
@@ -173,7 +175,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             handlePhoneNumberChange(getNumber)
         }
     }, [getNumber])
-    const tomorrow = dayjs().add(1, 'day')
+    const tomorrow = dayjs(checkInSelect).add(1, 'day')
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -448,12 +450,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                         },
                                                     }}
                                                     onChange={(newDate) => {
-                                                        // Convierte la fecha seleccionada a cadena en el formato deseado
                                                         const formattedDate = newDate
                                                             ? dayjs(newDate).format('YYYY-MM-DD')
                                                             : ''
                                                         setCheckInSelect(formattedDate)
-                                                        // Pasa la fecha formateada al otro componente usando setValue
                                                         field.onChange(formattedDate)
                                                     }}
                                                 />
@@ -486,6 +486,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                 adapterLocale="es"
                                             >
                                                 <DatePicker
+                                                    disabled={checkInSelect ? false : true}
                                                     slotProps={{
                                                         textField: {},
                                                         layout: {

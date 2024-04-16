@@ -1,4 +1,5 @@
 import { Box, Skeleton, Typography } from '@mui/material'
+import { useState } from 'react'
 import ApexChart from 'react-apexcharts'
 
 interface Props {
@@ -7,9 +8,11 @@ interface Props {
     data: any
     colors: any
     isLoading: boolean
+    title2: string
+    title3: string
 }
 
-function BarCharts({ title, categories, colors, data, isLoading }: Props) {
+function BarCharts({ title, categories, colors, data, isLoading, title2, title3 }: Props) {
     const options: any = {
         chart: {
             id: 'apexchart-example',
@@ -109,20 +112,10 @@ function BarCharts({ title, categories, colors, data, isLoading }: Props) {
             data: data,
         },
     ]
-
-    return (
-        <Box
-            boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
-            sx={{ background: 'white', p: { md: 3, sm: 2, xs: 1.5 }, borderRadius: 3 }}
-        >
-            <Typography variant="h2">{title}</Typography>
-            {isLoading ? (
-                <Skeleton
-                    variant="rounded"
-                    sx={{ width: '100%', bgcolor: '#DADADA' }}
-                    height={310}
-                />
-            ) : (
+    const [selectedOption, setSelectedOption] = useState<number>(1)
+    const renderChartOrText = () => {
+        if (selectedOption === 1) {
+            return (
                 <ApexChart
                     type="bar"
                     options={options}
@@ -130,6 +123,84 @@ function BarCharts({ title, categories, colors, data, isLoading }: Props) {
                     height={310}
                     width={'100%'}
                 />
+            )
+        } else if (selectedOption === 2) {
+            return (
+                <ApexChart
+                    type="bar"
+                    options={options}
+                    series={series}
+                    height={310}
+                    width={'100%'}
+                />
+            )
+        } else if (selectedOption === 3) {
+            return (
+                <ApexChart
+                    type="bar"
+                    options={options}
+                    series={series}
+                    height={310}
+                    width={'100%'}
+                />
+            )
+        }
+        return null
+    }
+    return (
+        <Box
+            boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
+            sx={{ background: 'white', p: { md: 3, sm: 2, xs: 1.5 }, borderRadius: 3 }}
+        >
+            <Box display={'flex'} gap={1}>
+                <Typography
+                    variant="h2"
+                    fontSize={16}
+                    sx={{
+                        opacity: selectedOption === 1 ? 1 : 0.5,
+                        borderBottom: selectedOption === 1 ? '2px solid #A8A8A8' : 'none',
+                        cursor: 'pointer',
+                    }}
+                    fontWeight={500}
+                    onClick={() => setSelectedOption(1)}
+                >
+                    {title}
+                </Typography>
+                <Typography
+                    variant="h2"
+                    fontSize={16}
+                    sx={{
+                        opacity: selectedOption === 2 ? 2 : 0.5,
+                        borderBottom: selectedOption === 2 ? '2px solid #A8A8A8' : 'none',
+                        cursor: 'pointer',
+                    }}
+                    fontWeight={500}
+                    onClick={() => setSelectedOption(2)}
+                >
+                    {title2}
+                </Typography>
+                <Typography
+                    sx={{
+                        opacity: selectedOption === 3 ? 1 : 0.5,
+                        borderBottom: selectedOption === 3 ? '2px solid #A8A8A8' : 'none',
+                        cursor: 'pointer',
+                    }}
+                    variant="h2"
+                    fontSize={16}
+                    fontWeight={500}
+                    onClick={() => setSelectedOption(3)}
+                >
+                    {title3}
+                </Typography>
+            </Box>
+            {isLoading ? (
+                <Skeleton
+                    variant="rounded"
+                    sx={{ width: '100%', bgcolor: '#DADADA' }}
+                    height={310}
+                />
+            ) : (
+                renderChartOrText()
             )}
         </Box>
     )

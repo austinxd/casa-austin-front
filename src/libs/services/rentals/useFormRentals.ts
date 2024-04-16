@@ -163,5 +163,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         phoneNumber,
         handlePhoneNumberChange,
         setPhoneNumber,
+        checkInSelect,
     }
 }
