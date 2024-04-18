@@ -6,21 +6,27 @@ export interface AUTH_INITIAL_STATE {
 }
 
 const token = Cookies.get('token')
-
+const roll = Cookies.get('roll')
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         token: token || null,
+        roll: roll || null,
     },
     reducers: {
         logout: (state) => {
             Cookies.remove('token')
             Cookies.remove('tokenRefresh')
+            Cookies.remove('roll')
             state.token = null
         },
         setToken: (state, { payload }) => {
             state.token = payload.token
             Cookies.set('token', payload.token, { expires: 7 })
+        },
+        setRoll: (state, { payload }) => {
+            state.roll = payload.roll
+            Cookies.set('roll', payload.roll, { expires: 7 })
         },
         setTokenRefresh: (state, { payload }) => {
             state.token = payload.token
@@ -29,6 +35,6 @@ const authSlice = createSlice({
     },
 })
 
-export const { logout, setToken, setTokenRefresh } = authSlice.actions
+export const { logout, setToken, setTokenRefresh, setRoll } = authSlice.actions
 
 export const authReducer = authSlice.reducer

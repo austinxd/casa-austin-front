@@ -157,7 +157,7 @@ export default function CrudDashboard() {
                             VENDEDORES
                         </Typography>
                         <Typography variant="h2" color={'#2F2B3D'} fontSize={14}>
-                            NÚMERO
+                            PUESTO
                         </Typography>
                     </Box>
                     <Divider />
@@ -223,7 +223,7 @@ export default function CrudDashboard() {
                                     mr={3}
                                     fontWeight={500}
                                 >
-                                    {item.seller}
+                                    s/. {item.seller}
                                 </Typography>
                             </Box>
                         ))

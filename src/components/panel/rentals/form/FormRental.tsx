@@ -1,4 +1,13 @@
-import { Autocomplete, Box, Grid, IconButton, TextField, Typography } from '@mui/material'
+import {
+    Autocomplete,
+    Box,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    IconButton,
+    TextField,
+    Typography,
+} from '@mui/material'
 import SelectInputPrimary from '../../../common/input/SelectInputPrimary'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -25,6 +34,8 @@ import SkeletonFormRental from './SkeletonFormRental'
 import BasicModal from '../../../common/modal/BasicModal'
 import ModalErrors from '../../../common/modal/ModalErrors'
 import PhoneInput from 'react-phone-input-2'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 
 interface Props {
     onCancel: () => void
@@ -100,7 +111,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setPhoneNumber(dataEdit.client.tel_number)
         }
     }, [isEditLoading, dataEdit])
-
+    const [filterAirbnb, setFilterAirbnb] = useState('')
+    const [filterToday, setFilterToday] = useState('')
     const fileInputRef = useRef<any>(null)
 
     const optionsHouse =
@@ -175,7 +187,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             handlePhoneNumberChange(getNumber)
         }
     }, [getNumber])
+
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
+
+    const onCheckAirbnb = () => {
+        setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
+    }
+    const onCheckToday = () => {
+        setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
+    }
+
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -658,16 +679,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     />
                                 </Grid>
                                 <Grid item md={6} xs={6}>
-                                    <SecondaryInput
-                                        {...register('advance_payment')}
-                                        type="text"
-                                        label={'Adelanto'}
-                                        messageError={
-                                            (errors.advance_payment?.message ?? null) as string
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item md={6} xs={6}>
                                     <Controller
                                         name="advance_payment_currency"
                                         defaultValue=""
@@ -693,10 +704,109 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         )}
                                     />
                                 </Grid>
+                                <Grid item md={6} xs={6}>
+                                    <SecondaryInput
+                                        {...register('advance_payment')}
+                                        type="text"
+                                        label={'Adelanto'}
+                                        messageError={
+                                            (errors.advance_payment?.message ?? null) as string
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item md={6} xs={6} display={'flex'} justifyContent={'start'}>
+                                    <FormControlLabel
+                                        sx={{ ml: 0.1 }}
+                                        onClick={onCheckAirbnb}
+                                        control={
+                                            <Checkbox
+                                                icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                                checkedIcon={
+                                                    <RadioButtonCheckedIcon fontSize="small" />
+                                                }
+                                                checked={filterAirbnb === 'air'}
+                                                sx={{
+                                                    mr: 0,
+                                                    p: 0.5,
+                                                    color: '#EB4C60',
+                                                    '&.Mui-checked': {
+                                                        color: '#EB4C60',
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography
+                                                sx={{
+                                                    color: '#000F08',
+                                                    fontSize: {
+                                                        md: '15px',
+                                                        sm: '14px',
+                                                        xs: '13px',
+                                                    },
+                                                    fontWeight: 400,
+                                                    opacity: 0.8,
+                                                }}
+                                            >
+                                                Piscina temperada
+                                            </Typography>
+                                        }
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    md={6}
+                                    xs={6}
+                                    display={'flex'}
+                                    justifyContent={'start'}
+                                    alignItems={'start'}
+                                >
+                                    <FormControlLabel
+                                        sx={{ ml: 0.1 }}
+                                        onClick={onCheckToday}
+                                        control={
+                                            <Checkbox
+                                                icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                                checkedIcon={
+                                                    <RadioButtonCheckedIcon fontSize="small" />
+                                                }
+                                                checked={filterToday === 'today'}
+                                                sx={{
+                                                    mr: 0,
+                                                    p: 0.5,
+                                                    color: '#0E6191',
+                                                    '&.Mui-checked': {
+                                                        color: '#0E6191',
+                                                    },
+                                                    '&.MuiFormControlLabel-label': {
+                                                        color: '#0E6191',
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography
+                                                sx={{
+                                                    color: '#000F08',
+                                                    fontSize: {
+                                                        md: '15px',
+                                                        sm: '14px',
+                                                        xs: '13px',
+                                                    },
+                                                    fontWeight: 400,
+                                                    opacity: 0.8,
+                                                }}
+                                            >
+                                                Pago completo
+                                            </Typography>
+                                        }
+                                    />
+                                </Grid>
                                 <Grid
                                     display={'flex'}
                                     alignItems={'center'}
                                     gap={1}
+                                    style={{ marginTop: '20px', marginBottom: '12px' }}
                                     item
                                     md={12}
                                     xs={12}

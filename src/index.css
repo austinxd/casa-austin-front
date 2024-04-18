@@ -8,13 +8,13 @@ body {
 ::-webkit-scrollbar {
     background-color: transparent;
     width: 8px;
-    height: 120px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #929292;
     border-radius: 5px;
-    height: 120px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -77,13 +77,13 @@ body {
     ::-webkit-scrollbar {
         background-color: transparent;
         width: 4px;
-        height: 20px;
+        height: 4px;
     }
 
     ::-webkit-scrollbar-thumb {
         background-color: #929292;
         border-radius: 5px;
-        height: 100px;
+        height: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {

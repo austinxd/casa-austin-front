@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setToken, setTokenRefresh } from './authSlice'
+import { setRoll, setToken, setTokenRefresh } from './authSlice'
 import { ILogin } from '../../../interfaces/auth/loginCredentials'
 import { login } from './auth'
 
@@ -30,6 +30,7 @@ export const useLoginForm = () => {
                 const keyRefresh = response?.data.refresh
                 dispatch(setToken({ token: key }))
                 dispatch(setTokenRefresh({ token: keyRefresh }))
+                dispatch(setRoll({ roll: response.data.groups[0] }))
                 navigate('/panel/inicio')
             }
         } catch (error: any) {

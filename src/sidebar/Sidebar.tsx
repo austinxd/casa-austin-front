@@ -1,4 +1,5 @@
 /* Icons */
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import {
     SpaceDashboardOutlined as SpaceDashboardOutlinedIcon,
     DateRangeOutlined as DateRangeOutlinedIcon,
@@ -23,7 +24,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useBoxShadow from '../hook/useBoxShadow'
 import { useDispatch } from 'react-redux'
 import { logout } from '../libs/services/auth/authSlice'
-
+import Cookies from 'js-cookie'
+const roll = Cookies.get('roll')
 const drawerWidth = 236
 const menuItems = [
     {
@@ -34,24 +36,30 @@ const menuItems = [
     },
     {
         id: 2,
+        text: 'Ingresos',
+        icon: AttachMoneyIcon,
+        path: '/panel/ingresos',
+    },
+    {
+        id: 3,
         text: 'Disponibilidad',
         icon: DateRangeOutlinedIcon,
         path: '/panel/disponibilidad',
     },
     {
-        id: 3,
+        id: 4,
         text: 'Alquileres',
         icon: AssignmentTurnedInOutlinedIcon,
         path: '/panel/alquileres',
     },
     {
-        id: 4,
+        id: 5,
         text: 'Clientes',
         icon: PersonOutlinedIcon,
         path: '/panel/clientes',
     },
     {
-        id: 5,
+        id: 6,
         text: 'Cerrar sesión',
         icon: LoginOutlinedIcon,
         path: '/panel/cerrar-sesion',
@@ -117,11 +125,14 @@ export default function Sidebar(props: Props) {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 4).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 5).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
-                            display: 'flex',
+                            display:
+                                roll === 'mantenimiento' && text === 'Disponibilidad'
+                                    ? 'none'
+                                    : 'flex',
                             px: 2,
                             py: 1,
                             mb: 1,
@@ -145,7 +156,7 @@ export default function Sidebar(props: Props) {
                         </Link>
                     </Box>
                 ))}
-                {menuItems.slice(4, 5).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(5, 6).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{
@@ -177,7 +188,7 @@ export default function Sidebar(props: Props) {
                                 fontWeight: 400,
                             }}
                         >
-                            {text}
+                            {text} - {roll ? roll : 'o'}
                         </Typography>
                     </Box>
                 ))}

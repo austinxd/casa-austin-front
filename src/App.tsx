@@ -7,6 +7,7 @@ import CrudDashboard from './components/panel/dashboard/CrudDashboard'
 import CrudRentals from './components/panel/rentals/CrudRentals'
 import CrudClients from './components/panel/clients/CrudClients'
 import CrudCalender from './components/panel/availability/CrudCalender'
+import CrudProfits from './components/panel/profits/CrudProfits'
 
 function App() {
     return (
@@ -26,6 +27,16 @@ function App() {
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
                                 <CrudDashboard />
+                            </Sidebar>
+                        </ProtectRoutes>
+                    }
+                />
+                <Route
+                    path="/panel/ingresos"
+                    element={
+                        <ProtectRoutes navigateTo="/">
+                            <Sidebar>
+                                <CrudProfits />
                             </Sidebar>
                         </ProtectRoutes>
                     }
