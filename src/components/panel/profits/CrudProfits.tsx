@@ -2,16 +2,19 @@ import { Box, Typography } from '@mui/material'
 import BarChartsVertical from '../../common/charts/BarChartVertical'
 import TableAustin from '../../common/table/TableAustin'
 import SearchProfits from './form/SearchProfits'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
 import SelectInputPrimary from '../../common/input/SelectInputPrimary'
 import CardResponsiveProfit from './card/CardResponsiveProfit'
 
 export default function CrudProfits() {
-    const [setSearch] = useState('')
+    const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize] = useState<number>(10)
 
+    useEffect(() => {
+        console.log(search, 'fff')
+    })
     const rows = [
         {
             id: 1,
