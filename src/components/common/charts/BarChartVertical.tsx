@@ -1,9 +1,9 @@
-import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, IconButton, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import ApexChart from 'react-apexcharts'
 import { useTheme } from '@mui/material/styles'
-import { useRef, useState } from 'react'
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
-import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import { useRef } from 'react'
+import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined'
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined'
 
 interface Props {
     title: string
@@ -15,16 +15,14 @@ interface Props {
 function BarChartsVertical({ title, categories, data, isLoading }: Props) {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-    const chartRef = useRef<any>(null)
+    const chartRef = useRef<any>()
 
-    const [scrollPosition, setScrollPosition] = useState(0)
+    const scrollLeft = () => {
+        chartRef.current.scrollLeft -= 50 // Ajusta la velocidad de desplazamiento según sea necesario
+    }
 
-    const handleScroll = (scrollOffset: number) => {
-        chartRef.current?.container?.scrollTo({
-            left: scrollPosition + scrollOffset,
-            behavior: 'smooth',
-        })
-        setScrollPosition(scrollPosition + scrollOffset)
+    const scrollRight = () => {
+        chartRef.current.scrollLeft += 50 // Ajusta la velocidad de desplazamiento según sea necesario
     }
 
     const options: any = {
@@ -103,62 +101,54 @@ function BarChartsVertical({ title, categories, data, isLoading }: Props) {
     ]
 
     return (
-        <Box
-            boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
-            position="relative"
-            width={{ md: '100%', sm: 'calc(100vw - 268px)', xs: 'calc(100vw - 32px)' }}
-            sx={{
-                background: 'white',
-                p: { md: 3, sm: 2, xs: 1.5 },
-                borderRadius: 3,
-                overflowX: 'auto',
-                scrollSnapType: 'x mandatory',
-                scrollPadding: '0px 16px',
-                '&::-webkit-scrollbar': {
-                    display: 'none',
-                },
-            }}
-        >
+        <Box position="relative">
             {isSmallScreen && (
-                <Box
-                    position="absolute"
-                    top="0"
-                    right="0"
-                    zIndex="1"
-                    display="flex"
-                    alignItems="center"
-                >
-                    <NavigateBeforeIcon
-                        onClick={() => handleScroll(-100)}
-                        style={{ cursor: 'pointer', color: '#000' }}
-                    />
-                    <NavigateNextIcon
-                        onClick={() => handleScroll(100)}
-                        style={{ cursor: 'pointer', color: '#000' }}
-                    />
+                <Box position={'absolute'} right={1} mt={'12px'}>
+                    <IconButton aria-label="scroll left" onClick={scrollLeft}>
+                        <ArrowCircleLeftOutlinedIcon />
+                    </IconButton>
+                    <IconButton aria-label="scroll right" sx={{ pl: 0 }} onClick={scrollRight}>
+                        <ArrowCircleRightOutlinedIcon />
+                    </IconButton>
                 </Box>
             )}
-            <Box display={'flex'} gap={1} p={{ md: 0, sm: 0, xs: 1 }}>
-                <Typography variant="h2" fontSize={16} fontWeight={500}>
-                    {title}
-                </Typography>
+            <Box
+                ref={chartRef}
+                boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
+                width={{ md: '100%', sm: 'calc(100vw - 268px)', xs: 'calc(100vw - 32px)' }}
+                sx={{
+                    background: 'white',
+                    p: { md: 3, sm: 2, xs: 1.5 },
+                    borderRadius: 3,
+                    overflowX: 'auto',
+                    scrollSnapType: 'x mandatory',
+                    scrollPadding: '0px 16px',
+                    '&::-webkit-scrollbar': {
+                        display: 'none',
+                    },
+                }}
+            >
+                <Box display={'flex'} gap={1} p={{ md: 0, sm: 0, xs: 1 }}>
+                    <Typography variant="h2" fontSize={16} fontWeight={500}>
+                        {title}
+                    </Typography>
+                </Box>
+                {isLoading ? (
+                    <Skeleton
+                        variant="rounded"
+                        sx={{ width: '100%', bgcolor: '#DADADA' }}
+                        height={310}
+                    />
+                ) : (
+                    <ApexChart
+                        type="bar"
+                        options={options}
+                        series={series}
+                        height={310}
+                        style={{ width: isSmallScreen ? '800px' : '100%' }}
+                    />
+                )}
             </Box>
-            {isLoading ? (
-                <Skeleton
-                    variant="rounded"
-                    sx={{ width: '100%', bgcolor: '#DADADA' }}
-                    height={310}
-                />
-            ) : (
-                <ApexChart
-                    type="bar"
-                    options={options}
-                    series={series}
-                    height={310}
-                    style={{ width: isSmallScreen ? '800px' : '100%' }}
-                    ref={chartRef}
-                />
-            )}
         </Box>
     )
 }

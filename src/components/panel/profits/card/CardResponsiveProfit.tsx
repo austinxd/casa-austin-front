@@ -64,9 +64,9 @@ export default function CardResponsiveProfit({
                     >
                         <LocalPhoneOutlinedIcon fontSize="small" />
                         <WhatsAppIcon fontSize="small" />
-                        <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
+                        {/*                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                             {tel_number}
-                        </Typography>
+                        </Typography> */}
                     </Box>
                 </Box>
                 <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.9 }}>

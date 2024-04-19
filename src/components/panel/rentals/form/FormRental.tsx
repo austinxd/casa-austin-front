@@ -90,6 +90,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         handlePhoneNumberChange,
         setPhoneNumber,
         checkInSelect,
+        checkPool,
+        checkFullPayment,
+        setCheckFullPayment,
+        setCheckPool,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -109,10 +113,11 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setCheckInSelect(dataEdit.check_in_date)
             setCheckOutSelect(dataEdit.check_out_date)
             setPhoneNumber(dataEdit.client.tel_number)
+            setCheckFullPayment(dataEdit.full_payment)
+            setCheckPool(dataEdit.temperature_pool)
         }
     }, [isEditLoading, dataEdit])
-    const [filterAirbnb, setFilterAirbnb] = useState('')
-    const [filterToday, setFilterToday] = useState('')
+
     const fileInputRef = useRef<any>(null)
 
     const optionsHouse =
@@ -189,13 +194,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }, [getNumber])
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
-
-    const onCheckAirbnb = () => {
-        setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
-    }
-    const onCheckToday = () => {
-        setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
-    }
 
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
@@ -717,14 +715,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                 <Grid item md={6} xs={6} display={'flex'} justifyContent={'start'}>
                                     <FormControlLabel
                                         sx={{ ml: 0.1 }}
-                                        onClick={onCheckAirbnb}
+                                        onClick={() => {
+                                            setCheckPool(!checkPool)
+                                        }}
                                         control={
                                             <Checkbox
                                                 icon={<RadioButtonUncheckedIcon fontSize="small" />}
                                                 checkedIcon={
                                                     <RadioButtonCheckedIcon fontSize="small" />
                                                 }
-                                                checked={filterAirbnb === 'air'}
+                                                checked={checkPool}
                                                 sx={{
                                                     mr: 0,
                                                     p: 0.5,
@@ -763,14 +763,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                 >
                                     <FormControlLabel
                                         sx={{ ml: 0.1 }}
-                                        onClick={onCheckToday}
+                                        onClick={() => {
+                                            setCheckFullPayment(!checkFullPayment)
+                                        }}
                                         control={
                                             <Checkbox
                                                 icon={<RadioButtonUncheckedIcon fontSize="small" />}
                                                 checkedIcon={
                                                     <RadioButtonCheckedIcon fontSize="small" />
                                                 }
-                                                checked={filterToday === 'today'}
+                                                checked={checkFullPayment}
                                                 sx={{
                                                     mr: 0,
                                                     p: 0.5,

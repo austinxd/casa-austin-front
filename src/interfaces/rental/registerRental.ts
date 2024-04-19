@@ -1,6 +1,8 @@
 export interface IRegisterRental {
     property: string
     client: string
+    full_payment: boolean
+    temperature_pool: boolean
     check_in_date: any
     check_out_date: any
     guests: number
@@ -26,6 +28,8 @@ export interface IRentalClient {
     advance_payment_currency: string
     check_in_date: any
     check_out_date: any
+    full_payment: boolean
+    temperature_pool: boolean
     guests: number
     id: string
     origin: string

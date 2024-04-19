@@ -9,14 +9,14 @@ interface Props {
 
 export default function ProtectAuth({ children, navigateTo }: Props) {
     const token = Cookies.get('token')
-
+    const roll = Cookies.get('rollTkn')
     if (token) {
-        return <Navigate to={navigateTo} />
+        if (roll === 'mantenimiento') {
+            return <Navigate to="/panel/disponibilidad" />
+        } else {
+            return <Navigate to={navigateTo} />
+        }
     }
 
-    return (
-        <div>
-            {token} {children}
-        </div>
-    )
+    return <div>{children}</div>
 }

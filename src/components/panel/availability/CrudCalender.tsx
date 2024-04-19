@@ -207,7 +207,7 @@ export default function CrudCalender() {
                 sx={{ boxShadow: 'none', backgroundColor: 'white', width: '100%' }}
             >
                 <Box display={'flex'} gap={2} my={{ md: 3, sm: 2, xs: 2 }}>
-                    {dataHouse?.properties_more_reserved.map((item) => (
+                    {dataHouse?.free_days_per_house.map((item) => (
                         <Box
                             key={item.property__background_color}
                             display={'flex'}
@@ -223,7 +223,7 @@ export default function CrudCalender() {
                                 }}
                             ></Box>
                             <Typography fontSize={15} fontWeight={400}>
-                                {item.property__name}
+                                {item.casa}
                             </Typography>
                         </Box>
                     ))}

@@ -30,6 +30,10 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
         checkTokenValidity()
     }, [token])
 
+    /*     if (token && roll === 'mantenimiento') {
+            return <Navigate to="/panel/disponibilidad/" />
+        } */
+
     if (!token) {
         return <Navigate to={navigateTo} />
     }

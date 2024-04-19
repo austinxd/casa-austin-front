@@ -4,34 +4,33 @@ import useBoxShadow from '../../../../hook/useBoxShadow'
 
 interface Props {
     icon: ReactNode
-    quantity: number
+    quantity: number | string
     title: string
     percent: string
     subTitle: string
     color: string
 }
 
-export default function Card({ color, icon, percent, quantity, subTitle, title }: Props) {
+export default function Card({ color, icon, quantity, title }: Props) {
     return (
         <Box
             sx={{
                 borderBottom: `3.5px solid ${color}`,
-
                 boxShadow: useBoxShadow(true),
                 borderRadius: '6px',
-                padding: '20px 24px',
+                padding: '16px 20px',
             }}
         >
             <Box display={'flex'}>
                 {icon}{' '}
-                <Typography color={'#444151'} fontSize={30} ml={'16px'}>
+                <Typography color={'#444151'} mt={0.4} fontSize={23} ml={'16px'}>
                     {quantity}
                 </Typography>
             </Box>
-            <Typography color={'#444151'} fontSize={15} fontWeight={300}>
+            <Typography color={'#444151'} fontSize={14} mt={1} fontWeight={300}>
                 {title}
             </Typography>
-            <Box display={'flex'} mt={'4px'}>
+            {/*             <Box display={'flex'} mt={'4px'}>
                 <Typography color={'#444151'} fontSize={15} fontWeight={400}>
                     {percent}
                 </Typography>
@@ -43,7 +42,7 @@ export default function Card({ color, icon, percent, quantity, subTitle, title }
                 >
                     {subTitle}
                 </Typography>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

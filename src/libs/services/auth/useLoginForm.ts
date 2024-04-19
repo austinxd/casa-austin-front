@@ -24,7 +24,7 @@ export const useLoginForm = () => {
         try {
             setIsLoading(true)
             const response = await login(data)
-
+            console.log(response, 'd')
             if (response.status === 200) {
                 const key = response?.data.access
                 const keyRefresh = response?.data.refresh

@@ -35,6 +35,9 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [checkInSelect, setCheckInSelect] = useState('')
     const [checkOutSelect, setCheckOutSelect] = useState('')
 
+    const [checkFullPayment, setCheckFullPayment] = useState(false)
+    const [checkPool, setCheckPool] = useState(false)
+
     const [phoneNumber, setPhoneNumber] = useState('')
 
     const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
@@ -101,6 +104,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('price_sol', data.price_sol)
             formData.append('advance_payment', data.advance_payment)
             formData.append('advance_payment_currency', data.advance_payment_currency)
+            formData.append('full_payment', checkFullPayment.toString())
+            formData.append('temperature_pool', checkPool.toString())
 
             if (imageSend.length > 0) {
                 imageSend.forEach((image: File) => {
@@ -164,5 +169,9 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         handlePhoneNumberChange,
         setPhoneNumber,
         checkInSelect,
+        setCheckFullPayment,
+        setCheckPool,
+        checkFullPayment,
+        checkPool,
     }
 }

@@ -6,15 +6,17 @@ import { useEffect, useState } from 'react'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
 import SelectInputPrimary from '../../common/input/SelectInputPrimary'
 import CardResponsiveProfit from './card/CardResponsiveProfit'
+import { useGetProfitsQuery } from '../../../libs/services/profits/profitsSlice'
 
 export default function CrudProfits() {
     const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize] = useState<number>(10)
-
+    const { data } = useGetProfitsQuery(' ')
     useEffect(() => {
         console.log(search, 'fff')
-    })
+        console.log(data, 'fff')
+    }, [data])
     const rows = [
         {
             id: 1,
