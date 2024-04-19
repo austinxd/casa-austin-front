@@ -26,7 +26,7 @@ const authSlice = createSlice({
         },
         setRoll: (state, { payload }) => {
             state.roll = payload.roll
-            Cookies.set('roll', payload.roll, { expires: 7 })
+            Cookies.set('rollTkn', payload.roll, { expires: 7 })
         },
         setTokenRefresh: (state, { payload }) => {
             state.token = payload.token

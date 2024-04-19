@@ -47,21 +47,22 @@ function BarCharts({ title, categories, colors, data, isLoading, title2, title3 
                     w: { globals: { series: any[] } }
                 }
             ) {
-                const value = series[0].data[val - 1]
+                /* const value = series[0].data[val - 1] */
                 return [
                     `Casa ${val}` +
-                        `<p style="margin-bottom: 16px; margin-left: 16px; margin-top: 4px;color: #444151; font-size: 16px; font-weight: 500">${value} %</p>`,
+                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">12 noches libres</p>`,
                 ]
             },
         },
         xaxis: {
+            tickAmount: 4,
             labels: {
                 style: {
                     colors: '#ACAAB1',
                 },
-                formatter: function (val: any) {
-                    return val + '%'
-                },
+                /*                 formatter: function (val: any) {
+                    return val
+                }, */
             },
             categories: categories,
         },

@@ -30,8 +30,13 @@ export const useLoginForm = () => {
                 const keyRefresh = response?.data.refresh
                 dispatch(setToken({ token: key }))
                 dispatch(setTokenRefresh({ token: keyRefresh }))
+                console.log(response, 'fffff')
                 dispatch(setRoll({ roll: response.data.groups[0] }))
-                navigate('/panel/inicio')
+                if (response.data.groups[0] === 'mantenimiento') {
+                    navigate('/panel/disponibilidad')
+                } else {
+                    navigate('/panel/inicio')
+                }
             }
         } catch (error: any) {
             if (error.response.request.status == 401) {

@@ -25,7 +25,7 @@ import useBoxShadow from '../hook/useBoxShadow'
 import { useDispatch } from 'react-redux'
 import { logout } from '../libs/services/auth/authSlice'
 import Cookies from 'js-cookie'
-const roll = Cookies.get('roll')
+
 const drawerWidth = 236
 const menuItems = [
     {
@@ -78,6 +78,11 @@ export default function Sidebar(props: Props) {
     const params = useLocation()
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [roll, setRoll] = useState(Cookies.get('rollTkn') || '')
+
+    useEffect(() => {
+        setRoll(Cookies.get('rollTkn') || '')
+    }, [params.pathname])
 
     useEffect(() => {
         setMobileOpen(false)
@@ -130,7 +135,7 @@ export default function Sidebar(props: Props) {
                         key={id}
                         sx={{
                             display:
-                                roll === 'mantenimiento' && text === 'Disponibilidad'
+                                roll === 'mantenimiento' && text != 'Disponibilidad'
                                     ? 'none'
                                     : 'flex',
                             px: 2,
@@ -188,7 +193,7 @@ export default function Sidebar(props: Props) {
                                 fontWeight: 400,
                             }}
                         >
-                            {text} - {roll ? roll : 'o'}
+                            {text}
                         </Typography>
                     </Box>
                 ))}
