@@ -43,7 +43,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
 
     const handlePhoneNumberChange = (value: string) => {
-        setValue('tel_number', value)
+        setValue('tel_contact_number', value)
         setPhoneNumber(value)
     }
 
@@ -102,11 +102,12 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('guests', data.guests)
             formData.append('price_usd', data.price_usd)
             formData.append('price_sol', data.price_sol)
-            formData.append('advance_payment', data.advance_payment)
+            formData.append('advance_payment', data.advance_payment ? data.advance_payment : '0')
             formData.append('advance_payment_currency', data.advance_payment_currency)
             formData.append('full_payment', checkFullPayment.toString())
             formData.append('temperature_pool', checkPool.toString())
-
+            formData.append('tel_contact_number', phoneNumber)
+            formData.append('origin', dataEdit?.id ? dataEdit.origin : 'aus')
             if (imageSend.length > 0) {
                 imageSend.forEach((image: File) => {
                     formData.append('file', image)
@@ -115,6 +116,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
             if (dataEdit?.id) {
                 formData.append('seller', dataEdit.seller.id)
+
                 if (idsDeleteImage.length > 0) {
                     idsDeleteImage.forEach(async (idDeleteImage) => {
                         await deleteRecipesForm(idDeleteImage.id)
@@ -139,6 +141,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                 refectchForCalender()
             }
         } catch (error: any) {
+            console.log(error, 'gggggggg')
             setErrorMessage(error.response.data)
             setOpenErrorModal(true)
         } finally {

@@ -7,7 +7,7 @@ interface Props {
     number_doc: string
     document_type: string
     check_in_date: string
-    price_sol: string
+    price_sol: number
 }
 
 export default function CardResponsiveProfit({
@@ -27,7 +27,7 @@ export default function CardResponsiveProfit({
             case 'pas':
                 return 'Pasaporte'
             default:
-                return id
+                return 'Documento'
         }
     }
     const handlePhoneClick = () => {
@@ -55,22 +55,25 @@ export default function CardResponsiveProfit({
                         <span style={{ opacity: 0.7 }}> Check-in:</span>{' '}
                         {check_in_date ? check_in_date : '-'}
                     </Typography>
-                    <Box
-                        display={'flex'}
-                        sx={{ cursor: 'pointer' }}
-                        onClick={handlePhoneClick}
-                        alignItems={'center'}
-                        gap={0.2}
-                    >
-                        <LocalPhoneOutlinedIcon fontSize="small" />
-                        <WhatsAppIcon fontSize="small" />
-                        {/*                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
+                    {tel_number && (
+                        <Box
+                            display={'flex'}
+                            sx={{ cursor: 'pointer' }}
+                            onClick={handlePhoneClick}
+                            alignItems={'center'}
+                            gap={0.2}
+                        >
+                            <LocalPhoneOutlinedIcon fontSize="small" />
+                            <WhatsAppIcon fontSize="small" />
+                            {/*                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                             {tel_number}
                         </Typography> */}
-                    </Box>
+                        </Box>
+                    )}
                 </Box>
                 <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.9 }}>
-                    <span style={{ opacity: 0.7 }}>{getTypeDocument(document_type)}</span>{' '}
+                    <span style={{ opacity: 0.7 }}>{getTypeDocument(document_type)}:</span>
+                    {'  '}
                     {number_doc}
                 </Typography>
             </Box>

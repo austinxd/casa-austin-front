@@ -6,142 +6,116 @@ import { useEffect, useState } from 'react'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
 import SelectInputPrimary from '../../common/input/SelectInputPrimary'
 import CardResponsiveProfit from './card/CardResponsiveProfit'
-import { useGetProfitsQuery } from '../../../libs/services/profits/profitsSlice'
+import {
+    useGetAllRentalsForEarningsQuery,
+    useGetEarningsPerMonthQuery,
+} from '../../../libs/services/rentals/rentalService'
+import { IRentalClient } from '../../../interfaces/rental/registerRental'
+import { useLocation } from 'react-router-dom'
 
+type MonthNameToNumber = {
+    [monthName: string]: number
+}
 export default function CrudProfits() {
+    const params = useLocation()
+    const currentYear = new Date().getFullYear()
+    const currentMonthNumber = new Date().getMonth() + 1
     const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize] = useState<number>(10)
-    const { data } = useGetProfitsQuery(' ')
+    const [month, setMonth] = useState<number>(currentMonthNumber)
+    const [monthSelect, setMonthSelect] = useState('')
+    const [meses, setMeses] = useState<string[]>()
+    const [ganancias, setGanancias] = useState<string[]>()
+    const [year, setYear] = useState<number>(currentYear)
+    const { data, isLoading, refetch } = useGetAllRentalsForEarningsQuery({
+        page: currentPage,
+        page_size: pageSize,
+        search: search,
+        month: month,
+        year: year,
+    })
+    const {
+        data: dataForChart,
+        isLoading: isLoadingChart,
+        refetch: refetchChart,
+    } = useGetEarningsPerMonthQuery({
+        year: year,
+    })
+    const formattedRows = data?.results.map((rental: IRentalClient) => ({
+        id: rental.id,
+        first_name: rental.origin === 'air' ? 'Airbnb' : rental.client.first_name,
+        number_doc: rental.client.number_doc ? rental.client.number_doc : '-',
+        type_home: rental.property.name,
+        check_in_date: rental.check_in_date,
+        type_reservation:
+            rental.origin === 'air'
+                ? 'Reserva Airbnb'
+                : rental.origin === 'man'
+                  ? 'Mantenimiento'
+                  : 'Reserva Local',
+        price_sol: rental.price_sol,
+        tel_number: rental.client.tel_number,
+        type_document: rental.client.type_document,
+    }))
     useEffect(() => {
-        console.log(search, 'fff')
-        console.log(data, 'fff')
-    }, [data])
-    const rows = [
-        {
-            id: 1,
-            first_name: 'John',
-            number_doc: '12345678',
-            type_home: 'Apartamento',
-            check_in_date: '2024-04-01',
-            price_sol: '470',
-            tel_number: '123456789',
-            type_document: 'dni',
-        },
-        {
-            id: 2,
-            first_name: 'Jane',
-            number_doc: '87654321',
-            type_home: 'Casa',
-            check_in_date: '2024-04-05',
-            price_sol: '540',
-            tel_number: '987654321',
-            type_document: 'dni',
-        },
-        {
-            id: 3,
-            first_name: 'Alice',
-            number_doc: '13579246',
-            type_home: 'Apartamento',
-            check_in_date: '2024-04-10',
-            price_sol: '580',
-            tel_number: '246813579',
-            type_document: 'dni',
-        },
-        {
-            id: 4,
-            first_name: 'Bob',
-            number_doc: '56789123',
-            type_home: 'Casa',
-            check_in_date: '2024-04-15',
-            price_sol: '690',
-            tel_number: '789123456',
-            type_document: 'dni',
-        },
-        {
-            id: 5,
-            first_name: 'Eve',
-            number_doc: '24681357',
-            type_home: 'Apartamento',
-            check_in_date: '2024-04-20',
-            price_sol: '1100',
-            tel_number: '357246813',
-            type_document: 'dni',
-        },
-        {
-            id: 6,
-            first_name: 'Michael',
-            number_doc: '98765432',
-            type_home: 'Casa',
-            check_in_date: '2024-04-25',
-            price_sol: '1200',
-            tel_number: '654321987',
-            type_document: 'dni',
-        },
-        {
-            id: 7,
-            first_name: 'Sarah',
-            number_doc: '31415926',
-            type_home: 'Apartamento',
-            check_in_date: '2024-04-30',
-            price_sol: '1380',
-            tel_number: '159265358',
-            type_document: 'dni',
-        },
-        {
-            id: 8,
-            first_name: 'David',
-            number_doc: '11111111',
-            type_home: 'Casa',
-            check_in_date: '2024-05-01',
-            price_sol: '0',
-            tel_number: '222222222',
-            type_document: 'dni',
-        },
-        {
-            id: 9,
-            first_name: 'Emily',
-            number_doc: '22222222',
-            type_home: 'Casa',
-            check_in_date: '2024-05-05',
-            price_sol: '0',
-            tel_number: '333333333',
-            type_document: 'dni',
-        },
-        {
-            id: 10,
-            first_name: 'James',
-            number_doc: '33333333',
-            type_home: 'Apartamento',
-            check_in_date: '2024-05-10',
-            price_sol: '0',
-            tel_number: '444444444',
-            type_document: 'dni',
-        },
-    ]
+        refetch()
+        refetchChart()
+    }, [params.pathname])
+
+    useEffect(() => {
+        const separateChartData = (data: any) => {
+            const months = Object.keys(data).map(
+                (monthName) => monthName.charAt(0).toUpperCase() + monthName.slice(1)
+            )
+            const values = Object.values(data).map(String)
+
+            return { months, values }
+        }
+        if (dataForChart) {
+            const { months, values } = separateChartData(dataForChart)
+            setGanancias(values)
+            setMeses(months)
+        }
+    }, [dataForChart])
+
+    const monthNameToNumber: MonthNameToNumber = {
+        Enero: 1,
+        Febrero: 2,
+        Marzo: 3,
+        Abril: 4,
+        Mayo: 5,
+        Junio: 6,
+        Julio: 7,
+        Agosto: 8,
+        Setiembre: 9,
+        Octubre: 10,
+        Noviembre: 11,
+        Diciembre: 12,
+    }
+    useEffect(() => {
+        if (monthSelect !== '') {
+            const selectedMonthNumber = monthNameToNumber[monthSelect]
+            setMonth(selectedMonthNumber)
+        }
+    }, [monthSelect])
+    const handleYearChange = (newYear: any) => {
+        setYear(newYear.target.value)
+    }
 
     const columns = [
         { field: 'first_name', headerName: 'NOMBRES', flex: 1, sortable: false },
+        { field: 'type_reservation', headerName: 'TIPO', flex: 1, sortable: false },
         { field: 'number_doc', headerName: 'DOCUMENTO', flex: 1, sortable: false },
         { field: 'type_home', headerName: 'CASA', flex: 1, sortable: false },
         { field: 'check_in_date', headerName: 'CHECK-IN', flex: 1, sortable: false },
         { field: 'price_sol', headerName: 'MONTO S/.', flex: 1, sortable: false },
-        /*         {
-            field: 'tel_number',
-            headerName: 'NÚMERO DE TELÉFONO',
-            flex: 1,
-            sortable: false,
-            valueGetter: (params: any) => {
-                const phoneNumber = params.value
-                if (phoneNumber) {
-                    const formattedPhoneNumber = `+${phoneNumber}`
-                    return formattedPhoneNumber
-                } else {
-                    return '-'
-                }
-            },
-        }, */
     ]
+
+    const options = []
+    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+        options.push({ value: i.toString(), label: i.toString() })
+    }
 
     return (
         <div>
@@ -152,32 +126,17 @@ export default function CrudProfits() {
                 <SelectInputPrimary
                     messageError=""
                     variant="outlined"
-                    options={[
-                        { value: '2024', label: '2024' },
-                        { value: '2023', label: '2023' },
-                        { value: '2022', label: '2022' },
-                        { value: '2021', label: '2021' },
-                    ]}
+                    options={options}
                     label={'Año'}
+                    onChange={handleYearChange}
+                    defaultValue={currentYear.toString()}
                 />
             </Box>
             <BarChartsVertical
-                categories={[
-                    'Enero',
-                    'Febrero',
-                    'Marzo',
-                    'Abril',
-                    'Mayo',
-                    'Junio',
-                    'Julio',
-                    'Agosto',
-                    'Setiembre',
-                    'Octubre',
-                    'Noviembre',
-                    'Diciembre',
-                ]}
-                data={[0, 0, 0, 470, 540, 580, 690, 1100, 1200, 1380, 0, 0]}
-                isLoading={false}
+                categories={meses}
+                setMonthSelect={setMonthSelect}
+                data={ganancias}
+                isLoading={isLoadingChart}
                 title="Ingresos del 2024"
             />
 
@@ -198,7 +157,11 @@ export default function CrudProfits() {
                     },
                 }}
             >
-                <TableAustin columns={columns} rows={rows} isLoading={false} />
+                <TableAustin
+                    columns={columns}
+                    rows={data?.results ? formattedRows : []}
+                    isLoading={isLoading}
+                />
                 <Box
                     sx={{
                         display: 'none',
@@ -210,7 +173,7 @@ export default function CrudProfits() {
                         },
                     }}
                 >
-                    {rows.map((item) => (
+                    {formattedRows?.map((item) => (
                         <CardResponsiveProfit
                             key={item.id}
                             check_in_date={item.check_in_date}
@@ -222,15 +185,17 @@ export default function CrudProfits() {
                         />
                     ))}
                 </Box>
-                <Box px={1}>
-                    <PaginationAustin
-                        pageSize={pageSize}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        totalPages={3}
-                        dataCount={1}
-                    />
-                </Box>
+                {data && (
+                    <Box px={1}>
+                        <PaginationAustin
+                            pageSize={pageSize}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            totalPages={data?.total_paginas}
+                            dataCount={data.count}
+                        />
+                    </Box>
+                )}
             </Box>
         </div>
     )

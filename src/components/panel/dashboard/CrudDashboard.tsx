@@ -11,9 +11,11 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
 import { useEffect, useState } from 'react'
 import { IBest_sellers } from '../../../interfaces/dashboard/dashboard'
+import { useLocation } from 'react-router-dom'
 
 export default function CrudDashboard() {
-    const { data, isLoading } = useGetDashboardQuery('')
+    const params = useLocation()
+    const { data, isLoading, refetch } = useGetDashboardQuery('')
     const [colorData, setColorData] = useState<string[]>([])
     const [freeDaysData, setFreeDaysData] = useState<number[]>([])
     const [sellsData, setSellsData] = useState<number[]>([])
@@ -62,8 +64,8 @@ export default function CrudDashboard() {
     }, [data])
 
     useEffect(() => {
-        console.log(data, 'ddddddd')
-    }, [data])
+        refetch()
+    }, [params.pathname])
     const [selectedOption, setSelectedOption] = useState<number>(1)
 
     const currentDate = new Date()
@@ -81,7 +83,7 @@ export default function CrudDashboard() {
                         percent="18%"
                         quantity={data?.free_days_total ? data?.free_days_total : ' '}
                         subTitle="than last week"
-                        title="Total de dias libres"
+                        title="Total de noches libres"
                     />
                 </div>
 
@@ -92,7 +94,7 @@ export default function CrudDashboard() {
                         percent="18%"
                         quantity={data?.ocuppied_days_total ? data?.ocuppied_days_total : ' '}
                         subTitle="than last week"
-                        title="Total de dias ocupados"
+                        title="Total de noches ocupados"
                     />
                 </div>
                 <div className={style.item}>
@@ -139,7 +141,7 @@ export default function CrudDashboard() {
                         boxShadow: useBoxShadow(true),
                     }}
                 >
-                    <Box display={'flex'} gap={1} px={3} pt={2}>
+                    <Box display={'flex'} gap={1} px={3} pt={3}>
                         <Typography
                             variant="h2"
                             fontSize={16}
@@ -219,7 +221,7 @@ export default function CrudDashboard() {
                     }}
                 >
                     <Typography variant="h2" p={3}>
-                        Ranking de{' '}
+                        Ranking de
                         <span style={{ textTransform: 'capitalize' }}>{currentMonth}</span>
                     </Typography>
                     <Divider />
@@ -277,6 +279,7 @@ export default function CrudDashboard() {
                                                 src={item.foto_perfil}
                                                 width={34}
                                                 height={34}
+                                                style={{ objectFit: 'cover', borderRadius: '4px' }}
                                                 alt={' '}
                                             />
                                         ) : (
@@ -285,14 +288,14 @@ export default function CrudDashboard() {
                                     </Box>
                                     <Box display={'flex'} flexDirection={'column'} ml={1}>
                                         <Typography variant="h2" fontSize={15}>
-                                            {item.nombre}
+                                            {item.nombre ? item.nombre : ' '}
                                         </Typography>
                                         <Typography
                                             variant="h2"
                                             fontSize={13}
                                             sx={{ opacity: 0.7 }}
                                         >
-                                            {item.apellido}
+                                            {item.apellido ? item.apellido : ' '}
                                         </Typography>
                                     </Box>
                                 </Box>

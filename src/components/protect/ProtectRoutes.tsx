@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { tokenValidate } from '../../libs/services/auth/auth'
 interface Props {
@@ -9,9 +9,9 @@ interface Props {
 
 export default function ProtectRoutes({ children, navigateTo }: Props) {
     const token = Cookies.get('token')
-
+    const params = useLocation()
     const tokenRefresh = Cookies.get('tokenRefresh')
-
+    const roll = Cookies.get('rollTkn')
     useEffect(() => {
         const checkTokenValidity = async () => {
             if (tokenRefresh && token) {
@@ -28,12 +28,11 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
         }
 
         checkTokenValidity()
-    }, [token])
+    }, [token, params.pathname])
 
-    /*     if (token && roll === 'mantenimiento') {
-            return <Navigate to="/panel/disponibilidad/" />
-        } */
-
+    if (token && roll === 'mantenimiento' && params.pathname != '/panel/disponibilidad') {
+        return <Navigate to={navigateTo} />
+    }
     if (!token) {
         return <Navigate to={navigateTo} />
     }

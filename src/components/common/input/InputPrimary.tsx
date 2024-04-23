@@ -13,25 +13,23 @@ const CssTextField = styled(TextField)({
     },
     '& input': {
         borderRadius: '5px',
-        color: 'white',
+        color: 'white !important',
         fontSize: '14px',
         fontWeight: 500,
         backgroundColor: 'transparent',
-        '::-ms-reveal': {
-            display: 'none',
-        },
+        '::-ms-reveal': { color: 'white  !important', display: 'none' },
     },
     '& input:-webkit-autofill': {
         WebkitBoxShadow: '0 0 0px 1000px #0E6191 inset',
         boxShadow: '0 0 0px 1000px #0E6191 inset',
-        color: 'white',
+        color: 'white  !important',
         background: '#0E6191',
         fontWeight: 400,
     },
     '& input:-webkit-autofill:hover, input:-webkit-autofill:focus': {
         WebkitBoxShadow: '0 0 0px 1000px #0E6191 inset',
         boxShadow: '0 0 0px 1000px #0E6191 inset',
-        color: 'white',
+        color: 'white !important',
     },
 })
 

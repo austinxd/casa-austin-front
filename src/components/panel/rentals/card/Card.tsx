@@ -89,18 +89,40 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                             variant="subtitle1"
                             sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}
                         >
-                            <span style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}>
-                                {(
-                                    (item.client.first_name ? item.client.first_name + ' ' : '') +
-                                    (item.client.last_name ? item.client.last_name : 'Airbnb')
-                                ).slice(0, 15)}
-                                {(
-                                    (item.client.first_name ? item.client.first_name + ' ' : '') +
-                                    (item.client.last_name ? item.client.last_name : 'Airbnb')
-                                ).length > 15
-                                    ? '...'
-                                    : ''}
-                            </span>
+                            {item.origin === 'aus' && (
+                                <span
+                                    style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
+                                >
+                                    {(
+                                        (item.client.first_name
+                                            ? item.client.first_name + ' '
+                                            : '') +
+                                        (item.client.last_name ? item.client.last_name : ' ')
+                                    ).slice(0, 15)}
+                                    {(
+                                        (item.client.first_name
+                                            ? item.client.first_name + ' '
+                                            : '') +
+                                        (item.client.last_name ? item.client.last_name : ' ')
+                                    ).length > 15
+                                        ? '...'
+                                        : ''}
+                                </span>
+                            )}
+                            {item.origin === 'air' && (
+                                <span
+                                    style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
+                                >
+                                    Airbnb
+                                </span>
+                            )}
+                            {item.origin === 'man' && (
+                                <span
+                                    style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
+                                >
+                                    Mantenimiento
+                                </span>
+                            )}
                         </Typography>
                         <Box
                             display={'flex'}
@@ -123,25 +145,48 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                     height: '24px',
                                 }}
                             >
-                                {item.origin === 'air' ? (
+                                {item.origin === 'air' && (
                                     <>
-                                        <AirbnbIcon />{' '}
+                                        <AirbnbIcon />
                                         <span style={{ fontSize: '13px' }}> +{item.guests}</span>
                                     </>
-                                ) : (
+                                )}
+
+                                {item.origin === 'aus' && (
                                     <>
                                         <GroupOutlinedIcon
-                                            fontSize={'small'}
+                                            fontSize="small"
                                             sx={{ fontSize: '16px', padding: 0, margin: 0 }}
                                         />
-                                        <span style={{ fontSize: '13px', lineHeight: '1px' }}>
+                                        <span
+                                            style={{
+                                                fontSize: '13px',
+                                                lineHeight: '1px',
+                                            }}
+                                        >
+                                            +{item.guests}
+                                        </span>
+                                    </>
+                                )}
+                                {item.origin === 'man' && (
+                                    <>
+                                        <GroupOutlinedIcon
+                                            fontSize="small"
+                                            sx={{ fontSize: '16px', padding: 0, margin: 0 }}
+                                        />
+                                        <span
+                                            style={{
+                                                fontSize: '13px',
+                                                lineHeight: '1px',
+                                            }}
+                                        >
                                             +{item.guests}
                                         </span>
                                     </>
                                 )}
                             </Box>
 
-                            {item.guests && (
+                            {item.client.tel_number && (
                                 <IconButton
                                     sx={{
                                         padding: 0.5,

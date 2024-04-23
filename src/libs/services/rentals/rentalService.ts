@@ -2,7 +2,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ENV } from '../../constants/config'
 import { cookiesGetString } from '../../utils/cookie-storage'
 import { IPropertyRental, IRental, IRentalClient } from '../../../interfaces/rental/registerRental'
-
+type MonthNameToNumber = {
+    [monthName: string]: string
+}
 export const rentalApi = createApi({
     reducerPath: 'rentalApi',
     baseQuery: fetchBaseQuery({
@@ -41,6 +43,28 @@ export const rentalApi = createApi({
                 },
             }),
         }),
+        getAllRentalsForEarnings: builder.query<
+            IRental,
+            {
+                page?: number
+                page_size?: number | string
+                search: string
+                month: number
+                year: number
+            }
+        >({
+            query: ({ page = 1, page_size = 10, search = '', year = 2024, month = 1 }) => ({
+                url: '/reservations/',
+                method: 'GET',
+                params: {
+                    page: page.toString(),
+                    page_size: page_size.toString(),
+                    search: search,
+                    year: year,
+                    month: month,
+                },
+            }),
+        }),
 
         getRentalForFilter: builder.query<IRental, {}>({
             query: () => ({
@@ -60,13 +84,29 @@ export const rentalApi = createApi({
                 method: 'GET',
             }),
         }),
+        getEarningsPerMonth: builder.query<
+            MonthNameToNumber,
+            {
+                year: number
+            }
+        >({
+            query: ({ year = 2024 }) => ({
+                url: '/profit-resume/',
+                method: 'GET',
+                params: {
+                    year: year,
+                },
+            }),
+        }),
     }),
 })
 
 export const {
     useGetRentalsByIdQuery,
     useGetAllRentalsQuery,
+    useGetAllRentalsForEarningsQuery,
     useGetAllPropertiesQuery,
     useGetSearchRentalQuery,
     useGetRentalForFilterQuery,
+    useGetEarningsPerMonthQuery,
 } = rentalApi

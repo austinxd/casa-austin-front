@@ -107,12 +107,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('advance_payment_currency', dataEdit.advance_payment_currency)
             setValue('property', dataEdit.property.id)
             setValue('client', dataEdit.client.id)
-            setValue('tel_number', dataEdit.client.tel_number)
+            setValue('tel_contact_number', dataEdit.tel_contact_number)
             setImageReceived(dataEdit.recipts)
             setHouseSeletc(dataEdit.property.id)
             setCheckInSelect(dataEdit.check_in_date)
             setCheckOutSelect(dataEdit.check_out_date)
-            setPhoneNumber(dataEdit.client.tel_number)
+            setPhoneNumber(dataEdit.tel_contact_number)
             setCheckFullPayment(dataEdit.full_payment)
             setCheckPool(dataEdit.temperature_pool)
         }
@@ -263,7 +263,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     <Controller
                                         name="client"
                                         control={control}
-                                        rules={{ required: 'Elige un nombre' }}
+                                        rules={{
+                                            required:
+                                                dataEdit?.origin === 'air'
+                                                    ? false
+                                                    : 'Elije un nombre',
+                                        }}
                                         render={({ field }) => {
                                             const { onChange, value } = field
                                             return (
@@ -616,10 +621,13 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     sx={{ marginBottom: { md: '0px', xs: '20px' } }}
                                 >
                                     <PhoneInput
-                                        {...register('tel_number', {
-                                            required: 'El celular es obligatorios',
+                                        {...register('tel_contact_number', {
+                                            required:
+                                                dataEdit?.origin === 'air'
+                                                    ? false
+                                                    : 'El celular es obligatorios',
                                         })}
-                                        value={phoneNumber}
+                                        value={phoneNumber ? phoneNumber : '51'}
                                         specialLabel={phoneNumber ? 'Número telefónico' : ''}
                                         country={'pe'}
                                         buttonStyle={{
@@ -653,7 +661,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         textAlign={'start'}
                                         variant="subtitle2"
                                     >
-                                        {(errors.tel_number?.message ?? null) as string}
+                                        {(errors.tel_contact_number?.message ?? null) as string}
                                     </Typography>
                                 </Grid>
                                 <Grid item md={6} xs={6}>
@@ -703,14 +711,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     />
                                 </Grid>
                                 <Grid item md={6} xs={6}>
-                                    <SecondaryInput
-                                        {...register('advance_payment')}
-                                        type="text"
-                                        label={'Adelanto'}
-                                        messageError={
-                                            (errors.advance_payment?.message ?? null) as string
-                                        }
-                                    />
+                                    {!checkFullPayment && (
+                                        <SecondaryInput
+                                            {...register('advance_payment')}
+                                            type="text"
+                                            label={'Adelanto'}
+                                            messageError={
+                                                (errors.advance_payment?.message ?? null) as string
+                                            }
+                                        />
+                                    )}
                                 </Grid>
                                 <Grid item md={6} xs={6} display={'flex'} justifyContent={'start'}>
                                     <FormControlLabel

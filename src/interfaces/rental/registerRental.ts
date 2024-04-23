@@ -10,7 +10,7 @@ export interface IRegisterRental {
     price_sol: number
     advance_payment: number
     advance_payment_currency: string
-    tel_number: string
+    tel_contact_number: string
     file: File | File[]
 }
 
@@ -36,6 +36,7 @@ export interface IRentalClient {
     price_sol: number
     price_usd: number
     property: IProperty
+    tel_contact_number: string
     seller: ISeller
     client: ISeller
     recipts: IRecipts[] | []
@@ -50,6 +51,8 @@ export interface ISeller {
     id: string
     last_name: string
     tel_number: string
+    number_doc: string
+    type_document: string
 }
 export interface IPropertyRental {
     actual: number

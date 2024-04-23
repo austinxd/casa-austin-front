@@ -9,10 +9,11 @@ interface Props {
     title: string
     categories: any
     data: any
+    setMonthSelect: any
     isLoading: boolean
 }
 
-function BarChartsVertical({ title, categories, data, isLoading }: Props) {
+function BarChartsVertical({ title, categories, data, isLoading, setMonthSelect }: Props) {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
     const chartRef = useRef<any>()
@@ -33,7 +34,7 @@ function BarChartsVertical({ title, categories, data, isLoading }: Props) {
             },
             events: {
                 xAxisLabelClick: function (event: any) {
-                    console.log(event.target.innerHTML, 'clic')
+                    setMonthSelect(event.target.innerHTML)
                 },
             },
         },
@@ -136,8 +137,8 @@ function BarChartsVertical({ title, categories, data, isLoading }: Props) {
                 {isLoading ? (
                     <Skeleton
                         variant="rounded"
-                        sx={{ width: '100%', bgcolor: '#DADADA' }}
-                        height={310}
+                        sx={{ width: '100%', bgcolor: '#DADADA', marginTop: '16px' }}
+                        height={300}
                     />
                 ) : (
                     <ApexChart
