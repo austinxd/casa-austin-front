@@ -118,10 +118,10 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
                                 {dataRental.guests ? dataRental.guests : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.price_sol ? dataRental.price_sol : '-'}
+                                {dataRental.price_usd ? dataRental.price_usd : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
-                                {dataRental.price_usd ? dataRental.price_usd : '-'}
+                                {dataRental.price_sol ? dataRental.price_sol : '-'}
                             </Typography>
                             <Typography variant="body2" fontWeight={400}>
                                 {dataRental.advance_payment ? dataRental.advance_payment : '-'}
