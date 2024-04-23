@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined'
 interface Props {
-    first_name: string
+    first_name: any
     tel_number: string
     number_doc: string
     document_type: string

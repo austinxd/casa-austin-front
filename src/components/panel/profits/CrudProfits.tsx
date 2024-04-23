@@ -28,12 +28,17 @@ export default function CrudProfits() {
     const [meses, setMeses] = useState<string[]>()
     const [ganancias, setGanancias] = useState<string[]>()
     const [year, setYear] = useState<number>(currentYear)
+    const [filterAirbnb, setFilterAirbnb] = useState('')
+    const [filterAus, setFilterAus] = useState('')
+    const [earningsMonth, setEarningsMonth] = useState('')
     const { data, isLoading, refetch } = useGetAllRentalsForEarningsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
         month: month,
         year: year,
+        type: filterAirbnb ? filterAirbnb : filterAus,
+        exclude: 'man',
     })
     const {
         data: dataForChart,
@@ -42,9 +47,32 @@ export default function CrudProfits() {
     } = useGetEarningsPerMonthQuery({
         year: year,
     })
+
+    useEffect(() => {
+        const currentDate = new Date()
+        const currentMonth = currentDate.toLocaleString('es', { month: 'long' })
+
+        const getEarningsForSelectedMonth = (selectedMonth: string) => {
+            if (dataForChart) {
+                if (selectedMonth === '') {
+                    setEarningsMonth(dataForChart[currentMonth.toLocaleLowerCase()])
+                } else {
+                    setEarningsMonth(dataForChart[selectedMonth.toLocaleLowerCase()])
+                }
+            }
+        }
+
+        getEarningsForSelectedMonth(monthSelect)
+    }, [monthSelect, dataForChart])
+
     const formattedRows = data?.results.map((rental: IRentalClient) => ({
         id: rental.id,
-        first_name: rental.origin === 'air' ? 'Airbnb' : rental.client.first_name,
+        first_name:
+            rental.origin === 'air'
+                ? rental.client.first_name != ''
+                    ? rental.client.first_name
+                    : 'Airbnb'
+                : rental.client.first_name,
         number_doc: rental.client.number_doc ? rental.client.number_doc : '-',
         type_home: rental.property.name,
         check_in_date: rental.check_in_date,
@@ -57,6 +85,7 @@ export default function CrudProfits() {
         price_sol: rental.price_sol,
         tel_number: rental.client.tel_number,
         type_document: rental.client.type_document,
+        origin: rental.origin,
     }))
     useEffect(() => {
         refetch()
@@ -102,9 +131,56 @@ export default function CrudProfits() {
     const handleYearChange = (newYear: any) => {
         setYear(newYear.target.value)
     }
-
+    const currentDate = new Date()
+    const currentMonth = currentDate.toLocaleString('es', { month: 'long' })
     const columns = [
-        { field: 'first_name', headerName: 'NOMBRES', flex: 1, sortable: false },
+        {
+            field: 'first_name',
+            headerName: 'NOMBRES',
+            flex: 1,
+            sortable: false,
+            renderCell: (params: any) => {
+                return (
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'start',
+                            padding: '0px 8px',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {' '}
+                        {params.row.origin === 'air' ? (
+                            <img
+                                src="../airbnb.png"
+                                height={20}
+                                style={{ borderRadius: '4px', marginRight: '4px' }}
+                                width={20}
+                            />
+                        ) : (
+                            <Box
+                                sx={{
+                                    borderRadius: '4px',
+                                    marginRight: '4px',
+                                    paddingTop: '2px',
+                                    border: '1px solid #C6C6C6',
+                                }}
+                                height={20}
+                                display={'flex'}
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                                width={20}
+                                boxShadow="4px 4px 20px rgba(0, 0, 0, 0.3)"
+                            >
+                                {params.row.type_home.replace(/\D/g, '')}
+                            </Box>
+                        )}
+                        {params.row.first_name}
+                    </div>
+                )
+            },
+        },
         { field: 'type_reservation', headerName: 'TIPO', flex: 1, sortable: false },
         { field: 'number_doc', headerName: 'DOCUMENTO', flex: 1, sortable: false },
         { field: 'type_home', headerName: 'CASA', flex: 1, sortable: false },
@@ -137,10 +213,17 @@ export default function CrudProfits() {
                 setMonthSelect={setMonthSelect}
                 data={ganancias}
                 isLoading={isLoadingChart}
-                title="Ingresos del 2024"
+                title={`El mes de ${monthSelect ? monthSelect.charAt(0).toUpperCase() + monthSelect.slice(1) : currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} ganaste S/. ${earningsMonth}`}
             />
 
-            <SearchProfits setCurrentPage={setCurrentPage} setSearch={setSearch} />
+            <SearchProfits
+                setFilterAirbnb={setFilterAirbnb}
+                setFilterAus={setFilterAus}
+                filterAirbnb={filterAirbnb}
+                filterAus={filterAus}
+                setCurrentPage={setCurrentPage}
+                setSearch={setSearch}
+            />
             <Box
                 sx={{
                     pb: 1.5,

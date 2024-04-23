@@ -51,9 +51,19 @@ export const rentalApi = createApi({
                 search: string
                 month: number
                 year: number
+                type: string
+                exclude: string
             }
         >({
-            query: ({ page = 1, page_size = 10, search = '', year = 2024, month = 1 }) => ({
+            query: ({
+                page = 1,
+                page_size = 10,
+                search = '',
+                year = 2024,
+                month = 1,
+                type = '',
+                exclude = 'man',
+            }) => ({
                 url: '/reservations/',
                 method: 'GET',
                 params: {
@@ -62,6 +72,8 @@ export const rentalApi = createApi({
                     search: search,
                     year: year,
                     month: month,
+                    type: type,
+                    exclude: exclude,
                 },
             }),
         }),

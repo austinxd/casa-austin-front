@@ -23,11 +23,11 @@ export default function Card({ color, icon, quantity, title }: Props) {
         >
             <Box display={'flex'}>
                 {icon}{' '}
-                <Typography color={'#444151'} mt={0.4} fontSize={23} ml={'16px'}>
+                <Typography color={'#444151'} mt={0.4} fontSize={{ md: 23, xs: 14 }} ml={'16px'}>
                     {quantity}
                 </Typography>
             </Box>
-            <Typography color={'#444151'} fontSize={14} mt={1} fontWeight={300}>
+            <Typography color={'#444151'} fontSize={{ md: 14, xs: 10 }} mt={1} fontWeight={300}>
                 {title}
             </Typography>
             {/*             <Box display={'flex'} mt={'4px'}>

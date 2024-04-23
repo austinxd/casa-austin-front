@@ -1,13 +1,26 @@
-import { Box, TextField } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
 import { useDebounce } from '../../../common/useDebounce'
 import { useEffect, useState } from 'react'
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 
 interface Props {
     setSearch: any
     setCurrentPage: any
+    filterAirbnb: string
+    filterAus: string
+    setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>
+    setFilterAus: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function SearchProfits({ setSearch, setCurrentPage }: Props) {
+export default function SearchProfits({
+    setSearch,
+    setCurrentPage,
+    setFilterAus,
+    filterAirbnb,
+    filterAus,
+    setFilterAirbnb,
+}: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 450)
 
@@ -18,6 +31,13 @@ export default function SearchProfits({ setSearch, setCurrentPage }: Props) {
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputText(event.target.value)
+    }
+
+    const onCheckAirbnb = () => {
+        setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
+    }
+    const onCheckAus = () => {
+        setFilterAus((prevState) => (prevState === '' ? 'aus' : ''))
     }
     return (
         <>
@@ -94,6 +114,86 @@ export default function SearchProfits({ setSearch, setCurrentPage }: Props) {
                         type="text"
                         placeholder="Buscar"
                     />
+                </Box>
+
+                <Box
+                    gap={{ md: 1, sm: 0.5, xs: 0.3 }}
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    sx={{
+                        '@media (max-width: 1000px)': {
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            pl: 1,
+                        },
+                    }}
+                >
+                    <Box>
+                        <FormControlLabel
+                            onClick={onCheckAirbnb}
+                            control={
+                                <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                    checked={filterAirbnb === 'air'}
+                                    sx={{
+                                        mr: 0,
+                                        p: 0.5,
+                                        color: '#EB4C60',
+                                        '&.Mui-checked': {
+                                            color: '#EB4C60',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    Airbnb
+                                </Typography>
+                            }
+                        />
+                        <FormControlLabel
+                            onClick={onCheckAus}
+                            control={
+                                <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                    checked={filterAus === 'aus'}
+                                    sx={{
+                                        mr: 0,
+                                        p: 0.5,
+                                        color: '#0E6191',
+                                        '&.Mui-checked': {
+                                            color: '#0E6191',
+                                        },
+                                        '&.MuiFormControlLabel-label': {
+                                            color: '#0E6191',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    Casa Austin
+                                </Typography>
+                            }
+                        />
+                    </Box>
                 </Box>
             </Box>
         </>

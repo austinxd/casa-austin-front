@@ -113,7 +113,20 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 <span
                                     style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
                                 >
-                                    Airbnb
+                                    {(
+                                        (item.client.first_name
+                                            ? item.client.first_name + ' '
+                                            : 'Airbnb') +
+                                        (item.client.last_name ? item.client.last_name : ' ')
+                                    ).slice(0, 15)}
+                                    {(
+                                        (item.client.first_name
+                                            ? item.client.first_name + ' '
+                                            : 'Airbnb') +
+                                        (item.client.last_name ? item.client.last_name : ' ')
+                                    ).length > 15
+                                        ? '...'
+                                        : ''}
                                 </span>
                             )}
                             {item.origin === 'man' && (
@@ -225,7 +238,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 fontWeight: 400,
                             }}
                         >
-                            $ {item.origin === 'air' ? ' -' : item.price_usd}
+                            $ {item.price_usd}
                         </Typography>
                         <Typography
                             fontSize={13}
@@ -238,7 +251,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 fontWeight: 400,
                             }}
                         >
-                            S./ {item.origin === 'air' ? ' -' : item.price_sol}
+                            S./ {item.price_usd}
                         </Typography>
                     </Box>
                 </Box>
