@@ -107,7 +107,10 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('full_payment', checkFullPayment.toString())
             formData.append('temperature_pool', checkPool.toString())
             formData.append('tel_contact_number', phoneNumber)
-            formData.append('origin', dataEdit?.id ? dataEdit.origin : 'aus')
+            formData.append(
+                'origin',
+                dataEdit?.origin === 'man' ? 'man' : dataEdit?.origin === 'air' ? 'air' : 'aus'
+            )
             if (imageSend.length > 0) {
                 imageSend.forEach((image: File) => {
                     formData.append('file', image)
