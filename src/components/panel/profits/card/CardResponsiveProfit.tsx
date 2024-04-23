@@ -73,7 +73,6 @@ export default function CardResponsiveProfit({
                 </Box>
                 <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.9 }}>
                     <span style={{ opacity: 0.7 }}>{getTypeDocument(document_type)}:</span>
-                    {'  '}
                     {number_doc}
                 </Typography>
             </Box>

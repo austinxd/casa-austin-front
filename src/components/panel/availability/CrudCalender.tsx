@@ -12,11 +12,18 @@ const generarEventos = (data: IRental): IEventoCalendario[] => {
     if (!data || !data.results) return []
     return data.results.map((rental) => ({
         title:
-            rental.origin === 'aus' ? `${rental.client.first_name} + ${rental.guests}` : 'Airbnb',
+            rental.origin === 'aus'
+                ? `${rental.client.first_name} + ${rental.guests}`
+                : rental.origin === 'air'
+                  ? 'Airbnb'
+                  : 'Mantenimiento',
         start: rental.check_in_date,
         end: rental.check_out_date,
-        color: rental.property.background_color,
-        image: rental.origin === 'aus' ? rental.property.name : '/airbnb.png',
+        color: rental.origin === 'man' ? '#888888' : rental.property.background_color,
+        image:
+            rental.origin === 'aus' || rental.origin === 'man'
+                ? rental.property.name
+                : '/airbnb.png',
         type: rental.origin,
     }))
 }
@@ -62,11 +69,13 @@ export default function CrudCalender() {
                             height: { md: '12px', sm: '6px', xs: '6px' },
                         }}
                     >
-                        {eventInfo.event.extendedProps.type === 'aus' ? (
+                        {eventInfo.event.extendedProps.type === 'aus' ||
+                        eventInfo.event.extendedProps.type === 'man' ? (
                             <Box
                                 sx={{
                                     height: { md: '16px', sm: '6px', xs: '6px' },
                                     width: { md: '16px', sm: '6px', xs: '6px' },
+                                    paddingTop: '2px',
                                     background: 'white',
                                     fontWeight: 600,
                                     color: '#0E6191',

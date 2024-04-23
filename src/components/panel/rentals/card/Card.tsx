@@ -251,7 +251,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                 fontWeight: 400,
                             }}
                         >
-                            S./ {item.price_usd}
+                            S./ {item.price_sol}
                         </Typography>
                     </Box>
                 </Box>
