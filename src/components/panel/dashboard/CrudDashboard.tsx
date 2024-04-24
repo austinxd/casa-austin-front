@@ -12,6 +12,7 @@ import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboard
 import { useEffect, useState } from 'react'
 import { IBest_sellers } from '../../../interfaces/dashboard/dashboard'
 import { useLocation } from 'react-router-dom'
+import Cookies from 'js-cookie'
 
 export default function CrudDashboard() {
     const params = useLocation()
@@ -22,8 +23,10 @@ export default function CrudDashboard() {
     const [nigthsBusyData, setNigthsBusyData] = useState<number[]>([])
     const [categoryData, setCategoryData] = useState<string[]>([])
     const [sellerOrder, setSellerOrder] = useState<IBest_sellers[]>([])
-
+    const [roll, setRoll] = useState(Cookies.get('rollTkn') || '')
+    const [idSeller, setIdSeller] = useState(Cookies.get('idSellerAus') || '')
     useEffect(() => {
+        console.log(data, 'ddddddddddddd')
         if (data) {
             const fullChartt = () => {
                 const sortedData = [...data.free_days_per_house].sort((a, b) => {
@@ -65,6 +68,8 @@ export default function CrudDashboard() {
 
     useEffect(() => {
         refetch()
+        setRoll(Cookies.get('rollTkn') || '')
+        setIdSeller(Cookies.get('idSellerAus') || '')
     }, [params.pathname])
     const [selectedOption, setSelectedOption] = useState<number>(1)
 
@@ -260,7 +265,7 @@ export default function CrudDashboard() {
                                 justifyContent={'space-between'}
                                 alignItems={'center'}
                                 px={3}
-                                py={2}
+                                py={1.5}
                             >
                                 <Box display={'flex'} justifyContent={'center'}>
                                     <Box
@@ -306,7 +311,23 @@ export default function CrudDashboard() {
                                     mr={3}
                                     fontWeight={500}
                                 >
-                                    s/. {item.ventas_soles}
+                                    {roll === 'vendedor' ? (
+                                        item.id === 8 ? (
+                                            <>s/. {item.ventas_soles}</>
+                                        ) : (
+                                            <>
+                                                {+idSeller === +item.id ? (
+                                                    <> s/. {item.ventas_soles}</>
+                                                ) : (
+                                                    <Typography sx={{ filter: 'blur(3px)' }}>
+                                                        s/Dinero
+                                                    </Typography>
+                                                )}
+                                            </>
+                                        )
+                                    ) : (
+                                        <>s/. {item.ventas_soles}</>
+                                    )}
                                 </Typography>
                             </Box>
                         ))

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setRoll, setToken, setTokenRefresh } from './authSlice'
+import { setRoll, setToken, setTokenRefresh, setIdSell } from './authSlice'
 import { ILogin } from '../../../interfaces/auth/loginCredentials'
 import { login } from './auth'
 
@@ -24,13 +24,15 @@ export const useLoginForm = () => {
         try {
             setIsLoading(true)
             const response = await login(data)
-            console.log(response, 'd')
             if (response.status === 200) {
                 const key = response?.data.access
                 const keyRefresh = response?.data.refresh
+                const idSell = response?.data.id
+                console.log(response, 'ddddds')
+                console.log(idSell, 'ddddds')
                 dispatch(setToken({ token: key }))
-                dispatch(setTokenRefresh({ token: keyRefresh }))
-                console.log(response, 'fffff')
+                dispatch(setTokenRefresh({ keyRefresh: keyRefresh }))
+                dispatch(setIdSell({ idSeller: idSell }))
                 dispatch(setRoll({ roll: response.data.groups[0] }))
                 if (response.data.groups[0] === 'mantenimiento') {
                     navigate('/panel/disponibilidad')

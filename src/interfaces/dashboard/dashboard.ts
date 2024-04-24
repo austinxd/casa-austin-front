@@ -16,6 +16,7 @@ export interface IFreeDays {
 }
 
 export interface IBest_sellers {
+    id: number
     nombre: number
     apellido: number
     ventas_soles: string
