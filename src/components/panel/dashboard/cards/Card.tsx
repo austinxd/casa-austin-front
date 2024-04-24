@@ -19,30 +19,53 @@ export default function Card({ color, icon, quantity, title }: Props) {
                 boxShadow: useBoxShadow(true),
                 borderRadius: '6px',
                 padding: '16px 20px',
+                '@media screen and (max-width: 1240px)': {
+                    padding: '12px 12px',
+                },
+                '@media screen and (max-width: 910px)': {
+                    padding: '8px',
+                },
             }}
         >
             <Box display={'flex'}>
                 {icon}{' '}
-                <Typography color={'#444151'} mt={0.4} fontSize={{ md: 23, xs: 14 }} ml={'16px'}>
+                <Typography
+                    color={'#444151'}
+                    display={'flex'}
+                    justifyContent={'start'}
+                    alignItems={'center'}
+                    ml={'16px'}
+                    sx={{
+                        fontSize: 23,
+                        '@media screen and (max-width: 1240px)': {
+                            fontSize: 19,
+                            marginLeft: '12px',
+                        },
+                        '@media screen and (max-width: 910px)': {
+                            fontSize: 16,
+                            marginLeft: '4px',
+                        },
+                    }}
+                >
                     {quantity}
                 </Typography>
             </Box>
-            <Typography color={'#444151'} fontSize={{ md: 14, xs: 10 }} mt={1} fontWeight={300}>
+            <Typography
+                color={'#444151'}
+                sx={{
+                    fontSize: 14,
+                    '@media screen and (max-width: 1240px)': {
+                        fontSize: 12,
+                    },
+                    '@media screen and (max-width: 910px)': {
+                        fontSize: 11,
+                    },
+                }}
+                mt={1.3}
+                fontWeight={300}
+            >
                 {title}
             </Typography>
-            {/*             <Box display={'flex'} mt={'4px'}>
-                <Typography color={'#444151'} fontSize={15} fontWeight={400}>
-                    {percent}
-                </Typography>
-                <Typography
-                    color={'#444151'}
-                    fontSize={12}
-                    sx={{ opacity: '0.7', ml: 1 }}
-                    fontWeight={300}
-                >
-                    {subTitle}
-                </Typography>
-            </Box> */}
         </Box>
     )
 }

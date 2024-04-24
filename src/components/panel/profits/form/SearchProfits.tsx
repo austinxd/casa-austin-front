@@ -124,7 +124,7 @@ export default function SearchProfits({
                     sx={{
                         '@media (max-width: 1000px)': {
                             width: '100%',
-                            justifyContent: 'space-between',
+                            justifyContent: 'end',
                             pl: 1,
                         },
                     }}
@@ -161,6 +161,11 @@ export default function SearchProfits({
                             }
                         />
                         <FormControlLabel
+                            sx={{
+                                '@media (max-width: 1000px)': {
+                                    mr: 0.4,
+                                },
+                            }}
                             onClick={onCheckAus}
                             control={
                                 <Checkbox

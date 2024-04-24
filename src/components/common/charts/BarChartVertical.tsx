@@ -11,9 +11,18 @@ interface Props {
     data: any
     setMonthSelect: any
     isLoading: boolean
+    earningsMonth: string
+    month: string
 }
 
-function BarChartsVertical({ title, categories, data, isLoading, setMonthSelect }: Props) {
+function BarChartsVertical({
+    earningsMonth,
+    month,
+    categories,
+    data,
+    isLoading,
+    setMonthSelect,
+}: Props) {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
     const chartRef = useRef<any>()
@@ -104,12 +113,12 @@ function BarChartsVertical({ title, categories, data, isLoading, setMonthSelect 
     return (
         <Box position="relative">
             {isSmallScreen && (
-                <Box position={'absolute'} right={1} mt={'12px'}>
+                <Box position={'absolute'} right={2} mt={'16px'}>
                     <IconButton aria-label="scroll left" onClick={scrollLeft}>
-                        <ArrowCircleLeftOutlinedIcon />
+                        <ArrowCircleLeftOutlinedIcon sx={{ fontSize: '28px' }} />
                     </IconButton>
                     <IconButton aria-label="scroll right" sx={{ pl: 0 }} onClick={scrollRight}>
-                        <ArrowCircleRightOutlinedIcon />
+                        <ArrowCircleRightOutlinedIcon sx={{ fontSize: '28px' }} />
                     </IconButton>
                 </Box>
             )}
@@ -130,8 +139,22 @@ function BarChartsVertical({ title, categories, data, isLoading, setMonthSelect 
                 }}
             >
                 <Box display={'flex'} gap={1} p={{ md: 0, sm: 0, xs: 1 }}>
-                    <Typography variant="h2" fontSize={16} fontWeight={500}>
-                        {title}
+                    <Typography
+                        variant="h2"
+                        fontSize={16}
+                        fontWeight={500}
+                        maxWidth={{ md: '100%', xs: '140px' }}
+                    >
+                        En {month} ganaste{' '}
+                        <span
+                            style={{
+                                fontSize: isSmallScreen ? '20px' : '16px',
+                                color: '#FF5733',
+                                fontWeight: 700,
+                            }}
+                        >
+                            S/. {earningsMonth}
+                        </span>
                     </Typography>
                 </Box>
                 {isLoading ? (
@@ -146,7 +169,7 @@ function BarChartsVertical({ title, categories, data, isLoading, setMonthSelect 
                         options={options}
                         series={series}
                         height={310}
-                        style={{ width: isSmallScreen ? '800px' : '100%' }}
+                        style={{ width: isSmallScreen ? '900px' : '100%' }}
                     />
                 )}
             </Box>

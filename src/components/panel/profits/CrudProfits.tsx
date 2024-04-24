@@ -65,7 +65,11 @@ export default function CrudProfits() {
 
         getEarningsForSelectedMonth(monthSelect)
     }, [monthSelect, dataForChart])
-
+    const reformDate = (dateString: string) => {
+        const parts = dateString.split('-')
+        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`
+        return formattedDate
+    }
     const formattedRows = data?.results.map((rental: IRentalClient) => ({
         id: rental.id,
         first_name:
@@ -82,7 +86,7 @@ export default function CrudProfits() {
                 : rental.client.last_name,
         number_doc: rental.client.number_doc ? rental.client.number_doc : '-',
         type_home: rental.property.name,
-        check_in_date: rental.check_in_date,
+        check_in_date: reformDate(rental.check_in_date),
         type_reservation:
             rental.origin === 'air'
                 ? 'Reserva Airbnb'
@@ -140,6 +144,7 @@ export default function CrudProfits() {
     }
     const currentDate = new Date()
     const currentMonth = currentDate.toLocaleString('es', { month: 'long' })
+
     const columns = [
         {
             field: 'last_name',
@@ -279,6 +284,12 @@ export default function CrudProfits() {
                 setMonthSelect={setMonthSelect}
                 data={ganancias}
                 isLoading={isLoadingChart}
+                month={
+                    monthSelect
+                        ? monthSelect.charAt(0).toUpperCase() + monthSelect.slice(1)
+                        : currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)
+                }
+                earningsMonth={earningsMonth}
                 title={`El mes de ${monthSelect ? monthSelect.charAt(0).toUpperCase() + monthSelect.slice(1) : currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} ganaste S/. ${earningsMonth}`}
             />
 
@@ -331,6 +342,8 @@ export default function CrudProfits() {
                             price_sol={item.price_sol}
                             tel_number={item.tel_number}
                             first_name={item.first_name}
+                            origin={item.origin}
+                            type_home={item.type_home}
                         />
                     ))}
                 </Box>
