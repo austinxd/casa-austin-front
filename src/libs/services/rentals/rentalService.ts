@@ -53,6 +53,7 @@ export const rentalApi = createApi({
                 year: number
                 type: string
                 exclude: string
+                from_check_in: boolean
             }
         >({
             query: ({
@@ -63,6 +64,7 @@ export const rentalApi = createApi({
                 month = 1,
                 type = '',
                 exclude = 'man',
+                from_check_in = true,
             }) => ({
                 url: '/reservations/',
                 method: 'GET',
@@ -74,6 +76,7 @@ export const rentalApi = createApi({
                     month: month,
                     type: type,
                     exclude: exclude,
+                    from_check_in: from_check_in,
                 },
             }),
         }),

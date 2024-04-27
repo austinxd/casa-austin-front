@@ -25,7 +25,6 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
             },
             '.fc-daygrid-day-events': {
                 marginBottom: '10px',
-                /*                 display: 'flex', */
             },
             '.fc-col-header, .fc-daygrid-body, .fc-scrollgrid-sync-table, .fc-timegrid-body, .fc-timegrid-body table':
                 {

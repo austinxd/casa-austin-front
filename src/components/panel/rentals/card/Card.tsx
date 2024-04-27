@@ -253,6 +253,35 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                         >
                             S./ {item.price_sol}
                         </Typography>
+                        {item.full_payment ? (
+                            <Typography
+                                fontSize={13}
+                                sx={{
+                                    background: '#F2F2F2',
+                                    color: 'red',
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: '4px',
+                                    fontWeight: 400,
+                                }}
+                            >
+                                S./ 0
+                            </Typography>
+                        ) : (
+                            <Typography
+                                fontSize={13}
+                                sx={{
+                                    background: '#F2F2F2',
+                                    color: 'red',
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: '4px',
+                                    fontWeight: 400,
+                                }}
+                            >
+                                S./ {item.resta_pagar}
+                            </Typography>
+                        )}
                     </Box>
                 </Box>
                 <Box

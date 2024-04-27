@@ -26,7 +26,6 @@ export default function CrudDashboard() {
     const [roll, setRoll] = useState(Cookies.get('rollTkn') || '')
     const [idSeller, setIdSeller] = useState(Cookies.get('idSellerAus') || '')
     useEffect(() => {
-        console.log(data, 'ddddddddddddd')
         if (data) {
             const fullChartt = () => {
                 const sortedData = [...data.free_days_per_house].sort((a, b) => {

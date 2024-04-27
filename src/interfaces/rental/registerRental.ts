@@ -30,6 +30,7 @@ export interface IRentalClient {
     check_out_date: any
     full_payment: boolean
     temperature_pool: boolean
+    resta_pagar: string
     guests: number
     id: string
     origin: string

@@ -26,8 +26,8 @@ export default function CrudProfits() {
     const [pageSize] = useState<number>(10)
     const [month, setMonth] = useState<number>(currentMonthNumber)
     const [monthSelect, setMonthSelect] = useState('')
-    const [meses, setMeses] = useState<string[]>()
-    const [ganancias, setGanancias] = useState<string[]>()
+    const [meses, setMeses] = useState<string[]>(['1'])
+    const [ganancias, setGanancias] = useState<string[]>(['2'])
     const [year, setYear] = useState<number>(currentYear)
     const [filterAirbnb, setFilterAirbnb] = useState('')
     const [filterAus, setFilterAus] = useState('')
@@ -40,6 +40,7 @@ export default function CrudProfits() {
         year: year,
         type: filterAirbnb ? filterAirbnb : filterAus,
         exclude: 'man',
+        from_check_in: true,
     })
     const {
         data: dataForChart,

@@ -144,7 +144,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                 refectchForCalender()
             }
         } catch (error: any) {
-            console.log(error, 'gggggggg')
             setErrorMessage(error.response.data)
             setOpenErrorModal(true)
         } finally {

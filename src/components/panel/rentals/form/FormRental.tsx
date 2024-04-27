@@ -367,7 +367,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             <TextField
                                                                 {...params}
                                                                 onChange={(e) => {
-                                                                    console.log(e.target.value)
                                                                     setSearch(e.target.value)
                                                                 }}
                                                                 label="Buscar por nombre, apellido o documento"
