@@ -1,7 +1,7 @@
 import { Box, IconButton, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import ApexChart from 'react-apexcharts'
 import { useTheme } from '@mui/material/styles'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined'
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined'
 
@@ -26,13 +26,20 @@ function BarChartsVertical({
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
     const chartRef = useRef<any>()
-
+    useEffect(() => {
+        if (chartRef.current) {
+            const currentDate = new Date()
+            const currentMonth = currentDate.getMonth() // Obtiene el número del mes actual (0-11)
+            const initialScroll = 40 * currentMonth // Calcula el desplazamiento inicial
+            chartRef.current.scrollLeft += initialScroll // Aplica el desplazamiento inicial
+        }
+    }, [])
     const scrollLeft = () => {
-        chartRef.current.scrollLeft -= 50 // Ajusta la velocidad de desplazamiento según sea necesario
+        chartRef.current.scrollBy({ left: -50, behavior: 'smooth' })
     }
 
     const scrollRight = () => {
-        chartRef.current.scrollLeft += 50 // Ajusta la velocidad de desplazamiento según sea necesario
+        chartRef.current.scrollBy({ left: 50, behavior: 'smooth' })
     }
 
     const options: any = {
@@ -111,25 +118,53 @@ function BarChartsVertical({
     ]
 
     return (
-        <Box position="relative">
-            {isSmallScreen && (
-                <Box position={'absolute'} right={2} mt={'16px'}>
-                    <IconButton aria-label="scroll left" onClick={scrollLeft}>
-                        <ArrowCircleLeftOutlinedIcon sx={{ fontSize: '28px' }} />
-                    </IconButton>
-                    <IconButton aria-label="scroll right" sx={{ pl: 0 }} onClick={scrollRight}>
-                        <ArrowCircleRightOutlinedIcon sx={{ fontSize: '28px' }} />
-                    </IconButton>
-                </Box>
-            )}
+        <Box
+            position="relative"
+            boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
+            px={{ md: 2, sm: 1, xs: 1 }}
+            pt={{ md: 2, sm: 1, xs: 1 }}
+            sx={{ background: 'white', p: { md: 3, sm: 2, xs: 1.5 }, borderRadius: 3 }}
+            width={{ md: '100%', sm: 'calc(100vw - 268px)', xs: 'calc(100vw - 24px)' }}
+        >
+            <Box
+                p={{ md: 0, sm: 0, xs: 1 }}
+                position={'relative'}
+                display={'flex'}
+                justifyContent={'space-between'}
+                alignItems={'center'}
+            >
+                <Typography
+                    variant="h2"
+                    fontSize={16}
+                    fontWeight={500}
+                    maxWidth={{ md: '100%', xs: '140px' }}
+                >
+                    En {month} ganaste{' '}
+                    <span
+                        style={{
+                            fontSize: isSmallScreen ? '20px' : '16px',
+                            color: '#FF5733',
+                            fontWeight: 700,
+                        }}
+                    >
+                        S/. {earningsMonth}
+                    </span>
+                </Typography>
+                {isSmallScreen && (
+                    <Box position={'absolute'} right={2} mt={'16px'}>
+                        <IconButton aria-label="scroll left" onClick={scrollLeft}>
+                            <ArrowCircleLeftOutlinedIcon sx={{ fontSize: '28px' }} />
+                        </IconButton>
+                        <IconButton aria-label="scroll right" sx={{ pl: 0 }} onClick={scrollRight}>
+                            <ArrowCircleRightOutlinedIcon sx={{ fontSize: '28px' }} />
+                        </IconButton>
+                    </Box>
+                )}
+            </Box>
+
             <Box
                 ref={chartRef}
-                boxShadow="4px 4px 20px rgba(0, 0, 0, 0.1)"
-                width={{ md: '100%', sm: 'calc(100vw - 268px)', xs: 'calc(100vw - 32px)' }}
                 sx={{
-                    background: 'white',
-                    p: { md: 3, sm: 2, xs: 1.5 },
-                    borderRadius: 3,
                     overflowX: 'auto',
                     scrollSnapType: 'x mandatory',
                     scrollPadding: '0px 16px',
@@ -138,25 +173,6 @@ function BarChartsVertical({
                     },
                 }}
             >
-                <Box display={'flex'} gap={1} p={{ md: 0, sm: 0, xs: 1 }}>
-                    <Typography
-                        variant="h2"
-                        fontSize={16}
-                        fontWeight={500}
-                        maxWidth={{ md: '100%', xs: '140px' }}
-                    >
-                        En {month} ganaste{' '}
-                        <span
-                            style={{
-                                fontSize: isSmallScreen ? '20px' : '16px',
-                                color: '#FF5733',
-                                fontWeight: 700,
-                            }}
-                        >
-                            S/. {earningsMonth}
-                        </span>
-                    </Typography>
-                </Box>
                 {isLoading ? (
                     <Skeleton
                         variant="rounded"
