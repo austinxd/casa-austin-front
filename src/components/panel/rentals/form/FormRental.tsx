@@ -348,10 +348,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                     .includes(
                                                                         inputValue.toLowerCase()
                                                                     )
+                                                                const phoneMatches = option.phone
+                                                                    .toLowerCase()
+                                                                    .includes(
+                                                                        inputValue.toLowerCase()
+                                                                    )
                                                                 return (
                                                                     labelMatches ||
                                                                     lastNameMatches ||
-                                                                    dniMatches
+                                                                    dniMatches ||
+                                                                    phoneMatches
                                                                 )
                                                             })
                                                         }
