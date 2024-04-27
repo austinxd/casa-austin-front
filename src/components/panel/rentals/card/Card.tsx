@@ -340,7 +340,7 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                                         fontSize: { md: '14px', sm: '12px', xs: '12px' },
                                     }}
                                 >
-                                    Fecha de ingreso {item.origin}
+                                    Fecha de ingreso
                                 </Typography>
                             </Box>
                         </Box>
