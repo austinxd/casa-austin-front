@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles'
 import { useEffect, useRef } from 'react'
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined'
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined'
+import { useLocation } from 'react-router-dom'
 
 interface Props {
     title: string
@@ -26,14 +27,15 @@ function BarChartsVertical({
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
     const chartRef = useRef<any>()
+    const params = useLocation()
     useEffect(() => {
         if (chartRef.current) {
             const currentDate = new Date()
             const currentMonth = currentDate.getMonth() // Obtiene el número del mes actual (0-11)
-            const initialScroll = 40 * currentMonth // Calcula el desplazamiento inicial
+            const initialScroll = 50 * currentMonth // Calcula el desplazamiento inicial
             chartRef.current.scrollLeft += initialScroll // Aplica el desplazamiento inicial
         }
-    }, [])
+    }, [params.pathname])
     const scrollLeft = () => {
         chartRef.current.scrollBy({ left: -50, behavior: 'smooth' })
     }
