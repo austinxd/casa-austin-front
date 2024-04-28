@@ -97,7 +97,7 @@ export default function CardResponsiveProfit({
                                 height={20}
                                 style={{ borderRadius: '4px', marginRight: '4px' }}
                                 width={20}
-                            />{' '}
+                            />
                             <Box
                                 sx={{
                                     borderRadius: '4px',

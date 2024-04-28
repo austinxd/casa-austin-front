@@ -1,10 +1,6 @@
 import { Box, Divider, Skeleton, Typography } from '@mui/material'
 import Card from './cards/Card'
-import TruckIcon from '../../common/icons/TruckIcon'
 import style from './dashboard.module.css'
-import AlertIcon from '../../common/icons/AlertIcon'
-import RouteIcon from '../../common/icons/RouteIcon'
-import ClockIcon from '../../common/icons/ClockIcon'
 import useBoxShadow from '../../../hook/useBoxShadow'
 import BarCharts from '../../common/charts/BarChart'
 import PersonIcon from '@mui/icons-material/Person'
@@ -13,6 +9,10 @@ import { useEffect, useState } from 'react'
 import { IBest_sellers } from '../../../interfaces/dashboard/dashboard'
 import { useLocation } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
+import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
+import MoneyOffIcon from '@mui/icons-material/MoneyOff'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 
 export default function CrudDashboard() {
     const params = useLocation()
@@ -82,29 +82,41 @@ export default function CrudDashboard() {
             <div className={style.container}>
                 <div className={style.item}>
                     <Card
-                        color="#7367F0"
-                        icon={<TruckIcon />}
+                        color="#4caf50"
+                        icon={
+                            <EventAvailableOutlinedIcon
+                                sx={{ color: '#4caf50', fontSize: { md: '34px', xs: '22px' } }}
+                            />
+                        }
                         percent="18%"
                         quantity={data?.free_days_total ? data?.free_days_total : ' '}
                         subTitle="than last week"
-                        title="Total de noches libres"
+                        title="Noches disponibles"
                     />
                 </div>
 
                 <div className={style.item}>
                     <Card
-                        color="#FFDAB7"
-                        icon={<RouteIcon />}
+                        color="#ff1744"
+                        icon={
+                            <EventBusyOutlinedIcon
+                                sx={{ color: '#ff1744', fontSize: { md: '34px', xs: '22px' } }}
+                            />
+                        }
                         percent="18%"
                         quantity={data?.ocuppied_days_total ? data?.ocuppied_days_total : ' '}
                         subTitle="than last week"
-                        title="Total de noches ocupados"
+                        title="Noches reservadas"
                     />
                 </div>
                 <div className={style.item}>
                     <Card
                         color="#FFBBBD"
-                        icon={<AlertIcon />}
+                        icon={
+                            <MoneyOffIcon
+                                sx={{ color: '#FFBBBD', fontSize: { md: '34px', xs: '22px' } }}
+                            />
+                        }
                         percent="18%"
                         quantity={data?.dinero_por_cobrar ? `S/. ${data?.dinero_por_cobrar}` : ' '}
                         subTitle="than last week"
@@ -114,7 +126,11 @@ export default function CrudDashboard() {
                 <div className={style.item}>
                     <Card
                         color="#9EE5ED"
-                        icon={<ClockIcon />}
+                        icon={
+                            <AccountBalanceIcon
+                                sx={{ color: '#9EE5ED', fontSize: { md: '34px', xs: '22px' } }}
+                            />
+                        }
                         percent="18%"
                         quantity={
                             data?.dinero_total_facturado

@@ -34,7 +34,7 @@ export default function Card({ color, icon, quantity, title }: Props) {
                     display={'flex'}
                     justifyContent={'start'}
                     alignItems={'center'}
-                    ml={'16px'}
+                    ml={'8px'}
                     sx={{
                         fontSize: 23,
                         '@media screen and (max-width: 1240px)': {
