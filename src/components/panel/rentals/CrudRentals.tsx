@@ -3,7 +3,7 @@ import style from './rental.module.css'
 import Card from './card/Card'
 import BasicModal from '../../common/modal/BasicModal'
 import FormRental from './form/FormRental'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DetailRental from './form/DetailRental'
 import DeleteRental from './form/DeleteRental'
 import { useGetAllRentalsQuery } from '../../../libs/services/rentals/rentalService'
@@ -38,9 +38,6 @@ export default function CrudRentals() {
         setBtn('Guardar nuevo alquiler')
     }
 
-    useEffect(() => {
-        console.log(data, 'ffffffff')
-    }, [data])
     const onEdit = (item: IRentalClient) => {
         setOpen(true)
         setTitle('Editar alquiler')

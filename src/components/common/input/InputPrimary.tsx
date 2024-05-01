@@ -26,10 +26,10 @@ const CssTextField = styled(TextField)({
         background: '#0E6191',
         fontWeight: 400,
     },
-    '& input:-webkit-autofill:hover, input:-webkit-autofill:focus': {
-        WebkitBoxShadow: '0 0 0px 1000px #0E6191 inset',
-        boxShadow: '0 0 0px 1000px #0E6191 inset',
-        color: 'white !important',
+    '& .MuiInputBase-input.MuiOutlinedInput-input:-webkit-autofill': {
+        WebkitTextFillColor: 'white',
+        borderRadius: '4px',
+        background: 'transparent',
     },
 })
 

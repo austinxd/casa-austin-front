@@ -28,7 +28,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [openErrorModal, setOpenErrorModal] = useState(false)
-
+    const [dataRegisterAlert, setDataRegisterAlert] = useState<IRegisterRental>()
     const [idsDeleteImage, setIdsDeleteImage] = useState<{ id: string }[]>([])
 
     const [houseSelect, setHouseSeletc] = useState('')
@@ -125,6 +125,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                         await deleteRecipesForm(idDeleteImage.id)
                     })
                 }
+
                 const response = await editReservationsForm(formData, dataEdit?.id)
 
                 if (response.status === 200) {
@@ -139,6 +140,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             const response = await reservationsForm(formData)
 
             if (response.status === 201) {
+                setDataRegisterAlert(data)
                 setSuccessRegister(true)
                 refetch()
                 refectchForCalender()
@@ -178,5 +180,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         setCheckPool,
         checkFullPayment,
         checkPool,
+        dataRegisterAlert,
     }
 }

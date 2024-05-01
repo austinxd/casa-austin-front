@@ -1,6 +1,7 @@
 import {
     Autocomplete,
     Box,
+    Button,
     Checkbox,
     FormControlLabel,
     Grid,
@@ -47,11 +48,14 @@ interface Props {
 
 export default function FormRental({ onCancel, title, btn, data, refetch }: Props) {
     const { data: optionProperty } = useGetAllPropertiesQuery('')
+
     const [currentPage] = useState(1)
     const [pageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
     const [getNumber, setGetNumber] = useState<string | undefined>('')
-
+    const [urlHouse, setUrlHouse] = useState<string | null>('')
+    const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
+    const [isCopyText, setIsCopyText] = useState(false)
     const { data: optionClientsData } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
@@ -76,6 +80,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         isLoading,
         successEdit,
         successRegister,
+        dataRegisterAlert,
         errorMessage,
         setValue,
         setIdsDeleteImage,
@@ -124,6 +129,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         optionProperty?.results.map((property) => ({
             value: property.id,
             label: property.name,
+            airbnb_url: property.location,
         })) || []
 
     const optionsClients =
@@ -132,6 +138,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             label: client.first_name + ' ' + client.last_name,
             phone: client.tel_number,
             lastName: client.last_name,
+            firstName: client.first_name,
             dni: client.number_doc,
         })) || []
 
@@ -141,6 +148,26 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         }
     }
 
+    const messageRef = useRef<HTMLDivElement>(null)
+
+    const copyMessage = () => {
+        if (messageRef.current) {
+            const message = messageRef.current.innerText
+            navigator.clipboard
+                .writeText(message)
+                .then(() => {
+                    setIsCopyText(true)
+                    setTimeout(() => {
+                        setIsCopyText(false)
+                    }, 3000)
+                })
+                .catch((error) => {
+                    console.error('Error al copiar el mensaje:', error)
+                })
+        } else {
+            console.error('No se puede copiar el mensaje: el ref es nulo.')
+        }
+    }
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             if (imageSend.length > 2) {
@@ -183,6 +210,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }
 
     const onSelectHouse = (event: any) => {
+        const selectedHouse = optionsHouse.find((option) => option.value === event.target.value)
+        if (selectedHouse) {
+            setUrlHouse(selectedHouse?.airbnb_url)
+        }
         setHouseSeletc(event.target.value)
     }
 
@@ -194,6 +225,17 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }, [getNumber])
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
+
+    const turnCurrency = (e: string) => {
+        switch (e) {
+            case 'sol':
+                return 'Soles'
+            case 'usd':
+                return 'Dolares'
+            default:
+                return ''
+        }
+    }
 
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
@@ -214,7 +256,85 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             >
                 <CloseIcon fontSize="small" />
             </IconButton>
-            {successRegister || successEdit ? (
+            {successRegister ? (
+                <Box>
+                    <Typography mb={2}>Registro exitoso</Typography>
+                    <SuccessEditIcon />
+                    <Typography variant="subtitle2" mt={2} ref={messageRef} textAlign={'left'}>
+                        ¡<span>{nameClientAlert} </span> tu Reserva está Confirmada en Casa Austin!{' '}
+                        <br />
+                        <span style={{ fontWeight: 700 }}>Check-in: </span>
+                        {dayjs(dataRegisterAlert?.check_in_date).format('DD-MM-YYYY')} <br />
+                        <span style={{ fontWeight: 700 }}>Check-out: </span>
+                        {dayjs(dataRegisterAlert?.check_out_date).format('DD-MM-YYYY')} <br />
+                        <span style={{ fontWeight: 700 }}>Reserva para: </span>
+                        {dataRegisterAlert?.guests} personas <br />{' '}
+                        <span style={{ fontWeight: 700 }}>Precio total: </span>$
+                        {dataRegisterAlert?.price_usd} ó S/.{dataRegisterAlert?.price_sol} <br />
+                        {checkFullPayment ? (
+                            <>
+                                <span style={{ fontWeight: 700 }}>Adelanto: </span> 100% completado{' '}
+                                <br />
+                            </>
+                        ) : (
+                            <>
+                                {dataRegisterAlert?.advance_payment}{' '}
+                                {turnCurrency(
+                                    dataRegisterAlert?.advance_payment_currency
+                                        ? dataRegisterAlert?.advance_payment_currency
+                                        : ''
+                                )}{' '}
+                                <br />
+                            </>
+                        )}
+                        <span style={{ fontWeight: 700 }}>Ubicación: </span>
+                        {urlHouse ? urlHouse : 'url'} <br /> <br />
+                        <span>
+                            Al llegar comunicarse con Michael 946892171 , el te ayudara con el
+                            ingreso.{' '}
+                            {checkPool
+                                ? ''
+                                : 'La piscina temperada se coordina con anticipacion (costo adicional: 100 soles/noche).'}{' '}
+                        </span>
+                    </Typography>
+
+                    <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                        <Button
+                            onClick={copyMessage}
+                            sx={{
+                                height: 38,
+                                width: 167,
+                                color: isCopyText ? 'grey' : '#0E6191',
+                                background: 'white',
+                                fontSize: '15px',
+                                fontWeight: 400,
+                                mt: 4,
+                                ':hover': {
+                                    background: 'white',
+                                },
+                            }}
+                        >
+                            {isCopyText ? 'Mensaje copiado' : ' Copiar mensaje'}
+                        </Button>
+                        <Button
+                            sx={{
+                                height: 38,
+                                width: 167,
+                                color: 'white',
+                                background: '#0E6191',
+                                fontSize: '15px',
+                                fontWeight: 400,
+                                mt: 4,
+                                ':hover': {
+                                    background: '#0E6191',
+                                },
+                            }}
+                        >
+                            Volver
+                        </Button>
+                    </Box>
+                </Box>
+            ) : successEdit ? (
                 <SuccessCard
                     title={successEdit ? 'Cambios Realizados' : 'Registro exitoso'}
                     icon={successEdit ? <SuccessEditIcon /> : <SuccessIcon />}
@@ -227,7 +347,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 />
             ) : (
                 <>
-                    {' '}
                     <Typography mb={2}>{title}</Typography>
                     {isEditLoading ? (
                         <SkeletonFormRental />
@@ -367,6 +486,11 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                                 newValue ? newValue.value : null
                                                             )
                                                             setGetNumber(newValue?.phone)
+                                                            setNameClientAlert(
+                                                                newValue?.firstName
+                                                                    ? newValue?.firstName
+                                                                    : ''
+                                                            )
                                                         }}
                                                         getOptionLabel={(option) => option.label}
                                                         renderInput={(params) => (
