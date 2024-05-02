@@ -53,7 +53,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [pageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
     const [getNumber, setGetNumber] = useState<string | undefined>('')
-    const [urlHouse, setUrlHouse] = useState<string | null>('')
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
     const { data: optionClientsData } = useGetAllClientsQuery({
@@ -210,10 +209,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }
 
     const onSelectHouse = (event: any) => {
-        const selectedHouse = optionsHouse.find((option) => option.value === event.target.value)
-        if (selectedHouse) {
-            setUrlHouse(selectedHouse?.airbnb_url)
-        }
         setHouseSeletc(event.target.value)
     }
 
@@ -263,21 +258,23 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                     <Typography variant="subtitle2" mt={2} ref={messageRef} textAlign={'left'}>
                         ¡<span>{nameClientAlert} </span> tu Reserva está Confirmada en Casa Austin!{' '}
                         <br />
-                        <span style={{ fontWeight: 700 }}>Check-in: </span>
+                        <br />
+                        <span style={{ fontWeight: 700 }}>*Check-in:* </span>
                         {dayjs(dataRegisterAlert?.check_in_date).format('DD-MM-YYYY')} <br />
-                        <span style={{ fontWeight: 700 }}>Check-out: </span>
+                        <span style={{ fontWeight: 700 }}>*Check-out:* </span>
                         {dayjs(dataRegisterAlert?.check_out_date).format('DD-MM-YYYY')} <br />
-                        <span style={{ fontWeight: 700 }}>Reserva para: </span>
+                        <span style={{ fontWeight: 700 }}>*Reserva para:* </span>
                         {dataRegisterAlert?.guests} personas <br />{' '}
-                        <span style={{ fontWeight: 700 }}>Precio total: </span>$
+                        <span style={{ fontWeight: 700 }}>*Precio total:* </span>$
                         {dataRegisterAlert?.price_usd} ó S/.{dataRegisterAlert?.price_sol} <br />
                         {checkFullPayment ? (
                             <>
-                                <span style={{ fontWeight: 700 }}>Adelanto: </span> 100% completado{' '}
-                                <br />
+                                <span style={{ fontWeight: 700 }}>*Adelanto:* </span> 100%
+                                completado <br />
                             </>
                         ) : (
                             <>
+                                <span style={{ fontWeight: 700 }}>*Adelanto:* </span>
                                 {dataRegisterAlert?.advance_payment}{' '}
                                 {turnCurrency(
                                     dataRegisterAlert?.advance_payment_currency
@@ -287,10 +284,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                 <br />
                             </>
                         )}
-                        <span style={{ fontWeight: 700 }}>Ubicación: </span>
-                        {urlHouse ? urlHouse : 'url'} <br /> <br />
+                        <span style={{ fontWeight: 700 }}>*Ubicación:* </span>
+                        Casa Austin (waze, maps, uber, etc) <br /> <br />
                         <span>
-                            Al llegar comunicarse con Michael 946892171 , el te ayudara con el
+                            Al llegar comunicarse con Michael 946892171 , él te ayudará con el
                             ingreso.{' '}
                             {checkPool
                                 ? ''
@@ -317,6 +314,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                             {isCopyText ? 'Mensaje copiado' : ' Copiar mensaje'}
                         </Button>
                         <Button
+                            onClick={handleCancel}
                             sx={{
                                 height: 38,
                                 width: 167,
