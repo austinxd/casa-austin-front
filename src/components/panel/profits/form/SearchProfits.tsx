@@ -1,4 +1,12 @@
-import { Box, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Checkbox,
+    FormControlLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material'
 import { useDebounce } from '../../../common/useDebounce'
 import { useEffect, useState } from 'react'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
@@ -11,10 +19,14 @@ interface Props {
     filterAus: string
     setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>
     setFilterAus: React.Dispatch<React.SetStateAction<string>>
+    setPageSize: React.Dispatch<React.SetStateAction<number>>
+    pageSize: number
 }
 
 export default function SearchProfits({
     setSearch,
+    setPageSize,
+    pageSize,
     setCurrentPage,
     setFilterAus,
     filterAirbnb,
@@ -39,6 +51,9 @@ export default function SearchProfits({
     const onCheckAus = () => {
         setFilterAus((prevState) => (prevState === '' ? 'aus' : ''))
     }
+    const handlePageSizeChange = (event: any) => {
+        setPageSize(event.target.value as number)
+    }
     return (
         <>
             <Box
@@ -52,26 +67,32 @@ export default function SearchProfits({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     px: 3,
-                    '@media (max-width: 900px)': {
+                    '@media (max-width: 1000px)': {
                         px: 0,
                         border: 'none',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 80,
                     },
                 }}
             >
                 <Box
+                    display={'flex'}
                     sx={{
-                        '@media (max-width: 700px)': {
-                            width: 180,
+                        '@media (max-width: 1000px)': {
+                            width: '100%',
                         },
                     }}
                 >
                     <TextField
+                        fullWidth
                         onChange={handleSearchChange}
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 height: '45px',
-                                color: '#2F2B3D',
 
+                                color: '#2F2B3D',
                                 opacity: 0.9,
                                 '& fieldset': {
                                     color: '#2F2B3D',
@@ -114,6 +135,28 @@ export default function SearchProfits({
                         type="text"
                         placeholder="Buscar"
                     />
+                    <Select
+                        value={pageSize}
+                        onChange={handlePageSizeChange}
+                        sx={{
+                            height: '45px',
+                            marginLeft: '6px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            '& .MuiSelect-outlined': {
+                                outline: 'none',
+                                borderRadius: '8px',
+                                border: 'none',
+                                padding: '8px',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                border: '1px solid #D1D0D4',
+                            },
+                        }}
+                    >
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                    </Select>
                 </Box>
 
                 <Box
@@ -124,12 +167,12 @@ export default function SearchProfits({
                     sx={{
                         '@media (max-width: 1000px)': {
                             width: '100%',
-                            justifyContent: 'end',
+                            justifyContent: 'start',
                             pl: 1,
                         },
                     }}
                 >
-                    <Box>
+                    <Box mt={{ xs: 1 }}>
                         <FormControlLabel
                             onClick={onCheckAirbnb}
                             control={

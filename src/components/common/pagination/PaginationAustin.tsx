@@ -68,9 +68,10 @@ export default function PaginationAustin({
                     count={totalPages}
                     variant="outlined"
                     shape="rounded"
+                    size="small"
                     sx={{
                         '& .MuiPaginationItem-root': {
-                            marginRight: '0px',
+                            marginRight: '2px',
                             color: '#5B586C',
                             background: '#EFEEF0',
                             outline: 'none',

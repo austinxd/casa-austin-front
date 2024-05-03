@@ -1,4 +1,13 @@
-import { Box, Button, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDebounce } from '../../../common/useDebounce'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
@@ -8,6 +17,8 @@ interface Props {
     onSave: () => void
     setSearch: React.Dispatch<React.SetStateAction<string>>
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+    setPageSize: React.Dispatch<React.SetStateAction<number>>
+    pageSize: number
     setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>
     filterAirbnb: string
     setFilterToday: React.Dispatch<React.SetStateAction<string>>
@@ -22,10 +33,11 @@ export default function SearchRental({
     filterAirbnb,
     filterToday,
     setFilterToday,
+    pageSize,
+    setPageSize,
 }: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 400)
-
     useEffect(() => {
         setSearch(textFiler)
         setCurrentPage(1)
@@ -40,6 +52,9 @@ export default function SearchRental({
     }
     const onCheckToday = () => {
         setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
+    }
+    const handlePageSizeChange = (event: any) => {
+        setPageSize(event.target.value as number)
     }
 
     return (
@@ -70,6 +85,7 @@ export default function SearchRental({
                 }}
             >
                 <Box
+                    display={'flex'}
                     sx={{
                         width: '240px',
                         '@media (max-width: 1000px)': {
@@ -127,6 +143,28 @@ export default function SearchRental({
                         type="text"
                         placeholder="Buscar"
                     />
+                    <Select
+                        value={pageSize}
+                        onChange={handlePageSizeChange}
+                        sx={{
+                            height: '45px',
+                            marginLeft: '6px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            '& .MuiSelect-outlined': {
+                                outline: 'none',
+                                borderRadius: '8px',
+                                border: 'none',
+                                padding: '8px',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                border: '1px solid #D1D0D4',
+                            },
+                        }}
+                    >
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                    </Select>
                 </Box>
 
                 <Box

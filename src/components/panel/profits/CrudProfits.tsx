@@ -23,7 +23,7 @@ export default function CrudProfits() {
     const currentMonthNumber = new Date().getMonth() + 1
     const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize] = useState<number>(10)
+    const [pageSize, setPageSize] = useState<number>(10)
     const [month, setMonth] = useState<number>(currentMonthNumber)
     const [monthSelect, setMonthSelect] = useState('')
     const [meses, setMeses] = useState<string[]>(['1'])
@@ -295,6 +295,8 @@ export default function CrudProfits() {
             />
 
             <SearchProfits
+                pageSize={pageSize}
+                setPageSize={setPageSize}
                 setFilterAirbnb={setFilterAirbnb}
                 setFilterAus={setFilterAus}
                 filterAirbnb={filterAirbnb}

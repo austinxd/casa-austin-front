@@ -20,7 +20,7 @@ export default function CrudRentals() {
     const [title, setTitle] = useState('')
     const [btn, setBtn] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageSize] = useState<number | string>(8)
+    const [pageSize, setPageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
     const [filterAirbnb, setFilterAirbnb] = useState('')
     const [filterToday, setFilterToday] = useState('')
@@ -61,6 +61,8 @@ export default function CrudRentals() {
                 Alquileres
             </Typography>
             <SearchRental
+                pageSize={pageSize}
+                setPageSize={setPageSize}
                 setSearch={setSearch}
                 setCurrentPage={setCurrentPage}
                 onSave={onSave}

@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, MenuItem, Select, TextField } from '@mui/material'
 import { useDebounce } from '../../../common/useDebounce'
 import { useEffect, useState } from 'react'
 
@@ -7,9 +7,18 @@ interface Props {
     setSearch: any
     setCurrentPage: any
     text: string
+    setPageSize: React.Dispatch<React.SetStateAction<number>>
+    pageSize: number
 }
 
-export default function SearchClient({ onSave, setSearch, setCurrentPage, text }: Props) {
+export default function SearchClient({
+    setPageSize,
+    pageSize,
+    onSave,
+    setSearch,
+    setCurrentPage,
+    text,
+}: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 450)
 
@@ -21,13 +30,16 @@ export default function SearchClient({ onSave, setSearch, setCurrentPage, text }
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputText(event.target.value)
     }
+    const handlePageSizeChange = (event: any) => {
+        setPageSize(event.target.value as number)
+    }
     return (
         <>
             <Box
                 sx={{
                     border: '1px solid #E6E6E8',
                     borderRadius: 1,
-                    height: { md: 88, sm: 54, xs: 54 },
+                    height: { md: 88, sm: 54, xs: 'auto' },
                     width: '100%',
                     display: 'flex',
                     alignItems: 'center',
@@ -36,17 +48,22 @@ export default function SearchClient({ onSave, setSearch, setCurrentPage, text }
                     '@media (max-width: 900px)': {
                         px: 0,
                         border: 'none',
+                        flexDirection: 'column-reverse',
+                        gap: 1,
+                        alignItems: 'end',
                     },
                 }}
             >
                 <Box
+                    display={'flex'}
                     sx={{
                         '@media (max-width: 700px)': {
-                            width: 180,
+                            width: '100%',
                         },
                     }}
                 >
                     <TextField
+                        fullWidth
                         onChange={handleSearchChange}
                         sx={{
                             '& .MuiOutlinedInput-root': {
@@ -95,6 +112,28 @@ export default function SearchClient({ onSave, setSearch, setCurrentPage, text }
                         type="text"
                         placeholder="Buscar"
                     />
+                    <Select
+                        value={pageSize}
+                        onChange={handlePageSizeChange}
+                        sx={{
+                            height: '45px',
+                            marginLeft: '6px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            '& .MuiSelect-outlined': {
+                                outline: 'none',
+                                borderRadius: '8px',
+                                border: 'none',
+                                padding: '8px',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                border: '1px solid #D1D0D4',
+                            },
+                        }}
+                    >
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                    </Select>
                 </Box>
 
                 <Box>
