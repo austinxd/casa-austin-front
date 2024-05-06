@@ -55,6 +55,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [getNumber, setGetNumber] = useState<string | undefined>('')
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
+    const [nameHouseAlert, setNameHouseAlert] = useState('')
     const { data: optionClientsData } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
@@ -209,6 +210,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }
 
     const onSelectHouse = (event: any) => {
+        const houseSelected = optionProperty?.results.find((item) => item.id === event.target.value)
+        setNameHouseAlert(houseSelected?.name ? houseSelected?.name : '')
         setHouseSeletc(event.target.value)
     }
 
@@ -232,6 +235,21 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         }
     }
 
+    const filterTextHouse = (e: string): string => {
+        switch (e) {
+            case 'CA1':
+                return 'Casa Austin 1 (waze, maps, uber, etc)'
+            case 'CA2':
+                return 'Casa Austin 2 (waze, maps, uber, etc)'
+            case 'CA3':
+                return 'Casa Austin 3 (waze, maps, uber, etc)'
+            case 'CA4':
+                return 'Casa Austin 4 (waze, maps, uber, etc)'
+
+            default:
+                return 'Casa Austin'
+        }
+    }
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -285,7 +303,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                             </>
                         )}
                         <span style={{ fontWeight: 700 }}>*Ubicación:* </span>
-                        Casa Austin (waze, maps, uber, etc) <br /> <br />
+                        {filterTextHouse(nameHouseAlert)} <br /> <br />
                         <span>
                             Al llegar comunicarse con Michael 946892171 , él te ayudará con el
                             ingreso.{' '}
