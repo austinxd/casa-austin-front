@@ -24,7 +24,7 @@ export const useGetDataClient = () => {
                     if (typeDocument === 'dni') {
                         setIsLoadingClient(true)
                         const response = await fetch(
-                            `https://script.google.com/macros/s/AKfycbyoBhxuklU5D3LTguTcYAS85klwFINHxxd-FroauC4CmFVvS0ua/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
+                            `https://script.google.com/macros/s/AKfycbxtHPLO20nmW5Vy4r_9MGcC5bQUCFXg1LaKUA-aIUpQ4K3oo-Mz8smlIfcWQJCefWF0Zw/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
                         )
                         const data = await response.json()
 
@@ -36,7 +36,7 @@ export const useGetDataClient = () => {
                     if (typeDocument === 'ruc') {
                         setIsLoadingClient(true)
                         const response = await fetch(
-                            `https://script.google.com/macros/s/AKfycbyoBhxuklU5D3LTguTcYAS85klwFINHxxd-FroauC4CmFVvS0ua/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
+                            `https://script.google.com/macros/s/AKfycbxtHPLO20nmW5Vy4r_9MGcC5bQUCFXg1LaKUA-aIUpQ4K3oo-Mz8smlIfcWQJCefWF0Zw/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
                         )
                         const data = await response.json()
 
