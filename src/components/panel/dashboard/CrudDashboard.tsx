@@ -242,7 +242,9 @@ export default function CrudDashboard() {
                 >
                     <Typography variant="h2" p={3}>
                         Ranking de
-                        <span style={{ textTransform: 'capitalize' }}>{currentMonth}</span>
+                        <span style={{ marginLeft: '4px', textTransform: 'capitalize' }}>
+                            {currentMonth}
+                        </span>
                     </Typography>
                     <Divider />
                     <Box display={'flex'} justifyContent={'space-between'} px={3} py={2}>
