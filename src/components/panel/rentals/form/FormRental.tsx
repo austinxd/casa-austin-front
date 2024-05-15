@@ -56,6 +56,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
     const [nameHouseAlert, setNameHouseAlert] = useState('')
+
     const { data: optionClientsData } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
@@ -141,6 +142,15 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             firstName: client.first_name,
             dni: client.number_doc,
         })) || []
+
+    const optionsClientsEdit = {
+        value: dataEdit?.client.id ? dataEdit?.client.id : '',
+        label: dataEdit?.client.first_name + ' ' + dataEdit?.client.last_name,
+        phone: dataEdit?.client.tel_number ? dataEdit?.client.tel_number : '',
+        lastName: dataEdit?.client.last_name ? dataEdit?.client.last_name : '',
+        firstName: dataEdit?.client.first_name ? dataEdit?.client.first_name : '',
+        dni: dataEdit?.client.number_doc ? dataEdit?.client.number_doc : '',
+    }
 
     const handleAddClick = () => {
         if (fileInputRef.current != null) {
@@ -409,12 +419,24 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             return (
                                                 <>
                                                     <Autocomplete
+                                                        isOptionEqualToValue={(option, value) =>
+                                                            option.value === value.value
+                                                        }
                                                         value={
-                                                            value
-                                                                ? optionsClients.find((option) => {
-                                                                      return value === option.value
-                                                                  }) ?? null
-                                                                : null
+                                                            dataEdit?.id
+                                                                ? value
+                                                                    ? optionsClientsEdit
+                                                                    : null
+                                                                : value
+                                                                  ? optionsClients.find(
+                                                                        (option) => {
+                                                                            return (
+                                                                                value ===
+                                                                                option.value
+                                                                            )
+                                                                        }
+                                                                    ) ?? null
+                                                                  : null
                                                         }
                                                         sx={{
                                                             '& .MuiPopper-root': {
