@@ -224,7 +224,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                                 required: 'Numbero de documento obligatorio',
                                             })}
                                             defaultValue={documentNumber}
-                                            type="number"
+                                            type={typeDocument === 'pas' ? 'text' : 'number'}
                                             onChange={onDocumentNumber}
                                             label={'Número de documento'}
                                             messageError={
