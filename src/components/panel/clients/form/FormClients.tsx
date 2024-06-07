@@ -98,14 +98,14 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                 setValue(
                     'last_name',
                     dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
-                        ? `${dataByApi.data.apellidoMaterno} ${dataByApi.data.apellidoPaterno}`
+                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
                               .toLowerCase()
                               .replace(/\b\w/g, (char) => char.toUpperCase())
                         : ''
                 )
                 setApiSurnames(
                     dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
-                        ? `${dataByApi.data.apellidoMaterno} ${dataByApi.data.apellidoPaterno}`
+                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
                               .toLowerCase()
                               .replace(/\b\w/g, (char) => char.toUpperCase())
                         : ''
