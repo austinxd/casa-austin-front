@@ -248,13 +248,29 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const filterTextHouse = (e: string): string => {
         switch (e) {
             case 'CA1':
-                return 'Casa Austin 1 (waze, maps, uber, etc)'
+                return 'Casa Austin (waze, maps, uber, etc)'
             case 'CA2':
-                return 'Casa Austin 2 (waze, maps, uber, etc)'
+                return 'Casa Austin (waze, maps, uber, etc)'
             case 'CA3':
-                return 'Casa Austin 3 (waze, maps, uber, etc)'
+                return 'Casa Austin (waze, maps, uber, etc)'
             case 'CA4':
-                return 'Casa Austin 4 (waze, maps, uber, etc)'
+                return 'Casa Austin (waze, maps, uber, etc)'
+
+            default:
+                return 'Casa Austin'
+        }
+    }
+
+    const filterTextHouse2 = (e: string): string => {
+        switch (e) {
+            case 'CA1':
+                return 'Casa Austin 1'
+            case 'CA2':
+                return 'Casa Austin 2'
+            case 'CA3':
+                return 'Casa Austin 3'
+            case 'CA4':
+                return 'Casa Austin 4'
 
             default:
                 return 'Casa Austin'
@@ -284,7 +300,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                     <Typography mb={2}>Registro exitoso</Typography>
                     <SuccessEditIcon />
                     <Typography variant="subtitle2" mt={2} ref={messageRef} textAlign={'left'}>
-                        ¡<span>{nameClientAlert} </span> tu Reserva está Confirmada en Casa Austin!{' '}
+                        ¡<span>{nameClientAlert} </span> tu Reserva está Confirmada en{' '}
+                        {filterTextHouse2(nameHouseAlert)}!
                         <br />
                         <br />
                         <span style={{ fontWeight: 700 }}>*Check-in:* </span>
