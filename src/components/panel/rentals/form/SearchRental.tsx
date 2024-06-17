@@ -251,7 +251,7 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    Proximas Reservas
+                                    Futuras Reservas
                                 </Typography>
                             }
                         />
@@ -282,7 +282,7 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    En progreso
+                                    En Curso
                                 </Typography>
                             }
                         />
