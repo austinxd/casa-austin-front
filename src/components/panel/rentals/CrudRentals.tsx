@@ -25,6 +25,7 @@ export default function CrudRentals() {
     const [filterAirbnb, setFilterAirbnb] = useState('')
     const [filterToday, setFilterToday] = useState('')
     const [filterInProgress, setFilterInProgress] = useState('')  // Estado para el filtro in_progress
+    
 
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
@@ -70,8 +71,10 @@ export default function CrudRentals() {
                 onSave={onSave}
                 filterAirbnb={filterAirbnb}
                 setFilterAirbnb={setFilterAirbnb}
-                setFilterToday={setFilterToday}
                 filterToday={filterToday}
+                setFilterToday={setFilterToday}
+                setFilterInProgress={setFilterInProgress} // Pasando la función de estado
+                filterInProgress={filterInProgress}       // Pasando el valor del estado
             />
 
             {/* Checkbox para el filtro in_progress */}
