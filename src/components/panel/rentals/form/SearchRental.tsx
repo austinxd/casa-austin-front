@@ -52,8 +52,9 @@ export default function SearchRental({
         setInputText(event.target.value);
     };
 
-    const handlePageSizeChange = (event: SelectChangeEvent<number>) => { // Cambiado para usar SelectChangeEvent
-        setPageSize(Number(event.target.value)); // Asegúrate de convertir el valor a número
+    // Asegúrate de que esta es la única definición de handlePageSizeChange en este archivo
+    const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+        setPageSize(Number(event.target.value));
     };
 
     const onCheckAirbnb = () => {
@@ -66,10 +67,6 @@ export default function SearchRental({
 
     const onCheckInProgress = () => {
         setFilterInProgress(prevState => prevState === '' ? 'in_progress' : '');
-    };
-
-    const handlePageSizeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setPageSize(event.target.value as number);
     };
 
     return (
