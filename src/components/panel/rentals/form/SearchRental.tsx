@@ -251,7 +251,7 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    Check-in próximos
+                                    Proximas Reservas
                                 </Typography>
                             }
                         />
@@ -273,7 +273,18 @@ export default function SearchRental({
                                     }}
                                 />
                             }
-                            label="In Progress"
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    En progreso
+                                </Typography>
+                            }
                         />
                     </Box>
                     <Button
