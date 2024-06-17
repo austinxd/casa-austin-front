@@ -251,7 +251,7 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    Futuras Reservas
+                                    Futuras
                                 </Typography>
                             }
                         />
