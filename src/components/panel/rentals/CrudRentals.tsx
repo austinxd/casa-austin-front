@@ -77,15 +77,6 @@ export default function CrudRentals() {
                 filterInProgress={filterInProgress}       // Pasando el valor del estado
             />
 
-            {/* Checkbox para el filtro in_progress */}
-            <label>
-                <input
-                    type="checkbox"
-                    checked={filterInProgress === 'in_progress'}
-                    onChange={() => setFilterInProgress(filterInProgress ? '' : 'in_progress')}
-                />
-                In Progress
-            </label>
 
             {isLoading ? (
                 <SkeletonCard />
