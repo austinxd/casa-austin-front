@@ -23,8 +23,8 @@ interface Props {
     filterAirbnb: string;
     setFilterToday: React.Dispatch<React.SetStateAction<string>>;
     filterToday: string;
-    setFilterInProgress: React.Dispatch<React.SetStateAction<string>>; // Agregar prop para el nuevo filtro in_progress
-    filterInProgress: string; // Agregar prop para el nuevo filtro in_progress
+    setFilterInProgress: React.Dispatch<React.SetStateAction<string>>;
+    filterInProgress: string;
 }
 
 export default function SearchRental({
@@ -37,8 +37,8 @@ export default function SearchRental({
     filterAirbnb,
     setFilterToday,
     filterToday,
-    setFilterInProgress, // Incluir esta prop para manejar el filtro in_progress
-    filterInProgress, // Incluir esta prop para manejar el filtro in_progress
+    setFilterInProgress,
+    filterInProgress,
 }: Props) {
     const [inputText, setInputText] = useState('');
     const textFilter: string = useDebounce(inputText, 400);
@@ -52,6 +52,10 @@ export default function SearchRental({
         setInputText(event.target.value);
     };
 
+    const handlePageSizeChange = (event: SelectChangeEvent<number>) => { // Cambiado para usar SelectChangeEvent
+        setPageSize(Number(event.target.value)); // Asegúrate de convertir el valor a número
+    };
+
     const onCheckAirbnb = () => {
         setFilterAirbnb(prevState => prevState === '' ? 'air' : '');
     };
@@ -60,7 +64,7 @@ export default function SearchRental({
         setFilterToday(prevState => prevState === '' ? 'today' : '');
     };
 
-    const onCheckInProgress = () => { // Manejo del estado para el nuevo filtro
+    const onCheckInProgress = () => {
         setFilterInProgress(prevState => prevState === '' ? 'in_progress' : '');
     };
 
