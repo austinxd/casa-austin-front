@@ -7,55 +7,66 @@ import {
     Select,
     TextField,
     Typography,
-} from '@mui/material'
-import { useEffect, useState } from 'react'
-import { useDebounce } from '../../../common/useDebounce'
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDebounce } from '../../../common/useDebounce';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
 interface Props {
-    onSave: () => void
-    setSearch: React.Dispatch<React.SetStateAction<string>>
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>
-    setPageSize: React.Dispatch<React.SetStateAction<number>>
-    pageSize: number
-    setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>
-    filterAirbnb: string
-    setFilterToday: React.Dispatch<React.SetStateAction<string>>
-    filterToday: string
+    onSave: () => void;
+    setSearch: React.Dispatch<React.SetStateAction<string>>;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    setPageSize: React.Dispatch<React.SetStateAction<number>>;
+    pageSize: number;
+    setFilterAirbnb: React.Dispatch<React.SetStateAction<string>>;
+    filterAirbnb: string;
+    setFilterToday: React.Dispatch<React.SetStateAction<string>>;
+    filterToday: string;
+    setFilterInProgress: React.Dispatch<React.SetStateAction<string>>; // Agregar prop para el nuevo filtro in_progress
+    filterInProgress: string; // Agregar prop para el nuevo filtro in_progress
 }
 
 export default function SearchRental({
     onSave,
     setSearch,
     setCurrentPage,
+    setPageSize,
+    pageSize,
     setFilterAirbnb,
     filterAirbnb,
-    filterToday,
     setFilterToday,
-    pageSize,
-    setPageSize,
+    filterToday,
+    setFilterInProgress, // Incluir esta prop para manejar el filtro in_progress
+    filterInProgress, // Incluir esta prop para manejar el filtro in_progress
 }: Props) {
-    const [inputText, setInputText] = useState('')
-    const textFiler: string = useDebounce(inputText, 400)
+    const [inputText, setInputText] = useState('');
+    const textFilter: string = useDebounce(inputText, 400);
+
     useEffect(() => {
-        setSearch(textFiler)
-        setCurrentPage(1)
-    }, [textFiler])
+        setSearch(textFilter);
+        setCurrentPage(1);
+    }, [textFilter, setSearch, setCurrentPage]);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputText(event.target.value)
-    }
+        setInputText(event.target.value);
+    };
 
     const onCheckAirbnb = () => {
-        setFilterAirbnb((prevState) => (prevState === '' ? 'air' : ''))
-    }
+        setFilterAirbnb(prevState => prevState === '' ? 'air' : '');
+    };
+
     const onCheckToday = () => {
-        setFilterToday((prevState) => (prevState === '' ? 'today' : ''))
-    }
-    const handlePageSizeChange = (event: any) => {
-        setPageSize(event.target.value as number)
-    }
+        setFilterToday(prevState => prevState === '' ? 'today' : '');
+    };
+
+    const onCheckInProgress = () => { // Manejo del estado para el nuevo filtro
+        setFilterInProgress(prevState => prevState === '' ? 'in_progress' : '');
+    };
+
+    const handlePageSizeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setPageSize(event.target.value as number);
+    };
 
     return (
         <>
@@ -74,7 +85,7 @@ export default function SearchRental({
                         gap: 1,
                         border: 'none',
                         flexDirection: 'column-reverse',
-                        alignItems: ' ',
+                        alignItems: 'start',
                     },
                     '@media (max-width: 900px)': {
                         mt: 6,
@@ -95,6 +106,7 @@ export default function SearchRental({
                 >
                     <TextField
                         fullWidth
+                        value={inputText}
                         onChange={handleSearchChange}
                         sx={{
                             '& .MuiOutlinedInput-root': {
@@ -116,7 +128,6 @@ export default function SearchRental({
                                     border: '1px solid #D1D0D4',
                                 },
                             },
-
                             '& input': {
                                 height: '24px',
                                 color: '#2F2B3D',
@@ -125,16 +136,14 @@ export default function SearchRental({
                                 fontWeight: 600,
                                 backgroundColor: '#FFF',
                             },
-                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                                {
-                                    display: 'none',
-                                    color: '#2F2B3D',
-                                    opacity: 0.9,
-                                },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                display: 'none',
+                                color: '#2F2B3D',
+                                opacity: 0.9,
+                            },
                             '& input:-webkit-autofill': {
-                                webkitBoxShadow:
-                                    '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
-                                boxShadow: '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
+                                webkitBoxShadow: '0 0 0px 1000px #F5F8FA inset',
+                                boxShadow: '0 0 0px 1000px #F5F8FA inset',
                                 color: '#2F2B3D',
                                 opacity: 0.9,
                                 fontWeight: 600,
@@ -240,9 +249,29 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    Check-in proximos
+                                    Check-in próximos
                                 </Typography>
                             }
+                        />
+                        {/* Agregar el nuevo filtro in_progress */}
+                        <FormControlLabel
+                            onClick={onCheckInProgress}
+                            control={
+                                <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                    checked={filterInProgress === 'in_progress'}
+                                    sx={{
+                                        mr: 0,
+                                        p: 0.5,
+                                        color: '#2F2B3D',
+                                        '&.Mui-checked': {
+                                            color: '#2F2B3D',
+                                        },
+                                    }}
+                                />
+                            }
+                            label="In Progress"
                         />
                     </Box>
                     <Button

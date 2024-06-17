@@ -24,12 +24,14 @@ export default function CrudRentals() {
     const [search, setSearch] = useState('')
     const [filterAirbnb, setFilterAirbnb] = useState('')
     const [filterToday, setFilterToday] = useState('')
+    const [filterInProgress, setFilterInProgress] = useState('')  // Estado para el filtro in_progress
+
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
-        from: filterToday,
-        type: filterAirbnb,
+        from: filterInProgress || filterToday,  // Combina filterInProgress y filterToday
+        type: filterAirbnb
     })
 
     const onSave = () => {
@@ -72,6 +74,16 @@ export default function CrudRentals() {
                 filterToday={filterToday}
             />
 
+            {/* Checkbox para el filtro in_progress */}
+            <label>
+                <input
+                    type="checkbox"
+                    checked={filterInProgress === 'in_progress'}
+                    onChange={() => setFilterInProgress(filterInProgress ? '' : 'in_progress')}
+                />
+                In Progress
+            </label>
+
             {isLoading ? (
                 <SkeletonCard />
             ) : (
@@ -103,13 +115,12 @@ export default function CrudRentals() {
                                 px: 3,
                             }}
                         >
-                            <p>Sin informacion para mostrar</p>
+                            <p>Sin información para mostrar</p>
                         </Box>
                     )}
                 </div>
             )}
 
-            <div className={style.container} style={{ marginTop: '12px' }}></div>
             {data && (
                 <PaginationAustin
                     pageSize={Number(pageSize)}
