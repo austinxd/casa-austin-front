@@ -7,6 +7,7 @@ import {
     Select,
     TextField,
     Typography,
+    SelectChangeEvent
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../../../common/useDebounce';
