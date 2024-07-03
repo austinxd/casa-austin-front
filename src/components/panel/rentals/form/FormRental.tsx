@@ -257,19 +257,19 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 return 'Casa Austin (waze, maps, uber, etc)'
 
             default:
-                return 'Casa Austin'
+                return 'Casa Austin (waze, maps, uber, etc'
         }
     }
 
     const filterTextHouse2 = (e: string): string => {
         switch (e) {
-            case 'CA1':
+            case 'Casa Austin 1':
                 return 'Casa Austin 1'
-            case 'CA2':
+            case 'Casa Austin 2':
                 return 'Casa Austin 2'
-            case 'CA3':
+            case 'Casa Austin 3':
                 return 'Casa Austin 3'
-            case 'CA4':
+            case 'Casa Austin 4:
                 return 'Casa Austin 4'
 
             default:
@@ -336,7 +336,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                             ingreso.{' '}
                             {checkPool
                                 ? ''
-                                : 'La piscina temperada se coordina con anticipacion (costo adicional: 100 soles/noche).'}{' '}
+                                : 'La piscina ó Jacuzzi temperado se coordina con anticipacion (costo adicional: 100 soles/noche).'}{' '}
                         </span>
                     </Typography>
 
