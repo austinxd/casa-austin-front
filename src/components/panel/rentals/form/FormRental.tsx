@@ -269,7 +269,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 return 'Casa Austin 2'
             case 'Casa Austin 3':
                 return 'Casa Austin 3'
-            case 'Casa Austin 4:
+            case 'Casa Austin 4':
                 return 'Casa Austin 4'
 
             default:
