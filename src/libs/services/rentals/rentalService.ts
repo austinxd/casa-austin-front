@@ -10,14 +10,14 @@ export const rentalApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ENV.API_URL,
         prepareHeaders: (headers: any) => {
-            headers.set('Authorization', ⁠ Bearer ${cookiesGetString('token')} ⁠)
+            headers.set('Authorization', `Bearer ${cookiesGetString('token')}`)
             return headers
         },
     }),
     endpoints: (builder) => ({
         getRentalsById: builder.query<IRentalClient, string>({
             query: (id) => ({
-                url: ⁠ /reservations/${id}/ ⁠,
+                url: `/reservations/${id}/`,
                 method: 'GET',
             }),
         }),
@@ -93,14 +93,6 @@ export const rentalApi = createApi({
                 method: 'GET',
             }),
         }),
-
-        getCalenderRents: builder.query<IRental, string>({
-            query: () => ({
-                url: '/vistacalendario/',
-                method: 'GET',
-            }),
-        }),
-
         getAllProperties: builder.query<IPropertyRental, string>({
             query: () => ({
                 url: '/property/',
@@ -132,5 +124,4 @@ export const {
     useGetSearchRentalQuery,
     useGetRentalForFilterQuery,
     useGetEarningsPerMonthQuery,
-    useGetCalenderRentsQuery,
 } = rentalApi
