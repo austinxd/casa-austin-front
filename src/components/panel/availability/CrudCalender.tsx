@@ -2,15 +2,18 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
 import { AppBar, Box, Typography } from '@mui/material'
-import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
+import {
+    useGetCalenderListQuery,
+    useGetSearchRentalQuery,
+} from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
-import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
+import { IEventoCalendario } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
 import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
 
-const generarEventos = (data: IRental): IEventoCalendario[] => {
-    if (!data || !data.results) return []
-    return data.results.map((rental) => ({
+const generarEventos = (data: any): IEventoCalendario[] => {
+    if (!data) return []
+    return data.map((rental: any) => ({
         title:
             rental.origin === 'aus'
                 ? `${rental.client.first_name} + ${rental.guests}`
@@ -29,16 +32,19 @@ const generarEventos = (data: IRental): IEventoCalendario[] => {
 }
 
 export default function CrudCalender() {
+    const { data: calenderList } = useGetCalenderListQuery('')
     const { data } = useGetSearchRentalQuery('')
     const { data: dataHouse } = useGetDashboardQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
 
     useEffect(() => {
-        if (data) {
-            setEventos(generarEventos(data))
+        if (calenderList) {
+            console.log(calenderList, ' nueva data')
+            console.log(data, ' antigua')
+            setEventos(generarEventos(calenderList))
         }
-    }, [data])
+    }, [calenderList])
 
     useEffect(() => {
         const currentMonth = currentDate.getMonth()
@@ -232,7 +238,7 @@ export default function CrudCalender() {
                                 }}
                             ></Box>
                             <Typography fontSize={15} fontWeight={400}>
-                                {item.casa}
+                                {item.casa.replace('Austin', '')}
                             </Typography>
                         </Box>
                     ))}
