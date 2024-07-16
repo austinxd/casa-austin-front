@@ -2,7 +2,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
 import { AppBar, Box, Typography } from '@mui/material'
-import { userGetCalenderRentsQuerty } from '../../../libs/services/rentals/rentalService'
+import { useGetSearchRentalQuery } from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRental } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
@@ -29,7 +29,7 @@ const generarEventos = (data: IRental): IEventoCalendario[] => {
 }
 
 export default function CrudCalender() {
-    const { data } = userGetCalenderRentsQuerty('')
+    const { data } = useGetSearchRentalQuery('')
     const { data: dataHouse } = useGetDashboardQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
