@@ -89,7 +89,7 @@ export const rentalApi = createApi({
         }),
         getSearchRental: builder.query<IRental, string>({
             query: () => ({
-                url: '/reservations/',
+                url: '/vistacalendario/',
                 method: 'GET',
             }),
         }),
