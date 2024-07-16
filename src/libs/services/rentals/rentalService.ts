@@ -93,6 +93,15 @@ export const rentalApi = createApi({
                 method: 'GET',
             }),
         }),
+
+
+        getCalenderRents: builder.query<IRental, string>({
+            query: () => ({
+                url: '/vistacalendario/',
+                method: 'GET',
+            }),
+        }),
+        
         getAllProperties: builder.query<IPropertyRental, string>({
             query: () => ({
                 url: '/property/',
@@ -124,4 +133,5 @@ export const {
     useGetSearchRentalQuery,
     useGetRentalForFilterQuery,
     useGetEarningsPerMonthQuery,
+    userGetCalenderRentsQuerty,
 } = rentalApi

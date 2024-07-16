@@ -29,7 +29,7 @@ const generarEventos = (data: IRental): IEventoCalendario[] => {
 }
 
 export default function CrudCalender() {
-    const { data } = useGetSearchRentalQuery('')
+    const { data } = userGetCalenderRentsQuerty('')
     const { data: dataHouse } = useGetDashboardQuery('')
 
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
