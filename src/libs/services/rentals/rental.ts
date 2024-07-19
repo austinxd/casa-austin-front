@@ -46,7 +46,7 @@ export const downloadContractById = async (id: string, name: string, checkIn: st
     const urlBlob = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = urlBlob
-    a.download = `${name}_${checkIn}.docx`
+    a.download = `${name}_${checkIn}.pdf`
     document.body.appendChild(a)
     a.click()
     a.remove()
