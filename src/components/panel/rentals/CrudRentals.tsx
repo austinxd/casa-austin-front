@@ -11,6 +11,7 @@ import { IRentalClient } from '../../../interfaces/rental/registerRental'
 import SkeletonCard from './card/SkeletonCard'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
 import SearchRental from './form/SearchRental'
+import { downloadContractById } from '../../../libs/services/rentals/rental'
 
 export default function CrudRentals() {
     const [open, setOpen] = useState(false)
@@ -24,15 +25,15 @@ export default function CrudRentals() {
     const [search, setSearch] = useState('')
     const [filterAirbnb, setFilterAirbnb] = useState('')
     const [filterToday, setFilterToday] = useState('')
-    const [filterInProgress, setFilterInProgress] = useState('')  // Estado para el filtro in_progress
-    
+    const [filterInProgress, setFilterInProgress] = useState('')
+    const [isLoadingContract, setIsLoadingContract] = useState(false)
 
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
-        from: filterInProgress || filterToday,  // Combina filterInProgress y filterToday
-        type: filterAirbnb
+        from: filterInProgress || filterToday,
+        type: filterAirbnb,
     })
 
     const onSave = () => {
@@ -58,6 +59,21 @@ export default function CrudRentals() {
         setDataRental(item)
     }
 
+    const handleDownload = async (id: string, name: string, check_in: string) => {
+        setIsLoadingContract(true)
+        try {
+            await downloadContractById(id, name, check_in)
+            console.log('Download successful')
+        } catch (error) {
+            console.error('Download failed', error)
+        } finally {
+            setIsLoadingContract(false)
+        }
+    }
+    const onContract = (item: IRentalClient) => {
+        handleDownload(item.id.toString(), item.client.first_name, item.check_in_date)
+    }
+
     return (
         <div>
             <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
@@ -74,9 +90,8 @@ export default function CrudRentals() {
                 filterToday={filterToday}
                 setFilterToday={setFilterToday}
                 setFilterInProgress={setFilterInProgress} // Pasando la función de estado
-                filterInProgress={filterInProgress}       // Pasando el valor del estado
+                filterInProgress={filterInProgress} // Pasando el valor del estado
             />
-
 
             {isLoading ? (
                 <SkeletonCard />
@@ -87,10 +102,12 @@ export default function CrudRentals() {
                             {data.results.map((item) => (
                                 <div key={item.id} className={style.item}>
                                     <Card
+                                        isLoadingContract={isLoadingContract}
                                         item={item}
                                         handleDelete={() => onDelete(item)}
                                         handleEdit={() => onEdit(item)}
                                         handleView={() => onView(item)}
+                                        handleContract={() => onContract(item)}
                                     />
                                 </div>
                             ))}

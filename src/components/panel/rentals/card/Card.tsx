@@ -1,4 +1,4 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import { Box, CircularProgress, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined'
 import { useState } from 'react'
@@ -8,13 +8,22 @@ import AirbnbIcon from '../../../common/icons/AitbnbIcon'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 
 interface Props {
+    isLoadingContract: boolean
     handleView: () => void
     handleEdit: () => void
+    handleContract: () => void
     handleDelete: (e: string) => void
     item: IRentalClient
 }
 
-export default function Card({ handleView, handleEdit, handleDelete, item }: Props) {
+export default function Card({
+    isLoadingContract,
+    handleContract,
+    handleView,
+    handleEdit,
+    handleDelete,
+    item,
+}: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
 
@@ -402,6 +411,13 @@ export default function Card({ handleView, handleEdit, handleDelete, item }: Pro
                     </MenuItem>
                     <MenuItem onClick={handleEdit} sx={{ color: '#000F08' }}>
                         Editar
+                    </MenuItem>
+                    <MenuItem onClick={handleContract} sx={{ color: '#000F08' }}>
+                        {isLoadingContract ? (
+                            <CircularProgress size={24} sx={{ mx: 'auto' }} />
+                        ) : (
+                            'Contrato'
+                        )}
                     </MenuItem>
                     <MenuItem
                         onClick={() => handleDelete('Reyes Sanchez Jesus Alexander')}

@@ -1,4 +1,6 @@
 import { casaApi } from '../../api/casaApi'
+import { ENV } from '../../constants/config'
+import { cookiesGetString } from '../../utils/cookie-storage'
 
 export const reservationsForm = async (payload: FormData) => {
     return await casaApi.post('/reservations/', payload)
@@ -22,4 +24,31 @@ export const deleteReservationsForm = async (id: string) => {
 
 export const deleteRecipesForm = async (id: string) => {
     return await casaApi.delete(`/delete-recipe/${id}/`)
+}
+
+export const downloadContractById = async (id: string, name: string, checkIn: string) => {
+    const token = cookiesGetString('token')
+    const url = `${ENV.API_URL}/reservations/${id}/contrato/`
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok')
+    }
+
+    const blob = await response.blob()
+    const urlBlob = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = urlBlob
+    a.download = `${name}_${checkIn}.docx`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(urlBlob)
 }

@@ -21,6 +21,12 @@ export const rentalApi = createApi({
                 method: 'GET',
             }),
         }),
+        getContractById: builder.query<IRentalClient, string>({
+            query: (id) => ({
+                url: `/reservations/${id}/contrato/`,
+                method: 'GET',
+            }),
+        }),
         getAllRentals: builder.query<
             IRental,
             {
@@ -131,4 +137,5 @@ export const {
     useGetRentalForFilterQuery,
     useGetEarningsPerMonthQuery,
     useGetCalenderListQuery,
+    useGetContractByIdQuery,
 } = rentalApi
