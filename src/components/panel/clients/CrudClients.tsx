@@ -1,4 +1,4 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from '@mui/material'
 import TableAustin from '../../common/table/TableAustin'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useState } from 'react'
@@ -10,12 +10,14 @@ import { useGetAllClientsQuery } from '../../../libs/services/clients/clientsSer
 import { IRegisterClient } from '../../../interfaces/clients/registerClients'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
 import SearchClient from './form/SearchClient'
+import CommentIcon from '@mui/icons-material/Comment'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default function CrudClients() {
     const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({})
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState<number>(10)
-
+    const { palette } = useTheme()
     const [search, setSearch] = useState('')
     const { data, isLoading, refetch } = useGetAllClientsQuery({
         page: currentPage,
@@ -24,6 +26,8 @@ export default function CrudClients() {
     })
 
     const [openForm, setOpenForm] = useState(false)
+    const [openComment, setOpenComment] = useState(false)
+    const [dataClient, setDataClient] = useState<IRegisterClient | null>(null)
     const [del, setDel] = useState(false)
     const [clienById, setClienById] = useState<IRegisterClient | null>(null)
     const [title, setTitle] = useState('')
@@ -43,8 +47,29 @@ export default function CrudClients() {
         }))
     }
 
+    const handleComment = (data: IRegisterClient) => {
+        setDataClient(data)
+        setOpenComment(true)
+    }
     const columns = [
-        { field: 'first_name', headerName: 'NOMBRES', flex: 1, sortable: false },
+        {
+            field: 'first_name',
+            headerName: 'NOMBRES',
+            flex: 1,
+            sortable: false,
+            renderCell: (params: { row: IRegisterClient }) => (
+                <Box display={'flex'} alignItems={'center'}>
+                    <Typography letterSpacing={0}>{params.row.first_name}</Typography>
+                    {params.row.comentarios_clientes && (
+                        <IconButton sx={{ p: 0.4 }} onClick={() => handleComment(params.row)}>
+                            <CommentIcon
+                                sx={{ color: palette.primary.main, opacity: 0.6, fontSize: '16px' }}
+                            />
+                        </IconButton>
+                    )}
+                </Box>
+            ),
+        },
         {
             field: 'last_name',
             headerName: 'APELLIDOS',
@@ -215,6 +240,7 @@ export default function CrudClients() {
                     {!isLoading &&
                         data?.results?.map((item: IRegisterClient) => (
                             <CardResponsive
+                                handleComment={() => handleComment(item)}
                                 key={item.id}
                                 id={item.id}
                                 first_name={item.first_name}
@@ -222,6 +248,7 @@ export default function CrudClients() {
                                 number_doc={item.number_doc}
                                 document_type={item.document_type}
                                 email={item.email}
+                                comment={item.comentarios_clientes}
                                 handleEdit={() => onEdit(item)}
                                 handleDelete={() => onDelete(item)}
                             />
@@ -264,6 +291,32 @@ export default function CrudClients() {
                         setClienById(null)
                     }}
                 />
+            </BasicModal>
+
+            <BasicModal open={openComment}>
+                {dataClient && (
+                    <Box position={'relative'}>
+                        <IconButton
+                            onClick={() => setOpenComment(false)}
+                            sx={{
+                                p: 0.8,
+                                borderRadius: '8px',
+                                position: 'absolute',
+                                right: '-3px',
+                                top: '-3px',
+                                background: '#DD6158',
+                                color: 'white',
+                                ':hover': {
+                                    background: '#DD6158',
+                                },
+                            }}
+                        >
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                        <Typography mb={2}>Comentario de {dataClient.first_name}</Typography>
+                        <Typography variant="body1">{dataClient.comentarios_clientes} </Typography>
+                    </Box>
+                )}
             </BasicModal>
         </div>
     )

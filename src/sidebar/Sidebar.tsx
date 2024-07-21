@@ -1,4 +1,3 @@
-/* Icons */
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import {
     SpaceDashboardOutlined as SpaceDashboardOutlinedIcon,
@@ -8,7 +7,6 @@ import {
     LoginOutlined as LoginOutlinedIcon,
     Menu as MenuIcon,
 } from '@mui/icons-material'
-/* Material UI */
 import {
     AppBar,
     Box,
@@ -20,7 +18,7 @@ import {
     Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useBoxShadow from '../hook/useBoxShadow'
 import { useDispatch } from 'react-redux'
 import { logout } from '../libs/services/auth/authSlice'
@@ -107,7 +105,6 @@ export default function Sidebar(props: Props) {
     }
     const drawer = (
         <div>
-            {/*             <img src={Logo} alt="logo-austin" height={107} width={140} /> */}
             <Box
                 width={140}
                 height={107}
@@ -134,6 +131,7 @@ export default function Sidebar(props: Props) {
                     <Box
                         key={id}
                         sx={{
+                            cursor: 'pointer',
                             display:
                                 roll === 'mantenimiento' && text != 'Disponibilidad'
                                     ? 'none'
@@ -146,19 +144,22 @@ export default function Sidebar(props: Props) {
                             background: params.pathname.includes(path) ? '#F5F5F5' : 'none',
                             color: params.pathname.includes(path) ? '#0E6191' : '#000F08',
                             borderRadius: '6px',
+                            ':hover': {
+                                background: '#F5F5F5',
+                            },
                         }}
+                        onClick={() => navigate(path)}
                     >
                         <Icon fontSize="small" sx={{ mr: 1.2, ml: 0 }} />
-                        <Link
-                            style={{
-                                textDecoration: 'none',
-                                fontSize: '15px',
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                py: 0.2,
                                 color: params.pathname.includes(path) ? '#0E6191' : '#000F08',
                             }}
-                            to={path}
                         >
                             {text}
-                        </Link>
+                        </Typography>
                     </Box>
                 ))}
                 {menuItems.slice(5, 6).map(({ text, icon: Icon, id }) => (

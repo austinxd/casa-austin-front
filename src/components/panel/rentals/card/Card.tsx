@@ -1,12 +1,20 @@
-import { Box, CircularProgress, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    IconButton,
+    Menu,
+    MenuItem,
+    Typography,
+    useTheme,
+} from '@mui/material'
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { IRentalClient } from '../../../../interfaces/rental/registerRental'
-import AirbnbIcon from '../../../common/icons/AitbnbIcon'
+import AirbnbIcon from '../../../common/icons/AirbnbIcon'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 interface Props {
     isLoadingContract: boolean
     handleView: () => void
@@ -26,7 +34,7 @@ export default function Card({
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
-
+    const { palette } = useTheme()
     const convertDate = (date: string) => {
         const months = [
             'Ene',
@@ -144,6 +152,15 @@ export default function Card({
                                 >
                                     Mantenimiento
                                 </span>
+                            )}
+                            {item.late_checkout && (
+                                <ExitToAppIcon
+                                    sx={{
+                                        color: palette.background.default,
+                                        fontSize: '16px',
+                                        marginLeft: '8px',
+                                    }}
+                                />
                             )}
                         </Typography>
                         <Box

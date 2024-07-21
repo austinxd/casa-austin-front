@@ -13,9 +13,9 @@ export const dashboardApi = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getDashboard: builder.query<IDataDash, string>({
-            query: () => ({
-                url: `/dashboard/`,
+        getDashboard: builder.query<IDataDash, { month: string; year: string }>({
+            query: ({ month, year }) => ({
+                url: `/dashboard?month=${month}&year=${year}`,
                 method: 'GET',
             }),
         }),

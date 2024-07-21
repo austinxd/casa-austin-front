@@ -38,6 +38,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
             setValue('last_name', dataEdit.last_name)
             setValue('email', dataEdit.email)
             setValue('tel_number', dataEdit.tel_number)
+            setValue('comentarios_clientes', dataEdit.comentarios_clientes)
             setValue('sex', dataEdit.sex)
             setSelectedOption(dataEdit.sex)
             setPhoneNumber(dataEdit.tel_number)
@@ -54,6 +55,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
             formData.append('last_name', data.last_name)
             formData.append('email', data.email)
             formData.append('tel_number', data.tel_number)
+            formData.append('comentarios_clientes', data.comentarios_clientes)
             formData.append('sex', data.sex[0])
 
             if (dataEdit?.id) {

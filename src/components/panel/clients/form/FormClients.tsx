@@ -1,29 +1,27 @@
 import { Box, Checkbox, FormControlLabel, Grid, IconButton, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import SelectInputPrimary from '../../../common/input/SelectInputPrimary'
+import {
+    SelectInputPrimary,
+    SecondaryInput,
+    CheckBoxSelected,
+    CheckBoxIcon,
+    ButtonPrimary,
+    SuccessIcon,
+    SuccessEditIcon,
+    BasicModal,
+    ModalErrors,
+} from '../../../common'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { SecondaryInput } from '../../../common/input/SecondaryInput'
-import 'dayjs/locale/es'
-import 'dayjs/locale/en'
-import CheckBoxSelected from '../../../common/icons/CheckBoxSelected'
-import CheckBoxIcon from '../../../common/icons/CheckBoxIcon'
 import { Controller } from 'react-hook-form'
 import { useFormClients } from '../../../../libs/services/clients/useFormClients'
-import ButtonPrimary from '../../../common/button/ButtonPrimary'
-import SuccessIcon from '../../../common/icons/SuccessIcon'
 import { IRegisterClient } from '../../../../interfaces/clients/registerClients'
 import SuccessCard from '../card/SuccessCard'
-import SuccessEditIcon from '../../../common/icons/SucessEditIcon'
 import { useEffect, useState } from 'react'
-import 'react-phone-input-2/lib/style.css'
 import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/material.css'
 import { useGetDataClient } from '../../../../libs/services/clients/useGetDataClient'
-
 import dayjs from 'dayjs'
-import BasicModal from '../../../common/modal/BasicModal'
-import ModalErrors from '../../../common/modal/ModalErrors'
+import { SecondaryInputMulti } from '../../../common/input/SecondaryInputMulti'
 
 interface Props {
     onCancel: () => void
@@ -103,6 +101,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                               .replace(/\b\w/g, (char) => char.toUpperCase())
                         : ''
                 )
+
                 setApiSurnames(
                     dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
                         ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
@@ -420,6 +419,19 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                         >
                                             {(errors.tel_number?.message ?? null) as string}
                                         </Typography>
+                                    </Grid>
+                                    <Grid mb={2} item md={12} xs={12}>
+                                        <SecondaryInputMulti
+                                            {...register('comentarios_clientes', {
+                                                maxLength: {
+                                                    value: 200,
+                                                    message:
+                                                        'El comentario no puede exceder los 200 caracteres',
+                                                },
+                                            })}
+                                            type="text"
+                                            label={'Comentario'}
+                                        />
                                     </Grid>
                                     {typeDocument === 'ruc' ? null : (
                                         <Grid

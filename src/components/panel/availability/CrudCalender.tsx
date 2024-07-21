@@ -1,19 +1,17 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
-import { AppBar, Box, Typography } from '@mui/material'
-import {
-    useGetCalenderListQuery,
-    useGetSearchRentalQuery,
-} from '../../../libs/services/rentals/rentalService'
+import { AppBar, Box, Typography, useTheme } from '@mui/material'
+import { useGetCalenderListQuery } from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
-import { IEventoCalendario } from '../../../interfaces/rental/registerRental'
+import { IEventoCalendario, IRentalClient } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
 import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 
-const generarEventos = (data: any): IEventoCalendario[] => {
+const generarEventos = (data: IRentalClient[]): IEventoCalendario[] => {
     if (!data) return []
-    return data.map((rental: any) => ({
+    return data.map((rental: IRentalClient) => ({
         title:
             rental.origin === 'aus'
                 ? `${rental.client.first_name} + ${rental.guests}`
@@ -21,27 +19,25 @@ const generarEventos = (data: any): IEventoCalendario[] => {
                   ? 'Airbnb'
                   : 'Mantenimiento',
         start: rental.check_in_date,
-        end: rental.check_out_date,
+        end: rental.late_checkout ? rental.late_check_out_date : rental.check_out_date,
         color: rental.origin === 'man' ? '#888888' : rental.property.background_color,
         image:
             rental.origin === 'aus' || rental.origin === 'man'
                 ? rental.property.name
                 : '/airbnb.png',
         type: rental.origin,
+        lateCheckout: rental.late_checkout,
     }))
 }
 
 export default function CrudCalender() {
     const { data: calenderList } = useGetCalenderListQuery('')
-    const { data } = useGetSearchRentalQuery('')
-    const { data: dataHouse } = useGetDashboardQuery('')
-
+    const { data: dataHouse } = useGetDashboardQuery({ month: '1', year: '2024' })
+    const { palette } = useTheme()
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
 
     useEffect(() => {
         if (calenderList) {
-            console.log(calenderList, ' nueva data')
-            console.log(data, ' antigua')
             setEventos(generarEventos(calenderList))
         }
     }, [calenderList])
@@ -104,17 +100,26 @@ export default function CrudCalender() {
                             />
                         )}
                     </Box>
-
-                    <Typography
-                        sx={{
-                            color: 'white',
-                            display: { md: 'flex', sm: 'none', xs: 'none' },
-                            fontSize: { md: '12px', sm: '10px', xs: '10px' },
-                        }}
-                        style={{ width: '90%', padding: 0, margin: 0.5 }}
-                    >
-                        {eventInfo.event.title}
-                    </Typography>
+                    <Box display={{ md: 'flex', sm: 'none', xs: 'none' }} alignItems={'center'}>
+                        <Typography
+                            sx={{
+                                color: 'white',
+                                fontSize: { md: '12px', sm: '10px', xs: '10px' },
+                            }}
+                            style={{ width: '90%', padding: 0, margin: 0.5 }}
+                        >
+                            {eventInfo.event.title}
+                        </Typography>
+                        {eventInfo.event.lateCheckout && (
+                            <ExitToAppIcon
+                                sx={{
+                                    color: palette.background.default,
+                                    fontSize: '16px',
+                                    marginLeft: '8px',
+                                }}
+                            />
+                        )}
+                    </Box>
                 </Box>
             )
         } else {
@@ -157,6 +162,12 @@ export default function CrudCalender() {
             info.el.style.borderTopLeftRadius = '0px'
             info.el.style.borderBottomLeftRadius = '0px'
         }
+        if (info.event.extendedProps.lateCheckout) {
+            info.el.style.marginRight = '-62px'
+            if (window.innerWidth < 900) {
+                info.el.style.marginRight = '-24px'
+            }
+        }
         const currentDate = new Date()
         currentDate.setHours(0, 0, 0, 0)
 
@@ -180,6 +191,12 @@ export default function CrudCalender() {
                 if (!usedColors.includes(eventColor)) {
                     const box = document.createElement('div')
                     box.style.height = '25px'
+                    if (info.event.extendedProps.lateCheckout) {
+                        box.style.width = '62px'
+                        if (window.innerWidth < 900) {
+                            box.style.width = '24px'
+                        }
+                    }
                     box.style.width = '12px'
                     box.style.backgroundColor = eventColor
                     box.style.borderTopRightRadius = '12px'

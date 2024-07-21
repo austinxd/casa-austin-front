@@ -1,4 +1,4 @@
-import { Box, Divider, Skeleton, Typography } from '@mui/material'
+import { Box, Divider, IconButton, Skeleton, Typography } from '@mui/material'
 import Card from './cards/Card'
 import style from './dashboard.module.css'
 import useBoxShadow from '../../../hook/useBoxShadow'
@@ -13,10 +13,13 @@ import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 import MoneyOffIcon from '@mui/icons-material/MoneyOff'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import { SelectInputs } from '../../common'
 
 export default function CrudDashboard() {
     const params = useLocation()
-    const { data, isLoading, refetch } = useGetDashboardQuery('')
+
     const [colorData, setColorData] = useState<string[]>([])
     const [freeDaysData, setFreeDaysData] = useState<number[]>([])
     const [sellsData, setSellsData] = useState<number[]>([])
@@ -25,6 +28,36 @@ export default function CrudDashboard() {
     const [sellerOrder, setSellerOrder] = useState<IBest_sellers[]>([])
     const [roll, setRoll] = useState(Cookies.get('rollTkn') || '')
     const [idSeller, setIdSeller] = useState(Cookies.get('idSellerAus') || '')
+
+    const [selectedOption, setSelectedOption] = useState<number>(1)
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1)
+    const [selectedYear, setSelectedYear] = useState(currentYear.toString())
+
+    const monthNames = [
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
+    ]
+
+    const options = []
+    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+        options.push({ value: i.toString(), label: i.toString() })
+    }
+    const { data, isLoading, refetch } = useGetDashboardQuery({
+        month: selectedMonth.toString(),
+        year: selectedYear,
+    })
     useEffect(() => {
         if (data) {
             const fullChartt = () => {
@@ -69,16 +102,58 @@ export default function CrudDashboard() {
         refetch()
         setRoll(Cookies.get('rollTkn') || '')
         setIdSeller(Cookies.get('idSellerAus') || '')
-    }, [params.pathname])
-    const [selectedOption, setSelectedOption] = useState<number>(1)
+    }, [params.pathname, selectedMonth, selectedYear])
 
-    const currentDate = new Date()
     const currentMonth = currentDate.toLocaleString('es-ES', { month: 'long' })
+
+    const handlePrevMonth = () => {
+        if (selectedMonth > 1) {
+            setSelectedMonth(selectedMonth - 1)
+        }
+    }
+
+    const handleNextMonth = () => {
+        if (selectedMonth < 12) {
+            setSelectedMonth(selectedMonth + 1)
+        }
+    }
+    const handleYearChange = (event: any) => {
+        setSelectedYear(event.target.value)
+    }
+
     return (
         <div>
-            <Typography variant="h1" mb={3}>
-                Dashboard
-            </Typography>
+            <Box mb={3} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                <Box display={'flex'} alignItems={'center'} gap={1}>
+                    <Typography variant="h1">Dashboard</Typography>
+                    <IconButton
+                        sx={{ p: 0.1, opacity: selectedMonth === 1 ? 0.3 : 1 }}
+                        onClick={handlePrevMonth}
+                        disabled={selectedMonth === 1}
+                    >
+                        <ArrowBackIosNewIcon color="primary" sx={{ opacity: 0.5, fontSize: 16 }} />
+                    </IconButton>
+                    <Typography variant="body1">{monthNames[selectedMonth - 1]}</Typography>
+                    <IconButton
+                        sx={{ p: 0.1, opacity: selectedMonth === 12 ? 0.3 : 1 }}
+                        onClick={handleNextMonth}
+                        disabled={selectedMonth === 12}
+                    >
+                        <ArrowForwardIosIcon color="primary" sx={{ opacity: 0.5, fontSize: 16 }} />
+                    </IconButton>
+                </Box>
+                <Box display={'flex '} alignItems={'center'} justifyContent={'space-between'}>
+                    <SelectInputs
+                        messageError=""
+                        variant="outlined"
+                        options={options}
+                        label={'Año'}
+                        onChange={handleYearChange}
+                        defaultValue={currentYear.toString()}
+                    />
+                </Box>
+            </Box>
+
             <div className={style.container}>
                 <div className={style.item}>
                     <Card
@@ -161,46 +236,52 @@ export default function CrudDashboard() {
                         boxShadow: useBoxShadow(true),
                     }}
                 >
-                    <Box display={'flex'} gap={1} px={3} pt={3}>
-                        <Typography
-                            variant="h2"
-                            fontSize={16}
-                            sx={{
-                                opacity: selectedOption === 1 ? 1 : 0.5,
-                                borderBottom: selectedOption === 1 ? '2px solid #A8A8A8' : 'none',
-                                cursor: 'pointer',
-                            }}
-                            fontWeight={500}
-                            onClick={() => setSelectedOption(1)}
-                        >
-                            Ventas
-                        </Typography>
-                        <Typography
-                            variant="h2"
-                            fontSize={16}
-                            sx={{
-                                opacity: selectedOption === 2 ? 1 : 0.5,
-                                borderBottom: selectedOption === 2 ? '2px solid #A8A8A8' : 'none',
-                                cursor: 'pointer',
-                            }}
-                            fontWeight={500}
-                            onClick={() => setSelectedOption(2)}
-                        >
-                            Disponibilidad
-                        </Typography>
-                        <Typography
-                            variant="h2"
-                            fontSize={16}
-                            sx={{
-                                opacity: selectedOption === 3 ? 1 : 0.5,
-                                borderBottom: selectedOption === 3 ? '2px solid #A8A8A8' : 'none',
-                                cursor: 'pointer',
-                            }}
-                            fontWeight={500}
-                            onClick={() => setSelectedOption(3)}
-                        >
-                            Ocupacion
-                        </Typography>
+                    <Box
+                        display={'flex'}
+                        px={3}
+                        pt={3}
+                        width={'100%'}
+                        justifyContent={'space-between'}
+                        flexDirection={{ md: 'row', sm: 'column-reverse', xs: 'column-reverse' }}
+                    >
+                        <Box display={'flex'} gap={1}>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    opacity: selectedOption === 1 ? 1 : 0.5,
+                                    borderBottom:
+                                        selectedOption === 1 ? '2px solid #A8A8A8' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => setSelectedOption(1)}
+                            >
+                                Ventas
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    opacity: selectedOption === 2 ? 1 : 0.5,
+                                    borderBottom:
+                                        selectedOption === 2 ? '2px solid #A8A8A8' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => setSelectedOption(2)}
+                            >
+                                Disponibilidad
+                            </Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    opacity: selectedOption === 3 ? 1 : 0.5,
+                                    borderBottom:
+                                        selectedOption === 3 ? '2px solid #A8A8A8' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => setSelectedOption(3)}
+                            >
+                                Ocupacion
+                            </Typography>
+                        </Box>
                     </Box>
                     {selectedOption === 1 ? (
                         <BarCharts

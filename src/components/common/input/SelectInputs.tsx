@@ -1,19 +1,27 @@
-'use client'
-import { Box, MenuItem, Select, SelectProps, Typography, styled } from '@mui/material'
-import { RefObject, forwardRef } from 'react'
+import { Box, FormControl, InputLabel, MenuItem, Select, Typography, styled } from '@mui/material'
 
-const CssSelect = styled(Select)({
+import { SelectProps } from '@mui/material/Select'
+interface Option {
+    value: string | number
+    label: string
+}
+interface BaseProps {
+    label: string
+    messageError: string
+    options: Option[]
+}
+
+type Props = BaseProps & SelectProps
+
+const CssFormControl = styled(FormControl)({
     '& .MuiOutlinedInput-root': {
-        height: '55px',
+        height: '36px',
         color: '#2F2B3D',
-
         opacity: 0.9,
         '& fieldset': {
-            color: '#2F2B3D',
-            opacity: 0.9,
-            background: 'transparent',
             borderRadius: '8px',
             border: '1px solid #D1D0D4',
+            background: 'transparent',
         },
         '&:hover fieldset': {
             border: '1px solid #D1D0D4',
@@ -22,67 +30,49 @@ const CssSelect = styled(Select)({
             border: '1px solid #D1D0D4',
         },
     },
-
-    '& input': {
+    '& .MuiSelect-select': {
+        textAlign: 'left',
+    },
+    '& .MuiInputBase-input': {
+        color: '#2F2B3D',
+        fontSize: '14px',
+        fontWeight: 600,
         height: '24px',
-        color: '#2F2B3D',
-        opacity: 0.9,
-        fontSize: '16px',
-        fontWeight: 600,
-        backgroundColor: '#FFF',
-    },
-    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-        display: 'none',
-        color: '#2F2B3D',
-        opacity: 0.9,
-    },
-    '& input:-webkit-autofill': {
-        webkitBoxShadow: '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
-        boxShadow: '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
-        color: '#2F2B3D',
-        opacity: 0.9,
-        fontWeight: 600,
     },
 })
-
-type BaseProps = {
-    label?: string
-    placeholder?: string
-    messageError?: string
-}
-
-type Props = BaseProps & SelectProps
-
-export const SelectInputs = forwardRef(function SelectInputs(
-    { placeholder, label, messageError, ...textFieldProps }: Props,
-    ref: ((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement> | null | undefined
-) {
+export default function SelectInputs({ label, options, messageError, ...selectProps }: Props) {
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                marginBottom: '0px',
-            }}
-        >
-            <CssSelect
-                fullWidth
-                placeholder={placeholder}
-                {...textFieldProps}
-                ref={ref}
-                label={label}
-                sx={{}}
-            >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-            </CssSelect>
-
-            <Typography color={'error'} ml={1.5} mt={0.2} variant="subtitle2">
-                {messageError}
-            </Typography>
+        <Box height={36}>
+            <CssFormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+                <Select
+                    defaultValue={''}
+                    {...selectProps}
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label={label}
+                >
+                    {options.map((option) => (
+                        <MenuItem
+                            key={option.value}
+                            value={option.value}
+                            sx={{ color: '#2F2B3D', opacity: 0.9 }}
+                        >
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Typography
+                    color={'error'}
+                    fontSize={11}
+                    ml={1.5}
+                    mt={0.2}
+                    textAlign={'start'}
+                    variant="subtitle2"
+                >
+                    {messageError}
+                </Typography>
+            </CssFormControl>
         </Box>
     )
-})
-
-SelectInputs.displayName = 'SelectInputs'
+}

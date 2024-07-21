@@ -59,7 +59,7 @@ export const lightTheme = createTheme({
                     fontWeight: 700,
                     color: '#0E6191',
                     '@media (max-width: 600px)': {
-                        fontSize: 16,
+                        fontSize: 18,
                     },
                 },
                 h2: {
@@ -103,7 +103,7 @@ export const lightTheme = createTheme({
                 body1: {
                     fontSize: 14,
                     fontWeight: 400,
-                    color: '#173E83',
+                    color: '#444151',
                 },
                 body2: {
                     fontSize: 16,

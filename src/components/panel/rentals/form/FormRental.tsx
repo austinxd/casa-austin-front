@@ -9,13 +9,20 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import SelectInputPrimary from '../../../common/input/SelectInputPrimary'
+import {
+    SelectInputPrimary,
+    SecondaryInput,
+    DeleteIcon,
+    ButtonPrimary,
+    SuccessEditIcon,
+    SuccessIcon,
+    BasicModal,
+    ModalErrors,
+} from '../../../common'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from 'react'
-import { SecondaryInput } from '../../../common/input/SecondaryInput'
-import DeleteIcon from '../../../common/icons/DeleteIcon'
 import { Controller } from 'react-hook-form'
 import { useFormRentals } from '../../../../libs/services/rentals/useFormRentals'
 import 'dayjs/locale/es'
@@ -25,18 +32,15 @@ import {
     useGetRentalsByIdQuery,
 } from '../../../../libs/services/rentals/rentalService'
 import { useGetAllClientsQuery } from '../../../../libs/services/clients/clientsService'
-import ButtonPrimary from '../../../common/button/ButtonPrimary'
 import SuccessCard from '../../clients/card/SuccessCard'
-import SuccessEditIcon from '../../../common/icons/SucessEditIcon'
-import SuccessIcon from '../../../common/icons/SuccessIcon'
 import { IRentalClient } from '../../../../interfaces/rental/registerRental'
 import dayjs from 'dayjs'
 import SkeletonFormRental from './SkeletonFormRental'
-import BasicModal from '../../../common/modal/BasicModal'
-import ModalErrors from '../../../common/modal/ModalErrors'
 import PhoneInput from 'react-phone-input-2'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+import { filterTextHouse, filterTextHouse2, turnCurrency } from '../../../../hook'
+import { SecondaryInputMulti } from '../../../common/input/SecondaryInputMulti'
 
 interface Props {
     onCancel: () => void
@@ -100,6 +104,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         checkFullPayment,
         setCheckFullPayment,
         setCheckPool,
+        lateCheckOut,
+        setLateCheckOut,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -107,6 +113,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('guests', dataEdit.guests)
             setValue('price_sol', dataEdit.price_sol)
             setValue('price_usd', dataEdit.price_usd)
+            setValue('comentarios_reservas', dataEdit.comentarios_reservas)
             setValue('advance_payment', dataEdit.advance_payment)
             setValue('check_in_date', dayjs(dataEdit.check_in_date))
             setValue('check_out_date', dayjs(dataEdit.check_out_date))
@@ -121,6 +128,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setPhoneNumber(dataEdit.tel_contact_number)
             setCheckFullPayment(dataEdit.full_payment)
             setCheckPool(dataEdit.temperature_pool)
+            setCheckPool(dataEdit.late_checkout)
+            console.log('fechaout:', dataEdit.late_check_out_date)
         }
     }, [isEditLoading, dataEdit])
 
@@ -234,48 +243,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
 
-    const turnCurrency = (e: string) => {
-        switch (e) {
-            case 'sol':
-                return 'Soles'
-            case 'usd':
-                return 'Dolares'
-            default:
-                return ''
-        }
-    }
-
-    const filterTextHouse = (e: string): string => {
-        switch (e) {
-            case 'CA1':
-                return 'Casa Austin (waze, maps, uber, etc)'
-            case 'CA2':
-                return 'Casa Austin (waze, maps, uber, etc)'
-            case 'CA3':
-                return 'Casa Austin (waze, maps, uber, etc)'
-            case 'CA4':
-                return 'Casa Austin (waze, maps, uber, etc)'
-
-            default:
-                return 'Casa Austin (waze, maps, uber, etc'
-        }
-    }
-
-    const filterTextHouse2 = (e: string): string => {
-        switch (e) {
-            case 'Casa Austin 1':
-                return 'Casa Austin 1'
-            case 'Casa Austin 2':
-                return 'Casa Austin 2'
-            case 'Casa Austin 3':
-                return 'Casa Austin 3'
-            case 'Casa Austin 4':
-                return 'Casa Austin 4'
-
-            default:
-                return 'Casa Austin'
-        }
-    }
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -906,6 +873,19 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         />
                                     )}
                                 </Grid>
+                                <Grid mb={2} item md={12} xs={12}>
+                                    <SecondaryInputMulti
+                                        {...register('comentarios_reservas', {
+                                            maxLength: {
+                                                value: 200,
+                                                message:
+                                                    'El comentario no puede exceder los 200 caracteres',
+                                            },
+                                        })}
+                                        type="text"
+                                        label={'Comentario'}
+                                    />
+                                </Grid>
                                 <Grid item md={6} xs={6} display={'flex'} justifyContent={'start'}>
                                     <FormControlLabel
                                         sx={{ ml: 0.1 }}
@@ -994,6 +974,57 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                 }}
                                             >
                                                 Pago completo
+                                            </Typography>
+                                        }
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    md={6}
+                                    xs={6}
+                                    display={'flex'}
+                                    justifyContent={'start'}
+                                    alignItems={'start'}
+                                >
+                                    <FormControlLabel
+                                        sx={{ ml: 0.1, mt: 3 }}
+                                        onClick={() => {
+                                            setLateCheckOut(!lateCheckOut)
+                                        }}
+                                        control={
+                                            <Checkbox
+                                                icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                                checkedIcon={
+                                                    <RadioButtonCheckedIcon fontSize="small" />
+                                                }
+                                                checked={lateCheckOut}
+                                                sx={{
+                                                    mr: 0,
+                                                    p: 0.5,
+                                                    color: '#0E6191',
+                                                    '&.Mui-checked': {
+                                                        color: '#0E6191',
+                                                    },
+                                                    '&.MuiFormControlLabel-label': {
+                                                        color: '#0E6191',
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography
+                                                sx={{
+                                                    color: '#000F08',
+                                                    fontSize: {
+                                                        md: '15px',
+                                                        sm: '14px',
+                                                        xs: '13px',
+                                                    },
+                                                    fontWeight: 400,
+                                                    opacity: 0.8,
+                                                }}
+                                            >
+                                                Late Checkout
                                             </Typography>
                                         }
                                     />

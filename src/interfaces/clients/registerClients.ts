@@ -1,4 +1,5 @@
 export interface IRegisterClient {
+    comentarios_clientes: string
     document_type: string
     number_doc: string
     first_name: string

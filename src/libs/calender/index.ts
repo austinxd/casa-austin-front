@@ -181,7 +181,7 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
                     borderRadius: '12px',
                     padding: 0,
                 },
-                /*                 '&:not(:last-of-type)': {
+                /*             '&:not(:last-of-type)': {
                     marginRight: theme.spacing(-1.5),
                     marginLeft: theme.spacing(2),
                 }, */

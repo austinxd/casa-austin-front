@@ -37,6 +37,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [checkFullPayment, setCheckFullPayment] = useState(false)
     const [checkPool, setCheckPool] = useState(false)
+    const [lateCheckOut, setLateCheckOut] = useState(false)
 
     const [phoneNumber, setPhoneNumber] = useState('')
 
@@ -106,6 +107,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('advance_payment_currency', data.advance_payment_currency)
             formData.append('full_payment', checkFullPayment.toString())
             formData.append('temperature_pool', checkPool.toString())
+            formData.append('late_checkout', lateCheckOut.toString())
             formData.append('tel_contact_number', phoneNumber)
             formData.append(
                 'origin',
@@ -138,7 +140,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             }
 
             const response = await reservationsForm(formData)
-            console.log(response, 'crear')
+            console.log(response, 'creados')
             if (response.status === 201) {
                 setDataRegisterAlert(data)
                 setSuccessRegister(true)
@@ -181,5 +183,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         checkFullPayment,
         checkPool,
         dataRegisterAlert,
+        lateCheckOut,
+        setLateCheckOut,
     }
 }

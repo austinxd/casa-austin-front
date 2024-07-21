@@ -1,10 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import BarChartsVertical from '../../common/charts/BarChartVertical'
-import TableAustin from '../../common/table/TableAustin'
 import SearchProfits from './form/SearchProfits'
 import { useEffect, useState } from 'react'
 import PaginationAustin from '../../common/pagination/PaginationAustin'
-import SelectInputPrimary from '../../common/input/SelectInputPrimary'
 import CardResponsiveProfit from './card/CardResponsiveProfit'
 import {
     useGetAllRentalsForEarningsQuery,
@@ -13,6 +11,7 @@ import {
 import { IRentalClient } from '../../../interfaces/rental/registerRental'
 import { useLocation } from 'react-router-dom'
 import HouseRoundedIcon from '@mui/icons-material/HouseRounded'
+import { SelectInputs, TableAustin } from '../../common'
 
 type MonthNameToNumber = {
     [monthName: string]: number
@@ -267,19 +266,20 @@ export default function CrudProfits() {
 
     return (
         <div>
-            <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
-                Ingresos
-            </Typography>
-            <Box maxWidth={100}>
-                <SelectInputPrimary
-                    messageError=""
-                    variant="outlined"
-                    options={options}
-                    label={'Año'}
-                    onChange={handleYearChange}
-                    defaultValue={currentYear.toString()}
-                />
+            <Box mb={{ md: 3, sm: 1, xs: 1 }} display={'flex'} justifyContent={'space-between'}>
+                <Typography variant="h1">Ingresos</Typography>{' '}
+                <Box maxWidth={100}>
+                    <SelectInputs
+                        messageError=""
+                        variant="outlined"
+                        options={options}
+                        label={'Año'}
+                        onChange={handleYearChange}
+                        defaultValue={currentYear.toString()}
+                    />
+                </Box>
             </Box>
+
             <BarChartsVertical
                 categories={meses}
                 setMonthSelect={setMonthSelect}

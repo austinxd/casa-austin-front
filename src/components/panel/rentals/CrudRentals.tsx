@@ -89,8 +89,8 @@ export default function CrudRentals() {
                 setFilterAirbnb={setFilterAirbnb}
                 filterToday={filterToday}
                 setFilterToday={setFilterToday}
-                setFilterInProgress={setFilterInProgress} // Pasando la función de estado
-                filterInProgress={filterInProgress} // Pasando el valor del estado
+                setFilterInProgress={setFilterInProgress}
+                filterInProgress={filterInProgress}
             />
 
             {isLoading ? (
