@@ -1,4 +1,4 @@
-import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from '@mui/material'
+import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
@@ -31,7 +31,7 @@ export default function CardResponsive({
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
-    const { palette } = useTheme()
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
     }
@@ -71,9 +71,7 @@ export default function CardResponsive({
                     <Typography variant="subtitle1">{first_name}</Typography>
                     {comment && (
                         <IconButton onClick={handleComment} sx={{ p: 0.5 }}>
-                            <CommentIcon
-                                sx={{ color: palette.primary.main, opacity: 0.6, fontSize: '17px' }}
-                            />
+                            <CommentIcon sx={{ color: 'gray', opacity: 0.6, fontSize: '17px' }} />
                         </IconButton>
                     )}
                 </Box>

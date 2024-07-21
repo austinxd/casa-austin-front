@@ -420,7 +420,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             {(errors.tel_number?.message ?? null) as string}
                                         </Typography>
                                     </Grid>
-                                    <Grid mb={2} item md={12} xs={12}>
+                                    <Grid mt={2} item md={12} xs={12}>
                                         <SecondaryInputMulti
                                             {...register('comentarios_clientes', {
                                                 maxLength: {

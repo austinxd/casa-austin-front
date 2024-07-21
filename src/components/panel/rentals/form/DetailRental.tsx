@@ -133,7 +133,16 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
                             </Typography>
                         </Box>
                     </Box>
-
+                    {dataRental.comentarios_reservas && (
+                        <Box my={2}>
+                            <Typography variant="body2">Comentario:</Typography>{' '}
+                            <Typography variant="body2" fontWeight={400}>
+                                {dataRental.comentarios_reservas
+                                    ? dataRental.comentarios_reservas
+                                    : '-'}
+                            </Typography>
+                        </Box>
+                    )}
                     <Divider sx={{ my: 2 }} />
                     <Box
                         display="flex"

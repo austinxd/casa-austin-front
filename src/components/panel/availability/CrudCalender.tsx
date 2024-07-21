@@ -135,7 +135,7 @@ export default function CrudCalender() {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            height: { md: '17px', sm: '1px', xs: '4px' },
+                            height: { md: '17px', sm: '1px', xs: '6px' },
                         }}
                     ></Box>
                 </Box>
@@ -163,7 +163,7 @@ export default function CrudCalender() {
             info.el.style.borderBottomLeftRadius = '0px'
         }
         if (info.event.extendedProps.lateCheckout) {
-            info.el.style.marginRight = '-62px'
+            info.el.style.marginRight = '-78px'
             if (window.innerWidth < 900) {
                 info.el.style.marginRight = '-24px'
             }

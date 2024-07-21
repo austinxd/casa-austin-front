@@ -109,6 +109,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('temperature_pool', checkPool.toString())
             formData.append('late_checkout', lateCheckOut.toString())
             formData.append('tel_contact_number', phoneNumber)
+            formData.append('comentarios_reservas', data.comentarios_reservas)
+
             formData.append(
                 'origin',
                 dataEdit?.origin === 'man' ? 'man' : dataEdit?.origin === 'air' ? 'air' : 'aus'

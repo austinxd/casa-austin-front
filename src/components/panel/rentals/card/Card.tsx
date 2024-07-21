@@ -1,12 +1,4 @@
-import {
-    Box,
-    CircularProgress,
-    IconButton,
-    Menu,
-    MenuItem,
-    Typography,
-    useTheme,
-} from '@mui/material'
+import { Box, CircularProgress, IconButton, Menu, MenuItem, Typography } from '@mui/material'
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined'
 import { useState } from 'react'
@@ -34,7 +26,7 @@ export default function Card({
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
-    const { palette } = useTheme()
+
     const convertDate = (date: string) => {
         const months = [
             'Ene',
@@ -153,15 +145,6 @@ export default function Card({
                                     Mantenimiento
                                 </span>
                             )}
-                            {item.late_checkout && (
-                                <ExitToAppIcon
-                                    sx={{
-                                        color: palette.background.default,
-                                        fontSize: '16px',
-                                        marginLeft: '8px',
-                                    }}
-                                />
-                            )}
                         </Typography>
                         <Box
                             display={'flex'}
@@ -241,8 +224,26 @@ export default function Card({
                                     />
                                 </IconButton>
                             )}
+                            {item.late_checkout && (
+                                <Box
+                                    display={'flex'}
+                                    alignItems={'center'}
+                                    justifyContent={'center'}
+                                    sx={{ background: 'gray', borderRadius: '4px' }}
+                                    height={26}
+                                    width={26}
+                                >
+                                    <ExitToAppIcon
+                                        sx={{
+                                            color: 'white',
+                                            fontSize: '16px',
+                                        }}
+                                    />
+                                </Box>
+                            )}
                         </Box>
                     </Box>
+
                     <Box
                         display={'flex'}
                         gap={2}
