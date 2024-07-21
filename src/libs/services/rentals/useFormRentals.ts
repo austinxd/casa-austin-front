@@ -131,7 +131,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
                 }
 
                 const response = await editReservationsForm(formData, dataEdit?.id)
-                console.log(response, 'edid')
+
                 if (response.status === 200) {
                     setSuccessEdit(true)
                     refetchEdit()
@@ -142,7 +142,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             }
 
             const response = await reservationsForm(formData)
-            console.log(response, 'creados')
+
             if (response.status === 201) {
                 setDataRegisterAlert(data)
                 setSuccessRegister(true)

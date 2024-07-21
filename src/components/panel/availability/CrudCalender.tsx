@@ -110,16 +110,34 @@ export default function CrudCalender() {
                         >
                             {eventInfo.event.title}
                         </Typography>
-                        {eventInfo.event.lateCheckout && (
+                    </Box>{' '}
+                    {eventInfo.event.extendedProps.lateCheckout && (
+                        <Box display={'flex'} ml={'8px'} alignItems={'center'}>
                             <ExitToAppIcon
                                 sx={{
                                     color: palette.background.default,
                                     fontSize: '16px',
-                                    marginLeft: '8px',
                                 }}
                             />
-                        )}
-                    </Box>
+                        </Box>
+                    )}
+                    {eventInfo.event.extendedProps.lateCheckout && (
+                        <Box
+                            display={'flex'}
+                            alignItems={'center'}
+                            sx={{
+                                marginLeft: 'auto',
+                            }}
+                        >
+                            <ExitToAppIcon
+                                sx={{
+                                    color: palette.background.default,
+                                    fontSize: '16px',
+                                    marginRight: '4px',
+                                }}
+                            />
+                        </Box>
+                    )}
                 </Box>
             )
         } else {
@@ -182,7 +200,6 @@ export default function CrudCalender() {
 
         if (info.isEnd) {
             const endDate = info.event.end
-
             const endDayCell = document.querySelector(
                 `.fc-day[data-date="${endDate.toISOString().slice(0, 10)}"]:first-of-type .fc-daygrid-day-events`
             )

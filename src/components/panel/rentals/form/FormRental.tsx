@@ -129,7 +129,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setCheckFullPayment(dataEdit.full_payment)
             setCheckPool(dataEdit.temperature_pool)
             setCheckPool(dataEdit.late_checkout)
-            console.log('fechaout:', dataEdit.late_check_out_date)
+            setLateCheckOut(dataEdit.late_check_out_date)
         }
     }, [isEditLoading, dataEdit])
 
