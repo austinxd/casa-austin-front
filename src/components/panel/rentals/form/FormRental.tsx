@@ -128,8 +128,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setPhoneNumber(dataEdit.tel_contact_number)
             setCheckFullPayment(dataEdit.full_payment)
             setCheckPool(dataEdit.temperature_pool)
-            setCheckPool(dataEdit.late_checkout)
-            setLateCheckOut(dataEdit.late_check_out_date)
+            setLateCheckOut(dataEdit.late_checkout)
         }
     }, [isEditLoading, dataEdit])
 

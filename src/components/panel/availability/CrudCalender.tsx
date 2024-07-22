@@ -132,8 +132,8 @@ export default function CrudCalender() {
                             <ExitToAppIcon
                                 sx={{
                                     color: palette.background.default,
-                                    fontSize: '16px',
-                                    marginRight: '4px',
+                                    fontSize: { md: '16px', sm: '6px', xs: '6px' },
+                                    marginRight: { md: '4px', sm: '2px', xs: '2px' },
                                 }}
                             />
                         </Box>
@@ -154,8 +154,26 @@ export default function CrudCalender() {
                             justifyContent: 'center',
                             alignItems: 'center',
                             height: { md: '17px', sm: '1px', xs: '6px' },
+                            width: '100%',
                         }}
-                    ></Box>
+                    >
+                        {eventInfo.event.extendedProps.lateCheckout && (
+                            <Box
+                                display={'flex'}
+                                sx={{
+                                    marginLeft: 'auto',
+                                }}
+                            >
+                                <ExitToAppIcon
+                                    sx={{
+                                        color: palette.background.default,
+                                        fontSize: { md: '16px', sm: '6px', xs: '6px' },
+                                        marginRight: { md: '4px', sm: '2px', xs: '2px' },
+                                    }}
+                                />
+                            </Box>
+                        )}
+                    </Box>
                 </Box>
             )
         }

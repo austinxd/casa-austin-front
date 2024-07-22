@@ -8,7 +8,7 @@ import {
     deleteRecipesForm,
     checkReservationDate,
 } from './rental'
-import { useGetSearchRentalQuery } from './rentalService'
+import { useGetCalenderListQuery } from './rentalService'
 
 export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, refetchEdit: any) => {
     const {
@@ -41,7 +41,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [phoneNumber, setPhoneNumber] = useState('')
 
-    const { refetch: refectchForCalender } = useGetSearchRentalQuery('')
+    const { refetch: refectchForCalender } = useGetCalenderListQuery('')
 
     const handlePhoneNumberChange = (value: string) => {
         setValue('tel_contact_number', value)
@@ -94,6 +94,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const formData = new FormData()
 
     const onRegisterUser = async (data: any) => {
+        console.log(data)
+        console.log(lateCheckOut, 'ff')
         try {
             setIsLoading(true)
             formData.append('property', data.property)
