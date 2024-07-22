@@ -85,7 +85,6 @@ export default function CrudCalender() {
                                     fontSize: { md: '12px', sm: '4.5px', xs: '4.5px' },
                                     marginRight: '12px',
                                     display: 'flex',
-                                    lineHeight: { md: '4px', sm: '3px', xs: '3px' },
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}
@@ -109,18 +108,20 @@ export default function CrudCalender() {
                             style={{ width: '90%', padding: 0, margin: 0.5 }}
                         >
                             {eventInfo.event.title}
-                        </Typography>
-                    </Box>{' '}
-                    {eventInfo.event.extendedProps.lateCheckout && (
-                        <Box display={'flex'} ml={'8px'} alignItems={'center'}>
-                            <ExitToAppIcon
-                                sx={{
-                                    color: palette.background.default,
-                                    fontSize: '16px',
-                                }}
-                            />
-                        </Box>
-                    )}
+                        </Typography>{' '}
+                        {eventInfo.event.extendedProps.lateCheckout && (
+                            <Box display={'flex'} ml={'8px'} alignItems={'center'}>
+                                <ExitToAppIcon
+                                    sx={{
+                                        color: palette.background.default,
+                                        fontSize: { md: '16px', sm: '6px', xs: '6px' },
+                                        marginRight: '2px',
+                                    }}
+                                />
+                            </Box>
+                        )}
+                    </Box>
+
                     {eventInfo.event.extendedProps.lateCheckout && (
                         <Box
                             display={'flex'}
@@ -133,7 +134,7 @@ export default function CrudCalender() {
                                 sx={{
                                     color: palette.background.default,
                                     fontSize: { md: '16px', sm: '6px', xs: '6px' },
-                                    marginRight: { md: '4px', sm: '2px', xs: '2px' },
+                                    marginRight: '2px',
                                 }}
                             />
                         </Box>
@@ -168,7 +169,7 @@ export default function CrudCalender() {
                                     sx={{
                                         color: palette.background.default,
                                         fontSize: { md: '16px', sm: '6px', xs: '6px' },
-                                        marginRight: { md: '4px', sm: '2px', xs: '2px' },
+                                        marginRight: '2px',
                                     }}
                                 />
                             </Box>
@@ -199,9 +200,9 @@ export default function CrudCalender() {
             info.el.style.borderBottomLeftRadius = '0px'
         }
         if (info.event.extendedProps.lateCheckout) {
-            info.el.style.marginRight = '-78px'
+            info.el.style.marginRight = '-21px'
             if (window.innerWidth < 900) {
-                info.el.style.marginRight = '-24px'
+                info.el.style.marginRight = '-16px'
             }
         }
         const currentDate = new Date()
@@ -227,9 +228,9 @@ export default function CrudCalender() {
                     const box = document.createElement('div')
                     box.style.height = '25px'
                     if (info.event.extendedProps.lateCheckout) {
-                        box.style.width = '62px'
+                        box.style.width = '32px'
                         if (window.innerWidth < 900) {
-                            box.style.width = '24px'
+                            box.style.width = '12px'
                         }
                     }
                     box.style.width = '12px'
