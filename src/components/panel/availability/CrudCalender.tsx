@@ -109,17 +109,6 @@ export default function CrudCalender() {
                         >
                             {eventInfo.event.title}
                         </Typography>{' '}
-                        {eventInfo.event.extendedProps.lateCheckout && (
-                            <Box display={'flex'} ml={'8px'} alignItems={'center'}>
-                                <ExitToAppIcon
-                                    sx={{
-                                        color: palette.background.default,
-                                        fontSize: { md: '16px', sm: '6px', xs: '6px' },
-                                        marginRight: '2px',
-                                    }}
-                                />
-                            </Box>
-                        )}
                     </Box>
 
                     {eventInfo.event.extendedProps.lateCheckout && (

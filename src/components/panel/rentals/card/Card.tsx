@@ -390,7 +390,9 @@ export default function Card({
                             </Box>
                             <Box display={'flex'} flexDirection={'column'}>
                                 <Typography variant="subtitle1">
-                                    {convertDate(item.check_out_date)}
+                                    {item.late_checkout
+                                        ? convertDate(item.late_check_out_date)
+                                        : convertDate(item.check_out_date)}
                                 </Typography>
                                 <Typography
                                     variant="subtitle1"
