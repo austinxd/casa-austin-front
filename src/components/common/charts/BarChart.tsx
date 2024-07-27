@@ -1,4 +1,5 @@
 import { Box, Skeleton } from '@mui/material'
+import { useEffect } from 'react'
 import ApexChart from 'react-apexcharts'
 
 interface Props {
@@ -47,7 +48,7 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                 const value = series[0].data[val - 1]
                 return [
                     `Casa ${val}` +
-                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">S/. ${value}</p>`,
+                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">S/. ${value} </p>`,
                 ]
             },
         },
@@ -293,6 +294,7 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
             enabled: false,
         },
     }
+
     const series = [
         {
             name: 'Casa',
@@ -300,15 +302,9 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
         },
     ]
 
-    return (
-        <Box sx={{ background: 'white', px: { md: 2, sm: 2, xs: 1.5 }, pt: 0, borderRadius: 3 }}>
-            {isLoading ? (
-                <Skeleton
-                    variant="rounded"
-                    sx={{ width: '100%', bgcolor: '#DADADA' }}
-                    height={310}
-                />
-            ) : (
+    const callChart = () => {
+        return (
+            <>
                 <ApexChart
                     type="bar"
                     options={
@@ -322,6 +318,23 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                     height={310}
                     width={'100%'}
                 />
+            </>
+        )
+    }
+
+    useEffect(() => {
+        callChart()
+    }, [data])
+    return (
+        <Box sx={{ background: 'white', px: { md: 2, sm: 2, xs: 1.5 }, pt: 0, borderRadius: 3 }}>
+            {isLoading ? (
+                <Skeleton
+                    variant="rounded"
+                    sx={{ width: '100%', bgcolor: '#DADADA' }}
+                    height={310}
+                />
+            ) : (
+                <>{callChart()} </>
             )}
         </Box>
     )

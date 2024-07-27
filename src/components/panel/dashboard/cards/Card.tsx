@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 import useBoxShadow from '../../../../hook/useBoxShadow'
-
+import ConstructionIcon from '@mui/icons-material/Construction'
 interface Props {
     icon: ReactNode
     quantity: number | string
@@ -9,9 +9,10 @@ interface Props {
     percent: string
     subTitle: string
     color: string
+    nochesMan?: number
 }
 
-export default function Card({ color, icon, quantity, title }: Props) {
+export default function Card({ color, icon, quantity, title, nochesMan }: Props) {
     return (
         <Box
             sx={{
@@ -27,28 +28,60 @@ export default function Card({ color, icon, quantity, title }: Props) {
                 },
             }}
         >
-            <Box display={'flex'}>
-                {icon}{' '}
-                <Typography
-                    color={'#444151'}
-                    display={'flex'}
-                    justifyContent={'start'}
-                    alignItems={'center'}
-                    ml={'8px'}
-                    sx={{
-                        fontSize: 23,
-                        '@media screen and (max-width: 1240px)': {
-                            fontSize: 19,
-                            marginLeft: '12px',
-                        },
-                        '@media screen and (max-width: 910px)': {
-                            fontSize: 16,
-                            marginLeft: '4px',
-                        },
-                    }}
-                >
-                    {quantity}
-                </Typography>
+            <Box display={'flex'} gap={2}>
+                <Box display={'flex'}>
+                    {icon}
+                    <Typography
+                        color={'#444151'}
+                        display={'flex'}
+                        justifyContent={'start'}
+                        alignItems={'center'}
+                        ml={'8px'}
+                        sx={{
+                            fontSize: 23,
+                            '@media screen and (max-width: 1240px)': {
+                                fontSize: 19,
+                                marginLeft: '12px',
+                            },
+                            '@media screen and (max-width: 910px)': {
+                                fontSize: 16,
+                                marginLeft: '4px',
+                            },
+                        }}
+                    >
+                        {quantity}
+                    </Typography>
+                </Box>
+
+                {nochesMan && (
+                    <>
+                        <Box display={'flex'}>
+                            <ConstructionIcon
+                                sx={{ color: '#808080', fontSize: { md: '34px', xs: '22px' } }}
+                            />
+                            <Typography
+                                color={'#444151'}
+                                display={'flex'}
+                                justifyContent={'start'}
+                                alignItems={'center'}
+                                ml={'8px'}
+                                sx={{
+                                    fontSize: 23,
+                                    '@media screen and (max-width: 1240px)': {
+                                        fontSize: 19,
+                                        marginLeft: '12px',
+                                    },
+                                    '@media screen and (max-width: 910px)': {
+                                        fontSize: 16,
+                                        marginLeft: '4px',
+                                    },
+                                }}
+                            >
+                                {nochesMan}
+                            </Typography>
+                        </Box>
+                    </>
+                )}
             </Box>
             <Typography
                 color={'#444151'}

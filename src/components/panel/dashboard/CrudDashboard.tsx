@@ -60,6 +60,7 @@ export default function CrudDashboard() {
     })
     useEffect(() => {
         if (data) {
+            console.log(data, 'showing data')
             const fullChartt = () => {
                 const sortedData = [...data.free_days_per_house].sort((a, b) => {
                     const numA = parseInt(a.casa.match(/\d+/)?.[0] || '0')
@@ -96,15 +97,13 @@ export default function CrudDashboard() {
             }
             fullChartt()
         }
-    }, [data])
+    }, [data, selectedMonth, selectedYear])
 
     useEffect(() => {
         refetch()
         setRoll(Cookies.get('rollTkn') || '')
         setIdSeller(Cookies.get('idSellerAus') || '')
     }, [params.pathname, selectedMonth, selectedYear])
-
-    const currentMonth = currentDate.toLocaleString('es-ES', { month: 'long' })
 
     const handlePrevMonth = () => {
         if (selectedMonth > 1) {
@@ -182,8 +181,10 @@ export default function CrudDashboard() {
                         quantity={data?.ocuppied_days_total ? data?.ocuppied_days_total : ' '}
                         subTitle="than last week"
                         title="Noches reservadas"
+                        nochesMan={data?.noches_man ? data?.noches_man : null}
                     />
                 </div>
+
                 <div className={style.item}>
                     <Card
                         color="#FFBBBD"
@@ -324,7 +325,7 @@ export default function CrudDashboard() {
                     <Typography variant="h2" p={3}>
                         Ranking de
                         <span style={{ marginLeft: '4px', textTransform: 'capitalize' }}>
-                            {currentMonth}
+                            {monthNames[selectedMonth - 1]}
                         </span>
                     </Typography>
                     <Divider />

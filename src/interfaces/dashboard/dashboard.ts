@@ -5,6 +5,7 @@ export interface IDataDash {
     ocuppied_days_total: number
     dinero_por_cobrar: string
     dinero_total_facturado: string
+    noches_man: any
 }
 export interface IFreeDays {
     casa: string
