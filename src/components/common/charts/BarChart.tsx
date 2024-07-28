@@ -1,5 +1,4 @@
-import { Box, Skeleton } from '@mui/material'
-import { useEffect } from 'react'
+import { Box, Skeleton, Typography } from '@mui/material'
 import ApexChart from 'react-apexcharts'
 
 interface Props {
@@ -29,28 +28,7 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
             },
         },
         legend: {
-            position: 'right',
-            labels: {
-                colors: '#6E6B78',
-            },
-            markers: {
-                radius: 12,
-                offsetX: -4,
-                offsetY: 2,
-            },
-            formatter: function (
-                val: any,
-                _opts: {
-                    seriesIndex: number
-                    w: { globals: { series: any[] } }
-                }
-            ) {
-                const value = series[0].data[val - 1]
-                return [
-                    `Casa ${val}` +
-                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">S/. ${value} </p>`,
-                ]
-            },
+            show: false,
         },
         xaxis: {
             tickAmount: 4,
@@ -58,198 +36,6 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                 style: {
                     colors: '#ACAAB1',
                 },
-                /*                 formatter: function (val: any) {
-                    return val
-                }, */
-            },
-            categories: categories,
-        },
-        yaxis: {
-            labels: {
-                style: {
-                    colors: '#ACAAB1',
-                },
-            },
-        },
-        grid: {
-            show: true,
-            borderColor: '#E6E5E7',
-            strokeDashArray: 12,
-            xaxis: {
-                lines: {
-                    show: true,
-                },
-            },
-            yaxis: {
-                lines: {
-                    show: false,
-                },
-            },
-        },
-        stroke: {
-            width: 1,
-        },
-        colors: colors,
-        dataLabels: {
-            enabled: true,
-            style: {
-                fontSize: '12px',
-                colors: ['white'],
-                fontWeight: 400,
-            },
-            formatter: function (_val: any, opts: any) {
-                return 'Casa ' + (opts.dataPointIndex + 1)
-            },
-        },
-        tooltip: {
-            enabled: false,
-        },
-    }
-    const optionsSell: any = {
-        chart: {
-            id: 'apexchart-example',
-            toolbar: {
-                show: false,
-            },
-        },
-        plotOptions: {
-            bar: {
-                horizontal: true,
-                barHeight: '65%',
-                distributed: true,
-                barWidth: '75%',
-                borderRadius: 9,
-                borderRadiusApplication: 'end',
-            },
-        },
-        legend: {
-            position: 'right',
-            labels: {
-                colors: '#6E6B78',
-            },
-            markers: {
-                radius: 12,
-                offsetX: -4,
-                offsetY: 2,
-            },
-            formatter: function (
-                val: any,
-                _opts: {
-                    seriesIndex: number
-                    w: { globals: { series: any[] } }
-                }
-            ) {
-                const value = series[0].data[val - 1]
-                return [
-                    `Casa ${val}` +
-                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">${value} noches libres</p>`,
-                ]
-            },
-        },
-        xaxis: {
-            tickAmount: 4,
-            labels: {
-                style: {
-                    colors: '#ACAAB1',
-                },
-                /*                 formatter: function (val: any) {
-                    return val
-                }, */
-            },
-            categories: categories,
-        },
-        yaxis: {
-            labels: {
-                style: {
-                    colors: '#ACAAB1',
-                },
-            },
-        },
-        grid: {
-            show: true,
-            borderColor: '#E6E5E7',
-            strokeDashArray: 12,
-            xaxis: {
-                lines: {
-                    show: true,
-                },
-            },
-            yaxis: {
-                lines: {
-                    show: false,
-                },
-            },
-        },
-        stroke: {
-            width: 1,
-        },
-        colors: colors,
-        dataLabels: {
-            enabled: true,
-            style: {
-                fontSize: '12px',
-                colors: ['white'],
-                fontWeight: 400,
-            },
-            formatter: function (_val: any, opts: any) {
-                return 'Casa ' + (opts.dataPointIndex + 1)
-            },
-        },
-        tooltip: {
-            enabled: false,
-        },
-    }
-
-    const optionsNigth: any = {
-        chart: {
-            id: 'apexchart-example',
-            toolbar: {
-                show: false,
-            },
-        },
-        plotOptions: {
-            bar: {
-                horizontal: true,
-                barHeight: '65%',
-                distributed: true,
-                barWidth: '75%',
-                borderRadius: 9,
-                borderRadiusApplication: 'end',
-            },
-        },
-        legend: {
-            position: 'right',
-            labels: {
-                colors: '#6E6B78',
-            },
-            markers: {
-                radius: 12,
-                offsetX: -4,
-                offsetY: 2,
-            },
-            formatter: function (
-                val: any,
-                _opts: {
-                    seriesIndex: number
-                    w: { globals: { series: any[] } }
-                }
-            ) {
-                const value = series[0].data[val - 1]
-                return [
-                    `Casa ${val}` +
-                        `<p style="margin-bottom: 12px; margin-left: 8px; margin-top: 4px;color: #444151; font-size: 13px; font-weight: 500">${value} noches ocupadas</p>`,
-                ]
-            },
-        },
-        xaxis: {
-            tickAmount: 4,
-            labels: {
-                style: {
-                    colors: '#ACAAB1',
-                },
-                /*                 formatter: function (val: any) {
-                    return val
-                }, */
             },
             categories: categories,
         },
@@ -302,29 +88,6 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
         },
     ]
 
-    const callChart = () => {
-        return (
-            <>
-                <ApexChart
-                    type="bar"
-                    options={
-                        selectedOption === 1
-                            ? options
-                            : selectedOption === 2
-                              ? optionsSell
-                              : optionsNigth
-                    }
-                    series={series}
-                    height={310}
-                    width={'100%'}
-                />
-            </>
-        )
-    }
-
-    useEffect(() => {
-        callChart()
-    }, [data])
     return (
         <Box sx={{ background: 'white', px: { md: 2, sm: 2, xs: 1.5 }, pt: 0, borderRadius: 3 }}>
             {isLoading ? (
@@ -334,7 +97,75 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                     height={310}
                 />
             ) : (
-                <>{callChart()} </>
+                <>
+                    <Box display={'flex'} gap={1}>
+                        <Box
+                            width={
+                                selectedOption === 1
+                                    ? 'calc(100% - 85px)'
+                                    : selectedOption === 2
+                                      ? 'calc(100% - 115px)'
+                                      : 'calc(100% - 143px)'
+                            }
+                        >
+                            {' '}
+                            <ApexChart
+                                type="bar"
+                                options={options}
+                                series={series}
+                                height={310}
+                                width={'100%'}
+                            />
+                        </Box>
+
+                        <Box
+                            width={
+                                selectedOption === 1
+                                    ? '85px'
+                                    : selectedOption === 2
+                                      ? '112px'
+                                      : '140px'
+                            }
+                            py={2}
+                        >
+                            {data.map((item: any, index: number) => (
+                                <Box pt={2}>
+                                    <Box display={'flex'} alignItems={'center'} gap={0.5}>
+                                        <Box
+                                            height={10}
+                                            width={10}
+                                            borderRadius={100}
+                                            sx={{ background: colors[index] }}
+                                        ></Box>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{ opacity: 0.8, fontSize: 12.5, fontWeight: 600 }}
+                                        >
+                                            Casa {categories[index]}
+                                        </Typography>
+                                    </Box>
+                                    <Typography variant="body1" fontSize={12} ml={1}>
+                                        {selectedOption === 1 ? (
+                                            <> S/. {new Intl.NumberFormat('es-PE').format(item)}</>
+                                        ) : selectedOption === 2 ? (
+                                            <>
+                                                {item > 1
+                                                    ? item + ' noches libres'
+                                                    : item + ' noche libre'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {item > 1
+                                                    ? item + ' noches ocupadas'
+                                                    : item + ' noche ocupada'}
+                                            </>
+                                        )}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+                </>
             )}
         </Box>
     )

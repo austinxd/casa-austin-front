@@ -405,18 +405,30 @@ export default function CrudDashboard() {
                                 </Box>
                                 <Typography
                                     variant="h2"
+                                    fontSize={16}
                                     textAlign={'center'}
                                     sx={{ opacity: 0.8 }}
-                                    mr={3}
+                                    mr={0}
                                     fontWeight={500}
                                 >
                                     {roll === 'vendedor' ? (
                                         item.id === 8 ? (
-                                            <>s/. {item.ventas_soles}</>
+                                            <>
+                                                s/.{' '}
+                                                {new Intl.NumberFormat('es-PE').format(
+                                                    +item.ventas_soles
+                                                )}
+                                            </>
                                         ) : (
                                             <>
                                                 {+idSeller === +item.id ? (
-                                                    <> s/. {item.ventas_soles}</>
+                                                    <>
+                                                        {' '}
+                                                        s/.{' '}
+                                                        {new Intl.NumberFormat('es-PE').format(
+                                                            +item.ventas_soles
+                                                        )}
+                                                    </>
                                                 ) : (
                                                     <Typography sx={{ filter: 'blur(3px)' }}>
                                                         s/Dinero
@@ -425,7 +437,12 @@ export default function CrudDashboard() {
                                             </>
                                         )
                                     ) : (
-                                        <>s/. {item.ventas_soles}</>
+                                        <>
+                                            s/.{' '}
+                                            {new Intl.NumberFormat('es-PE').format(
+                                                +item.ventas_soles
+                                            )}
+                                        </>
                                     )}
                                 </Typography>
                             </Box>
