@@ -31,9 +31,9 @@ export default function CrudDashboard() {
 
     const [selectedOption, setSelectedOption] = useState<number>(1)
     const currentDate = new Date()
-    const currentYear = currentDate.getFullYear()
+    const [currentYear, setCurrentYear] = useState(currentDate.getFullYear())
+
     const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1)
-    const [selectedYear, setSelectedYear] = useState(currentYear.toString())
 
     const monthNames = [
         'Enero',
@@ -56,7 +56,7 @@ export default function CrudDashboard() {
     }
     const { data, isLoading, refetch } = useGetDashboardQuery({
         month: selectedMonth.toString(),
-        year: selectedYear,
+        year: currentYear.toString(),
     })
     useEffect(() => {
         if (data) {
@@ -96,27 +96,36 @@ export default function CrudDashboard() {
             }
             fullChartt()
         }
-    }, [data, selectedMonth, selectedYear])
+    }, [data, selectedMonth, currentYear])
 
     useEffect(() => {
         refetch()
         setRoll(Cookies.get('rollTkn') || '')
         setIdSeller(Cookies.get('idSellerAus') || '')
-    }, [params.pathname, selectedMonth, selectedYear])
+    }, [params.pathname, selectedMonth, currentYear])
 
     const handlePrevMonth = () => {
         if (selectedMonth > 1) {
             setSelectedMonth(selectedMonth - 1)
+        }
+        if (selectedMonth === 1) {
+            setSelectedMonth(12)
+            setCurrentYear(currentYear - 1)
         }
     }
 
     const handleNextMonth = () => {
         if (selectedMonth < 12) {
             setSelectedMonth(selectedMonth + 1)
+            return
+        }
+        if (selectedMonth === 12) {
+            setSelectedMonth(1)
+            setCurrentYear(currentYear + 1)
         }
     }
     const handleYearChange = (event: any) => {
-        setSelectedYear(event.target.value)
+        setCurrentYear(event.target.value)
     }
 
     return (
@@ -124,19 +133,11 @@ export default function CrudDashboard() {
             <Box mb={3} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                 <Box display={'flex'} alignItems={'center'} gap={1}>
                     <Typography variant="h1">Dashboard</Typography>
-                    <IconButton
-                        sx={{ p: 0.1, opacity: selectedMonth === 1 ? 0.3 : 1 }}
-                        onClick={handlePrevMonth}
-                        disabled={selectedMonth === 1}
-                    >
+                    <IconButton sx={{ p: 0.1 }} onClick={handlePrevMonth}>
                         <ArrowBackIosNewIcon color="primary" sx={{ opacity: 0.5, fontSize: 16 }} />
                     </IconButton>
                     <Typography variant="body1">{monthNames[selectedMonth - 1]}</Typography>
-                    <IconButton
-                        sx={{ p: 0.1, opacity: selectedMonth === 12 ? 0.3 : 1 }}
-                        onClick={handleNextMonth}
-                        disabled={selectedMonth === 12}
-                    >
+                    <IconButton sx={{ p: 0.1 }} onClick={handleNextMonth}>
                         <ArrowForwardIosIcon color="primary" sx={{ opacity: 0.5, fontSize: 16 }} />
                     </IconButton>
                 </Box>
@@ -147,6 +148,7 @@ export default function CrudDashboard() {
                         options={options}
                         label={'Año'}
                         onChange={handleYearChange}
+                        value={currentYear}
                         defaultValue={currentYear.toString()}
                     />
                 </Box>

@@ -99,9 +99,9 @@ export const rentalApi = createApi({
                 method: 'GET',
             }),
         }),
-        getCalenderList: builder.query<IRentalClient[], string>({
-            query: () => ({
-                url: '/vistacalendario/',
+        getCalenderList: builder.query<IRentalClient[], { year: string }>({
+            query: ({ year }) => ({
+                url: `/vistacalendario/?year=${year}`,
                 method: 'GET',
             }),
         }),

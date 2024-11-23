@@ -1,14 +1,15 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import esLocale from '@fullcalendar/core/locales/es'
-import { AppBar, Box, Typography, useTheme } from '@mui/material'
+import { AppBar, Box, IconButton, Typography, useTheme } from '@mui/material'
 import { useGetCalenderListQuery } from '../../../libs/services/rentals/rentalService'
 import { useEffect, useState } from 'react'
 import { IEventoCalendario, IRentalClient } from '../../../interfaces/rental/registerRental'
 import CalendarWrappers from '../../../libs/calender'
 import { useGetDashboardQuery } from '../../../libs/services/dashboard/dashboardSlice'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 const generarEventos = (data: IRentalClient[]): IEventoCalendario[] => {
     if (!data) return []
     return data.map((rental: IRentalClient) => ({
@@ -31,11 +32,14 @@ const generarEventos = (data: IRentalClient[]): IEventoCalendario[] => {
 }
 
 export default function CrudCalender() {
-    const { data: calenderList } = useGetCalenderListQuery('')
+    const currentDates = new Date()
+    const [currentYear, setCurrentYear] = useState(currentDates.getFullYear())
+    const currentMonth = currentDates.getMonth()
+    const { data: calenderList } = useGetCalenderListQuery({ year: currentYear.toString() })
     const { data: dataHouse } = useGetDashboardQuery({ month: '1', year: '2024' })
     const { palette } = useTheme()
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
-
+    const [isScroll, setIsScroll] = useState(false)
     useEffect(() => {
         if (calenderList) {
             setEventos(generarEventos(calenderList))
@@ -43,15 +47,29 @@ export default function CrudCalender() {
     }, [calenderList])
 
     useEffect(() => {
-        const currentMonth = currentDate.getMonth()
-
-        const scrollonMonth = () => {
+        const scrollOnYearAndMonth = () => {
             const scrollHeight = window.innerWidth < 1000 ? 320 : 520
-            window.scroll(0, scrollHeight * currentMonth)
+            const isCurrentYear = currentYear === currentDates.getFullYear()
+            if (scrollHeight > 10) {
+                setIsScroll(true)
+            } else {
+                setIsScroll(false)
+            }
+            if (isCurrentYear) {
+                window.scrollTo({
+                    top: scrollHeight * currentMonth,
+                    behavior: 'smooth',
+                })
+            } else {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                })
+            }
         }
-        scrollonMonth()
-    }, [])
 
+        scrollOnYearAndMonth()
+    }, [currentYear, currentMonth])
     const currentDate = new Date()
 
     const renderEventContent = (eventInfo: any) => {
@@ -242,8 +260,7 @@ export default function CrudCalender() {
             }
         }
     }
-    const currentDates = new Date()
-    const currentYear = currentDates.getFullYear()
+
     const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
     const monthStartDates = months.map((month) => `${currentYear}-${month}-01`)
@@ -255,35 +272,53 @@ export default function CrudCalender() {
 
     return (
         <div>
-            <Typography variant="h1" mb={{ md: 1, sm: 1, xs: 1 }}>
-                Disponibilidad
-            </Typography>
-
             <AppBar
                 position="sticky"
                 sx={{ boxShadow: 'none', backgroundColor: 'white', width: '100%' }}
             >
-                <Box display={'flex'} gap={2} my={{ md: 3, sm: 2, xs: 2 }}>
-                    {dataHouse?.free_days_per_house.map((item) => (
-                        <Box
-                            key={item.property__background_color}
-                            display={'flex'}
-                            gap={0.5}
-                            alignItems={'center'}
-                        >
+                <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    mt={isScroll ? 2 : 0}
+                    justifyContent={'space-between'}
+                >
+                    <Typography variant="h1" mb={{ md: 1, sm: 1, xs: 1 }}>
+                        Disponibilidad
+                    </Typography>
+                    <Box display={'flex'} ml={'auto'} alignItems={'center'} gap={1}>
+                        <IconButton size="small" onClick={() => setCurrentYear((prev) => prev - 1)}>
+                            <ArrowBackIosIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                        <Typography variant="body2">{currentYear}</Typography>
+                        <IconButton size="small" onClick={() => setCurrentYear((prev) => prev + 1)}>
+                            <ArrowForwardIosIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Box>
+                </Box>
+
+                <Box>
+                    <Box display={'flex'} gap={2} my={{ md: 3, sm: 2, xs: 2 }}>
+                        {dataHouse?.free_days_per_house.map((item) => (
                             <Box
-                                sx={{
-                                    background: item.property__background_color,
-                                    borderRadius: '100%',
-                                    height: '15px',
-                                    width: '15px',
-                                }}
-                            ></Box>
-                            <Typography fontSize={15} fontWeight={400}>
-                                {item.casa.replace('Austin', '')}
-                            </Typography>
-                        </Box>
-                    ))}
+                                key={item.property__background_color}
+                                display={'flex'}
+                                gap={0.5}
+                                alignItems={'center'}
+                            >
+                                <Box
+                                    sx={{
+                                        background: item.property__background_color,
+                                        borderRadius: '100%',
+                                        height: '15px',
+                                        width: '15px',
+                                    }}
+                                ></Box>
+                                <Typography fontSize={15} fontWeight={400}>
+                                    {item.casa.replace('Austin', '')}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
                 </Box>
                 <Box
                     sx={{

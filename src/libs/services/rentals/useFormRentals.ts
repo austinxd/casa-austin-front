@@ -24,7 +24,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [successRegister, setSuccessRegister] = useState(false)
     const [successEdit, setSuccessEdit] = useState(false)
-
+    const currentDates = new Date()
+    const currentYear = currentDates.getFullYear()
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [openErrorModal, setOpenErrorModal] = useState(false)
@@ -41,7 +42,9 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [phoneNumber, setPhoneNumber] = useState('')
 
-    const { refetch: refectchForCalender } = useGetCalenderListQuery('')
+    const { refetch: refectchForCalender } = useGetCalenderListQuery({
+        year: currentYear.toString(),
+    })
 
     const handlePhoneNumberChange = (value: string) => {
         setValue('tel_contact_number', value)
