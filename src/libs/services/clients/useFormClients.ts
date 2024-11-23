@@ -47,16 +47,21 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
 
     const onCreateClient = async (data: IRegisterClient) => {
         try {
+            console.log(data, 'to send')
+
             setIsLoading(true)
+            formData.append(
+                'date',
+                data.document_type === 'ruc' ? '' : dayjs(data.date).format('YYYY-MM-DD')
+            )
+            formData.append('sex', data.document_type === 'ruc' ? 'e' : data.sex[0])
             formData.append('document_type', data.document_type)
             formData.append('number_doc', data.number_doc)
-            formData.append('date', dayjs(data.date).format('YYYY-MM-DD'))
             formData.append('first_name', data.first_name)
             formData.append('last_name', data.last_name)
             formData.append('email', data.email)
             formData.append('tel_number', data.tel_number)
             formData.append('comentarios_clientes', data.comentarios_clientes)
-            formData.append('sex', data.sex[0])
 
             if (dataEdit?.id) {
                 const response = await editClientForm(formData, dataEdit?.id)

@@ -129,7 +129,7 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                             py={2}
                         >
                             {data.map((item: any, index: number) => (
-                                <Box pt={2}>
+                                <Box pt={2} key={index}>
                                     <Box display={'flex'} alignItems={'center'} gap={0.5}>
                                         <Box
                                             height={10}

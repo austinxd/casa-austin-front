@@ -60,7 +60,6 @@ export default function CrudDashboard() {
     })
     useEffect(() => {
         if (data) {
-            console.log(data, 'showing data')
             const fullChartt = () => {
                 const sortedData = [...data.free_days_per_house].sort((a, b) => {
                     const numA = parseInt(a.casa.match(/\d+/)?.[0] || '0')

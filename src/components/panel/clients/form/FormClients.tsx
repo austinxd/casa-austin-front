@@ -151,6 +151,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                     onClick={onCancel}
                     sx={{
                         p: 0.8,
+                        zIndex: 1000,
                         borderRadius: '8px',
                         position: 'absolute',
                         right: '-3px',
