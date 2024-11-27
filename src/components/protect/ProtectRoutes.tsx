@@ -1,7 +1,8 @@
 import { ReactNode, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import { tokenValidate } from '../../libs/services/auth/auth'
+import { tokenValidate } from '@/services/auth/auth'
+
 interface Props {
     children: ReactNode
     navigateTo: string

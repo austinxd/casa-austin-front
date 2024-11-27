@@ -1,6 +1,6 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography, styled } from '@mui/material'
-
 import { SelectProps } from '@mui/material/Select'
+
 interface Option {
     value: string | number
     label: string
@@ -40,16 +40,23 @@ const CssFormControl = styled(FormControl)({
         height: '24px',
     },
 })
+
 export default function SelectInputs({ label, options, messageError, ...selectProps }: Props) {
     return (
-        <Box height={36}>
-            <CssFormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+        <Box height={36} sx={{ background: 'white', borderRadius: 2 }}>
+            <CssFormControl
+                fullWidth
+                sx={{
+                    '& .MuiOutlinedInput-root': {
+                        '& fieldset': { borderRadius: 2 },
+                    },
+                }}
+            >
+                <InputLabel id={`select-label-${label}`}>{label}</InputLabel>
                 <Select
-                    defaultValue={''}
                     {...selectProps}
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId={`select-label-${label}`}
+                    id={`select-${label}`}
                     label={label}
                 >
                     {options.map((option) => (
@@ -62,16 +69,18 @@ export default function SelectInputs({ label, options, messageError, ...selectPr
                         </MenuItem>
                     ))}
                 </Select>
-                <Typography
-                    color={'error'}
-                    fontSize={11}
-                    ml={1.5}
-                    mt={0.2}
-                    textAlign={'start'}
-                    variant="subtitle2"
-                >
-                    {messageError}
-                </Typography>
+                {messageError && (
+                    <Typography
+                        color={'error'}
+                        fontSize={11}
+                        ml={1.5}
+                        mt={0.2}
+                        textAlign={'start'}
+                        variant="subtitle2"
+                    >
+                        {messageError}
+                    </Typography>
+                )}
             </CssFormControl>
         </Box>
     )

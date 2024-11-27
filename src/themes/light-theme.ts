@@ -6,11 +6,10 @@ export const lightTheme = createTheme({
         primary: {
             main: '#000F08',
             light: '#F5F7FA',
-            contrastText: '#575756',
+            contrastText: '#FFF',
         },
         secondary: {
-            main: '#FFFFFF',
-            light: '#3c3e94',
+            main: '#3c3e94',
         },
         success: {
             main: '#0000ff',
@@ -20,6 +19,7 @@ export const lightTheme = createTheme({
         },
         background: {
             paper: '#FFFFFF',
+            default: '#FCFBFB',
         },
         text: {
             primary: '#AFB0C0',

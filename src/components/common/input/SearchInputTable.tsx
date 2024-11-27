@@ -1,27 +1,15 @@
-import React from 'react'
 import { TextField, TextFieldProps } from '@mui/material'
 
-interface SearchInputTableProps extends Omit<TextFieldProps, 'onChange'> {
-    searchTerm: string
-    onSearchChange: (searchTerm: string) => void
+interface BaseProps {
+    placeholder: string
 }
+type Props = BaseProps & TextFieldProps
 
-const SearchInputTable: React.FC<SearchInputTableProps> = ({
-    searchTerm,
-    onSearchChange,
-    ...rest
-}) => {
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onSearchChange(event.target.value)
-    }
-
+export default function SearchInputTable({ placeholder, ...props }: Props) {
     return (
         <TextField
-            {...rest}
-            type="text"
-            placeholder="Buscar"
-            value={searchTerm}
-            onChange={handleSearchChange}
+            fullWidth
+            {...props}
             sx={{
                 '& .MuiOutlinedInput-root': {
                     height: '45px',
@@ -31,7 +19,7 @@ const SearchInputTable: React.FC<SearchInputTableProps> = ({
                         color: '#2F2B3D',
                         opacity: 0.9,
                         background: 'transparent',
-                        borderRadius: '8px',
+                        borderRadius: 2,
                         border: '1px solid #D1D0D4',
                     },
                     '&:hover fieldset': {
@@ -55,15 +43,15 @@ const SearchInputTable: React.FC<SearchInputTableProps> = ({
                     opacity: 0.9,
                 },
                 '& input:-webkit-autofill': {
-                    webkitBoxShadow: '0 0 0px 1000px #F5F8FA inset',
-                    boxShadow: '0 0 0px 1000px #F5F8FA inset',
+                    webkitBoxShadow: '0 0 0px 1000px #F5F8FA inset', // Resetear el borde
+                    boxShadow: '0 0 0px 1000px #F5F8FA inset', // Resetear el borde
                     color: '#2F2B3D',
                     opacity: 0.9,
                     fontWeight: 600,
                 },
             }}
+            type="text"
+            placeholder={placeholder}
         />
     )
 }
-
-export default SearchInputTable

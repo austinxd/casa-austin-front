@@ -1,0 +1,534 @@
+import { Box, Checkbox, FormControlLabel, Grid, IconButton, Typography } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import {
+    SelectInputPrimary,
+    SecondaryInput,
+    CheckBoxSelected,
+    CheckBoxIcon,
+    ButtonPrimary,
+    SuccessIcon,
+    SuccessEditIcon,
+    BasicModal,
+    ModalErrors,
+    SecondaryInputMulti,
+} from '@/components/common'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Controller } from 'react-hook-form'
+import SuccessCard from '../card/SuccessCard'
+import { useEffect, useState } from 'react'
+import PhoneInput from 'react-phone-input-2'
+import dayjs from 'dayjs'
+import { IRegisterClient } from '@/interfaces/clients/registerClients'
+import { useFormClients } from '@/services/clients/useFormClients'
+import { useGetDataClient } from '@/services/clients/useGetDataClient'
+
+interface Props {
+    onCancel: () => void
+    title: string
+    btn: string
+    data: IRegisterClient | null
+    refetch: any
+}
+
+export default function FormClients({ onCancel, title, btn, data, refetch }: Props) {
+    const {
+        register,
+        isLoading,
+        handleSubmit,
+        control,
+        setSelectedOption,
+        selectedOption,
+        errors,
+        successRegister,
+        errorMessage,
+        successEdit,
+        phoneNumber,
+        setValue,
+        handlePhoneNumberChange,
+        openErrorModal,
+        setOpenErrorModal,
+    } = useFormClients(data, refetch)
+
+    const handleOptionChange = (event: any) => {
+        setSelectedOption(event.target.value)
+    }
+    const {
+        setDocumentNumber,
+        documentNumber,
+        typeDocument,
+        setSelecTypeDocument,
+        isLoadingClient,
+        dataByApi,
+        dataRucByApi,
+    } = useGetDataClient()
+
+    const onDocumentNumber = (event: any) => {
+        setDocumentNumber(event.target.value)
+    }
+
+    const onSelectDocument = (event: any) => {
+        setSelecTypeDocument(event.target.value)
+    }
+
+    const [apiName, setApiName] = useState<string>()
+    const [apiSurnames, setApiSurnames] = useState<string>()
+    const [apiSocialName, setApiSocialName] = useState<string>()
+
+    useEffect(() => {
+        if (dataByApi) {
+            if (dataByApi.message === 'Exito' || dataByApi.status === 0) {
+                setValue(
+                    'first_name',
+                    dataByApi.data.nombres
+                        ? dataByApi.data.nombres
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
+                        : ''
+                )
+                setApiName(
+                    dataByApi.data.nombres
+                        ? dataByApi.data.nombres
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
+                        : ''
+                )
+                setValue(
+                    'last_name',
+                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
+                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+
+                setApiSurnames(
+                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
+                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())
+                        : ''
+                )
+                setValue(
+                    'date',
+                    dataByApi.data.fechaNacimiento
+                        ? dayjs(dataByApi.data.fechaNacimiento, 'DD/MM/YYYY')
+                        : ''
+                )
+                setValue('number_doc', documentNumber)
+                setValue('sex', dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
+                setSelectedOption(dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
+            }
+        }
+    }, [dataByApi])
+
+    useEffect(() => {
+        if (dataRucByApi) {
+            if (dataRucByApi.message === 'Exito' || dataRucByApi.status === 0) {
+                setValue(
+                    'first_name',
+                    dataRucByApi.data.razonsocial
+                        ? dataRucByApi.data.razonsocial
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
+                        : ''
+                )
+                setApiSocialName(
+                    dataRucByApi.data.razonsocial
+                        ? dataRucByApi.data.razonsocial
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
+                        : ''
+                )
+            }
+        }
+    }, [dataRucByApi])
+
+    return (
+        <div>
+            <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
+                <IconButton
+                    onClick={onCancel}
+                    sx={{
+                        p: 0.8,
+                        zIndex: 1000,
+                        borderRadius: '8px',
+                        position: 'absolute',
+                        right: '-3px',
+                        top: '-3px',
+                        background: '#DD6158',
+                        color: 'white',
+                        ':hover': {
+                            background: '#DD6158',
+                        },
+                    }}
+                >
+                    <CloseIcon fontSize="small" />
+                </IconButton>
+                {successRegister || successEdit ? (
+                    <SuccessCard
+                        title={successEdit ? 'Cambios Realizados' : 'Registro exitoso'}
+                        icon={successEdit ? <SuccessEditIcon /> : <SuccessIcon />}
+                        onCancel={onCancel}
+                        text={
+                            successEdit
+                                ? 'Los datos del cliente han sido actualizados exitosamente'
+                                : 'El registro del cliente se ha completado satisfactoriamente'
+                        }
+                    />
+                ) : (
+                    <div style={{ position: 'relative' }}>
+                        <>
+                            <Typography mb={2}>{title}</Typography>
+
+                            <form onSubmit={handleSubmit}>
+                                <Grid container columnSpacing={2}>
+                                    <Grid item md={6} xs={12}>
+                                        <Controller
+                                            name="document_type"
+                                            defaultValue=""
+                                            rules={{
+                                                required: 'El tipo de documento es obligatorio',
+                                            }}
+                                            control={control}
+                                            render={({ field: { onChange, value } }) => (
+                                                <SelectInputPrimary
+                                                    variant="outlined"
+                                                    options={[
+                                                        { value: 'dni', label: 'DNI' },
+                                                        {
+                                                            value: 'cex',
+                                                            label: 'Carnet de extranjeria',
+                                                        },
+                                                        { value: 'pas', label: 'Pasaporte' },
+                                                        { value: 'ruc', label: 'RUC' },
+                                                    ]}
+                                                    label={'Elija tipo de documento'}
+                                                    value={value}
+                                                    onChange={(selectedValue) => {
+                                                        onSelectDocument &&
+                                                            onSelectDocument(selectedValue)
+                                                        onChange(selectedValue)
+                                                    }}
+                                                    messageError={
+                                                        (errors.document_type?.message ??
+                                                            null) as string
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6} xs={12}>
+                                        <SecondaryInput
+                                            {...register('number_doc', {
+                                                required: 'Numbero de documento obligatorio',
+                                            })}
+                                            defaultValue={documentNumber}
+                                            type={typeDocument === 'pas' ? 'text' : 'number'}
+                                            onChange={onDocumentNumber}
+                                            label={'Número de documento'}
+                                            messageError={
+                                                (errors.number_doc?.message ?? null) as string
+                                            }
+                                        />
+                                    </Grid>
+
+                                    {typeDocument === 'ruc' ? null : (
+                                        <Grid item md={12} xs={12}>
+                                            <Controller
+                                                name="date"
+                                                defaultValue={null}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <LocalizationProvider
+                                                        dateAdapter={AdapterDayjs}
+                                                        adapterLocale="es"
+                                                    >
+                                                        <DatePicker
+                                                            label={
+                                                                isLoadingClient
+                                                                    ? 'Cargando...'
+                                                                    : 'Elija una fecha'
+                                                            }
+                                                            {...field}
+                                                            slotProps={{
+                                                                textField: {},
+                                                                layout: {
+                                                                    sx: {
+                                                                        '.MuiDateCalendar-root': {
+                                                                            color: '#0E6191',
+                                                                            textTransform:
+                                                                                'capitalize',
+                                                                            borderRadius: 0,
+                                                                            borderWidth: 0,
+                                                                            backgroundColor:
+                                                                                'white',
+                                                                        },
+                                                                        '.MuiDialogContent-root': {
+                                                                            backgroundColor:
+                                                                                'white',
+                                                                        },
+                                                                        '& .MuiPickersDay-root': {
+                                                                            color: '#5C5C5C',
+                                                                            fontWeight: 600,
+                                                                            '&.Mui-selected': {
+                                                                                backgroundColor:
+                                                                                    '#0E6191 !important',
+                                                                                color: 'white',
+                                                                            },
+                                                                        },
+                                                                        '& .MuiButtonBase-root': {
+                                                                            '&.MuiPickersDay-today':
+                                                                                {
+                                                                                    border: '1px solid #0E6191 !important',
+                                                                                    background:
+                                                                                        'white !important',
+                                                                                    color: '#0E6191',
+                                                                                },
+                                                                        },
+                                                                        '& .MuiPickersYear-yearButton':
+                                                                            {
+                                                                                background: 'red',
+                                                                                '&.Mui-selected': {
+                                                                                    backgroundColor:
+                                                                                        '#0E6191',
+                                                                                    color: 'white',
+                                                                                    border: '1px solid blue',
+                                                                                },
+                                                                            },
+                                                                    },
+                                                                },
+                                                            }}
+                                                            sx={{
+                                                                width: '100%',
+                                                                '.MuiOutlinedInput-root': {
+                                                                    height: '55px',
+                                                                    color: '#2F2B3D',
+                                                                    opacity: 0.9,
+                                                                    '& fieldset': {
+                                                                        borderRadius: '8px',
+                                                                        border: '1px solid #D1D0D4',
+                                                                        background: 'transparent',
+                                                                    },
+                                                                    '&:hover fieldset': {
+                                                                        border: '1px solid #D1D0D4',
+                                                                    },
+                                                                    '&.Mui-focused fieldset': {
+                                                                        border: '1px solid #D1D0D4',
+                                                                    },
+                                                                },
+                                                                '.MuiInputBase-input': {
+                                                                    color: '#2F2B3D',
+                                                                    fontSize: '16px',
+                                                                    fontWeight: 600,
+                                                                },
+                                                            }}
+                                                        />
+                                                    </LocalizationProvider>
+                                                )}
+                                            />
+                                            <Box sx={{ height: 26, width: '100%' }}></Box>
+                                        </Grid>
+                                    )}
+
+                                    <Grid item md={12} xs={12}>
+                                        <SecondaryInput
+                                            {...register('first_name', {
+                                                required: 'El nombre es obligatorio',
+                                            })}
+                                            focused={
+                                                typeDocument === 'ruc'
+                                                    ? apiSocialName
+                                                        ? true
+                                                        : false
+                                                    : apiName
+                                                      ? true
+                                                      : false
+                                            }
+                                            defaultValue={
+                                                typeDocument === 'ruc' ? apiSocialName : apiName
+                                            }
+                                            type="text"
+                                            label={
+                                                typeDocument === 'ruc' ? 'Razón Social' : 'Nombres'
+                                            }
+                                            messageError={
+                                                (errors.first_name?.message ?? null) as string
+                                            }
+                                            isloading={isLoadingClient}
+                                        />
+                                    </Grid>
+                                    {typeDocument === 'ruc' ? null : (
+                                        <Grid item md={12} xs={12}>
+                                            <SecondaryInput
+                                                {...register('last_name')}
+                                                type="text"
+                                                focused={apiSurnames ? true : false}
+                                                defaultValue={apiSurnames}
+                                                label={'Apellidos'}
+                                                isloading={isLoadingClient}
+                                            />
+                                        </Grid>
+                                    )}
+
+                                    <Grid item md={6} xs={12}>
+                                        <SecondaryInput
+                                            {...register('email')}
+                                            type="text"
+                                            label={'Correo electrónico'}
+                                            messageError={(errors.email?.message ?? null) as string}
+                                        />
+                                    </Grid>
+                                    <Grid item md={6} xs={12}>
+                                        <PhoneInput
+                                            {...register('tel_number', {
+                                                required: 'El celular es obligatorios',
+                                            })}
+                                            buttonStyle={{
+                                                backgroundColor: '#FAFAFA',
+                                                borderTopLeftRadius: '10px',
+                                                borderBottomLeftRadius: '10px',
+                                            }}
+                                            value={phoneNumber}
+                                            country={'pe'}
+                                            specialLabel={phoneNumber ? 'Número telefónico' : ''}
+                                            dropdownStyle={{
+                                                textAlign: 'start',
+                                                color: 'black',
+                                            }}
+                                            placeholder="Número telefónico"
+                                            inputStyle={{
+                                                border: '1px solid #D1D0D4',
+                                                borderRadius: '8px',
+                                                color: '#2F2B3D',
+                                                height: '55px',
+                                                outline: 'none',
+                                                width: '100%',
+                                                fontFamily: 'Public Sans',
+                                                fontWeight: 600,
+                                            }}
+                                            inputProps={{ className: 'input-phone-number' }}
+                                            onChange={handlePhoneNumberChange}
+                                        />
+                                        <Typography
+                                            color={'error'}
+                                            fontSize={11}
+                                            ml={1.5}
+                                            mt={0.2}
+                                            textAlign={'start'}
+                                            variant="subtitle2"
+                                        >
+                                            {(errors.tel_number?.message ?? null) as string}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid mt={2} item md={12} xs={12}>
+                                        <SecondaryInputMulti
+                                            {...register('comentarios_clientes', {
+                                                maxLength: {
+                                                    value: 200,
+                                                    message:
+                                                        'El comentario no puede exceder los 200 caracteres',
+                                                },
+                                            })}
+                                            type="text"
+                                            label={'Comentario'}
+                                        />
+                                    </Grid>
+                                    {typeDocument === 'ruc' ? null : (
+                                        <Grid
+                                            item
+                                            md={12}
+                                            xs={12}
+                                            display={'flex'}
+                                            alignItems={'start'}
+                                            flexDirection={'column'}
+                                            mt={{ md: 0, sm: 1, xs: 3 }}
+                                        >
+                                            <Box>
+                                                <FormControlLabel
+                                                    sx={{
+                                                        '& .MuiTypography-body1': {
+                                                            color: '#2F2B3D',
+                                                            opacity: 0.9,
+                                                            fontSize: '16px',
+                                                            fontWeight: 500,
+                                                            mr: 2,
+                                                        },
+                                                    }}
+                                                    control={
+                                                        <Checkbox
+                                                            {...register('sex', {
+                                                                required:
+                                                                    'El genero es obligatorio',
+                                                            })}
+                                                            checked={selectedOption === 'm'}
+                                                            onChange={handleOptionChange}
+                                                            value="m"
+                                                            icon={<CheckBoxIcon />}
+                                                            checkedIcon={<CheckBoxSelected />}
+                                                        />
+                                                    }
+                                                    label="Masculino"
+                                                />
+                                                <FormControlLabel
+                                                    sx={{
+                                                        '& .MuiTypography-body1': {
+                                                            color: '#2F2B3D',
+                                                            opacity: 0.9,
+                                                            fontSize: '16px',
+                                                            fontWeight: 500,
+                                                            mr: 2,
+                                                        },
+                                                    }}
+                                                    control={
+                                                        <Checkbox
+                                                            {...register('sex', {
+                                                                required:
+                                                                    'El genero es obligatorio',
+                                                            })}
+                                                            checked={selectedOption === 'f'}
+                                                            onChange={handleOptionChange}
+                                                            value="f"
+                                                            icon={<CheckBoxIcon />}
+                                                            checkedIcon={<CheckBoxSelected />}
+                                                        />
+                                                    }
+                                                    label="Femenino"
+                                                />
+                                            </Box>
+                                            <Box sx={{ height: 2, width: '100%' }}></Box>
+                                        </Grid>
+                                    )}
+                                </Grid>
+
+                                <ButtonPrimary
+                                    type="submit"
+                                    isLoading={isLoading}
+                                    style={{
+                                        background: '#0E6191',
+                                        color: 'white',
+                                        height: '48px',
+                                        fontWeight: 500,
+                                        width: '100%',
+                                        marginBottom: '4px',
+                                        marginTop: '12px',
+                                    }}
+                                >
+                                    {btn}
+                                </ButtonPrimary>
+                            </form>
+
+                            <BasicModal open={openErrorModal}>
+                                <ModalErrors
+                                    title="Ups! ocurrio un problema"
+                                    data={errorMessage}
+                                    onCancel={() => setOpenErrorModal(false)}
+                                />
+                            </BasicModal>
+                        </>
+                    </div>
+                )}
+            </Box>
+        </div>
+    )
+}

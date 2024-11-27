@@ -5,7 +5,7 @@ export { default as SearchInputTable } from './input/SearchInputTable'
 export { SecondaryInput } from './input/SecondaryInput'
 export { default as SelectInputPrimary } from './input/SelectInputPrimary'
 export { default as SelectInputs } from './input/SelectInputs'
-
+export { SecondaryInputMulti } from './input/SecondaryInputMulti'
 /* ------------ BUTTON ------------ */
 export { default as ButtonPrimary } from './button/ButtonPrimary'
 
@@ -24,8 +24,8 @@ export { default as SuccessEditIcon } from './icons/SuccessEditIcon'
 export { default as TruckIcon } from './icons/TruckIcon'
 
 /* ------------ CHARTS ------------ */
-export { default as BarChart } from './charts/BarChart'
-export { default as BarChartVertical } from './charts/BarChartVertical'
+export { default as BarCharts } from './charts/BarCharts'
+export { default as BarChartsProfits } from './charts/BarChartsProfits'
 
 /* ------------ MODALS ------------ */
 export { default as BasicModal } from './modal/BasicModal'
@@ -38,4 +38,4 @@ export { default as PaginationAustin } from './pagination/PaginationAustin'
 export { default as TableAustin } from './table/TableAustin'
 
 /* ------------ DEBOUSE ------------ */
-export { useDebounce } from './useDebounce'
+export { useDebounce } from '../../core/hook/useDebounce'

@@ -1,13 +1,14 @@
-import Login from './components/ui/login/Login'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ProtectAuth from './components/protect/ProtectAuth'
 import ProtectRoutes from './components/protect/ProtectRoutes'
-import Sidebar from './sidebar/Sidebar'
-import CrudDashboard from './components/panel/dashboard/CrudDashboard'
-import CrudRentals from './components/panel/rentals/CrudRentals'
-import CrudClients from './components/panel/clients/CrudClients'
-import CrudCalender from './components/panel/availability/CrudCalender'
-import CrudProfits from './components/panel/profits/CrudProfits'
+import Sidebar from './layout/panel/Sidebar'
+
+import CrudClients from './pages/panel/clients/CrudClients'
+import CrudCalender from './pages/panel/calender/CrudCalender'
+import CrudProfits from './pages/panel/profits/CrudProfits'
+import Login from './pages/auth/login/Login'
+import CrudDashboard from './pages/panel/dashboard/CrudDashboard'
+import CrudRentals from './pages/panel/reservations/CrudRentals'
 
 function App() {
     return (

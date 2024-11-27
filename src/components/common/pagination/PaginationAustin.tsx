@@ -38,7 +38,7 @@ export default function PaginationAustin({
                 alignItems={'center'}
                 sx={{
                     mt: 2,
-                    background: 'white',
+                    background: 'transparent',
                     borderEndEndRadius: '8px',
                     borderEndStartRadius: '8px',
                     '@media (max-width: 1000px)': {
@@ -50,7 +50,6 @@ export default function PaginationAustin({
             >
                 <Typography
                     variant="subtitle1"
-                    color={'#ACAAB1'}
                     fontSize={13}
                     sx={{
                         ml: 1,
