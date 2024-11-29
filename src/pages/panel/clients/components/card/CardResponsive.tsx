@@ -1,9 +1,10 @@
-import { Box, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from '@mui/material'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined'
 import CommentIcon from '@mui/icons-material/Comment'
+import { useBoxShadow } from '@/core/utils'
 interface Props {
     handleEdit: () => void
     handleComment: () => void
@@ -31,7 +32,7 @@ export default function CardResponsive({
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
-
+    const { palette } = useTheme()
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
     }
@@ -47,6 +48,8 @@ export default function CardResponsive({
                 return 'Carnet de Extranjeria'
             case 'pas':
                 return 'Pasaporte'
+            case 'ruc':
+                return 'RUC'
             default:
                 return id
         }
@@ -59,16 +62,19 @@ export default function CardResponsive({
         <div>
             <Box
                 display={'flex'}
-                width={'100%'}
+                sx={{
+                    p: 2,
+                    background: palette.primary.contrastText,
+                    boxShadow: useBoxShadow(true),
+                    borderRadius: 2,
+                }}
                 position={'relative'}
                 flexDirection={'column'}
-                border={'1px solid #D1D0D4'}
-                borderRadius={'8px'}
-                px={'12px'}
-                py={'12px'}
             >
                 <Box display={'flex'} alignItems={'center'}>
-                    <Typography variant="subtitle1">{first_name}</Typography>
+                    <Typography fontWeight={600} mb={1} fontSize={15}>
+                        {first_name}
+                    </Typography>
                     {comment && (
                         <IconButton onClick={handleComment} sx={{ p: 0.5 }}>
                             <CommentIcon sx={{ color: 'gray', opacity: 0.6, fontSize: '17px' }} />
@@ -76,8 +82,8 @@ export default function CardResponsive({
                     )}
                 </Box>
                 <Box display={'flex'} justifyContent={'space-between'}>
-                    <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
-                        {email ? email : '-'}
+                    <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>
+                        <strong>{getTypeDocument(document_type)}: </strong> {number_doc}{' '}
                     </Typography>
                     <Box
                         display={'flex'}
@@ -86,15 +92,24 @@ export default function CardResponsive({
                         alignItems={'center'}
                         gap={0.2}
                     >
-                        <LocalPhoneOutlinedIcon fontSize="small" />
-                        <WhatsAppIcon fontSize="small" />
+                        <LocalPhoneOutlinedIcon
+                            sx={{ fontSize: '20px', color: palette.primary.main, opacity: 0.6 }}
+                        />
+                        <WhatsAppIcon sx={{ fontSize: '20px', color: '#65D072' }} />
                         {/*                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
                             {tel_number}
                         </Typography> */}
                     </Box>
                 </Box>
-                <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
-                    <span>{getTypeDocument(document_type)}</span> {number_doc}
+
+                <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>
+                    {email ? (
+                        <>
+                            <strong>Correo: </strong> {email}
+                        </>
+                    ) : (
+                        ''
+                    )}
                 </Typography>
 
                 <IconButton
@@ -104,7 +119,7 @@ export default function CardResponsive({
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
-                    style={{ position: 'absolute', top: 3, right: 1 }}
+                    style={{ position: 'absolute', top: 5, right: 3 }}
                 >
                     <MoreVertIcon fontSize="small" />
                 </IconButton>

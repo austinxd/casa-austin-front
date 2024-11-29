@@ -22,6 +22,7 @@ import dayjs from 'dayjs'
 import { IRegisterClient } from '@/interfaces/clients/registerClients'
 import { useFormClients } from '@/services/clients/useFormClients'
 import { useGetDataClient } from '@/services/clients/useGetDataClient'
+import { capitalizeWords } from '@/core/utils'
 
 interface Props {
     onCancel: () => void
@@ -59,7 +60,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
         typeDocument,
         setSelecTypeDocument,
         isLoadingClient,
-        dataByApi,
+        dataByApiSecond,
         dataRucByApi,
     } = useGetDataClient()
 
@@ -76,51 +77,26 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
     const [apiSocialName, setApiSocialName] = useState<string>()
 
     useEffect(() => {
-        if (dataByApi) {
-            if (dataByApi.message === 'Exito' || dataByApi.status === 0) {
-                setValue(
-                    'first_name',
-                    dataByApi.data.nombres
-                        ? dataByApi.data.nombres
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
-                        : ''
-                )
-                setApiName(
-                    dataByApi.data.nombres
-                        ? dataByApi.data.nombres
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char: any) => char.toUpperCase())
-                        : ''
-                )
-                setValue(
-                    'last_name',
-                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
-                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char) => char.toUpperCase())
-                        : ''
-                )
+        if (dataByApiSecond) {
+            const { sexo, dni, feNacimiento, preNombres, apeMaterno, apePaterno } = dataByApiSecond
 
-                setApiSurnames(
-                    dataByApi.data.apellidoMaterno || dataByApi.data.apellidoPaterno
-                        ? `${dataByApi.data.apellidoPaterno} ${dataByApi.data.apellidoMaterno}`
-                              .toLowerCase()
-                              .replace(/\b\w/g, (char) => char.toUpperCase())
-                        : ''
-                )
-                setValue(
-                    'date',
-                    dataByApi.data.fechaNacimiento
-                        ? dayjs(dataByApi.data.fechaNacimiento, 'DD/MM/YYYY')
-                        : ''
-                )
-                setValue('number_doc', documentNumber)
-                setValue('sex', dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
-                setSelectedOption(dataByApi.data.sexo ? dataByApi.data.sexo.toLowerCase() : '')
-            }
+            const formattedFirstName = preNombres ? capitalizeWords(preNombres) : ''
+            const formattedLastName =
+                apePaterno || apeMaterno
+                    ? capitalizeWords(`${apePaterno || ''} ${apeMaterno || ''}`.trim())
+                    : ''
+
+            const formattedDate = feNacimiento ? dayjs(feNacimiento) : ''
+            setValue('first_name', formattedFirstName)
+            setApiName(formattedFirstName)
+            setValue('last_name', formattedLastName)
+            setApiSurnames(formattedLastName)
+            setValue('date', formattedDate)
+            setValue('number_doc', dni)
+            setSelectedOption(sexo === 'MASCULINO' ? 'm' : 'f')
+            setValue('sex', sexo === 'MASCULINO' ? 'm' : 'f')
         }
-    }, [dataByApi])
+    }, [dataByApiSecond])
 
     useEffect(() => {
         if (dataRucByApi) {
@@ -233,7 +209,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                         />
                                     </Grid>
 
-                                    {typeDocument === 'ruc' ? null : (
+                                    {typeDocument === 'ruc' ||
+                                    data?.document_type === 'ruc' ? null : (
                                         <Grid item md={12} xs={12}>
                                             <Controller
                                                 name="date"
@@ -350,7 +327,10 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             }
                                             type="text"
                                             label={
-                                                typeDocument === 'ruc' ? 'Razón Social' : 'Nombres'
+                                                typeDocument === 'ruc' ||
+                                                data?.document_type === 'ruc'
+                                                    ? 'Razón Social'
+                                                    : 'Nombres'
                                             }
                                             messageError={
                                                 (errors.first_name?.message ?? null) as string
@@ -358,7 +338,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             isloading={isLoadingClient}
                                         />
                                     </Grid>
-                                    {typeDocument === 'ruc' ? null : (
+                                    {typeDocument === 'ruc' ||
+                                    data?.document_type === 'ruc' ? null : (
                                         <Grid item md={12} xs={12}>
                                             <SecondaryInput
                                                 {...register('last_name')}
@@ -405,7 +386,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                                 outline: 'none',
                                                 width: '100%',
                                                 fontFamily: 'Public Sans',
-                                                fontWeight: 600,
+                                                fontWeight: 400,
                                             }}
                                             inputProps={{ className: 'input-phone-number' }}
                                             onChange={handlePhoneNumberChange}
@@ -421,7 +402,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             {(errors.tel_number?.message ?? null) as string}
                                         </Typography>
                                     </Grid>
-                                    <Grid mt={2} item md={12} xs={12}>
+                                    <Grid mb={1} sx={{ mt: { sm: 0, xs: 2 } }} item md={12} xs={12}>
                                         <SecondaryInputMulti
                                             {...register('comentarios_clientes', {
                                                 maxLength: {
@@ -434,7 +415,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
                                             label={'Comentario'}
                                         />
                                     </Grid>
-                                    {typeDocument === 'ruc' ? null : (
+                                    {typeDocument === 'ruc' ||
+                                    data?.document_type === 'ruc' ? null : (
                                         <Grid
                                             item
                                             md={12}

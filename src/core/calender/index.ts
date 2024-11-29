@@ -6,9 +6,8 @@ const CalendarWrappers = styled(Box)<BoxProps>(({ theme }) => {
     return {
         borderRadius: theme.shape.borderRadius,
         scrollBehavior: 'smooth',
-        overflowY: 'hidden',
+        overflowY: 'auto',
         overflowX: 'hidden',
-        minHeight: '100%',
         width: 'auto',
         padding: '0px',
         '& .fc': {

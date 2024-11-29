@@ -5,14 +5,12 @@ import FormRental from './components/form/FormRental'
 import { useState } from 'react'
 import DetailRental from './components/form/DetailRental'
 import DeleteRental from './components/form/DeleteRental'
-
-import SkeletonCard from './components/card/SkeletonCard'
-
 import { useGetAllRentalsQuery } from '@/services/rentals/rentalService'
 import SearchRental from './components/form/SearchRental'
 import { BasicModal, PaginationAustin } from '@/components/common'
 import { IRentalClient } from '@/interfaces/rental/registerRental'
 import { downloadContractById } from '@/services/rentals/rental'
+import ReservationSkeleton from './components/skeleton/ReservationSkeleton'
 
 export default function CrudRentals() {
     const [open, setOpen] = useState(false)
@@ -77,70 +75,72 @@ export default function CrudRentals() {
 
     return (
         <div>
-            <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
-                Alquileres
-            </Typography>
-            <SearchRental
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                setSearch={setSearch}
-                setCurrentPage={setCurrentPage}
-                onSave={onSave}
-                filterAirbnb={filterAirbnb}
-                setFilterAirbnb={setFilterAirbnb}
-                filterToday={filterToday}
-                setFilterToday={setFilterToday}
-                setFilterInProgress={setFilterInProgress}
-                filterInProgress={filterInProgress}
-            />
-
             {isLoading ? (
-                <SkeletonCard />
+                <ReservationSkeleton />
             ) : (
-                <div style={{ marginTop: '16px' }}>
-                    {data?.results && data.results.length > 0 ? (
-                        <div className={style.container} style={{ marginTop: '12px' }}>
-                            {data.results.map((item: any) => (
-                                <div key={item.id} className={style.item}>
-                                    <Card
-                                        isLoadingContract={isLoadingContract}
-                                        item={item}
-                                        handleDelete={() => onDelete(item)}
-                                        handleEdit={() => onEdit(item)}
-                                        handleView={() => onView(item)}
-                                        handleContract={() => onContract(item)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Box
-                            sx={{
-                                border: '1px solid #E6E6E8',
-                                borderRadius: 1,
-                                mt: 3,
-                                height: 200,
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                px: 3,
-                            }}
-                        >
-                            <p>Sin información para mostrar</p>
-                        </Box>
-                    )}
-                </div>
-            )}
+                <>
+                    <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
+                        Alquileres
+                    </Typography>
+                    <SearchRental
+                        pageSize={pageSize}
+                        setPageSize={setPageSize}
+                        setSearch={setSearch}
+                        setCurrentPage={setCurrentPage}
+                        onSave={onSave}
+                        filterAirbnb={filterAirbnb}
+                        setFilterAirbnb={setFilterAirbnb}
+                        filterToday={filterToday}
+                        setFilterToday={setFilterToday}
+                        setFilterInProgress={setFilterInProgress}
+                        filterInProgress={filterInProgress}
+                    />
 
-            {data && (
-                <PaginationAustin
-                    pageSize={Number(pageSize)}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    totalPages={data?.total_paginas}
-                    dataCount={data.count}
-                />
+                    <div style={{ marginTop: '16px' }}>
+                        {data?.results && data.results.length > 0 ? (
+                            <div className={style.container} style={{ marginTop: '12px' }}>
+                                {data.results.map((item: any) => (
+                                    <div key={item.id} className={style.item}>
+                                        <Card
+                                            isLoadingContract={isLoadingContract}
+                                            item={item}
+                                            handleDelete={() => onDelete(item)}
+                                            handleEdit={() => onEdit(item)}
+                                            handleView={() => onView(item)}
+                                            handleContract={() => onContract(item)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <Box
+                                sx={{
+                                    border: '1px solid #E6E6E8',
+                                    borderRadius: 1,
+                                    mt: 3,
+                                    height: 200,
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    px: 3,
+                                }}
+                            >
+                                <p>Sin información para mostrar</p>
+                            </Box>
+                        )}
+                    </div>
+
+                    {data && (
+                        <PaginationAustin
+                            pageSize={Number(pageSize)}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            totalPages={data?.total_paginas}
+                            dataCount={data.count}
+                        />
+                    )}
+                </>
             )}
 
             <BasicModal open={open}>

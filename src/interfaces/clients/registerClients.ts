@@ -43,6 +43,9 @@ export interface IDataClienbyApi {
     message: string
     data: IClientInformation
 }
+export interface IDataClienbyApiScondary {
+    data: IClientInformation
+}
 
 export interface IClientInformation {
     apellidoMaterno: string | null

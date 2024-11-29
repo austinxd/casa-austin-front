@@ -64,6 +64,7 @@ export default function CrudDashboard() {
                     >
                         <Box
                             sx={{
+                                flex: 1.5,
                                 background: palette.primary.contrastText,
                                 height: 'fit-content',
                                 borderRadius: 2,

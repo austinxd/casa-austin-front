@@ -4,6 +4,7 @@ body {
     background: rgb(255, 255, 255);
     margin: 0;
     padding: 0;
+    overflow-y: auto;
 }
 ::-webkit-scrollbar {
     background-color: transparent;
@@ -40,7 +41,8 @@ body {
 
 /* Estilos para el input phone react */
 .input-phone-number {
-    padding-left: 60px;
+    padding-left: 48px;
+    font-size: 15px;
 }
 .input-phone-number::focus {
     border-color: transparent;

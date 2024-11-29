@@ -1,5 +1,6 @@
-import { useDebounce } from '@/components/common'
-import { Box, Button, MenuItem, Select, TextField } from '@mui/material'
+import { SearchInputTable, useDebounce } from '@/components/common'
+import { useBoxShadow } from '@/core/utils'
+import { Box, Button, MenuItem, Select, useTheme } from '@mui/material'
 
 import { useEffect, useState } from 'react'
 
@@ -22,7 +23,7 @@ export default function SearchClient({
 }: Props) {
     const [inputText, setInputText] = useState('')
     const textFiler: string = useDebounce(inputText, 450)
-
+    const { palette } = useTheme()
     useEffect(() => {
         setSearch(textFiler)
         setCurrentPage(1)
@@ -38,18 +39,18 @@ export default function SearchClient({
         <>
             <Box
                 sx={{
-                    border: '1px solid #E6E6E8',
-                    borderRadius: 1,
-                    height: { md: 88, sm: 54, xs: 'auto' },
-                    width: '100%',
+                    background: palette.primary.contrastText,
+                    boxShadow: useBoxShadow(true),
+                    borderRadius: 2,
+                    p: 2,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    px: 3,
                     '@media (max-width: 900px)': {
-                        px: 0,
-                        border: 'none',
+                        p: 0,
+                        background: 'transparent',
                         flexDirection: 'column-reverse',
+                        boxShadow: 'none',
                         gap: 1,
                         alignItems: 'end',
                     },
@@ -63,53 +64,9 @@ export default function SearchClient({
                         },
                     }}
                 >
-                    <TextField
+                    <SearchInputTable
                         fullWidth
                         onChange={handleSearchChange}
-                        sx={{
-                            '& .MuiOutlinedInput-root': {
-                                height: '45px',
-                                color: '#2F2B3D',
-
-                                opacity: 0.9,
-                                '& fieldset': {
-                                    color: '#2F2B3D',
-                                    opacity: 0.9,
-                                    background: 'transparent',
-                                    borderRadius: '8px',
-                                    border: '1px solid #D1D0D4',
-                                },
-                                '&:hover fieldset': {
-                                    border: '1px solid #D1D0D4',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    border: '1px solid #D1D0D4',
-                                },
-                            },
-
-                            '& input': {
-                                height: '24px',
-                                color: '#2F2B3D',
-                                opacity: 0.9,
-                                fontSize: '16px',
-                                fontWeight: 600,
-                                backgroundColor: '#FFF',
-                            },
-                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                                {
-                                    display: 'none',
-                                    color: '#2F2B3D',
-                                    opacity: 0.9,
-                                },
-                            '& input:-webkit-autofill': {
-                                webkitBoxShadow:
-                                    '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
-                                boxShadow: '0 0 0px 1000px #F5F8FA inset' /* Resetear el borde */,
-                                color: '#2F2B3D',
-                                opacity: 0.9,
-                                fontWeight: 600,
-                            },
-                        }}
                         type="text"
                         placeholder="Buscar"
                     />

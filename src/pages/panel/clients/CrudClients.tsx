@@ -10,6 +10,8 @@ import SearchClient from './components/form/SearchClient'
 import { useGetAllClientsQuery } from '@/services/clients/clientsService'
 import { IRegisterClient } from '@/interfaces/clients/registerClients'
 import { BasicModal, PaginationAustin, TableAustin } from '@/components/common'
+import { useBoxShadow } from '@/core/utils'
+import ClientSkelton from './components/skeleton/ClientSkelton'
 
 export default function CrudClients() {
     const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({})
@@ -190,80 +192,85 @@ export default function CrudClients() {
 
     return (
         <div>
-            <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
-                Clientes
-            </Typography>
-            <SearchClient
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                text={'Añadir Clientes'}
-                onSave={onCreate}
-                setCurrentPage={setCurrentPage}
-                setSearch={setSearch}
-            />
+            {isLoading ? (
+                <ClientSkelton />
+            ) : (
+                <>
+                    <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
+                        Clientes
+                    </Typography>
+                    <SearchClient
+                        pageSize={pageSize}
+                        setPageSize={setPageSize}
+                        text={'Añadir Clientes'}
+                        onSave={onCreate}
+                        setCurrentPage={setCurrentPage}
+                        setSearch={setSearch}
+                    />
 
-            <Box
-                sx={{
-                    pb: 1.5,
-                    background: 'white',
-                    borderEndEndRadius: '8px',
-                    borderEndStartRadius: '8px',
-                    borderBottom: '1px solid #E6E5E7',
-                    borderLeft: '1px solid #E6E5E7',
-                    borderRight: '1px solid #E6E5E7',
-                    '@media (max-width: 1000px)': {
-                        borderBottom: 'none',
-                        borderLeft: 'none',
-                        borderRight: 'none',
-                    },
-                }}
-            >
-                <TableAustin
-                    isLoading={isLoading}
-                    rows={data?.results ? data?.results : []}
-                    columns={columns}
-                />
+                    <Box
+                        sx={{
+                            pb: 1.5,
 
-                <Box
-                    sx={{
-                        display: 'none',
-                        mt: 1,
-                        '@media (max-width: 1000px)': {
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                        },
-                    }}
-                >
-                    {!isLoading &&
-                        data?.results?.map((item: IRegisterClient) => (
-                            <CardResponsive
-                                handleComment={() => handleComment(item)}
-                                key={item.id}
-                                id={item.id}
-                                first_name={item.first_name}
-                                tel_number={item.tel_number}
-                                number_doc={item.number_doc}
-                                document_type={item.document_type}
-                                email={item.email}
-                                comment={item.comentarios_clientes}
-                                handleEdit={() => onEdit(item)}
-                                handleDelete={() => onDelete(item)}
+                            borderRadius: 2,
+                            mt: 2,
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                boxShadow: useBoxShadow(true),
+                                background: palette.primary.contrastText,
+                            }}
+                        >
+                            <TableAustin
+                                isLoading={isLoading}
+                                rows={data?.results ? data?.results : []}
+                                columns={columns}
                             />
-                        ))}
-                </Box>
-                {data && (
-                    <Box px={1}>
-                        <PaginationAustin
-                            pageSize={pageSize}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}
-                            totalPages={data?.total_paginas}
-                            dataCount={data.count}
-                        />
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'none',
+
+                                '@media (max-width: 1000px)': {
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2,
+                                },
+                            }}
+                        >
+                            {!isLoading &&
+                                data?.results?.map((item: IRegisterClient) => (
+                                    <CardResponsive
+                                        handleComment={() => handleComment(item)}
+                                        key={item.id}
+                                        id={item.id}
+                                        first_name={item.first_name}
+                                        tel_number={item.tel_number}
+                                        number_doc={item.number_doc}
+                                        document_type={item.document_type}
+                                        email={item.email}
+                                        comment={item.comentarios_clientes}
+                                        handleEdit={() => onEdit(item)}
+                                        handleDelete={() => onDelete(item)}
+                                    />
+                                ))}
+                        </Box>
                     </Box>
-                )}
-            </Box>
+                    {data && (
+                        <Box>
+                            <PaginationAustin
+                                pageSize={pageSize}
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                totalPages={data?.total_paginas}
+                                dataCount={data.count}
+                            />
+                        </Box>
+                    )}
+                </>
+            )}
 
             <BasicModal open={del}>
                 {clienById && (

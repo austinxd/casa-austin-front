@@ -43,7 +43,7 @@ export default function RankingSellers({ monthNames, selectedMonth, data, curren
         <Box
             sx={{
                 background: palette.primary.contrastText,
-                flex: 2,
+                flex: 1,
                 height: 'fit-content',
                 borderRadius: 2,
                 boxShadow: useBoxShadow(true),

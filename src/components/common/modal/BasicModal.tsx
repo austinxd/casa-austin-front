@@ -16,7 +16,7 @@ export default function BasicModal({ children, open }: Props) {
                     maxWidth: '684px',
                     width: '100%',
                     background: '#FFFFFF',
-                    borderRadius: { md: '20px', sm: '12px', xs: '8px' },
+                    borderRadius: 2,
                     paddingY: '20px',
                     paddingX: { xs: '12px', md: '40px' },
                     textAlign: 'center',

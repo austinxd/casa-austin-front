@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import { useGetTokenForClientQuery } from './clientsService'
-import { IDataClienbyApi, IDataRucbyApi } from '@/interfaces/clients/registerClients'
+import { IDataRucbyApi } from '@/interfaces/clients/registerClients'
 import { useDebounce } from '@/components/common'
 
 export const useGetDataClient = () => {
     const [typeDocument, setSelecTypeDocument] = useState('')
     const [documentNumber, setDocumentNumber] = useState('')
     const [tokenDni, setTokenDni] = useState('20483ac1-702f-41c7-80f2-f98205acd11a')
-    const [dataByApi, setDataByApi] = useState<IDataClienbyApi>()
+    const [dataByApiSecond, setDataByApiSecond] = useState<any>()
     const [dataRucByApi, setDataRucByApi] = useState<IDataRucbyApi>()
     const [isLoadingClient, setIsLoadingClient] = useState(false)
     const numberDocDebounce: string = useDebounce(documentNumber, 800)
@@ -25,12 +25,12 @@ export const useGetDataClient = () => {
                     if (typeDocument === 'dni') {
                         setIsLoadingClient(true)
                         const response = await fetch(
-                            `https://script.google.com/macros/s/AKfycbwo__qdJpcxEcpfORq8O2-jLTLKqJCwO2xabWmopYDuUUbflsE6TebicurSe_B5Oh-Q/exec?op=${typeDocDebounce}&token=${tokenDni}&formato=json&documento=${numberDocDebounce}`
+                            `https://casaaustin.pe/datos/api.php?dni=${documentNumber}`
                         )
                         const data = await response.json()
-
-                        if (data.message === 'Exito' || data.status === 0) {
-                            setDataByApi(data)
+                        console.log(data)
+                        if (response.status === 200) {
+                            setDataByApiSecond(data.data)
                         }
                     }
 
@@ -60,7 +60,7 @@ export const useGetDataClient = () => {
         setDocumentNumber,
         documentNumber,
         setTokenDni,
-        dataByApi,
+        dataByApiSecond,
         isLoadingClient,
         typeDocument,
         dataRucByApi,

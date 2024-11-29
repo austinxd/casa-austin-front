@@ -284,14 +284,14 @@ export default function Sidebar(props: Props) {
             </Box>
             <Box
                 sx={{
-                    p: { md: 3, xs: 2 },
+                    p: 2,
                     width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 }}
             >
                 <Box
                     sx={{
                         mx: 'auto',
-                        mt: { md: 0, sm: 8, xs: 8 },
+                        mt: { md: 0, sm: 8, xs: 7 },
                         maxWidth: '1200px',
                     }}
                 >
