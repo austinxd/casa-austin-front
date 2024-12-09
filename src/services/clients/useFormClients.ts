@@ -48,8 +48,6 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
 
     const onCreateClient = async (data: IRegisterClient) => {
         try {
-            console.log(data, 'to send')
-
             setIsLoading(true)
             formData.append(
                 'date',

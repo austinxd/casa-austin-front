@@ -14,6 +14,9 @@ export const lightTheme = createTheme({
         success: {
             main: '#0000ff',
         },
+        info: {
+            main: '#F5F7FA',
+        },
         error: {
             main: '#FF4C51',
         },

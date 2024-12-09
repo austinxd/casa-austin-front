@@ -13,7 +13,7 @@ type BaseProps = {
     label?: string
     placeholder?: string
     messageError?: string
-    color: 'secondary' | 'primary'
+    color: 'secondary' | 'primary' | 'info'
 }
 
 type Props = BaseProps & TextFieldProps
@@ -90,9 +90,9 @@ export const InputPrimaryPassword = forwardRef(function InputPrimaryPassword(
                                 edge="end"
                             >
                                 {showPassword ? (
-                                    <VisibilityOff color="secondary" fontSize="small" />
+                                    <VisibilityOff color="info" fontSize="small" />
                                 ) : (
-                                    <Visibility color="secondary" fontSize="small" />
+                                    <Visibility color="info" fontSize="small" />
                                 )}
                             </IconButton>
                         </InputAdornment>

@@ -44,7 +44,7 @@ export default function Login() {
                 ></Box>
                 <form onSubmit={handleSubmit}>
                     <InputPrimary
-                        color="secondary"
+                        color="info"
                         {...register('email', {
                             required: 'El correo es obligatorio',
                             pattern: {
@@ -58,7 +58,7 @@ export default function Login() {
                     />
 
                     <InputPrimaryPassword
-                        color="secondary"
+                        color="info"
                         {...register('password', {
                             required: 'La contraseña es obligatoria',
                         })}

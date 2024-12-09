@@ -31,7 +31,6 @@ export default function SuccessCard({ icon, onCancel, text, title }: Props) {
                 }}
                 onClick={onCancel}
             >
-                {' '}
                 Volver
             </Button>
         </Box>

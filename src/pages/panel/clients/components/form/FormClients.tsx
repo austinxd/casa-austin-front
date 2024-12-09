@@ -93,8 +93,9 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
             setApiSurnames(formattedLastName)
             setValue('date', formattedDate)
             setValue('number_doc', dni)
-            setSelectedOption(sexo === 'MASCULINO' ? 'm' : 'f')
-            setValue('sex', sexo === 'MASCULINO' ? 'm' : 'f')
+
+            setSelectedOption(sexo === 'm' ? 'm' : 'f')
+            setValue('sex', sexo === 'm' ? 'm' : 'f')
         }
     }, [dataByApiSecond])
 

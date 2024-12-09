@@ -83,4 +83,5 @@ export interface IEventoCalendario {
     end: string
     color: string
     image: string
+    house: string
 }

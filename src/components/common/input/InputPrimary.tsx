@@ -5,7 +5,7 @@ const CssTextField = styled(TextField)({
     '& .MuiOutlinedInput-root': {
         color: 'white',
         '& fieldset': {
-            borderColor: 'white', // Cambiado de "color" a "borderColor"
+            borderColor: 'white',
             background: 'transparent',
             borderRadius: '5px',
             color: 'white',
@@ -37,7 +37,7 @@ type BaseProps = {
     label?: string
     placeholder?: string
     messageError?: string
-    color: 'secondary' | 'primary'
+    color: 'secondary' | 'primary' | 'info'
 }
 
 type Props = BaseProps & TextFieldProps

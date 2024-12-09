@@ -29,7 +29,6 @@ export const useLoginForm = () => {
                 const key = response?.data.access
                 const keyRefresh = response?.data.refresh
                 const idSell = response?.data.id
-
                 dispatch(setToken({ token: key }))
                 dispatch(setTokenRefresh({ keyRefresh: keyRefresh }))
                 dispatch(setIdSell({ idSeller: idSell }))

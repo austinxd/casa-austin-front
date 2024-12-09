@@ -18,5 +18,6 @@ export const createEvents = (data: IRentalClient[]): IEventoCalendario[] => {
                 : '/airbnb.png',
         type: rental.origin,
         lateCheckout: rental.late_checkout,
+        house: rental.property.name,
     }))
 }

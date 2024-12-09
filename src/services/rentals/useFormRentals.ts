@@ -97,8 +97,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const formData = new FormData()
 
     const onRegisterUser = async (data: any) => {
-        console.log(data)
-        console.log(lateCheckOut, 'ff')
         try {
             setIsLoading(true)
             formData.append('property', data.property)

@@ -28,7 +28,6 @@ export const useGetDataClient = () => {
                             `https://casaaustin.pe/datos/api.php?dni=${documentNumber}`
                         )
                         const data = await response.json()
-                        console.log(data)
                         if (response.status === 200) {
                             setDataByApiSecond(data.data)
                         }
