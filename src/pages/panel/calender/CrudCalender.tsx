@@ -140,7 +140,6 @@ export default function CrudCalender() {
         if (updatedItemsSelect.length === 0) {
             setEventos(createEvents(calenderList || []))
         } else {
-            console.log(eventos, 'allin')
             const filteredEvents = createEvents(calenderList || []).filter((item) =>
                 updatedItemsSelect.includes(item.house)
             )

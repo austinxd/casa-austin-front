@@ -20,6 +20,7 @@ export default function HeaderCalender({
     return (
         <Box
             sx={{
+                maxWidth: 1200,
                 position: 'fixed',
                 width: {
                     md: 'calc(100% - 242px)',
