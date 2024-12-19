@@ -52,7 +52,7 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
     } = useFormClients(data, refetch)
 
     const handleOptionChange = (event: any) => {
-        setSelectedOption(event.target.value)
+        setSelectedOption(event.target.value.toLocaleLowerCase())
     }
     const {
         setDocumentNumber,

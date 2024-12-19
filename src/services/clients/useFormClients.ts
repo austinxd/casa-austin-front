@@ -40,7 +40,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
             setValue('email', dataEdit.email)
             setValue('tel_number', dataEdit.tel_number)
             setValue('comentarios_clientes', dataEdit.comentarios_clientes)
-            setValue('sex', dataEdit.sex)
+            setValue('sex', dataEdit.sex.toLocaleLowerCase())
             setSelectedOption(dataEdit.sex)
             setPhoneNumber(dataEdit.tel_number)
         }
@@ -53,7 +53,10 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
                 'date',
                 data.document_type === 'ruc' ? '' : dayjs(data.date).format('YYYY-MM-DD')
             )
-            formData.append('sex', data.document_type === 'ruc' ? 'e' : data.sex[0])
+            formData.append(
+                'sex',
+                data.document_type === 'ruc' ? 'e' : data.sex[0].toLocaleLowerCase()
+            )
             formData.append('document_type', data.document_type)
             formData.append('number_doc', data.number_doc)
             formData.append('first_name', data.first_name)
