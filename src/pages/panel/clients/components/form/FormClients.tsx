@@ -94,8 +94,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
             setValue('date', formattedDate)
             setValue('number_doc', dni)
 
-            setSelectedOption(sexo === 'm' ? 'm' : 'f')
-            setValue('sex', sexo === 'm' ? 'm' : 'f')
+            setSelectedOption(sexo === 'm' || 'M' ? 'm' : 'f')
+            setValue('sex', sexo === 'm' || 'M' ? 'm' : 'f')
         }
     }, [dataByApiSecond])
 
