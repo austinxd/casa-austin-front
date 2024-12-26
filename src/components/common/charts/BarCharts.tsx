@@ -151,7 +151,7 @@ function BarCharts({ categories, colors, data, isLoading, selectedOption }: Prop
                                     </Box>
                                     <Typography variant="body1" fontSize={12} ml={1}>
                                         {selectedOption === 1 ? (
-                                            <>S/. {new Intl.NumberFormat('es-PE').format(item)}</>
+                                            <>S/ {new Intl.NumberFormat('es-PE').format(item)}</>
                                         ) : (
                                             <>
                                                 {item} {selectedOption === 2 ? 'noche' : 'noche'}

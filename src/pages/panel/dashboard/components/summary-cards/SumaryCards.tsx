@@ -5,6 +5,7 @@ import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlin
 import MoneyOffIcon from '@mui/icons-material/MoneyOff'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import { IDataDash } from '@/interfaces/dashboard/dashboard'
+import formatCurrency from '@/core/utils/formatCurrency'
 
 interface Props {
     data: IDataDash | undefined
@@ -49,7 +50,11 @@ export default function SumaryCards({ data }: Props) {
                                 sx={{ color: '#FFBBBD', fontSize: { md: '34px', xs: '22px' } }}
                             />
                         }
-                        quantity={data?.dinero_por_cobrar ? `S/. ${data?.dinero_por_cobrar}` : ' '}
+                        quantity={
+                            data?.dinero_por_cobrar
+                                ? ` ${formatCurrency(+data?.dinero_por_cobrar)}`
+                                : ' '
+                        }
                         title="Dinero por cobrar"
                     />
                 </div>
@@ -63,7 +68,7 @@ export default function SumaryCards({ data }: Props) {
                         }
                         quantity={
                             data?.dinero_total_facturado
-                                ? `S/. ${data?.dinero_total_facturado}`
+                                ? `${formatCurrency(+data?.dinero_total_facturado)}`
                                 : ' '
                         }
                         title="Total facturado"

@@ -138,7 +138,7 @@ export default function RankingSellers({ monthNames, selectedMonth, data, curren
                             )
                         ) : (
                             <Typography fontWeight={500}>
-                                S/. {new Intl.NumberFormat('es-PE').format(+item.ventas_soles)}
+                                S/ {new Intl.NumberFormat('es-PE').format(+item.ventas_soles)}
                             </Typography>
                         )}
                     </Typography>
