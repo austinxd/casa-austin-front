@@ -76,6 +76,10 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
     const [apiSurnames, setApiSurnames] = useState<string>()
     const [apiSocialName, setApiSocialName] = useState<string>()
 
+    const toLower = (e: string) => {
+        return e.toLowerCase()
+    }
+
     useEffect(() => {
         if (dataByApiSecond) {
             const { sexo, dni, feNacimiento, preNombres, apeMaterno, apePaterno } = dataByApiSecond
@@ -93,9 +97,8 @@ export default function FormClients({ onCancel, title, btn, data, refetch }: Pro
             setApiSurnames(formattedLastName)
             setValue('date', formattedDate)
             setValue('number_doc', dni)
-
-            setSelectedOption(sexo === 'm' || 'M' ? 'm' : 'f')
-            setValue('sex', sexo === 'm' || 'M' ? 'm' : 'f')
+            setSelectedOption(toLower(sexo) === 'm' ? 'm' : 'f')
+            setValue('sex', toLower(sexo) === 'm' ? 'm' : 'f')
         }
     }, [dataByApiSecond])
 

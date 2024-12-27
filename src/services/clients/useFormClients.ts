@@ -53,10 +53,7 @@ export const useFormClients = (dataEdit: IRegisterClient | null, refetch: any) =
                 'date',
                 data.document_type === 'ruc' ? '' : dayjs(data.date).format('YYYY-MM-DD')
             )
-            formData.append(
-                'sex',
-                data.document_type === 'ruc' ? 'e' : data.sex[0].toLocaleLowerCase()
-            )
+            formData.append('sex', data.document_type === 'ruc' ? 'e' : data.sex[0].toLowerCase())
             formData.append('document_type', data.document_type)
             formData.append('number_doc', data.number_doc)
             formData.append('first_name', data.first_name)
