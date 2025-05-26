@@ -56,6 +56,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [pageSize] = useState<number>(10)
     const [search, setSearch] = useState('')
     const [getNumber, setGetNumber] = useState<string | undefined>('')
+    const [getEmail, setGetEmail] = useState<string | undefined>('')
+
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
     const [nameHouseAlert, setNameHouseAlert] = useState('')
@@ -98,6 +100,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         phoneNumber,
         handlePhoneNumberChange,
         setPhoneNumber,
+        emailClient,
+        setEmailClient,
         checkInSelect,
         checkPool,
         checkFullPayment,
@@ -148,6 +152,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             lastName: client.last_name,
             firstName: client.first_name,
             dni: client.number_doc,
+            email: client.email,
         })) || []
 
     const optionsClientsEdit = {
@@ -157,6 +162,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         lastName: dataEdit?.client.last_name ? dataEdit?.client.last_name : '',
         firstName: dataEdit?.client.first_name ? dataEdit?.client.first_name : '',
         dni: dataEdit?.client.number_doc ? dataEdit?.client.number_doc : '',
+        email: dataEdit?.client.email ? dataEdit?.client.email : '',
     }
 
     const handleAddClick = () => {
@@ -240,6 +246,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             handlePhoneNumberChange(getNumber)
         }
     }, [getNumber])
+
+    useEffect(() => {
+        if (getEmail) {
+            setEmailClient(getEmail)
+        }
+    }, [getEmail])
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
 
@@ -504,10 +516,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                         }
                                                         options={optionsClients}
                                                         onChange={(_event: any, newValue) => {
+                                                            console.log(newValue)
                                                             onChange(
                                                                 newValue ? newValue.value : null
                                                             )
                                                             setGetNumber(newValue?.phone)
+                                                            setGetEmail(newValue?.email)
                                                             setNameClientAlert(
                                                                 newValue?.firstName
                                                                     ? newValue?.firstName
@@ -814,7 +828,16 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     >
                                         {(errors.tel_contact_number?.message ?? null) as string}
                                     </Typography>
-                                </Grid>
+                                </Grid>{' '}
+                                {emailClient && (
+                                    <Grid item md={12} xs={126}>
+                                        <SecondaryInput
+                                            value={emailClient ? emailClient : ''}
+                                            type="text"
+                                            label={'Correo electronico'}
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid item md={6} xs={6}>
                                     <SecondaryInput
                                         {...register('price_usd', {
@@ -1137,7 +1160,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     )}
                                 </Grid>
                             </Grid>
-
                             <ButtonPrimary
                                 type="submit"
                                 isLoading={isLoading}

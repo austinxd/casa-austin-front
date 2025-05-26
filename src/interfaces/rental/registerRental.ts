@@ -58,6 +58,7 @@ export interface ISeller {
     tel_number: string
     number_doc: string
     type_document: string
+    email?: string
 }
 export interface IPropertyRental {
     actual: number

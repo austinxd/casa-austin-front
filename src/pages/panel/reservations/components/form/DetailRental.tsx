@@ -9,18 +9,6 @@ interface Props {
     dataRental: IRentalClient
 }
 
-const LABELS = [
-    'Casa',
-    'Nombre',
-    'Fecha de ingreso',
-    'Fecha de salida',
-    'Cantidad de huéspedes',
-    'Precio en dólares',
-    'Precio en soles',
-    'Adelanto',
-    'Moneda',
-]
-
 export default function DetailRental({ onCancel, dataRental }: Props) {
     const [imageExpanded, setImageExpanded] = useState(false)
     const [imageSelect, setImageSelect] = useState<string>()
@@ -36,6 +24,20 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
             setImageExpanded(true)
         }
     }
+    const showEmail = !!dataRental.client.email
+
+    const LABELS = [
+        'Casa',
+        'Nombre',
+        'Fecha de ingreso',
+        'Fecha de salida',
+        'Cantidad de huéspedes',
+        'Precio en dólares',
+        'Precio en soles',
+        'Adelanto',
+        'Moneda',
+        ...(showEmail ? ['Correo'] : []),
+    ]
 
     const formatCurrency = (currency: string) => {
         const currencies: Record<string, string> = {
@@ -58,6 +60,7 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
         `S/ ${dataRental.price_sol || '-'}`,
         dataRental.advance_payment?.toString() || '-',
         formatCurrency(dataRental.advance_payment_currency),
+        ...(showEmail ? [dataRental.client.email!] : []),
     ]
 
     const renderImageGrid = () => {

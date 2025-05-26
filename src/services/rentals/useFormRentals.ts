@@ -41,6 +41,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [lateCheckOut, setLateCheckOut] = useState(false)
 
     const [phoneNumber, setPhoneNumber] = useState('')
+    const [emailClient, setEmailClient] = useState('')
 
     const { refetch: refectchForCalender } = useGetCalenderListQuery({
         year: currentYear.toString(),
@@ -53,6 +54,9 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     useEffect(() => {
         if (dataEdit?.id) {
+            if (dataEdit?.client.email) {
+                setEmailClient(dataEdit?.client.email)
+            }
             return
             /*             const formDataCheck = new FormData()
             if (houseSelect && checkInSelect && checkOutSelect) {
@@ -182,6 +186,8 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         phoneNumber,
         handlePhoneNumberChange,
         setPhoneNumber,
+        emailClient,
+        setEmailClient,
         checkInSelect,
         setCheckFullPayment,
         setCheckPool,
