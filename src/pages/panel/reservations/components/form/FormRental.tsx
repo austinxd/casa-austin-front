@@ -829,10 +829,18 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         {(errors.tel_contact_number?.message ?? null) as string}
                                     </Typography>
                                 </Grid>{' '}
-                                {emailClient && (
+                                {data?.id ? (
                                     <Grid item md={12} xs={126}>
                                         <SecondaryInput
-                                            value={emailClient ? emailClient : ''}
+                                            value={emailClient ? emailClient : 'Sin correo'}
+                                            type="text"
+                                            label={'Correo electronico'}
+                                        />
+                                    </Grid>
+                                ) : (
+                                    <Grid item md={12} xs={126}>
+                                        <SecondaryInput
+                                            value={getEmail ? getEmail : 'Sin correo'}
                                             type="text"
                                             label={'Correo electronico'}
                                         />
