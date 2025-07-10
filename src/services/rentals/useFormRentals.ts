@@ -29,7 +29,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [openErrorModal, setOpenErrorModal] = useState(false)
-    const [dataRegisterAlert, setDataRegisterAlert] = useState<IRegisterRental>()
+    const [dataRegisterAlert, setDataRegisterAlert] = useState<IRentalClient>()
     const [idsDeleteImage, setIdsDeleteImage] = useState<{ id: string }[]>([])
 
     const [houseSelect, setHouseSeletc] = useState('')
