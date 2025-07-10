@@ -322,12 +322,12 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                     <Box mt={2}>
                     <Typography fontWeight={700}>Confirmar reserva:</Typography>
                     <Typography color="primary" sx={{ wordBreak: 'break-all' }}>
-                        https://casaaustin.pe/reserva.php?uuid={dataRegisterAlert?.uuid}
+                        https://casaaustin.pe/reserva.php?uuid={dataRegisterAlert?.id}
                     </Typography>
                     <IconButton
                         onClick={() =>
                         navigator.clipboard.writeText(
-                            `https://casaaustin.pe/reserva.php?uuid=${dataRegisterAlert?.uuid}`
+                            `https://casaaustin.pe/reserva.php?uuid=${dataRegisterAlert?.id}`
                         )
                         }
                         sx={{ mt: 1 }}
