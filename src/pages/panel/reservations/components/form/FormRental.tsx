@@ -319,6 +319,24 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                         </span>
                     </Typography>
 
+                    <Box mt={2}>
+                    <Typography fontWeight={700}>Confirmar reserva:</Typography>
+                    <Typography color="primary" sx={{ wordBreak: 'break-all' }}>
+                        https://casaaustin.pe/reserva.php?uuid={dataRegisterAlert?.uuid}
+                    </Typography>
+                    <IconButton
+                        onClick={() =>
+                        navigator.clipboard.writeText(
+                            `https://casaaustin.pe/reserva.php?uuid=${dataRegisterAlert?.uuid}`
+                        )
+                        }
+                        sx={{ mt: 1 }}
+                    >
+                        <SuccessEditIcon />
+                        <Typography variant="caption" ml={1}>Copiar enlace</Typography>
+                    </IconButton>
+                    </Box>
+
                     <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                         <Button
                             onClick={copyMessage}
