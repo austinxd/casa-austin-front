@@ -60,6 +60,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
+    const [isCopyUrl, setIsCopyUrl] = useState(false)
     const [nameHouseAlert, setNameHouseAlert] = useState('')
 
     const { data: optionClientsData } = useGetAllClientsQuery({
@@ -109,6 +110,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         setCheckPool,
         lateCheckOut,
         setLateCheckOut,
+        reservCreate,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -173,15 +175,15 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     const messageRef = useRef<HTMLDivElement>(null)
 
-    const copyMessage = () => {
+    const copyMessageUrl = () => {
         if (messageRef.current) {
-            const message = messageRef.current.innerText
+            const message = `https://casaaustin.pe/reserva.php?uuid=${reservCreate.id}`
             navigator.clipboard
                 .writeText(message)
                 .then(() => {
-                    setIsCopyText(true)
+                    setIsCopyUrl(true)
                     setTimeout(() => {
-                        setIsCopyText(false)
+                        setIsCopyUrl(false)
                     }, 3000)
                 })
                 .catch((error) => {
@@ -255,6 +257,21 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
 
+    const copyMessage = () => {
+        const textToCopy = 'https://enlace-de-confirmacion.com' // O lo que necesites
+        navigator.clipboard
+            .writeText(textToCopy)
+            .then(() => {
+                setIsCopyText(true)
+                setTimeout(() => {
+                    setIsCopyText(false)
+                }, 2000)
+            })
+            .catch((error) => {
+                console.error('Error al copiar el mensaje:', error)
+            })
+    }
+
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -278,6 +295,32 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 <Box>
                     <Typography mb={2}>Registro exitoso</Typography>
                     <SuccessEditIcon />
+                    <Typography variant="subtitle2" mt={1}>
+                        Confirmación de reserva:
+                    </Typography>
+                    <Box
+                        sx={{
+                            backgroundColor: 'rgba(0, 172, 238, 0.2)', // celeste opaco (transparente)
+                            borderRadius: 4,
+                            textAlign: 'center',
+                            px: 2,
+                        }}
+                        onClick={copyMessageUrl}
+                    >
+                        <Typography
+                            ref={messageRef}
+                            variant="subtitle1"
+                            sx={{
+                                cursor: 'pointer',
+                                ':hover': { opacity: 0.6 },
+                            }}
+                            fontSize={12}
+                            py={0.6}
+                        >
+                            {isCopyUrl ? 'Enlace copiado' : 'Click aquí para copiar enlace'}
+                        </Typography>
+                    </Box>
+
                     <Typography variant="subtitle2" mt={2} ref={messageRef} textAlign={'left'}>
                         ¡<span>{nameClientAlert} </span> tu Reserva está Confirmada en{' '}
                         {filterTextHouse2(nameHouseAlert)}!
@@ -315,7 +358,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                             ingreso.{' '}
                             {checkPool
                                 ? ''
-                                : 'La piscina ó Jacuzzi temperado se coordina con anticipacion (costo adicional: 100 soles/noche).'}{' '}
+                                : 'La piscina ó Jacuzzi temperado se coordina con anticipación (costo adicional: 100 soles/noche).'}{' '}
                         </span>
                     </Typography>
 
@@ -516,7 +559,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                         }
                                                         options={optionsClients}
                                                         onChange={(_event: any, newValue) => {
-                                                            console.log(newValue)
                                                             onChange(
                                                                 newValue ? newValue.value : null
                                                             )
@@ -834,7 +876,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         <SecondaryInput
                                             value={emailClient ? emailClient : 'Sin correo'}
                                             type="text"
-                                            label={'Correo electronico'}
+                                            label={'Correo electrónico'}
                                         />
                                     </Grid>
                                 ) : (
@@ -842,7 +884,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         <SecondaryInput
                                             value={getEmail ? getEmail : 'Sin correo'}
                                             type="text"
-                                            label={'Correo electronico'}
+                                            label={'Correo electrónico'}
                                         />
                                     </Grid>
                                 )}
@@ -1187,7 +1229,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                     )}
                     <BasicModal open={openErrorModal}>
                         <ModalErrors
-                            title="Ups! ocurrio un problema"
+                            title="Ups! ocurrió un problema"
                             data={errorMessage}
                             onCancel={() => setOpenErrorModal(false)}
                         />

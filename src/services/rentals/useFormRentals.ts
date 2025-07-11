@@ -21,7 +21,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [imageReceived, setImageReceived] = useState<IRecipts[] | []>([])
     const [imageSend, setImageSend] = useState<File[] | []>([])
-
+    const [reservCreate, setReservCreate] = useState<any>(null)
     const [successRegister, setSuccessRegister] = useState(false)
     const [successEdit, setSuccessEdit] = useState(false)
     const currentDates = new Date()
@@ -149,7 +149,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             }
 
             const response = await reservationsForm(formData)
-
+            setReservCreate(response.data)
             if (response.status === 201) {
                 setDataRegisterAlert(data)
                 setSuccessRegister(true)
@@ -196,5 +196,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         dataRegisterAlert,
         lateCheckOut,
         setLateCheckOut,
+        reservCreate,
     }
 }
