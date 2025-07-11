@@ -174,16 +174,15 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     }
 
     const messageRef = useRef<HTMLDivElement>(null)
-
-    const copyMessageUrl = () => {
+    const copyMessage = () => {
         if (messageRef.current) {
-            const message = `https://casaaustin.pe/reserva.php?uuid=${reservCreate.id}`
+            const message = messageRef.current.innerText
             navigator.clipboard
                 .writeText(message)
                 .then(() => {
-                    setIsCopyUrl(true)
+                    setIsCopyText(true)
                     setTimeout(() => {
-                        setIsCopyUrl(false)
+                        setIsCopyText(false)
                     }, 3000)
                 })
                 .catch((error) => {
@@ -193,6 +192,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             console.error('No se puede copiar el mensaje: el ref es nulo.')
         }
     }
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             if (imageSend.length > 2) {
@@ -257,14 +257,14 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
 
     const tomorrow = dayjs(checkInSelect).add(1, 'day')
 
-    const copyMessage = () => {
-        const textToCopy = 'https://enlace-de-confirmacion.com' // O lo que necesites
+    const copyMessageUrl = () => {
+        const message = `https://casaaustin.pe/reserva.php?uuid=${reservCreate.id}`
         navigator.clipboard
-            .writeText(textToCopy)
+            .writeText(message)
             .then(() => {
-                setIsCopyText(true)
+                setIsCopyUrl(true)
                 setTimeout(() => {
-                    setIsCopyText(false)
+                    setIsCopyUrl(false)
                 }, 2000)
             })
             .catch((error) => {
