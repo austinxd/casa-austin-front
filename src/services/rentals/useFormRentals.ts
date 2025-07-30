@@ -117,7 +117,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('late_checkout', lateCheckOut.toString())
             formData.append('tel_contact_number', phoneNumber)
             formData.append('comentarios_reservas', data.comentarios_reservas)
-            formData.append('points_redeemed', data.points_redeemed)
+            formData.append('points_to_redeem', data.points_to_redeem)
 
             formData.append(
                 'origin',

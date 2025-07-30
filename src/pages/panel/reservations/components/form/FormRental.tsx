@@ -129,7 +129,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('client', dataEdit.client.id)
             setValue('tel_contact_number', dataEdit.tel_contact_number)
             setValue('tel_contact_number', dataEdit.tel_contact_number)
-            setValue('points_redeemed', dataEdit.points_redeemed)
+            setValue('points_to_redeem', dataEdit.points_redeemed)
 
             setImageReceived(dataEdit.recipts)
             setHouseSeletc(dataEdit.property.id)
@@ -929,7 +929,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             type="number"
                                             label={`Puntos usados`}
                                             messageError={
-                                                (errors.points_redeemed?.message ?? null) as string
+                                                (errors.points_to_redeem?.message ?? null) as string
                                             }
                                         />
                                     </Grid>
@@ -958,7 +958,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             </Typography>
                                         </Box>
                                         <SecondaryInput
-                                            {...register('points_redeemed', {
+                                            {...register('points_to_redeem', {
                                                 required: 'El punto es obligatorio',
                                                 valueAsNumber: true,
                                                 min: {
@@ -978,7 +978,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             type="number"
                                             label={`Escribe un máximo de ${maxPoints} pts`}
                                             messageError={
-                                                (errors.points_redeemed?.message ?? null) as string
+                                                (errors.points_to_redeem?.message ?? null) as string
                                             }
                                         />
                                     </Grid>

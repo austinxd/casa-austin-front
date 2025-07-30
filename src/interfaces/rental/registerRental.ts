@@ -12,7 +12,7 @@ export interface IRegisterRental {
     advance_payment: number
     advance_payment_currency: string
     tel_contact_number: string
-    points_redeemed: string
+    points_to_redeem: string
     file: File | File[]
 }
 
@@ -45,7 +45,9 @@ export interface IRentalClient {
     tel_contact_number: string
     seller: ISeller
     client: ISeller
+    points_to_redeem: string
     points_redeemed: string
+
     recipts: IRecipts[] | []
 }
 
