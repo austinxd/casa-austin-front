@@ -66,6 +66,7 @@ export const SecondaryInput = forwardRef(function SecondaryInput(
                 flexDirection: 'column',
                 marginBottom: '0px',
                 height: 82,
+                width: '100%',
             }}
         >
             <CssTextField

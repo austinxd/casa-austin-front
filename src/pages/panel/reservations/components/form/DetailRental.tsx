@@ -36,6 +36,7 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
         'Precio en soles',
         'Adelanto',
         'Moneda',
+        'Puntos',
         ...(showEmail ? ['Correo'] : []),
     ]
 
@@ -60,6 +61,7 @@ export default function DetailRental({ onCancel, dataRental }: Props) {
         `S/ ${dataRental.price_sol || '-'}`,
         dataRental.advance_payment?.toString() || '-',
         formatCurrency(dataRental.advance_payment_currency),
+        dataRental.points_redeemed,
         ...(showEmail ? [dataRental.client.email!] : []),
     ]
 

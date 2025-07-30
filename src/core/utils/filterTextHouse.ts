@@ -10,7 +10,7 @@ const filterTextHouse2 = (e: string): string => {
             return 'Casa Austin (waze, maps, uber, etc)'
 
         default:
-            return 'Casa Austin (waze, maps, uber, etc'
+            return 'Casa Austin (waze, maps, uber, etc)'
     }
 }
 

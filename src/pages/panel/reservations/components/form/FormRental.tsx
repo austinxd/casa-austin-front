@@ -57,6 +57,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
     const [search, setSearch] = useState('')
     const [getNumber, setGetNumber] = useState<string | undefined>('')
     const [getEmail, setGetEmail] = useState<string | undefined>('')
+    const [getPoints, setGetPoints] = useState<string | undefined>('')
+    const [pointsReserv, setPointsReserv] = useState('')
 
     const [nameClientAlert, setNameClientAlert] = useState<string | null>('')
     const [isCopyText, setIsCopyText] = useState(false)
@@ -126,6 +128,9 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('property', dataEdit.property.id)
             setValue('client', dataEdit.client.id)
             setValue('tel_contact_number', dataEdit.tel_contact_number)
+            setValue('tel_contact_number', dataEdit.tel_contact_number)
+            setValue('points_redeemed', dataEdit.points_redeemed)
+
             setImageReceived(dataEdit.recipts)
             setHouseSeletc(dataEdit.property.id)
             setCheckInSelect(dataEdit.check_in_date)
@@ -134,6 +139,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setCheckFullPayment(dataEdit.full_payment)
             setCheckPool(dataEdit.temperature_pool)
             setLateCheckOut(dataEdit.late_checkout)
+            setPointsReserv(dataEdit.points_redeemed)
         }
     }, [isEditLoading, dataEdit])
 
@@ -155,8 +161,8 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             firstName: client.first_name,
             dni: client.number_doc,
             email: client.email,
+            points_balance: client.points_balance,
         })) || []
-
     const optionsClientsEdit = {
         value: dataEdit?.client.id ? dataEdit?.client.id : '',
         label: dataEdit?.client.first_name + ' ' + dataEdit?.client.last_name,
@@ -165,6 +171,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         firstName: dataEdit?.client.first_name ? dataEdit?.client.first_name : '',
         dni: dataEdit?.client.number_doc ? dataEdit?.client.number_doc : '',
         email: dataEdit?.client.email ? dataEdit?.client.email : '',
+        points_balance: dataEdit?.client.points_balance ? dataEdit?.client.points_balance : '',
     }
 
     const handleAddClick = () => {
@@ -271,7 +278,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 console.error('Error al copiar el mensaje:', error)
             })
     }
-
+    const maxPoints = Number(getPoints) || 0
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -562,8 +569,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                             onChange(
                                                                 newValue ? newValue.value : null
                                                             )
+                                                            console.log(newValue)
                                                             setGetNumber(newValue?.phone)
                                                             setGetEmail(newValue?.email)
+                                                            setGetPoints(newValue?.points_balance)
                                                             setNameClientAlert(
                                                                 newValue?.firstName
                                                                     ? newValue?.firstName
@@ -814,7 +823,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                 <Grid item md={6} xs={12}>
                                     <SecondaryInput
                                         {...register('guests', {
-                                            required: 'El numero de huespedes es obligatorios',
+                                            required: 'El numero de huéspedes es obligatorios',
                                         })}
                                         type="text"
                                         label={'Cantidad de huéspedes'}
@@ -908,6 +917,72 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         messageError={(errors.price_sol?.message ?? null) as string}
                                     />
                                 </Grid>
+                                {pointsReserv && (
+                                    <Grid item md={12} xs={12} display={'flex'} gap={1}>
+                                        <SecondaryInput
+                                            value={pointsReserv}
+                                            fullWidth
+                                            inputProps={{
+                                                step: 'any',
+                                            }}
+                                            defaultValue={0}
+                                            type="number"
+                                            label={`Puntos usados`}
+                                            messageError={
+                                                (errors.points_redeemed?.message ?? null) as string
+                                            }
+                                        />
+                                    </Grid>
+                                )}
+                                {getPoints && (
+                                    <Grid item md={12} xs={12} display={'flex'} gap={1}>
+                                        <Box
+                                            sx={{
+                                                border: '1px solid #D1D0D4',
+                                                display: 'flex',
+                                                width: 120,
+                                                px: 1.2,
+                                                borderRadius: 2,
+
+                                                height: 56,
+                                                alignItems: 'start',
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            <Typography variant="body1" fontSize={12}>
+                                                Puntos
+                                            </Typography>
+                                            <Typography variant="body2" fontSize={13}>
+                                                {getPoints} pts
+                                            </Typography>
+                                        </Box>
+                                        <SecondaryInput
+                                            {...register('points_redeemed', {
+                                                required: 'El punto es obligatorio',
+                                                valueAsNumber: true,
+                                                min: {
+                                                    value: 0,
+                                                    message: 'Debe ser mayor o igual a 0',
+                                                },
+                                                max: {
+                                                    value: maxPoints,
+                                                    message: `No puede superar ${maxPoints} puntos`,
+                                                },
+                                            })}
+                                            fullWidth
+                                            inputProps={{
+                                                step: 'any',
+                                            }}
+                                            defaultValue={0}
+                                            type="number"
+                                            label={`Escribe un máximo de ${maxPoints} pts`}
+                                            messageError={
+                                                (errors.points_redeemed?.message ?? null) as string
+                                            }
+                                        />
+                                    </Grid>
+                                )}
                                 <Grid item md={6} xs={6}>
                                     <Controller
                                         name="advance_payment_currency"

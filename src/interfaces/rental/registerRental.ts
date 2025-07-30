@@ -12,6 +12,7 @@ export interface IRegisterRental {
     advance_payment: number
     advance_payment_currency: string
     tel_contact_number: string
+    points_redeemed: string
     file: File | File[]
 }
 
@@ -44,6 +45,7 @@ export interface IRentalClient {
     tel_contact_number: string
     seller: ISeller
     client: ISeller
+    points_redeemed: string
     recipts: IRecipts[] | []
 }
 
@@ -59,6 +61,7 @@ export interface ISeller {
     number_doc: string
     type_document: string
     email?: string
+    points_balance: string
 }
 export interface IPropertyRental {
     actual: number
