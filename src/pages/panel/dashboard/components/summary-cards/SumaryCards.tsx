@@ -1,8 +1,8 @@
 import style from '../../dashboard.module.css'
 import Card from './cards/Card'
-import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 import MoneyOffIcon from '@mui/icons-material/MoneyOff'
+import StarsIcon from '@mui/icons-material/Stars'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import { IDataDash } from '@/interfaces/dashboard/dashboard'
 import formatCurrency from '@/core/utils/formatCurrency'
@@ -24,21 +24,21 @@ export default function SumaryCards({ data }: Props) {
                             />
                         }
                         quantity={data?.free_days_total ? data?.free_days_total : ' '}
-                        title="Noches disponibles"
+                        title="Noches Disponibles "
+                        nigthReserv={data?.ocuppied_days_total ? data.ocuppied_days_total : 0}
                     />
                 </div>
 
                 <div className={style.item}>
                     <Card
-                        color="#ff1744"
+                        color="#FF9800"
                         icon={
-                            <EventBusyOutlinedIcon
-                                sx={{ color: '#ff1744', fontSize: { md: '34px', xs: '22px' } }}
+                            <StarsIcon
+                                sx={{ color: '#FF9800', fontSize: { md: '34px', xs: '22px' } }}
                             />
                         }
-                        quantity={data?.ocuppied_days_total ? data?.ocuppied_days_total : '0'}
-                        title="Noches reservadas"
-                        nochesMan={data?.noches_man ? data?.noches_man : null}
+                        quantity={data?.puntos_canjeados ? data?.puntos_canjeados : '0'}
+                        title="Puntos canjeados"
                     />
                 </div>
 

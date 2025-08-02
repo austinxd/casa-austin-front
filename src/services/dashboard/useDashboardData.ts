@@ -12,7 +12,6 @@ export const useDashboardData = (month: number, year: number) => {
     const [sellsData, setSellsData] = useState<number[]>([])
     const [nightsBusyData, setNightsBusyData] = useState<number[]>([])
     const [categoryData, setCategoryData] = useState<string[]>([])
-
     useEffect(() => {
         if (data) {
             const sortedData = [...data.free_days_per_house].sort((a, b) => {
@@ -26,6 +25,7 @@ export const useDashboardData = (month: number, year: number) => {
             setSellsData(sortedData.map((item) => parseFloat(item.dinero_facturado.toFixed(1))))
             setNightsBusyData(sortedData.map((item) => parseFloat(item.dias_ocupada.toFixed(1))))
             setCategoryData(sortedData.map((item) => item.casa.match(/\d+/)?.[0]?.toString() || ''))
+            console.log(nightsBusyData)
         }
     }, [data])
 

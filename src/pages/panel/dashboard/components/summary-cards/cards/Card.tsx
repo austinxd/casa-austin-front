@@ -1,16 +1,16 @@
 import { Box, Typography, useTheme } from '@mui/material'
 import { ReactNode } from 'react'
 import { useBoxShadow } from '@/core/utils'
-import ConstructionIcon from '@mui/icons-material/Construction'
+import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
 interface Props {
     icon: ReactNode
     quantity: number | string
     title: string
     color: string
-    nochesMan?: number
+    nigthReserv?: number
 }
 
-export default function Card({ color, icon, quantity, title, nochesMan }: Props) {
+export default function Card({ color, icon, quantity, title, nigthReserv }: Props) {
     const { palette } = useTheme()
     return (
         <Box
@@ -41,11 +41,11 @@ export default function Card({ color, icon, quantity, title, nochesMan }: Props)
                     </Typography>
                 </Box>
 
-                {nochesMan && (
+                {nigthReserv && (
                     <>
                         <Box display={'flex'}>
-                            <ConstructionIcon
-                                sx={{ color: '#808080', fontSize: { md: '32px', xs: '22px' } }}
+                            <EventBusyOutlinedIcon
+                                sx={{ color: '#ff1744', fontSize: { md: '34px', xs: '22px' } }}
                             />
                             <Typography
                                 ml={'8px'}
@@ -53,21 +53,35 @@ export default function Card({ color, icon, quantity, title, nochesMan }: Props)
                                     fontSize: { md: 22, sm: 18, xs: 14 },
                                 }}
                             >
-                                {nochesMan}
+                                {nigthReserv}
                             </Typography>
                         </Box>
                     </>
                 )}
             </Box>
-            <Typography
-                sx={{
-                    fontSize: { md: 14, sm: 12, xs: 11 },
-                }}
-                mt={1.3}
-                fontWeight={300}
-            >
-                {title}
-            </Typography>
+            <Box display={'flex'}>
+                <Typography
+                    sx={{
+                        fontSize: { md: 14, sm: 12, xs: 11 },
+                    }}
+                    mt={1.3}
+                    fontWeight={300}
+                >
+                    {title}
+                </Typography>
+                {nigthReserv && (
+                    <Typography
+                        sx={{
+                            fontSize: { md: 14, sm: 12, xs: 11 },
+                        }}
+                        ml={0.5}
+                        mt={1.3}
+                        fontWeight={300}
+                    >
+                        | Ocupadas
+                    </Typography>
+                )}
+            </Box>
         </Box>
     )
 }

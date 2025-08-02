@@ -6,6 +6,7 @@ export interface IDataDash {
     dinero_por_cobrar: string
     dinero_total_facturado: string
     noches_man: any
+    puntos_canjeados: string
 }
 export interface IFreeDays {
     casa: string
