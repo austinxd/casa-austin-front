@@ -20,6 +20,7 @@ export default function RenderEventContent({ eventInfo }: any) {
                     }}
                 >
                     {eventInfo.event.extendedProps.type === 'aus' ||
+                    eventInfo.event.extendedProps.type === 'client' ||
                     eventInfo.event.extendedProps.type === 'man' ? (
                         <Box
                             sx={{

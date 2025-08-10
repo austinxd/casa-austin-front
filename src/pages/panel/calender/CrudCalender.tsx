@@ -16,11 +16,14 @@ export default function CrudCalender() {
     const currentDates = new Date()
     const [itemsSelect, setItemsSelect] = useState<string[]>([])
     const [currentYear, setCurrentYear] = useState(currentDates.getFullYear())
+
     const { data: calenderList, isLoading } = useGetCalenderListQuery({
         year: currentYear.toString(),
     })
+
     const { data: dataHouse } = useGetDashboardQuery({ month: '1', year: '2024' })
     const [eventos, setEventos] = useState<IEventoCalendario[]>([])
+
     const { monthStartDates, monthEndDates } = getMonthStartAndEndDates(months, currentYear)
 
     useEffect(() => {

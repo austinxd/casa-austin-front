@@ -27,6 +27,8 @@ interface Props {
     filterToday: string
     setFilterInProgress: React.Dispatch<React.SetStateAction<string>>
     filterInProgress: string
+    setFilterStatus: React.Dispatch<React.SetStateAction<string>>
+    filterStatus: string
 }
 
 export default function SearchRental({
@@ -41,6 +43,8 @@ export default function SearchRental({
     filterToday,
     setFilterInProgress,
     filterInProgress,
+    setFilterStatus,
+    filterStatus,
 }: Props) {
     const [inputText, setInputText] = useState('')
     const textFilter: string = useDebounce(inputText, 400)
@@ -69,6 +73,10 @@ export default function SearchRental({
 
     const onCheckInProgress = () => {
         setFilterInProgress((prevState) => (prevState === '' ? 'in_progress' : ''))
+    }
+
+    const onCheckInStatus = () => {
+        setFilterStatus((prevState) => (prevState === '' ? 'pending' : ''))
     }
 
     return (
@@ -139,7 +147,13 @@ export default function SearchRental({
                     gap={{ md: 1, sm: 0.5, xs: 1 }}
                     display={'flex'}
                     justifyContent={'center'}
-                    alignItems={'center'}
+                    alignItems={'start'}
+                    flexDirection={{
+                        lg: 'row',
+                        md: 'column-reverse',
+                        sm: 'column-reverse',
+                        xs: 'column-reverse',
+                    }}
                     sx={{
                         '@media (max-width: 1000px)': {
                             width: '100%',
@@ -149,7 +163,7 @@ export default function SearchRental({
                 >
                     <Box>
                         <FormControlLabel
-                            sx={{ mr: 1.5, ml: 0.1 }}
+                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 }, ml: -0.6 }}
                             onClick={onCheckAirbnb}
                             control={
                                 <Checkbox
@@ -157,7 +171,7 @@ export default function SearchRental({
                                     checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
                                     checked={filterAirbnb === 'air'}
                                     sx={{
-                                        mr: 0,
+                                        mr: -0.4,
                                         p: 0.5,
                                         color: '#EB4C60',
                                         '&.Mui-checked': {
@@ -180,7 +194,7 @@ export default function SearchRental({
                             }
                         />
                         <FormControlLabel
-                            sx={{ mr: 1.5 }}
+                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 } }}
                             onClick={onCheckToday}
                             control={
                                 <Checkbox
@@ -188,7 +202,7 @@ export default function SearchRental({
                                     checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
                                     checked={filterToday === 'today'}
                                     sx={{
-                                        mr: 0,
+                                        mr: -0.4,
                                         p: 0.5,
                                         color: '#0E6191',
                                         '&.Mui-checked': {
@@ -213,9 +227,9 @@ export default function SearchRental({
                                 </Typography>
                             }
                         />
-                        {/* Agregar el nuevo filtro in_progress */}
+
                         <FormControlLabel
-                            sx={{ mr: 0 }}
+                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 } }}
                             onClick={onCheckInProgress}
                             control={
                                 <Checkbox
@@ -223,7 +237,7 @@ export default function SearchRental({
                                     checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
                                     checked={filterInProgress === 'in_progress'}
                                     sx={{
-                                        mr: 0,
+                                        mr: -0.4,
                                         p: 0.5,
                                         color: '#2F2B3D',
                                         '&.Mui-checked': {
@@ -241,7 +255,38 @@ export default function SearchRental({
                                         opacity: 0.8,
                                     }}
                                 >
-                                    En Curso
+                                    En curso
+                                </Typography>
+                            }
+                        />
+                        <FormControlLabel
+                            sx={{ mr: 1 }}
+                            onClick={onCheckInStatus}
+                            control={
+                                <Checkbox
+                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                    checked={filterStatus === 'pending'}
+                                    sx={{
+                                        mr: -0.4,
+                                        p: 0.5,
+                                        color: '#2F2B3D',
+                                        '&.Mui-checked': {
+                                            color: '#2F2B3D',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Typography
+                                    sx={{
+                                        color: '#000F08',
+                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
+                                        fontWeight: 400,
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    Pendientes{' '}
                                 </Typography>
                             }
                         />
@@ -249,18 +294,13 @@ export default function SearchRental({
                     <Button
                         sx={{
                             height: 38,
-                            width: 167,
+                            width: { lg: 170, sm: '100%', xs: '100%' },
                             color: 'white',
                             background: '#0E6191',
                             fontSize: '15px',
                             fontWeight: 400,
                             ':hover': {
                                 background: '#0E6191',
-                            },
-                            '@media (max-width: 700px)': {
-                                width: 120,
-                                px: 0,
-                                fontSize: 13,
                             },
                         }}
                         onClick={onSave}

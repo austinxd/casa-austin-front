@@ -13,7 +13,7 @@ export const createEvents = (data: IRentalClient[]): IEventoCalendario[] => {
         end: rental.late_checkout ? rental.late_check_out_date : rental.check_out_date,
         color: rental.origin === 'man' ? '#888888' : rental.property.background_color,
         image:
-            rental.origin === 'aus' || rental.origin === 'man'
+            rental.origin === 'aus' || rental.origin === 'man' || rental.origin === 'client'
                 ? rental.property.name
                 : '/airbnb.png',
         type: rental.origin,
