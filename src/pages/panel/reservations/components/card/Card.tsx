@@ -18,7 +18,7 @@ import { IRentalClient } from '@/interfaces/rental/registerRental'
 import { AirbnbIcon } from '@/components/common'
 import ConverDate from '@/core/utils/converDate'
 import { useBoxShadow } from '@/core/utils'
-
+import HouseIcon from '@mui/icons-material/House'
 interface Props {
     isLoadingContract: boolean
     handleView: () => void
@@ -121,9 +121,27 @@ export default function Card({
                             </>
                         )}
 
-                        {item.origin === 'aus' && (
+                        {item.origin === 'client' && (
                             <>
                                 <GroupOutlinedIcon
+                                    fontSize="small"
+                                    sx={{ fontSize: '20px', padding: 0, margin: 0 }}
+                                />
+                                <span
+                                    style={{
+                                        fontSize: '14px',
+                                        lineHeight: '2px',
+                                        marginLeft: '2px',
+                                    }}
+                                >
+                                    {item.guests}
+                                </span>
+                            </>
+                        )}
+
+                        {item.origin === 'aus' && (
+                            <>
+                                <HouseIcon
                                     fontSize="small"
                                     sx={{ fontSize: '20px', padding: 0, margin: 0 }}
                                 />
@@ -197,60 +215,11 @@ export default function Card({
                                 ? `${item.client.first_name.slice(0, 20)}...`
                                 : item.client.first_name}
                         </Typography>
-                        <Typography lineHeight={1}>{item.client.last_name}</Typography>
+                        <Typography lineHeight={1}>
+                            {item.origin === 'man' ? '' : item.client.last_name}
+                        </Typography>
                     </Box>
-                    {/*                 <Typography
-                    variant="subtitle1"
-                    sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'end' }}
-                >
-                    {item.origin === 'aus' && (
-                        <span
-                            style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
-                        >
-                            {(
-                                (item.client.first_name
-                                    ? item.client.first_name + ' '
-                                    : '') +
-                                (item.client.last_name ? item.client.last_name : ' ')
-                            ).slice(0, 15)}
-                            {(
-                                (item.client.first_name
-                                    ? item.client.first_name + ' '
-                                    : '') +
-                                (item.client.last_name ? item.client.last_name : ' ')
-                            ).length > 15
-                                ? '...'
-                                : ''}
-                        </span>
-                    )}
-                    {item.origin === 'air' && (
-                        <span
-                            style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
-                        >
-                            {(
-                                (item.client.first_name
-                                    ? item.client.first_name + ' '
-                                    : 'Airbnb') +
-                                (item.client.last_name ? item.client.last_name : ' ')
-                            ).slice(0, 15)}
-                            {(
-                                (item.client.first_name
-                                    ? item.client.first_name + ' '
-                                    : 'Airbnb') +
-                                (item.client.last_name ? item.client.last_name : ' ')
-                            ).length > 15
-                                ? '...'
-                                : ''}
-                        </span>
-                    )}
-                    {item.origin === 'man' && (
-                        <span
-                            style={{ marginTop: '4px', fontSize: '17px', fontWeight: 600 }}
-                        >
-                            Mantenimiento
-                        </span>
-                    )}
-                </Typography> */}
+
                     <Box
                         display={'flex'}
                         justifyContent={'center'}
@@ -259,61 +228,6 @@ export default function Card({
                         ml={1.5}
                         mb={0.5}
                     >
-                        {/*                 <Box
-                        onClick={handleView}
-                        sx={{
-                            background: item.origin === 'air' ? '#FF5A5F' : '#0E6191',
-                            borderRadius: '4px',
-                            color: 'white',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            p: 0.5,
-                            height: '24px',
-                        }}
-                    >
-                        {item.origin === 'air' && (
-                            <>
-                                <AirbnbIcon />
-                                <span style={{ fontSize: '13px' }}> +{item.guests}</span>
-                            </>
-                        )}
-
-                        {item.origin === 'aus' && (
-                            <>
-                                <GroupOutlinedIcon
-                                    fontSize="small"
-                                    sx={{ fontSize: '16px', padding: 0, margin: 0 }}
-                                />
-                                <span
-                                    style={{
-                                        fontSize: '13px',
-                                        lineHeight: '1px',
-                                    }}
-                                >
-                                    +{item.guests}
-                                </span>
-                            </>
-                        )}
-                        {item.origin === 'man' && (
-                            <>
-                                <GroupOutlinedIcon
-                                    fontSize="small"
-                                    sx={{ fontSize: '16px', padding: 0, margin: 0 }}
-                                />
-                                <span
-                                    style={{
-                                        fontSize: '13px',
-                                        lineHeight: '1px',
-                                    }}
-                                >
-                                    +{item.guests}
-                                </span>
-                            </>
-                        )}
-                    </Box> */}
-
                         {item.client.tel_number && (
                             <IconButton
                                 sx={{
@@ -329,93 +243,93 @@ export default function Card({
                                 />
                             </IconButton>
                         )}
-
-                        {/*                       {item.late_checkout && (
-                            <Box
-                                display={'flex'}
-                                alignItems={'center'}
-                                justifyContent={'center'}
-                                sx={{ background: 'gray', borderRadius: '4px' }}
-                                height={26}
-                                width={26}
-                            >
-                                <ExitToAppIcon
-                                    sx={{
-                                        color: 'white',
-                                        fontSize: '16px',
-                                    }}
-                                />
-                            </Box>
-                        )} */}
                     </Box>
                 </Box>
-
-                <Box
-                    display={'flex'}
-                    gap={2}
-                    mt={2.5}
-                    sx={{
-                        '@media (max-width: 1400px)': {
-                            mt: 1.5,
-                        },
-                    }}
-                >
-                    <Typography
-                        fontSize={13}
+                {item.origin === 'man' ? (
+                    <Box
                         sx={{
-                            background: '#F2F2F2',
-                            color: '#0E6191',
-                            px: 1.5,
-                            py: 0.5,
-                            borderRadius: '4px',
-                            fontWeight: 400,
+                            background: palette.divider,
+                            py: 1,
+                            my: 0.65,
+                            px: 1.2,
+                            borderRadius: 2,
+                            borderTopRightRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            width: 'fit-content',
                         }}
                     >
-                        $ {item.price_usd}
-                    </Typography>
-                    <Typography
-                        fontSize={13}
+                        <Typography variant="body1">
+                            {`${item.property.name}`} en mantenimiento
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Box
+                        display={'flex'}
+                        gap={2}
+                        mt={2.5}
                         sx={{
-                            background: '#F2F2F2',
-                            color: '#7367F0',
-                            px: 1.5,
-                            py: 0.5,
-                            borderRadius: '4px',
-                            fontWeight: 400,
+                            '@media (max-width: 1400px)': {
+                                mt: 1.5,
+                            },
                         }}
                     >
-                        S./ {item.price_sol}
-                    </Typography>
-                    {item.full_payment ? (
                         <Typography
                             fontSize={13}
                             sx={{
                                 background: '#F2F2F2',
-                                color: 'red',
+                                color: '#0E6191',
                                 px: 1.5,
                                 py: 0.5,
                                 borderRadius: '4px',
                                 fontWeight: 400,
                             }}
                         >
-                            S./ 0
+                            $ {item.price_usd}
                         </Typography>
-                    ) : (
                         <Typography
                             fontSize={13}
                             sx={{
                                 background: '#F2F2F2',
-                                color: 'red',
+                                color: '#7367F0',
                                 px: 1.5,
                                 py: 0.5,
                                 borderRadius: '4px',
                                 fontWeight: 400,
                             }}
                         >
-                            S./ {item.resta_pagar}
+                            S./ {item.price_sol}
                         </Typography>
-                    )}
-                </Box>
+                        {item.full_payment ? (
+                            <Typography
+                                fontSize={13}
+                                sx={{
+                                    background: '#F2F2F2',
+                                    color: 'red',
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: '4px',
+                                    fontWeight: 400,
+                                }}
+                            >
+                                S./ 0
+                            </Typography>
+                        ) : (
+                            <Typography
+                                fontSize={13}
+                                sx={{
+                                    background: '#F2F2F2',
+                                    color: 'red',
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: '4px',
+                                    fontWeight: 400,
+                                }}
+                            >
+                                S./ {item.resta_pagar}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
             </Box>
 
             <Box

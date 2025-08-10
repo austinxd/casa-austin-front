@@ -1,5 +1,6 @@
 export interface IRegisterRental {
     property: string
+    status: 'incomplete' | 'pending' | 'approved' | ''
     client: string
     comentarios_reservas: string
     full_payment: boolean
@@ -37,6 +38,7 @@ export interface IRentalClient {
     late_check_out_date: any
     resta_pagar: string
     guests: number
+    status: 'incomplete' | 'pending' | 'approved'
     id: string
     origin: string
     price_sol: number

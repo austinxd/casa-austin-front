@@ -130,6 +130,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             setValue('tel_contact_number', dataEdit.tel_contact_number)
             setValue('tel_contact_number', dataEdit.tel_contact_number)
             setValue('points_to_redeem', dataEdit.points_redeemed)
+            setValue('status', dataEdit.status)
 
             setImageReceived(dataEdit.recipts)
             setHouseSeletc(dataEdit.property.id)
@@ -163,6 +164,21 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             email: client.email,
             points_balance: client.points_balance,
         })) || []
+
+    const optionsStatus = [
+        {
+            value: 'incomplete',
+            label: 'Incompleto',
+        },
+        {
+            value: 'pending',
+            label: 'Pendiente',
+        },
+        {
+            value: 'approved',
+            label: 'Aprobado',
+        },
+    ]
     const optionsClientsEdit = {
         value: dataEdit?.client.id ? dataEdit?.client.id : '',
         label: dataEdit?.client.first_name + ' ' + dataEdit?.client.last_name,
@@ -881,7 +897,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                     </Typography>
                                 </Grid>{' '}
                                 {data?.id ? (
-                                    <Grid item md={12} xs={126}>
+                                    <Grid item md={6} xs={12}>
                                         <SecondaryInput
                                             value={emailClient ? emailClient : 'Sin correo'}
                                             type="text"
@@ -889,7 +905,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         />
                                     </Grid>
                                 ) : (
-                                    <Grid item md={12} xs={126}>
+                                    <Grid item md={6} xs={12}>
                                         <SecondaryInput
                                             value={getEmail ? getEmail : 'Sin correo'}
                                             type="text"
@@ -897,6 +913,30 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         />
                                     </Grid>
                                 )}
+                                <Grid item md={6} xs={12}>
+                                    <Controller
+                                        name="status"
+                                        defaultValue=""
+                                        rules={{
+                                            required: 'El tipo de estado es obligatoria',
+                                        }}
+                                        control={control}
+                                        render={({ field: { onChange, value } }) => (
+                                            <SelectInputPrimary
+                                                variant="outlined"
+                                                options={optionsStatus}
+                                                label="Elija un estado"
+                                                value={value}
+                                                messageError={
+                                                    (errors.status?.message ?? null) as string
+                                                }
+                                                onChange={(selectedValue) => {
+                                                    onChange(selectedValue)
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </Grid>
                                 <Grid item md={6} xs={6}>
                                     <SecondaryInput
                                         {...register('price_usd', {

@@ -100,17 +100,20 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const formData = new FormData()
 
-    const onRegisterUser = async (data: any) => {
+    const onRegisterUser = async (data: IRegisterRental) => {
         try {
             setIsLoading(true)
             formData.append('property', data.property)
             formData.append('client', data.client)
             formData.append('check_in_date', dayjs(data.check_in_date).format('YYYY-MM-DD'))
             formData.append('check_out_date', dayjs(data.check_out_date).format('YYYY-MM-DD'))
-            formData.append('guests', data.guests)
-            formData.append('price_usd', data.price_usd)
-            formData.append('price_sol', data.price_sol)
-            formData.append('advance_payment', data.advance_payment ? data.advance_payment : '0')
+            formData.append('guests', `${data.guests}`)
+            formData.append('price_usd', `${data.price_usd}`)
+            formData.append('price_sol', `${data.price_sol}`)
+            formData.append(
+                'advance_payment',
+                data.advance_payment ? `${data.advance_payment}` : '0'
+            )
             formData.append('advance_payment_currency', data.advance_payment_currency)
             formData.append('full_payment', checkFullPayment.toString())
             formData.append('temperature_pool', checkPool.toString())
@@ -118,10 +121,17 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('tel_contact_number', phoneNumber)
             formData.append('comentarios_reservas', data.comentarios_reservas)
             formData.append('points_to_redeem', data.points_to_redeem)
+            formData.append('status', data.status === '' ? 'pending' : data.status)
 
             formData.append(
                 'origin',
-                dataEdit?.origin === 'man' ? 'man' : dataEdit?.origin === 'air' ? 'air' : 'aus'
+                dataEdit?.origin === 'man'
+                    ? 'man'
+                    : dataEdit?.origin === 'air'
+                      ? 'air'
+                      : dataEdit?.origin === 'client'
+                        ? 'client'
+                        : 'aus'
             )
             if (imageSend.length > 0) {
                 imageSend.forEach((image: File) => {
