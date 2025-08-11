@@ -7,18 +7,17 @@ import {
     Typography,
     useTheme,
 } from '@mui/material'
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
-import ConstructionIcon from '@mui/icons-material/Construction'
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { IRentalClient } from '@/interfaces/rental/registerRental'
-import { AirbnbIcon } from '@/components/common'
+import { StatusIcon } from '@/components/common'
 import ConverDate from '@/core/utils/converDate'
 import { useBoxShadow } from '@/core/utils'
-import HouseIcon from '@mui/icons-material/House'
+import OriginBadge from '../common/OriginBadge'
+
 interface Props {
     isLoadingContract: boolean
     handleView: () => void
@@ -87,84 +86,14 @@ export default function Card({
                         gap: 1,
                     }}
                 >
+                    <StatusIcon size={17} status={item.status} />
                     <Typography sx={{ color: 'white' }}> {item.property.name}</Typography>
                     <Box
                         height={'25px'}
                         width={'1px'}
                         sx={{ ml: 0.8, background: palette.divider }}
                     />
-                    <Box
-                        onClick={handleView}
-                        sx={{
-                            background: item.origin === 'air' ? '#FF5A5F' : 'transparente',
-                            color: 'white',
-                            display: 'flex',
-                            borderRadius: 1,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            p: 0.3,
-                        }}
-                    >
-                        {item.origin === 'air' && (
-                            <>
-                                <AirbnbIcon />
-                                <span
-                                    style={{
-                                        fontSize: '14px',
-                                        marginLeft: '4px',
-                                        paddingTop: '1px',
-                                    }}
-                                >
-                                    {item.guests}
-                                </span>
-                            </>
-                        )}
-
-                        {item.origin === 'client' && (
-                            <>
-                                <GroupOutlinedIcon
-                                    fontSize="small"
-                                    sx={{ fontSize: '20px', padding: 0, margin: 0 }}
-                                />
-                                <span
-                                    style={{
-                                        fontSize: '14px',
-                                        lineHeight: '2px',
-                                        marginLeft: '2px',
-                                    }}
-                                >
-                                    {item.guests}
-                                </span>
-                            </>
-                        )}
-
-                        {item.origin === 'aus' && (
-                            <>
-                                <HouseIcon
-                                    fontSize="small"
-                                    sx={{ fontSize: '20px', padding: 0, margin: 0 }}
-                                />
-                                <span
-                                    style={{
-                                        fontSize: '14px',
-                                        lineHeight: '2px',
-                                        marginLeft: '2px',
-                                    }}
-                                >
-                                    {item.guests}
-                                </span>
-                            </>
-                        )}
-                        {item.origin === 'man' && (
-                            <>
-                                <ConstructionIcon
-                                    fontSize="small"
-                                    sx={{ fontSize: '18px', padding: 0, margin: 0 }}
-                                />
-                            </>
-                        )}
-                    </Box>
+                    <OriginBadge origin={item.origin} guests={item.guests} onClick={handleView} />
                 </Box>
                 {item.late_checkout && (
                     <>

@@ -26,6 +26,7 @@ export default function CrudRentals() {
     const [filterToday, setFilterToday] = useState('')
     const [filterInProgress, setFilterInProgress] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
+    const [filterInClient, setFilterClient] = useState('')
 
     const [isLoadingContract, setIsLoadingContract] = useState(false)
 
@@ -33,7 +34,7 @@ export default function CrudRentals() {
         page: currentPage,
         page_size: pageSize,
         search: search,
-        from: filterInProgress || filterToday || filterStatus,
+        from: filterInProgress || filterToday || filterStatus || filterInClient,
         type: filterAirbnb,
     })
 
@@ -98,6 +99,8 @@ export default function CrudRentals() {
                         filterInProgress={filterInProgress}
                         filterStatus={filterStatus}
                         setFilterStatus={setFilterStatus}
+                        filterInClient={filterInClient}
+                        setFilterClient={setFilterClient}
                     />
 
                     <div style={{ marginTop: '16px' }}>

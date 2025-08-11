@@ -22,6 +22,7 @@ export { default as SuccessDeletIcon } from './icons/SuccessDeletIcon'
 export { default as SuccessIcon } from './icons/SuccessIcon'
 export { default as SuccessEditIcon } from './icons/SuccessEditIcon'
 export { default as TruckIcon } from './icons/TruckIcon'
+export { StatusIcon } from './icons/StatusIcon'
 
 /* ------------ CHARTS ------------ */
 export { default as BarCharts } from './charts/BarCharts'

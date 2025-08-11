@@ -8,6 +8,7 @@ import {
     Typography,
     SelectChangeEvent,
     useTheme,
+    Grid,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useBoxShadow } from '@/core/utils'
@@ -29,6 +30,9 @@ interface Props {
     filterInProgress: string
     setFilterStatus: React.Dispatch<React.SetStateAction<string>>
     filterStatus: string
+
+    filterInClient: string
+    setFilterClient: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function SearchRental({
@@ -45,6 +49,8 @@ export default function SearchRental({
     filterInProgress,
     setFilterStatus,
     filterStatus,
+    filterInClient,
+    setFilterClient,
 }: Props) {
     const [inputText, setInputText] = useState('')
     const textFilter: string = useDebounce(inputText, 400)
@@ -79,6 +85,10 @@ export default function SearchRental({
         setFilterStatus((prevState) => (prevState === '' ? 'pending' : ''))
     }
 
+    const onCheckClient = () => {
+        setFilterClient((prevState) => (prevState === '' ? 'client' : ''))
+    }
+
     return (
         <>
             <Box
@@ -97,7 +107,7 @@ export default function SearchRental({
                         boxShadow: 'none',
                         p: 0,
                         background: 'transparent',
-                        border: 'none',
+                        width: '100%',
                         flexDirection: 'column-reverse',
                         alignItems: 'start',
                     },
@@ -144,157 +154,167 @@ export default function SearchRental({
                 </Box>
 
                 <Box
-                    gap={{ md: 1, sm: 0.5, xs: 1 }}
+                    gap={{ md: 0, sm: 0.5, xs: 1 }}
                     display={'flex'}
+                    width={{ md: 'auto' }}
                     justifyContent={'center'}
-                    alignItems={'start'}
+                    alignItems={'center'}
                     flexDirection={{
                         lg: 'row',
                         md: 'column-reverse',
-                        sm: 'column-reverse',
-                        xs: 'column-reverse',
                     }}
                     sx={{
                         '@media (max-width: 1000px)': {
                             width: '100%',
-                            justifyContent: 'space-between',
+                            flexDirection: 'column-reverse',
                         },
                     }}
                 >
-                    <Box>
-                        <FormControlLabel
-                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 }, ml: -0.6 }}
-                            onClick={onCheckAirbnb}
-                            control={
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
-                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
-                                    checked={filterAirbnb === 'air'}
-                                    sx={{
-                                        mr: -0.4,
-                                        p: 0.5,
-                                        color: '#EB4C60',
-                                        '&.Mui-checked': {
+                    <Grid
+                        container
+                        spacing={{ xs: 1, sm: 1 }}
+                        alignItems="center"
+                        sx={{ flexWrap: { xs: 'wrap', sm: 'wrap' } }} // xs: dos filas; sm+: una sola fila
+                    >
+                        <Grid item xs={4} sm="auto">
+                            {/* Airbnb */}
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckAirbnb}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterAirbnb === 'air'}
+                                        sx={{
+                                            p: 0.5,
                                             color: '#EB4C60',
-                                        },
-                                    }}
-                                />
-                            }
-                            label={
-                                <Typography
-                                    sx={{
-                                        color: '#000F08',
-                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
-                                        fontWeight: 400,
-                                        opacity: 0.8,
-                                    }}
-                                >
-                                    Airbnb
-                                </Typography>
-                            }
-                        />
-                        <FormControlLabel
-                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 } }}
-                            onClick={onCheckToday}
-                            control={
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
-                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
-                                    checked={filterToday === 'today'}
-                                    sx={{
-                                        mr: -0.4,
-                                        p: 0.5,
-                                        color: '#0E6191',
-                                        '&.Mui-checked': {
-                                            color: '#0E6191',
-                                        },
-                                        '&.MuiFormControlLabel-label': {
-                                            color: '#0E6191',
-                                        },
-                                    }}
-                                />
-                            }
-                            label={
-                                <Typography
-                                    sx={{
-                                        color: '#000F08',
-                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
-                                        fontWeight: 400,
-                                        opacity: 0.8,
-                                    }}
-                                >
-                                    Futuras
-                                </Typography>
-                            }
-                        />
+                                            '&.Mui-checked': { color: '#EB4C60' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        Airbnb
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
 
-                        <FormControlLabel
-                            sx={{ mr: { md: 2, sm: 1.2, xs: 1.3 } }}
-                            onClick={onCheckInProgress}
-                            control={
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
-                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
-                                    checked={filterInProgress === 'in_progress'}
-                                    sx={{
-                                        mr: -0.4,
-                                        p: 0.5,
-                                        color: '#2F2B3D',
-                                        '&.Mui-checked': {
+                        <Grid item xs={4} sm="auto">
+                            {/* Clientes */}
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckClient}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterInClient === 'client'}
+                                        sx={{
+                                            p: 0.5,
+                                            color: palette.secondary.main,
+                                            '&.Mui-checked': { color: palette.secondary.main },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        Clientes
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={4} sm="auto">
+                            {/* Futuras */}
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckToday}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterToday === 'today'}
+                                        sx={{
+                                            p: 0.5,
+                                            color: '#0E6191',
+                                            '&.Mui-checked': { color: '#0E6191' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        Futuras
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={4} sm="auto">
+                            {/* En curso */}
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckInProgress}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterInProgress === 'in_progress'}
+                                        sx={{
+                                            p: 0.5,
                                             color: '#2F2B3D',
-                                        },
-                                    }}
-                                />
-                            }
-                            label={
-                                <Typography
-                                    sx={{
-                                        color: '#000F08',
-                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
-                                        fontWeight: 400,
-                                        opacity: 0.8,
-                                    }}
-                                >
-                                    En curso
-                                </Typography>
-                            }
-                        />
-                        <FormControlLabel
-                            sx={{ mr: 1 }}
-                            onClick={onCheckInStatus}
-                            control={
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedIcon fontSize="small" />}
-                                    checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
-                                    checked={filterStatus === 'pending'}
-                                    sx={{
-                                        mr: -0.4,
-                                        p: 0.5,
-                                        color: '#2F2B3D',
-                                        '&.Mui-checked': {
+                                            '&.Mui-checked': { color: '#2F2B3D' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        En curso
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={4} sm="auto">
+                            {/* Pendientes */}
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckInStatus}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterStatus === 'pending'}
+                                        sx={{
+                                            p: 0.5,
                                             color: '#2F2B3D',
-                                        },
-                                    }}
-                                />
-                            }
-                            label={
-                                <Typography
-                                    sx={{
-                                        color: '#000F08',
-                                        fontSize: { md: '15px', sm: '14px', xs: '13px' },
-                                        fontWeight: 400,
-                                        opacity: 0.8,
-                                    }}
-                                >
-                                    Pendientes{' '}
-                                </Typography>
-                            }
-                        />
-                    </Box>
+                                            '&.Mui-checked': { color: '#2F2B3D' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        Pendientes
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
+                    </Grid>
                     <Button
                         sx={{
                             height: 38,
-                            width: { lg: 170, sm: '100%', xs: '100%' },
+                            width: { lg: 180, md: '100%', sm: '100%', xs: '100%' },
                             color: 'white',
                             background: '#0E6191',
                             fontSize: '15px',
