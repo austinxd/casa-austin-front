@@ -34,8 +34,8 @@ export default function CrudRentals() {
         page: currentPage,
         page_size: pageSize,
         search: search,
-        from: filterInProgress || filterToday || filterStatus || filterInClient,
-        type: filterAirbnb,
+        from: filterInProgress || filterToday || filterStatus,
+        type: filterAirbnb || filterInClient,
     })
 
     const onSave = () => {
