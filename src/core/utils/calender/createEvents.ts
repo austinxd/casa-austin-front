@@ -8,7 +8,9 @@ export const createEvents = (data: IRentalClient[]): IEventoCalendario[] => {
                 ? `${rental.client.first_name} + ${rental.guests}`
                 : rental.origin === 'air'
                   ? 'Airbnb'
-                  : 'Mantenimiento',
+                  : rental.origin === 'client'
+                    ? `${rental.client.first_name} + ${rental.guests}`
+                    : 'Mantenimiento',
         start: rental.check_in_date,
         end: rental.late_checkout ? rental.late_check_out_date : rental.check_out_date,
         color: rental.origin === 'man' ? '#888888' : rental.property.background_color,
