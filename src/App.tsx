@@ -13,11 +13,7 @@ const CrudDashboard = lazy(() => import('./pages/panel/dashboard/CrudDashboard')
 const CrudRentals = lazy(() => import('./pages/panel/reservations/CrudRentals'))
 
 // Staff Management components
-const CrudStaff = lazy(() => import('./pages/panel/staff/CrudStaff'))
-const StaffDashboard = lazy(() => import('./pages/panel/staff/StaffDashboard'))
-const CrudTasks = lazy(() => import('./pages/panel/tasks/CrudTasks'))
-const CrudTimeTracking = lazy(() => import('./pages/panel/time-tracking/CrudTimeTracking'))
-const CrudSchedules = lazy(() => import('./pages/panel/schedules/CrudSchedules'))
+const PersonalManagement = lazy(() => import('./pages/panel/staff/PersonalManagement'))
 
 function App() {
     return (
@@ -97,55 +93,7 @@ function App() {
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
                                 <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando personal...</div>}>
-                                    <CrudStaff />
-                                </Suspense>
-                            </Sidebar>
-                        </ProtectRoutes>
-                    }
-                />
-                <Route
-                    path="/panel/personal/dashboard"
-                    element={
-                        <ProtectRoutes navigateTo="/">
-                            <Sidebar>
-                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando dashboard...</div>}>
-                                    <StaffDashboard />
-                                </Suspense>
-                            </Sidebar>
-                        </ProtectRoutes>
-                    }
-                />
-                <Route
-                    path="/panel/tareas"
-                    element={
-                        <ProtectRoutes navigateTo="/">
-                            <Sidebar>
-                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando tareas...</div>}>
-                                    <CrudTasks />
-                                </Suspense>
-                            </Sidebar>
-                        </ProtectRoutes>
-                    }
-                />
-                <Route
-                    path="/panel/tiempo"
-                    element={
-                        <ProtectRoutes navigateTo="/">
-                            <Sidebar>
-                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando tiempo...</div>}>
-                                    <CrudTimeTracking />
-                                </Suspense>
-                            </Sidebar>
-                        </ProtectRoutes>
-                    }
-                />
-                <Route
-                    path="/panel/horarios"
-                    element={
-                        <ProtectRoutes navigateTo="/">
-                            <Sidebar>
-                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando horarios...</div>}>
-                                    <CrudSchedules />
+                                    <PersonalManagement />
                                 </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
