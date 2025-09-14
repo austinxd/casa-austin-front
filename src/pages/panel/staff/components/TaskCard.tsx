@@ -124,7 +124,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
-                minHeight: 280,
+                minHeight: { xs: 'auto', sm: 240, md: 280 },
                 display: 'flex',
                 flexDirection: 'column',
                 '&:hover': {
@@ -139,16 +139,44 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
             }}
         >
 
-            <CardContent sx={{ p: 3, pb: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ 
+                p: { xs: 2, sm: 2.5, md: 3 }, 
+                pb: { xs: 1.5, sm: 2 }, 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column' 
+            }}>
                 {/* Header */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: { xs: 'center', sm: 'flex-start' }, 
+                    mb: { xs: 1.5, sm: 2 },
+                    flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
                         {/* Task Type Icon */}
-                        <Typography variant="h5" sx={{ mr: 1 }}>
+                        <Typography 
+                            variant="h5" 
+                            sx={{ 
+                                mr: { xs: 0.5, sm: 1 },
+                                fontSize: { xs: '1.2rem', sm: '1.5rem' }
+                            }}
+                        >
                             {getTaskTypeIcon(task.task_type)}
                         </Typography>
-                        <Box>
-                            <Typography variant="h6" fontWeight="600" sx={{ lineHeight: 1.2 }}>
+                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                            <Typography 
+                                variant="h6" 
+                                fontWeight="600" 
+                                sx={{ 
+                                    lineHeight: 1.2,
+                                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
                                 {getTaskTypeText(task.task_type)}
                             </Typography>
                             <Typography 
@@ -156,7 +184,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 sx={{ 
                                     color: task.property_name ? "text.secondary" : "#d32f2f",
                                     fontWeight: task.property_name ? 400 : 700,
-                                    fontSize: task.property_name ? "0.75rem" : "0.8rem",
+                                    fontSize: { xs: "0.7rem", sm: "0.75rem" },
+                                    display: 'block'
                                 }}
                             >
                                 {task.property_name || "NO ASIGNADO"}
@@ -164,50 +193,91 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Box>
                     </Box>
 
-                    {/* Menu */}
-                    <IconButton
-                        size="small"
-                        onClick={handleClick}
-                        sx={{ ml: 1, color: 'text.secondary' }}
-                    >
-                        <MoreVertIcon />
-                    </IconButton>
-                </Box>
-
-                {/* Status Row */}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2 }}>
-                    <Chip
-                        label={getStatusText(task.status)}
-                        color={getStatusColor(task.status) as any}
-                        size="small"
-                        sx={{ fontWeight: 500 }}
-                    />
+                    {/* Status and Menu Row */}
+                    <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 1,
+                        mt: { xs: 1, sm: 0 },
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'space-between', sm: 'flex-end' }
+                    }}>
+                        <Chip
+                            label={getStatusText(task.status)}
+                            color={getStatusColor(task.status) as any}
+                            size="small"
+                            sx={{ 
+                                fontWeight: 500,
+                                fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                            }}
+                        />
+                        <IconButton
+                            size="small"
+                            onClick={handleClick}
+                            sx={{ 
+                                color: 'text.secondary',
+                                width: { xs: 36, sm: 32 },
+                                height: { xs: 36, sm: 32 }
+                            }}
+                        >
+                            <MoreVertIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
                 </Box>
 
                 {/* Assigned Staff */}
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    mb: { xs: 1.5, sm: 2 }
+                }}>
                     {task.staff_member_name ? (
                         <>
-                            <Avatar sx={{ width: 28, height: 28, mr: 1.5, fontSize: '0.8rem' }}>
+                            <Avatar sx={{ 
+                                width: { xs: 24, sm: 28 }, 
+                                height: { xs: 24, sm: 28 }, 
+                                mr: { xs: 1, sm: 1.5 }, 
+                                fontSize: { xs: '0.7rem', sm: '0.8rem' }
+                            }}>
                                 {task.staff_member_name[0]}
                             </Avatar>
-                            <Typography variant="body2" color="text.secondary">
-                                Asignado a: <strong>{task.staff_member_name}</strong>
+                            <Typography 
+                                variant="body2" 
+                                color="text.secondary"
+                                sx={{
+                                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    flex: 1
+                                }}
+                            >
+                                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                                    Asignado a: 
+                                </Box>
+                                <strong>{task.staff_member_name}</strong>
                             </Typography>
                         </>
                     ) : (
                         <>
                             <Avatar sx={{ 
-                                width: 28, 
-                                height: 28, 
-                                mr: 1.5, 
-                                fontSize: '0.8rem',
+                                width: { xs: 24, sm: 28 }, 
+                                height: { xs: 24, sm: 28 }, 
+                                mr: { xs: 1, sm: 1.5 }, 
+                                fontSize: { xs: '0.7rem', sm: '0.8rem' },
                                 bgcolor: '#f5f5f5',
                                 color: '#d32f2f'
                             }}>
                                 ?
                             </Avatar>
-                            <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 600 }}>
+                            <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                    color: '#d32f2f', 
+                                    fontWeight: 600,
+                                    fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                                }}
+                            >
                                 No asignado
                             </Typography>
                         </>
@@ -217,12 +287,22 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 {/* Date and Priority */}
                 <Box sx={{ 
                     display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: 1,
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    justifyContent: { sm: 'space-between' }, 
+                    alignItems: { xs: 'stretch', sm: 'center' },
+                    gap: { xs: 1, sm: 1 },
+                    mb: { xs: 1.5, sm: 2 }
                 }}>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography 
+                        variant="caption" 
+                        color="text.secondary"
+                        sx={{ 
+                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5
+                        }}
+                    >
                         📅 {task.scheduled_date 
                             ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
                             : 'Sin fecha programada'
@@ -236,7 +316,9 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             backgroundColor: getPriorityColor(task.priority),
                             color: 'white',
                             fontWeight: 600,
-                            fontSize: '0.7rem',
+                            fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                            height: { xs: 22, sm: 24 },
+                            alignSelf: { xs: 'flex-start', sm: 'center' }
                         }}
                     />
                 </Box>
@@ -247,12 +329,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         variant="body2" 
                         color="text.secondary" 
                         sx={{ 
-                            mt: 2, 
-                            fontSize: '0.8rem',
+                            mt: { xs: 1, sm: 2 }, 
+                            fontSize: { xs: '0.75rem', sm: '0.8rem' },
                             display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: { xs: 2, sm: 3 },
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
+                            lineHeight: { xs: 1.3, sm: 1.4 }
                         }}
                     >
                         {task.description}
@@ -260,7 +343,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 )}
 
                 {/* Quick Action Buttons */}
-                <Box sx={{ display: 'flex', gap: 1, mt: 'auto', pt: 2, borderTop: '1px solid #f0f0f0' }}>
+                <Box sx={{ 
+                    display: 'flex', 
+                    gap: { xs: 1.5, sm: 1 }, 
+                    mt: 'auto', 
+                    pt: { xs: 1.5, sm: 2 }, 
+                    borderTop: '1px solid #f0f0f0' 
+                }}>
                     {task.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
                             <IconButton
@@ -268,16 +357,19 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 onClick={() => onStartWork(task.id.toString())}
                                 sx={{ 
                                     color: 'success.main',
-                                    bgcolor: 'success.50',
+                                    bgcolor: 'success.light',
+                                    width: { xs: 44, sm: 36 },
+                                    height: { xs: 44, sm: 36 },
                                     '&:hover': { 
-                                        bgcolor: 'success.100',
+                                        bgcolor: 'success.main',
+                                        color: 'white',
                                         transform: 'scale(1.1)'
                                     },
                                     border: '1px solid',
-                                    borderColor: 'success.200',
+                                    borderColor: 'success.main',
                                 }}
                             >
-                                <StartIcon fontSize="small" />
+                                <StartIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -289,16 +381,19 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 onClick={() => onCompleteWork(task.id.toString())}
                                 sx={{ 
                                     color: 'primary.main',
-                                    bgcolor: 'primary.50',
+                                    bgcolor: 'primary.light',
+                                    width: { xs: 44, sm: 36 },
+                                    height: { xs: 44, sm: 36 },
                                     '&:hover': { 
-                                        bgcolor: 'primary.100',
+                                        bgcolor: 'primary.main',
+                                        color: 'white',
                                         transform: 'scale(1.1)'
                                     },
                                     border: '1px solid',
-                                    borderColor: 'primary.200',
+                                    borderColor: 'primary.main',
                                 }}
                             >
-                                <CompleteIcon fontSize="small" />
+                                <CompleteIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -309,16 +404,19 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             onClick={() => onEdit(task)}
                             sx={{ 
                                 color: 'warning.main',
-                                bgcolor: 'warning.50',
+                                bgcolor: 'grey.100',
+                                width: { xs: 44, sm: 36 },
+                                height: { xs: 44, sm: 36 },
                                 '&:hover': { 
-                                    bgcolor: 'warning.100',
+                                    bgcolor: 'warning.light',
+                                    color: 'warning.dark',
                                     transform: 'scale(1.1)'
                                 },
                                 border: '1px solid',
-                                borderColor: 'warning.200',
+                                borderColor: 'warning.main',
                             }}
                         >
-                            <EditIcon fontSize="small" />
+                            <EditIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
                         </IconButton>
                     </Tooltip>
                 </Box>
