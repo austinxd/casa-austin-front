@@ -195,192 +195,89 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         >
 
             <CardContent sx={{ 
-                p: { xs: 1.2, sm: 2, md: 2.5 }, 
-                pb: { xs: 0.8, sm: 1.5 }, 
+                p: { xs: 1.5, sm: 2, md: 2.5 }, 
+                pb: { xs: 1, sm: 1.5 }, 
                 flex: 1, 
                 display: 'flex', 
                 flexDirection: 'column' 
             }}>
-                {/* Mobile Header - Creative Layout */}
+                {/* Header */}
                 <Box sx={{ 
-                    display: { xs: 'block', sm: 'flex' },
-                    justifyContent: { sm: 'space-between' },
-                    alignItems: { sm: 'flex-start' },
-                    mb: { xs: 1.2, sm: 1.5 }
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: { xs: 'center', sm: 'flex-start' }, 
+                    mb: { xs: 1, sm: 1.5 },
+                    flexWrap: { xs: 'wrap', sm: 'nowrap' }
                 }}>
-                    {/* Mobile: Icon + Title in one line, Property below */}
-                    <Box sx={{ 
-                        display: { xs: 'flex', sm: 'flex' }, 
-                        alignItems: 'center', 
-                        justifyContent: { xs: 'space-between', sm: 'flex-start' },
-                        flex: 1, 
-                        minWidth: 0,
-                        mb: { xs: 0.8, sm: 0 }
-                    }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-                            {/* Task Type Icon - Larger on mobile */}
-                            <Box sx={{ 
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: { xs: 40, sm: 'auto' },
-                                height: { xs: 40, sm: 'auto' },
-                                borderRadius: { xs: 2, sm: 0 },
-                                bgcolor: { xs: 'rgba(255,255,255,0.2)', sm: 'transparent' },
-                                mr: { xs: 1, sm: 1 }
-                            }}>
-                                <Typography 
-                                    variant="h5" 
-                                    sx={{ 
-                                        fontSize: { xs: '1.4rem', sm: '1.5rem' }
-                                    }}
-                                >
-                                    {getTaskTypeIcon(task.task_type)}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ minWidth: 0, flex: 1 }}>
-                                <Typography 
-                                    variant="h6" 
-                                    fontWeight="700" 
-                                    sx={{ 
-                                        lineHeight: 1.2,
-                                        fontSize: { xs: '0.95rem', sm: '0.95rem', md: '1rem' },
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                        color: getTextColor(),
-                                        mb: { xs: 0.3, sm: 0 }
-                                    }}
-                                >
-                                    {getTaskTypeText(task.task_type)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                        
-                        {/* Status chip - Top right on mobile */}
-                        <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-                            <Chip
-                                label={getStatusText(task.status)}
-                                color={getStatusColor(task.status) as any}
-                                size="small"
-                                sx={{ 
-                                    fontWeight: 600,
-                                    fontSize: '0.7rem',
-                                    height: 24
-                                }}
-                            />
-                        </Box>
-                    </Box>
-
-                    {/* Property Name - Full width on mobile */}
-                    <Box sx={{ 
-                        display: { xs: 'flex', sm: 'none' },
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mb: 0.8
-                    }}>
-                        {task.property_name ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
+                        {/* Task Type Icon */}
+                        <Typography 
+                            variant="h5" 
+                            sx={{ 
+                                mr: { xs: 0.5, sm: 1 },
+                                fontSize: { xs: '1.2rem', sm: '1.5rem' }
+                            }}
+                        >
+                            {getTaskTypeIcon(task.task_type)}
+                        </Typography>
+                        <Box sx={{ minWidth: 0, flex: 1 }}>
                             <Typography 
-                                variant="body2" 
+                                variant="h6" 
+                                fontWeight="600" 
                                 sx={{ 
-                                    color: getTextColor(),
-                                    fontWeight: 500,
-                                    fontSize: "0.8rem",
+                                    lineHeight: 1.1,
+                                    fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
-                                    flex: 1,
-                                    mr: 1
+                                    color: getTextColor()
                                 }}
                             >
-                                📍 {task.property_name}
+                                {getTaskTypeText(task.task_type)}
                             </Typography>
-                        ) : (
-                            <Chip
-                                label="NO ASIGNADO"
-                                size="small"
-                                sx={{
-                                    bgcolor: 'error.main',
-                                    color: 'error.contrastText',
-                                    fontWeight: 600,
-                                    fontSize: '0.65rem',
-                                    height: 20
-                                }}
-                            />
-                        )}
-                        
-                        {/* Priority and Menu on mobile */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                            <Chip
-                                label={getPriorityText(task.priority)}
-                                size="small"
-                                sx={{
-                                    backgroundColor: getPriorityColor(task.priority),
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    fontSize: '0.65rem',
-                                    height: 20
-                                }}
-                            />
-                            <IconButton
-                                size="small"
-                                onClick={handleClick}
-                                sx={{ 
-                                    color: getTextColor(),
-                                    width: 32,
-                                    height: 32,
-                                    bgcolor: 'rgba(255,255,255,0.2)',
-                                    '&:hover': {
-                                        bgcolor: 'rgba(255,255,255,0.3)'
-                                    }
-                                }}
-                            >
-                                <MoreVertIcon fontSize="small" />
-                            </IconButton>
+                            {task.property_name ? (
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        color: getTextColor(),
+                                        fontWeight: 400,
+                                        fontSize: { xs: "0.7rem", sm: "0.75rem" },
+                                        display: 'block',
+                                        lineHeight: 1.2,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {task.property_name}
+                                </Typography>
+                            ) : (
+                                <Chip
+                                    label="NO ASIGNADO"
+                                    size="small"
+                                    sx={{
+                                        bgcolor: 'error.main',
+                                        color: 'error.contrastText',
+                                        fontWeight: 600,
+                                        fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                        height: { xs: 18, sm: 20 },
+                                        '& .MuiChip-label': {
+                                            px: 1
+                                        }
+                                    }}
+                                />
+                            )}
                         </Box>
                     </Box>
 
-                    {/* Desktop Layout */}
-                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {task.property_name ? (
-                            <Typography 
-                                variant="caption" 
-                                sx={{ 
-                                    color: getTextColor(),
-                                    fontWeight: 400,
-                                    fontSize: "0.75rem",
-                                    display: 'block',
-                                    lineHeight: 1.2,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap'
-                                }}
-                            >
-                                {task.property_name}
-                            </Typography>
-                        ) : (
-                            <Chip
-                                label="NO ASIGNADO"
-                                size="small"
-                                sx={{
-                                    bgcolor: 'error.main',
-                                    color: 'error.contrastText',
-                                    fontWeight: 600,
-                                    fontSize: '0.7rem',
-                                    height: 20,
-                                    '& .MuiChip-label': {
-                                        px: 1
-                                    }
-                                }}
-                            />
-                        )}
-                    </Box>
-
-                    {/* Desktop Status and Menu */}
+                    {/* Status and Menu Row */}
                     <Box sx={{ 
-                        display: { xs: 'none', sm: 'flex' },
+                        display: 'flex', 
                         alignItems: 'center', 
-                        gap: 1
+                        gap: 1,
+                        mt: { xs: 1, sm: 0 },
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'space-between', sm: 'flex-end' }
                     }}>
                         <Chip
                             label={getStatusText(task.status)}
@@ -388,19 +285,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             size="small"
                             sx={{ 
                                 fontWeight: 500,
-                                fontSize: '0.75rem'
-                            }}
-                        />
-                        <Chip
-                            label={getPriorityText(task.priority)}
-                            size="small"
-                            sx={{
-                                backgroundColor: getPriorityColor(task.priority),
-                                color: 'white',
-                                fontWeight: 600,
-                                fontSize: '0.7rem',
-                                height: 24,
-                                alignSelf: 'center'
+                                fontSize: { xs: '0.7rem', sm: '0.75rem' }
                             }}
                         />
                         <IconButton
@@ -408,8 +293,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             onClick={handleClick}
                             sx={{ 
                                 color: getTextColor(),
-                                width: 32,
-                                height: 32
+                                width: { xs: 44, sm: 32 },
+                                height: { xs: 44, sm: 32 }
                             }}
                         >
                             <MoreVertIcon fontSize="small" />
@@ -477,77 +362,68 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     )}
                 </Box>
 
-                {/* Dates Section - Mobile Creative Layout */}
+                {/* Dates and Priority */}
                 <Box sx={{ 
-                    display: 'flex',
-                    flexDirection: { xs: 'row', sm: 'column' },
-                    justifyContent: { xs: 'space-between', sm: 'flex-start' },
-                    gap: { xs: 1, sm: 0.5 },
-                    mb: { xs: 1.2, sm: 1.5 },
-                    background: { xs: 'rgba(255,255,255,0.1)', sm: 'transparent' },
-                    borderRadius: { xs: 1.5, sm: 0 },
-                    p: { xs: 1, sm: 0 }
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    justifyContent: { sm: 'space-between' }, 
+                    alignItems: { xs: 'stretch', sm: 'flex-start' },
+                    gap: { xs: 0.8, sm: 1 },
+                    mb: { xs: 1, sm: 1.5 }
                 }}>
-                    {/* Check-out Date */}
-                    {task.check_out_date && (
-                        <Box sx={{ 
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            alignItems: { xs: 'center', sm: 'center' },
-                            gap: { xs: 0.2, sm: 0.4 },
-                            flex: { xs: 1, sm: 'auto' },
-                            textAlign: { xs: 'center', sm: 'left' }
-                        }}>
-                            <Typography sx={{ 
-                                fontSize: { xs: '1rem', sm: '0.7rem' },
-                                color: getTextColor()
-                            }}>
-                                🏠
-                            </Typography>
+                    {/* Dates Container */}
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        gap: 0.3,
+                        flex: 1
+                    }}>
+                        {/* Check-out Date */}
+                        {task.check_out_date && (
                             <Typography 
                                 variant="caption" 
                                 sx={{ 
-                                    fontSize: { xs: '0.7rem', sm: '0.7rem' },
-                                    fontWeight: { xs: 600, sm: 500 },
-                                    color: getTextColor(),
-                                    lineHeight: 1.2
+                                    fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.4,
+                                    color: getTextColor()
                                 }}
                             >
-                                {new Date(task.check_out_date).toLocaleDateString('es-ES')}
+                                🏠 Check-out: {new Date(task.check_out_date).toLocaleDateString('es-ES')}
                             </Typography>
-                        </Box>
-                    )}
-                    
-                    {/* Scheduled Date */}
-                    <Box sx={{ 
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: { xs: 'center', sm: 'center' },
-                        gap: { xs: 0.2, sm: 0.4 },
-                        flex: { xs: 1, sm: 'auto' },
-                        textAlign: { xs: 'center', sm: 'left' }
-                    }}>
-                        <Typography sx={{ 
-                            fontSize: { xs: '1rem', sm: '0.7rem' },
-                            color: getTextColor()
-                        }}>
-                            📅
-                        </Typography>
+                        )}
+                        
+                        {/* Scheduled Date */}
                         <Typography 
                             variant="caption" 
                             sx={{ 
-                                fontSize: { xs: '0.7rem', sm: '0.7rem' },
-                                fontWeight: { xs: 600, sm: 500 },
-                                color: getTextColor(),
-                                lineHeight: 1.2
+                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.4,
+                                color: getTextColor()
                             }}
                         >
-                            {task.scheduled_date 
+                            📅 Programada: {task.scheduled_date 
                                 ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
-                                : 'Sin fecha'
+                                : 'Sin fecha programada'
                             }
                         </Typography>
                     </Box>
+                    
+                    <Chip
+                        label={getPriorityText(task.priority)}
+                        size="small"
+                        sx={{
+                            backgroundColor: getPriorityColor(task.priority),
+                            color: 'white',
+                            fontWeight: 600,
+                            fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                            height: { xs: 22, sm: 24 },
+                            alignSelf: { xs: 'flex-start', sm: 'center' }
+                        }}
+                    />
                 </Box>
 
                 {/* Description */}
@@ -569,18 +445,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     </Typography>
                 )}
 
-                {/* Quick Action Buttons - Mobile-First Design */}
+                {/* Quick Action Buttons */}
                 <Box sx={{ 
                     display: 'flex', 
-                    gap: { xs: 1.2, sm: 0.8 }, 
+                    gap: { xs: 1, sm: 0.8 }, 
                     mt: 'auto', 
-                    pt: { xs: 1.2, sm: 1.5 },
-                    justifyContent: { xs: 'center', sm: 'flex-start' },
-                    borderTop: { xs: 'none', sm: `1px solid ${getDividerColor()}` },
-                    background: { xs: 'rgba(255,255,255,0.1)', sm: 'transparent' },
-                    borderRadius: { xs: 1.5, sm: 0 },
-                    p: { xs: 1, sm: 0 },
-                    mx: { xs: -0.5, sm: 0 }
+                    pt: { xs: 1, sm: 1.5 }, 
+                    borderTop: `1px solid ${getDividerColor()}` 
                 }}>
                     {task.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
@@ -590,25 +461,19 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 sx={{ 
                                     color: '#ffffff',
                                     bgcolor: '#6366f1',
-                                    width: { xs: 48, sm: 32 },
-                                    height: { xs: 48, sm: 32 },
-                                    borderRadius: { xs: 2, sm: 1 },
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
                                     '&:hover': { 
                                         bgcolor: '#4f46e5',
                                         color: 'white',
+                                        transform: 'scale(1.1)',
                                         boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)'
                                     },
-                                    '@media (hover: hover)': {
-                                        '&:hover': {
-                                            transform: 'scale(1.1)'
-                                        }
-                                    },
-                                    border: '2px solid #6366f1',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: { xs: '0 2px 8px rgba(99, 102, 241, 0.3)', sm: 'none' }
+                                    border: '1px solid #6366f1',
+                                    transition: 'all 0.3s ease'
                                 }}
                             >
-                                <StartIcon sx={{ fontSize: { xs: 22, sm: 18 } }} />
+                                <StartIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -619,27 +484,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 size="small"
                                 onClick={() => onCompleteWork(task.id.toString())}
                                 sx={{ 
-                                    color: '#ffffff',
-                                    bgcolor: '#22c55e',
-                                    width: { xs: 48, sm: 32 },
-                                    height: { xs: 48, sm: 32 },
-                                    borderRadius: { xs: 2, sm: 1 },
+                                    color: 'primary.main',
+                                    bgcolor: 'primary.light',
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
                                     '&:hover': { 
-                                        bgcolor: '#16a34a',
+                                        bgcolor: 'primary.main',
                                         color: 'white',
-                                        boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)'
+                                        transform: 'scale(1.1)'
                                     },
-                                    '@media (hover: hover)': {
-                                        '&:hover': {
-                                            transform: 'scale(1.1)'
-                                        }
-                                    },
-                                    border: '2px solid #22c55e',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: { xs: '0 2px 8px rgba(34, 197, 94, 0.3)', sm: 'none' }
+                                    border: '1px solid',
+                                    borderColor: 'primary.main',
                                 }}
                             >
-                                <CompleteIcon sx={{ fontSize: { xs: 22, sm: 18 } }} />
+                                <CompleteIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -649,27 +507,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             size="small"
                             onClick={() => onEdit(task)}
                             sx={{ 
-                                color: '#ffffff',
-                                bgcolor: '#f59e0b',
-                                width: { xs: 48, sm: 32 },
-                                height: { xs: 48, sm: 32 },
-                                borderRadius: { xs: 2, sm: 1 },
+                                color: 'warning.main',
+                                bgcolor: 'grey.100',
+                                width: { xs: 44, sm: 32 },
+                                height: { xs: 44, sm: 32 },
                                 '&:hover': { 
-                                    bgcolor: '#d97706',
-                                    color: 'white',
-                                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
+                                    bgcolor: 'warning.light',
+                                    color: 'warning.dark',
+                                    transform: 'scale(1.1)'
                                 },
-                                '@media (hover: hover)': {
-                                    '&:hover': {
-                                        transform: 'scale(1.1)'
-                                    }
-                                },
-                                border: '2px solid #f59e0b',
-                                transition: 'all 0.3s ease',
-                                boxShadow: { xs: '0 2px 8px rgba(245, 158, 11, 0.3)', sm: 'none' }
+                                border: '1px solid',
+                                borderColor: 'warning.main',
                             }}
                         >
-                            <EditIcon sx={{ fontSize: { xs: 22, sm: 18 } }} />
+                            <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
                 </Box>
