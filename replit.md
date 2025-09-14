@@ -1,0 +1,89 @@
+# Overview
+
+Casa Austin is a property rental management system built with React and TypeScript. The application serves as a comprehensive dashboard for managing vacation rental properties, handling reservations, clients, calendar availability, and financial tracking. It's designed specifically for managing multiple rental properties ("Casa Austin 1-4") with integrations to Airbnb and local booking systems.
+
+# User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+# System Architecture
+
+## Frontend Architecture
+- **Framework**: React 18 with TypeScript for type safety and modern development
+- **Build Tool**: Vite for fast development and optimized builds
+- **UI Framework**: Material-UI (MUI) v5 with custom theming (light/dark mode support)
+- **State Management**: Redux Toolkit for global state with RTK Query for API data fetching
+- **Routing**: React Router DOM v6 for client-side navigation
+- **Forms**: React Hook Form for efficient form handling and validation
+- **Calendar**: FullCalendar integration for availability and booking management
+- **Charts**: ApexCharts with React wrapper for data visualization
+
+## Component Structure
+- **Common Components**: Reusable UI components (inputs, buttons, modals, tables, charts)
+- **Layout Components**: Sidebar navigation and drawer layouts for panel interface
+- **Protected Routes**: Authentication guards for secure access control
+- **Page Components**: Feature-specific CRUD interfaces (Dashboard, Clients, Rentals, Calendar, Profits)
+
+## Authentication & Authorization
+- **Token-based Authentication**: JWT tokens with refresh token mechanism
+- **Cookie Management**: js-cookie for secure token storage
+- **Role-based Access**: Different user roles (admin, maintenance) with route restrictions
+- **Auto-refresh**: Automatic token validation and renewal
+
+## API Integration
+- **Primary API**: Casa Austin backend API for core functionality
+- **External Services**: 
+  - Google Apps Script for client document validation (DNI/RUC lookup)
+  - Custom PHP API for additional client data retrieval
+- **HTTP Client**: Axios with interceptors for token management
+- **Data Fetching**: RTK Query for efficient API state management with caching
+
+## Data Management
+- **Global State**: Redux store with slices for auth, clients, rentals, dashboard, and profits
+- **Local State**: React hooks for component-specific state management
+- **Form State**: React Hook Form controllers for complex form interactions
+- **Caching**: RTK Query automatic caching and invalidation strategies
+
+## Styling & Theming
+- **Material-UI Theming**: Custom theme configuration with primary/secondary color schemes
+- **CSS Modules**: Scoped styles for specific components
+- **Responsive Design**: Mobile-first approach with MUI breakpoints
+- **Typography**: Public Sans font family for consistent branding
+
+## Development Tools
+- **TypeScript**: Strict type checking with custom interfaces for API responses
+- **ESLint**: Code quality and consistency enforcement
+- **Prettier**: Automated code formatting
+- **Path Aliases**: Clean import statements with @ alias for src directory
+
+# External Dependencies
+
+## Core Dependencies
+- **React Ecosystem**: react, react-dom, react-router-dom for core functionality
+- **State Management**: @reduxjs/toolkit, react-redux, react-query for data management
+- **UI Framework**: @mui/material, @mui/icons-material, @mui/x-data-grid, @mui/x-date-pickers
+- **Forms & Validation**: react-hook-form for form management
+- **HTTP Client**: axios for API communication
+- **Date Management**: dayjs for date manipulation and formatting
+
+## Specialized Libraries
+- **Calendar**: @fullcalendar/react, @fullcalendar/core, @fullcalendar/daygrid for booking calendar
+- **Charts**: apexcharts, react-apexcharts for data visualization
+- **Phone Input**: react-phone-input-2 for international phone number handling
+- **Cookie Management**: js-cookie for authentication token storage
+
+## Development Dependencies
+- **Build Tools**: vite, @vitejs/plugin-react for development and build process
+- **TypeScript**: typescript, @types/* packages for type definitions
+- **Linting**: eslint, @typescript-eslint/* for code quality
+- **Formatting**: prettier for consistent code style
+
+## External APIs
+- **Casa Austin API**: Primary backend API at https://api.casaaustin.pe/api/v1
+- **Google Apps Script**: Document validation service for client verification
+- **Custom PHP API**: Additional client data retrieval at https://casaaustin.pe/datos/api.php
+
+## Development Environment
+- **Node.js**: Required for package management and build process
+- **Vite Dev Server**: Hot module replacement on port 5000
+- **Preview Server**: Production preview on port 5000 with host binding
