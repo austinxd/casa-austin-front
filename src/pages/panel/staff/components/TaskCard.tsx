@@ -180,16 +180,34 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 </Box>
 
                 {/* Assigned Staff */}
-                {task.staff_member_name && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Avatar sx={{ width: 28, height: 28, mr: 1.5, fontSize: '0.8rem' }}>
-                            {task.staff_member_name[0]}
-                        </Avatar>
-                        <Typography variant="body2" color="text.secondary">
-                            Asignado a: <strong>{task.staff_member_name}</strong>
-                        </Typography>
-                    </Box>
-                )}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    {task.staff_member_name ? (
+                        <>
+                            <Avatar sx={{ width: 28, height: 28, mr: 1.5, fontSize: '0.8rem' }}>
+                                {task.staff_member_name[0]}
+                            </Avatar>
+                            <Typography variant="body2" color="text.secondary">
+                                Asignado a: <strong>{task.staff_member_name}</strong>
+                            </Typography>
+                        </>
+                    ) : (
+                        <>
+                            <Avatar sx={{ 
+                                width: 28, 
+                                height: 28, 
+                                mr: 1.5, 
+                                fontSize: '0.8rem',
+                                bgcolor: '#f5f5f5',
+                                color: '#d32f2f'
+                            }}>
+                                ?
+                            </Avatar>
+                            <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 600 }}>
+                                No asignado
+                            </Typography>
+                        </>
+                    )}
+                </Box>
 
                 {/* Date and Priority */}
                 <Box sx={{ 
