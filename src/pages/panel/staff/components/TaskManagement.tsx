@@ -28,6 +28,9 @@ export default function TaskManagement() {
         page_size: 100,
     })
 
+    // Temporal: Log para revisar respuesta del API
+    console.log('🔍 API Response - Task data:', data?.results?.[0])
+
     const [startWork] = useStartWorkMutation()
     const [completeWork] = useCompleteWorkMutation()
 
