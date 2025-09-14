@@ -4,7 +4,7 @@ Casa Austin is a property rental management system built with React and TypeScri
 
 ## Recent Changes
 
-**September 14, 2025 - Mobile-Optimized Task Management Interface**
+**September 14, 2025 - Mobile-Optimized Task Management Interface & Style Consistency**
 - **TaskCard Component**: Comprehensive responsive design improvements with mobile-first approach
   - Touch-friendly action buttons (44px minimum touch targets on mobile)
   - Responsive typography scaling across all breakpoints (xs, sm, md, lg)
@@ -16,8 +16,13 @@ Casa Austin is a property rental management system built with React and TypeScri
   - Responsive statistics grid with mobile-optimized spacing
   - Quick status filter system with touch-friendly chips
   - Improved empty states with contextual messaging for filtered views
+- **Style Consistency Fixes**: Unified design language across the application
+  - Fixed "Gestión de Personal" title to match other page titles (removed custom fontSize overrides)
+  - Converted all "Crear Tarea" buttons to use ButtonPrimary component for consistency
+  - Standardized button styling with #0E6191 background and consistent heights
+  - Maintained responsive behavior with proper mobile-friendly layouts
 - **API Integration**: Enhanced property color system using real backend data instead of hardcoded values
-- **User Experience**: Significantly improved mobile responsiveness addressing user feedback ("no es tan responsive")
+- **User Experience**: Significantly improved mobile responsiveness and visual consistency addressing user feedback
 
 # User Preferences
 

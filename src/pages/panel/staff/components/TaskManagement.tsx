@@ -14,6 +14,7 @@ import {
     Add as AddIcon,
     Assignment as TaskIcon,
 } from '@mui/icons-material'
+import ButtonPrimary from '@/components/common/button/ButtonPrimary'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
 import TaskEditModal from './TaskEditModal'
 import TaskAddModal from './TaskAddModal'
@@ -120,27 +121,31 @@ export default function TaskManagement() {
                 justifyContent: 'flex-end', 
                 mb: 2,
                 '@media (max-width: 600px)': {
-                    justifyContent: 'stretch',
+                    justifyContent: 'flex-start',
                 },
             }}>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => setAddModalOpen(true)}
-                    size="small"
-                    sx={{ 
-                        borderRadius: 1,
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        px: 2,
-                        py: 0.5,
-                        '@media (max-width: 600px)': {
+                <Box sx={{ 
+                    '@media (max-width: 600px)': {
+                        width: '100%',
+                    },
+                }}>
+                    <ButtonPrimary
+                        onClick={() => setAddModalOpen(true)}
+                        style={{
+                            background: '#0E6191',
+                            color: 'white',
+                            height: '45px',
+                            fontWeight: 600,
                             width: '100%',
-                        },
-                    }}
-                >
-                    Crear Tarea
-                </Button>
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        <AddIcon sx={{ fontSize: '20px' }} />
+                        Crear Tarea
+                    </ButtonPrimary>
+                </Box>
             </Box>
 
             {/* Estadísticas */}
@@ -384,17 +389,22 @@ export default function TaskManagement() {
                         >
                             Ver todas
                         </Button>
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
+                        <ButtonPrimary
                             onClick={() => setAddModalOpen(true)}
-                            size="small"
-                            sx={{ 
-                                textTransform: 'none'
+                            style={{
+                                background: '#0E6191',
+                                color: 'white',
+                                height: '36px',
+                                fontWeight: 600,
+                                width: '140px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
                             }}
                         >
+                            <AddIcon sx={{ fontSize: '18px' }} />
                             Crear tarea
-                        </Button>
+                        </ButtonPrimary>
                     </Paper>
                 ) : (
                 <Paper
@@ -415,21 +425,23 @@ export default function TaskManagement() {
                     <Typography variant="body1" color="text.disabled" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
                         Crea la primera tarea para comenzar la gestión de trabajo
                     </Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
+                    <ButtonPrimary
                         onClick={() => setAddModalOpen(true)}
-                        size="medium"
-                        sx={{ 
-                            borderRadius: 1,
-                            textTransform: 'none',
-                            fontWeight: 500,
-                            px: 3,
-                            py: 1,
+                        style={{
+                            background: '#0E6191',
+                            color: 'white',
+                            height: '48px',
+                            fontWeight: 600,
+                            width: '200px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginTop: '8px'
                         }}
                     >
+                        <AddIcon sx={{ fontSize: '20px' }} />
                         Crear Primera Tarea
-                    </Button>
+                    </ButtonPrimary>
                 </Paper>
             ))}
 

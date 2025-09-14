@@ -43,17 +43,7 @@ export default function PersonalManagement() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Typography 
-                variant="h1" 
-                mb={3}
-                sx={{
-                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                    '@media (max-width: 600px)': {
-                        mb: 2,
-                        textAlign: 'center',
-                    },
-                }}
-            >
+            <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
                 Gestión de Personal
             </Typography>
             
