@@ -27,6 +27,7 @@ export interface WorkTask {
     title: string
     description: string
     scheduled_date: string
+    check_out_date?: string
     estimated_duration: string
     priority: 'low' | 'medium' | 'high' | 'urgent'
     status: 'pending' | 'assigned' | 'in_progress' | 'completed' | 'cancelled'
