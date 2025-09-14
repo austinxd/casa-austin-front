@@ -390,50 +390,96 @@ export default function TaskManagement() {
 
             {/* Tabla de Tareas Responsive */}
             <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                <DataGrid
-                    rows={data?.results || []}
-                    columns={columns}
-                    density="compact"
-                    initialState={{
-                        pagination: {
-                            paginationModel: { pageSize: isMobile ? 10 : 25 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10, 25, 50]}
-                    disableRowSelectionOnClick
-                    autoHeight={!isMobile}
-                    height={isMobile ? 400 : undefined}
-                    sx={{
-                        border: 'none',
-                        '& .MuiDataGrid-cell': {
-                            borderBottom: '1px solid #f0f0f0',
-                            py: { xs: 0.5, sm: 2 },
-                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f8f9fa',
-                            fontWeight: 700,
-                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                            borderBottom: '2px solid #e0e0e0',
-                            color: '#374151',
-                            minHeight: { xs: '36px !important', sm: '56px !important' },
-                        },
-                        '& .MuiDataGrid-row': {
-                            minHeight: { xs: '44px !important', sm: '72px !important' },
-                            '&:hover': {
-                                backgroundColor: '#f9fafb',
+                {isMobile ? (
+                    <Box sx={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                            rows={data?.results || []}
+                            columns={columns}
+                            density="compact"
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { pageSize: 8 },
+                                },
+                            }}
+                            pageSizeOptions={[5, 8, 10]}
+                            disableRowSelectionOnClick
+                            sx={{
+                                border: 'none',
+                                '& .MuiDataGrid-cell': {
+                                    borderBottom: '1px solid #f0f0f0',
+                                    py: 0.5,
+                                    fontSize: '0.8rem',
+                                },
+                                '& .MuiDataGrid-columnHeaders': {
+                                    backgroundColor: '#f8f9fa',
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
+                                    borderBottom: '2px solid #e0e0e0',
+                                    color: '#374151',
+                                    minHeight: '36px !important',
+                                },
+                                '& .MuiDataGrid-row': {
+                                    minHeight: '44px !important',
+                                    '&:hover': {
+                                        backgroundColor: '#f9fafb',
+                                    },
+                                    '&:nth-of-type(even)': {
+                                        backgroundColor: '#fafbfc',
+                                    },
+                                },
+                                '& .MuiDataGrid-footerContainer': {
+                                    borderTop: '2px solid #e0e0e0',
+                                    backgroundColor: '#f8f9fa',
+                                    minHeight: '40px',
+                                },
+                            }}
+                        />
+                    </Box>
+                ) : (
+                    <DataGrid
+                        rows={data?.results || []}
+                        columns={columns}
+                        density="compact"
+                        initialState={{
+                            pagination: {
+                                paginationModel: { pageSize: 25 },
                             },
-                            '&:nth-of-type(even)': {
-                                backgroundColor: '#fafbfc',
+                        }}
+                        pageSizeOptions={[10, 25, 50]}
+                        disableRowSelectionOnClick
+                        autoHeight
+                        sx={{
+                            border: 'none',
+                            '& .MuiDataGrid-cell': {
+                                borderBottom: '1px solid #f0f0f0',
+                                py: 2,
+                                fontSize: '0.875rem',
                             },
-                        },
-                        '& .MuiDataGrid-footerContainer': {
-                            borderTop: '2px solid #e0e0e0',
-                            backgroundColor: '#f8f9fa',
-                            minHeight: { xs: '40px', sm: '52px' },
-                        },
-                    }}
-                />
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#f8f9fa',
+                                fontWeight: 700,
+                                fontSize: '0.875rem',
+                                borderBottom: '2px solid #e0e0e0',
+                                color: '#374151',
+                                minHeight: '56px !important',
+                            },
+                            '& .MuiDataGrid-row': {
+                                minHeight: '72px !important',
+                                '&:hover': {
+                                    backgroundColor: '#f9fafb',
+                                },
+                                '&:nth-of-type(even)': {
+                                    backgroundColor: '#fafbfc',
+                                },
+                            },
+                            '& .MuiDataGrid-footerContainer': {
+                                borderTop: '2px solid #e0e0e0',
+                                backgroundColor: '#f8f9fa',
+                                minHeight: '52px',
+                            },
+                        }}
+                    />
+                )}
             </Paper>
 
             {/* Empty State */}
