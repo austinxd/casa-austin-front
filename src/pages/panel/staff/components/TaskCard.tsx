@@ -88,30 +88,34 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         return Math.max(0, diffDays) // Return 0 if scheduled date is before check-out
     }
 
-    // Get card background color based on days difference using theme colors
+    // Get card background color based on days difference using darker theme colors
     const getCardBackgroundColor = (): string => {
         const daysDiff = calculateDaysDifference()
         
         if (daysDiff === 0) return theme.palette.background.paper // Default background
-        if (daysDiff === 1) return theme.palette.grey[50] // Very light gray for 1 day
-        if (daysDiff <= 3) return theme.palette.grey[100] // Light gray for 2-3 days
-        if (daysDiff <= 7) return theme.palette.grey[200] // Medium gray for 4-7 days
-        if (daysDiff <= 14) return theme.palette.grey[300] // Darker gray for 1-2 weeks
-        return theme.palette.grey[400] // Darkest gray for more than 2 weeks
+        if (daysDiff === 1) return theme.palette.grey[200] // Light gray for 1 day
+        if (daysDiff <= 3) return theme.palette.grey[300] // Medium gray for 2-3 days
+        if (daysDiff <= 7) return theme.palette.grey[400] // Darker gray for 4-7 days
+        if (daysDiff <= 14) return theme.palette.grey[500] // Much darker gray for 1-2 weeks
+        return theme.palette.grey[600] // Darkest gray for more than 2 weeks
     }
 
     // Get text color based on background darkness for better contrast
     const getTextColor = (): string => {
         const daysDiff = calculateDaysDifference()
-        // For darker backgrounds, use primary text color
-        return daysDiff >= 14 ? theme.palette.text.primary : theme.palette.text.secondary
+        // For all darker backgrounds, use primary text for better readability
+        if (daysDiff >= 1) return theme.palette.text.primary
+        // For default background, use secondary text
+        return theme.palette.text.secondary
     }
 
     // Get divider color based on background for better contrast
     const getDividerColor = (): string => {
         const daysDiff = calculateDaysDifference()
-        // For darker backgrounds, use a darker divider
-        return daysDiff >= 7 ? theme.palette.divider : theme.palette.grey[100]
+        // For darker backgrounds, use a more visible divider
+        if (daysDiff >= 7) return theme.palette.grey[700]
+        // For lighter backgrounds, use standard divider
+        return theme.palette.divider
     }
 
     const getStatusText = (status: string) => {
@@ -220,26 +224,44 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap'
+                                    whiteSpace: 'nowrap',
+                                    color: getTextColor()
                                 }}
                             >
                                 {getTaskTypeText(task.task_type)}
                             </Typography>
-                            <Typography 
-                                variant="caption" 
-                                sx={{ 
-                                    color: task.property_name ? "text.secondary" : "#d32f2f",
-                                    fontWeight: task.property_name ? 400 : 700,
-                                    fontSize: { xs: "0.7rem", sm: "0.75rem" },
-                                    display: 'block',
-                                    lineHeight: 1.2,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap'
-                                }}
-                            >
-                                {task.property_name || "NO ASIGNADO"}
-                            </Typography>
+                            {task.property_name ? (
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        color: getTextColor(),
+                                        fontWeight: 400,
+                                        fontSize: { xs: "0.7rem", sm: "0.75rem" },
+                                        display: 'block',
+                                        lineHeight: 1.2,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {task.property_name}
+                                </Typography>
+                            ) : (
+                                <Chip
+                                    label="NO ASIGNADO"
+                                    size="small"
+                                    sx={{
+                                        bgcolor: 'error.main',
+                                        color: 'error.contrastText',
+                                        fontWeight: 600,
+                                        fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                        height: { xs: 18, sm: 20 },
+                                        '& .MuiChip-label': {
+                                            px: 1
+                                        }
+                                    }}
+                                />
+                            )}
                         </Box>
                     </Box>
 
@@ -265,7 +287,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             size="small"
                             onClick={handleClick}
                             sx={{ 
-                                color: 'text.secondary',
+                                color: getTextColor(),
                                 width: { xs: 44, sm: 32 },
                                 height: { xs: 44, sm: 32 }
                             }}
@@ -293,13 +315,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             </Avatar>
                             <Typography 
                                 variant="body2" 
-                                color="text.secondary"
                                 sx={{
                                     fontSize: { xs: '0.8rem', sm: '0.875rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
-                                    flex: 1
+                                    flex: 1,
+                                    color: getTextColor()
                                 }}
                             >
                                 <strong>{task.staff_member_name}</strong>
@@ -317,16 +339,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             }}>
                                 ?
                             </Avatar>
-                            <Typography 
-                                variant="body2" 
-                                sx={{ 
-                                    color: '#d32f2f', 
+                            <Chip
+                                label="No asignado"
+                                size="small"
+                                sx={{
+                                    bgcolor: 'error.main',
+                                    color: 'error.contrastText',
                                     fontWeight: 600,
-                                    fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                                    fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                                    height: { xs: 20, sm: 22 },
+                                    '& .MuiChip-label': {
+                                        px: 1
+                                    }
                                 }}
-                            >
-                                No asignado
-                            </Typography>
+                            />
                         </>
                     )}
                 </Box>
