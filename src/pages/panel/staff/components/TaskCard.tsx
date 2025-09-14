@@ -100,9 +100,14 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         }
     }
 
-    const getPropertyColor = (propertyName: string) => {
-        // Colores por defecto para cada casa
-        switch (propertyName) {
+    const getPropertyColor = (task: WorkTask) => {
+        // Usar el color del API si está disponible
+        if (task.property_background_color) {
+            return task.property_background_color
+        }
+        
+        // Fallback a colores hardcodeados si el API no incluye el color
+        switch (task.property_name) {
             case 'Casa Austin 1': return '#FF6B6B'  // Rojo
             case 'Casa Austin 2': return '#4ECDC4'  // Verde azulado
             case 'Casa Austin 3': return '#45B7D1'  // Azul
@@ -129,7 +134,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 border: 'none',
                 // Agregar el color de fondo de la propiedad como borde
                 ...(task.property_name && {
-                    borderLeft: `4px solid ${getPropertyColor(task.property_name)}`,
+                    borderLeft: `4px solid ${getPropertyColor(task)}`,
                 }),
             }}
         >

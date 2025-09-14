@@ -21,6 +21,7 @@ export interface WorkTask {
     staff_member_name: string
     building_property: string
     property_name: string
+    property_background_color?: string
     reservation?: string
     task_type: 'checkout_cleaning' | 'maintenance' | 'inspection' | 'checkin_preparation'
     title: string
