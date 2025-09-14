@@ -124,7 +124,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
-                minHeight: { xs: 'auto', sm: 240, md: 280 },
+                minHeight: { xs: 'auto', sm: 180, md: 200 },
                 display: 'flex',
                 flexDirection: 'column',
                 '&:hover': {
@@ -140,8 +140,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         >
 
             <CardContent sx={{ 
-                p: { xs: 2, sm: 2.5, md: 3 }, 
-                pb: { xs: 1.5, sm: 2 }, 
+                p: { xs: 1.5, sm: 2, md: 2.5 }, 
+                pb: { xs: 1, sm: 1.5 }, 
                 flex: 1, 
                 display: 'flex', 
                 flexDirection: 'column' 
@@ -151,7 +151,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: { xs: 'center', sm: 'flex-start' }, 
-                    mb: { xs: 1.5, sm: 2 },
+                    mb: { xs: 1, sm: 1.5 },
                     flexWrap: { xs: 'wrap', sm: 'nowrap' }
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
@@ -170,8 +170,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 variant="h6" 
                                 fontWeight="600" 
                                 sx={{ 
-                                    lineHeight: 1.2,
-                                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                                    lineHeight: 1.1,
+                                    fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap'
@@ -185,7 +185,11 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     color: task.property_name ? "text.secondary" : "#d32f2f",
                                     fontWeight: task.property_name ? 400 : 700,
                                     fontSize: { xs: "0.7rem", sm: "0.75rem" },
-                                    display: 'block'
+                                    display: 'block',
+                                    lineHeight: 1.2,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
                                 }}
                             >
                                 {task.property_name || "NO ASIGNADO"}
@@ -216,8 +220,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             onClick={handleClick}
                             sx={{ 
                                 color: 'text.secondary',
-                                width: { xs: 36, sm: 32 },
-                                height: { xs: 36, sm: 32 }
+                                width: { xs: 44, sm: 32 },
+                                height: { xs: 44, sm: 32 }
                             }}
                         >
                             <MoreVertIcon fontSize="small" />
@@ -229,15 +233,15 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 <Box sx={{ 
                     display: 'flex', 
                     alignItems: 'center', 
-                    mb: { xs: 1.5, sm: 2 }
+                    mb: { xs: 1, sm: 1.5 }
                 }}>
                     {task.staff_member_name ? (
                         <>
                             <Avatar sx={{ 
-                                width: { xs: 24, sm: 28 }, 
-                                height: { xs: 24, sm: 28 }, 
-                                mr: { xs: 1, sm: 1.5 }, 
-                                fontSize: { xs: '0.7rem', sm: '0.8rem' }
+                                width: { xs: 22, sm: 26 }, 
+                                height: { xs: 22, sm: 26 }, 
+                                mr: { xs: 0.8, sm: 1.2 }, 
+                                fontSize: { xs: '0.65rem', sm: '0.75rem' }
                             }}>
                                 {task.staff_member_name[0]}
                             </Avatar>
@@ -258,10 +262,10 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     ) : (
                         <>
                             <Avatar sx={{ 
-                                width: { xs: 24, sm: 28 }, 
-                                height: { xs: 24, sm: 28 }, 
-                                mr: { xs: 1, sm: 1.5 }, 
-                                fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                                width: { xs: 22, sm: 26 }, 
+                                height: { xs: 22, sm: 26 }, 
+                                mr: { xs: 0.8, sm: 1.2 }, 
+                                fontSize: { xs: '0.65rem', sm: '0.75rem' },
                                 bgcolor: '#f5f5f5',
                                 color: '#d32f2f'
                             }}>
@@ -287,8 +291,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     flexDirection: { xs: 'column', sm: 'row' },
                     justifyContent: { sm: 'space-between' }, 
                     alignItems: { xs: 'stretch', sm: 'center' },
-                    gap: { xs: 1, sm: 1 },
-                    mb: { xs: 1.5, sm: 2 }
+                    gap: { xs: 0.8, sm: 1 },
+                    mb: { xs: 1, sm: 1.5 }
                 }}>
                     <Typography 
                         variant="caption" 
@@ -326,13 +330,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         variant="body2" 
                         color="text.secondary" 
                         sx={{ 
-                            mt: { xs: 1, sm: 2 }, 
-                            fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                            mt: { xs: 0.8, sm: 1.5 }, 
+                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
                             display: '-webkit-box',
-                            WebkitLineClamp: { xs: 2, sm: 3 },
+                            WebkitLineClamp: { xs: 2, sm: 2 },
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
-                            lineHeight: { xs: 1.3, sm: 1.4 }
+                            lineHeight: { xs: 1.2, sm: 1.3 }
                         }}
                     >
                         {task.description}
@@ -342,9 +346,9 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 {/* Quick Action Buttons */}
                 <Box sx={{ 
                     display: 'flex', 
-                    gap: { xs: 1.5, sm: 1 }, 
+                    gap: { xs: 1, sm: 0.8 }, 
                     mt: 'auto', 
-                    pt: { xs: 1.5, sm: 2 }, 
+                    pt: { xs: 1, sm: 1.5 }, 
                     borderTop: '1px solid #f0f0f0' 
                 }}>
                     {task.status === 'assigned' && (
@@ -355,8 +359,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 sx={{ 
                                     color: 'success.main',
                                     bgcolor: 'success.light',
-                                    width: { xs: 44, sm: 36 },
-                                    height: { xs: 44, sm: 36 },
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
                                     '&:hover': { 
                                         bgcolor: 'success.main',
                                         color: 'white',
@@ -366,7 +370,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     borderColor: 'success.main',
                                 }}
                             >
-                                <StartIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
+                                <StartIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -379,8 +383,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 sx={{ 
                                     color: 'primary.main',
                                     bgcolor: 'primary.light',
-                                    width: { xs: 44, sm: 36 },
-                                    height: { xs: 44, sm: 36 },
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
                                     '&:hover': { 
                                         bgcolor: 'primary.main',
                                         color: 'white',
@@ -390,7 +394,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     borderColor: 'primary.main',
                                 }}
                             >
-                                <CompleteIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
+                                <CompleteIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                             </IconButton>
                         </Tooltip>
                     )}
@@ -402,8 +406,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             sx={{ 
                                 color: 'warning.main',
                                 bgcolor: 'grey.100',
-                                width: { xs: 44, sm: 36 },
-                                height: { xs: 44, sm: 36 },
+                                width: { xs: 44, sm: 32 },
+                                height: { xs: 44, sm: 32 },
                                 '&:hover': { 
                                     bgcolor: 'warning.light',
                                     color: 'warning.dark',
@@ -413,7 +417,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 borderColor: 'warning.main',
                             }}
                         >
-                            <EditIcon sx={{ fontSize: { xs: 24, sm: 20 } }} />
+                            <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
                 </Box>
