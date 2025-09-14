@@ -1,4 +1,3 @@
-import React from 'react'
 import {
     Dialog,
     DialogTitle,
@@ -95,9 +94,9 @@ export default function TaskAddModal({ open, onClose, onTaskAdded }: TaskAddModa
                 task_type: data.task_type as any,
                 priority: data.priority as any,
                 status: data.status as any,
-                staff_member: data.staff_member || null,
+                staff_member: data.staff_member || undefined,
                 property_name: data.property_name,
-                scheduled_date: data.scheduled_date ? `${data.scheduled_date}T09:00:00Z` : null,
+                scheduled_date: data.scheduled_date ? `${data.scheduled_date}T09:00:00Z` : undefined,
                 estimated_duration: data.estimated_duration.toString(),
             }).unwrap()
 
@@ -120,8 +119,15 @@ export default function TaskAddModal({ open, onClose, onTaskAdded }: TaskAddModa
             onClose={handleClose}
             maxWidth="md"
             fullWidth
+            fullScreen={false}
             PaperProps={{
-                sx: { borderRadius: 2 }
+                sx: { 
+                    borderRadius: 2,
+                    '@media (max-width: 600px)': {
+                        margin: 1,
+                        maxHeight: '90vh',
+                    },
+                }
             }}
         >
             <DialogTitle sx={{ pb: 1 }}>

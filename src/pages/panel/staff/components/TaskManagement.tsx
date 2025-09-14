@@ -307,7 +307,14 @@ export default function TaskManagement() {
     return (
         <Box sx={{ width: '100%' }}>
             {/* Header Compacto */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'flex-end', 
+                mb: 2,
+                '@media (max-width: 600px)': {
+                    justifyContent: 'stretch',
+                },
+            }}>
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -319,6 +326,9 @@ export default function TaskManagement() {
                         fontWeight: 500,
                         px: 2,
                         py: 0.5,
+                        '@media (max-width: 600px)': {
+                            width: '100%',
+                        },
                     }}
                 >
                     Crear Tarea
@@ -327,7 +337,7 @@ export default function TaskManagement() {
 
             {/* Estadísticas */}
             <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Grid container spacing={1.5}>
+                <Grid container spacing={{ xs: 1, sm: 1.5 }}>
                     <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: '#ff9800', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
@@ -397,15 +407,18 @@ export default function TaskManagement() {
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',
                             py: 2,
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            px: { xs: 1, sm: 2 },
                         },
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: '#f8f9fa',
                             fontWeight: 700,
-                            fontSize: '0.875rem',
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
                             borderBottom: '2px solid #e0e0e0',
                             color: '#374151',
                         },
                         '& .MuiDataGrid-row': {
+                            minHeight: { xs: '52px', sm: '60px' },
                             '&:hover': {
                                 backgroundColor: '#f9fafb',
                             },
@@ -416,6 +429,16 @@ export default function TaskManagement() {
                         '& .MuiDataGrid-footerContainer': {
                             borderTop: '2px solid #e0e0e0',
                             backgroundColor: '#f8f9fa',
+                            '& .MuiTablePagination-root': {
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            },
+                        },
+                        '@media (max-width: 600px)': {
+                            '& .MuiDataGrid-cell': {
+                                whiteSpace: 'normal',
+                                wordWrap: 'break-word',
+                                lineHeight: '1.2',
+                            },
                         },
                     }}
                 />

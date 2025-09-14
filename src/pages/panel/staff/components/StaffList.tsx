@@ -268,7 +268,14 @@ export default function StaffList() {
     return (
         <Box sx={{ width: '100%' }}>
             {/* Header Compacto */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'stretch', sm: 'center' },
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 2, sm: 0 },
+                mb: 3 
+            }}>
                 <TextField
                     placeholder="Buscar por nombre, email o teléfono..."
                     value={search}
@@ -281,7 +288,7 @@ export default function StaffList() {
                         ),
                     }}
                     sx={{ 
-                        maxWidth: 400,
+                        maxWidth: { xs: '100%', sm: 400 },
                         '& .MuiOutlinedInput-root': {
                             borderRadius: 2,
                             bgcolor: 'white',
@@ -299,6 +306,8 @@ export default function StaffList() {
                         fontWeight: 500,
                         px: 2,
                         py: 0.5,
+                        whiteSpace: 'nowrap',
+                        minWidth: { xs: '100%', sm: 'auto' },
                     }}
                 >
                     Agregar Personal
@@ -323,15 +332,18 @@ export default function StaffList() {
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',
                             py: 2,
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            px: { xs: 1, sm: 2 },
                         },
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: '#f8f9fa',
                             fontWeight: 700,
-                            fontSize: '0.875rem',
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
                             borderBottom: '2px solid #e0e0e0',
                             color: '#374151',
                         },
                         '& .MuiDataGrid-row': {
+                            minHeight: { xs: '52px', sm: '60px' },
                             '&:hover': {
                                 backgroundColor: '#f9fafb',
                             },
@@ -342,6 +354,29 @@ export default function StaffList() {
                         '& .MuiDataGrid-footerContainer': {
                             borderTop: '2px solid #e0e0e0',
                             backgroundColor: '#f8f9fa',
+                            '& .MuiTablePagination-root': {
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            },
+                        },
+                        '@media (max-width: 600px)': {
+                            '& .MuiDataGrid-columnHeaders': {
+                                display: 'none',
+                            },
+                            '& .MuiDataGrid-cell': {
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                padding: '8px',
+                                borderBottom: '1px solid #e0e0e0',
+                                '&:before': {
+                                    content: 'attr(data-field)',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 'bold',
+                                    color: '#666',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '4px',
+                                },
+                            },
                         },
                     }}
                 />

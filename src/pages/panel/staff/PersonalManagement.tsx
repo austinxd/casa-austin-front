@@ -43,12 +43,35 @@ export default function PersonalManagement() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Typography variant="h1" mb={3}>
+            <Typography 
+                variant="h1" 
+                mb={3}
+                sx={{
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                    '@media (max-width: 600px)': {
+                        mb: 2,
+                        textAlign: 'center',
+                    },
+                }}
+            >
                 Gestión de Personal
             </Typography>
             
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="staff management tabs">
+                <Tabs 
+                    value={value} 
+                    onChange={handleChange} 
+                    aria-label="staff management tabs"
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{
+                        '& .MuiTab-root': {
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                            minWidth: { xs: 'auto', sm: 160 },
+                            px: { xs: 2, sm: 3 },
+                        },
+                    }}
+                >
                     <Tab label="Personal" {...a11yProps(0)} />
                     <Tab label="Tareas" {...a11yProps(1)} />
                     <Tab label="Tiempo" {...a11yProps(2)} />

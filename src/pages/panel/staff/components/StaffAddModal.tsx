@@ -1,4 +1,3 @@
-import React from 'react'
 import {
     Dialog,
     DialogTitle,
@@ -103,8 +102,15 @@ export default function StaffAddModal({ open, onClose, onStaffAdded }: StaffAddM
             onClose={handleClose}
             maxWidth="md"
             fullWidth
+            fullScreen={false}
             PaperProps={{
-                sx: { borderRadius: 2 }
+                sx: { 
+                    borderRadius: 2,
+                    '@media (max-width: 600px)': {
+                        margin: 1,
+                        maxHeight: '90vh',
+                    },
+                }
             }}
         >
             <DialogTitle sx={{ pb: 1 }}>
