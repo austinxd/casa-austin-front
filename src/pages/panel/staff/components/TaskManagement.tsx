@@ -22,10 +22,12 @@ import {
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
 import TaskEditModal from './TaskEditModal'
+import TaskAddModal from './TaskAddModal'
 import { WorkTask } from '@/interfaces/staff.interface'
 
 export default function TaskManagement() {
     const [editModalOpen, setEditModalOpen] = useState(false)
+    const [addModalOpen, setAddModalOpen] = useState(false)
     const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null)
 
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
@@ -309,7 +311,7 @@ export default function TaskManagement() {
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
-                    onClick={() => console.log('Add new task')}
+                    onClick={() => setAddModalOpen(true)}
                     sx={{ 
                         borderRadius: 2,
                         textTransform: 'none',
@@ -439,7 +441,7 @@ export default function TaskManagement() {
                     <Button
                         variant="contained"
                         startIcon={<AddIcon />}
-                        onClick={() => console.log('Add new task')}
+                        onClick={() => setAddModalOpen(true)}
                         size="large"
                         sx={{ 
                             borderRadius: 2,
@@ -461,6 +463,13 @@ export default function TaskManagement() {
                 }}
                 task={selectedTask}
                 onTaskUpdated={refetch}
+            />
+
+            {/* Modal de Agregar Tarea */}
+            <TaskAddModal
+                open={addModalOpen}
+                onClose={() => setAddModalOpen(false)}
+                onTaskAdded={refetch}
             />
         </Box>
     )

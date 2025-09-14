@@ -23,9 +23,11 @@ import {
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllStaffQuery, useDeleteStaffMutation } from '@/services/staff/staffService'
 import { StaffMember } from '@/interfaces/staff.interface'
+import StaffAddModal from './StaffAddModal'
 
 export default function StaffList() {
     const [search, setSearch] = useState('')
+    const [addModalOpen, setAddModalOpen] = useState(false)
 
     const { data, isLoading, error, refetch } = useGetAllStaffQuery({
         page: 1,
@@ -265,35 +267,9 @@ export default function StaffList() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* Header */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                    <Box>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
-                            Personal
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            {data?.count || 0} empleados registrados
-                        </Typography>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => console.log('Add new staff')}
-                        size="large"
-                        sx={{ 
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Agregar Personal
-                    </Button>
-                </Box>
-
-                {/* Búsqueda */}
+            {/* Header Compacto */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <TextField
-                    fullWidth
                     placeholder="Buscar por nombre, email o teléfono..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -312,7 +288,19 @@ export default function StaffList() {
                         }
                     }}
                 />
-            </Paper>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => setAddModalOpen(true)}
+                    sx={{ 
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                    }}
+                >
+                    Agregar Personal
+                </Button>
+            </Box>
 
             {/* Tabla */}
             <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -382,7 +370,7 @@ export default function StaffList() {
                         <Button
                             variant="contained"
                             startIcon={<AddIcon />}
-                            onClick={() => console.log('Add new staff')}
+                            onClick={() => setAddModalOpen(true)}
                             size="large"
                             sx={{ 
                                 borderRadius: 2,
@@ -395,6 +383,13 @@ export default function StaffList() {
                     )}
                 </Paper>
             )}
+
+            {/* Modal de Agregar Personal */}
+            <StaffAddModal
+                open={addModalOpen}
+                onClose={() => setAddModalOpen(false)}
+                onStaffAdded={refetch}
+            />
         </Box>
     )
 }
