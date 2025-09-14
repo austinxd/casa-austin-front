@@ -12,9 +12,9 @@ export default function ProtectAuth({ children, navigateTo }: Props) {
     const roll = Cookies.get('rollTkn')
     if (token) {
         if (roll === 'mantenimiento') {
-            return <Navigate to="/panel/disponibilidad" />
+            return <Navigate to="/panel/disponibilidad" replace />
         } else {
-            return <Navigate to={navigateTo} />
+            return <Navigate to={navigateTo} replace />
         }
     }
 
