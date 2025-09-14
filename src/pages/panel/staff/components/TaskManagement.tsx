@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
     Box,
     Typography,
@@ -8,9 +8,9 @@ import {
     CardContent,
     Grid,
     Paper,
-    Stack,
     IconButton,
-    Divider,
+    Tooltip,
+    Avatar,
 } from '@mui/material'
 import {
     Add as AddIcon,
@@ -22,9 +22,15 @@ import {
     Person as PersonIcon,
     Home as PropertyIcon,
 } from '@mui/icons-material'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
+import TaskEditModal from './TaskEditModal'
+import { WorkTask } from '@/interfaces/staff.interface'
 
 export default function TaskManagement() {
+    const [editModalOpen, setEditModalOpen] = useState(false)
+    const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null)
+
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
         page_size: 100,
@@ -66,12 +72,12 @@ export default function TaskManagement() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'pending': return '#ff9800'
-            case 'assigned': return '#2196f3'
-            case 'in_progress': return '#9c27b0'
-            case 'completed': return '#4caf50'
-            case 'cancelled': return '#f44336'
-            default: return '#757575'
+            case 'pending': return 'warning'
+            case 'assigned': return 'info'
+            case 'in_progress': return 'secondary'
+            case 'completed': return 'success'
+            case 'cancelled': return 'error'
+            default: return 'default'
         }
     }
 
@@ -102,7 +108,7 @@ export default function TaskManagement() {
             case 'medium': return 'Media'
             case 'high': return 'Alta'
             case 'urgent': return 'Urgente'
-            default: priority
+            default: return priority || 'Media'
         }
     }
 
@@ -126,6 +132,146 @@ export default function TaskManagement() {
         }
     }
 
+    const columns: GridColDef[] = [
+        {
+            field: 'title',
+            headerName: 'TAREA',
+            flex: 2,
+            minWidth: 250,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
+                    <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
+                        {getTaskTypeIcon(params.row.task_type)}
+                    </Typography>
+                    <Box>
+                        <Typography variant="subtitle2" fontWeight="600">
+                            {params.value || `Tarea ${getTaskTypeText(params.row.task_type)}`}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {getTaskTypeText(params.row.task_type)}
+                        </Typography>
+                    </Box>
+                </Box>
+            ),
+        },
+        {
+            field: 'staff_member_name',
+            headerName: 'ASIGNADO A',
+            width: 150,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                        {params.value?.[0] || 'U'}
+                    </Avatar>
+                    <Typography variant="body2">
+                        {params.value || 'Sin asignar'}
+                    </Typography>
+                </Box>
+            ),
+        },
+        {
+            field: 'property_name',
+            headerName: 'PROPIEDAD',
+            width: 140,
+            renderCell: (params) => (
+                <Typography variant="body2">
+                    {params.value || 'Sin propiedad'}
+                </Typography>
+            ),
+        },
+        {
+            field: 'priority',
+            headerName: 'PRIORIDAD',
+            width: 110,
+            renderCell: (params) => (
+                <Chip
+                    label={getPriorityText(params.value)}
+                    size="small"
+                    color={getPriorityColor(params.value || 'medium')}
+                    sx={{ minWidth: 70 }}
+                />
+            ),
+        },
+        {
+            field: 'status',
+            headerName: 'ESTADO',
+            width: 130,
+            renderCell: (params) => (
+                <Chip
+                    label={getStatusText(params.value)}
+                    size="small"
+                    color={getStatusColor(params.value)}
+                    sx={{ fontWeight: 'medium', minWidth: 100 }}
+                />
+            ),
+        },
+        {
+            field: 'scheduled_date',
+            headerName: 'FECHA',
+            width: 110,
+            renderCell: (params) => (
+                <Typography variant="body2">
+                    {params.value ? new Date(params.value).toLocaleDateString('es-ES') : 'Sin fecha'}
+                </Typography>
+            ),
+        },
+        {
+            field: 'actions',
+            headerName: 'ACCIONES',
+            width: 140,
+            align: 'center',
+            headerAlign: 'center',
+            sortable: false,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    {params.row.status === 'assigned' && (
+                        <Tooltip title="Iniciar trabajo">
+                            <IconButton
+                                size="small"
+                                onClick={() => handleStartWork(params.row.id)}
+                                sx={{ 
+                                    color: 'success.main',
+                                    '&:hover': { bgcolor: 'success.50' }
+                                }}
+                            >
+                                <StartIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                    {params.row.status === 'in_progress' && (
+                        <Tooltip title="Completar trabajo">
+                            <IconButton
+                                size="small"
+                                onClick={() => handleCompleteWork(params.row.id)}
+                                sx={{ 
+                                    color: 'primary.main',
+                                    '&:hover': { bgcolor: 'primary.50' }
+                                }}
+                            >
+                                <CompleteIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                    <Tooltip title="Editar tarea">
+                        <IconButton
+                            size="small"
+                            onClick={() => {
+                                setSelectedTask(params.row)
+                                setEditModalOpen(true)
+                            }}
+                            sx={{ 
+                                color: 'info.main',
+                                '&:hover': { bgcolor: 'info.50' }
+                            }}
+                        >
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            ),
+        },
+    ]
+
     if (isLoading) {
         return (
             <Box sx={{ p: 3, textAlign: 'center' }}>
@@ -144,13 +290,13 @@ export default function TaskManagement() {
                     Error al cargar tareas
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    {JSON.stringify(error)}
+                    Por favor, inicia sesión para ver los datos
                 </Typography>
             </Box>
         )
     }
 
-    // Agrupar tareas por estado
+    // Estadísticas
     const tasksByStatus = {
         pending: data?.results?.filter(task => task.status === 'pending') || [],
         assigned: data?.results?.filter(task => task.status === 'assigned') || [],
@@ -158,107 +304,14 @@ export default function TaskManagement() {
         completed: data?.results?.filter(task => task.status === 'completed') || [],
     }
 
-    const TaskCard = ({ task }: { task: any }) => (
-        <Card elevation={2} sx={{ mb: 2 }}>
-            <CardContent sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
-                            {getTaskTypeIcon(task.task_type)}
-                        </Typography>
-                        <Chip
-                            label={task.priority ? getPriorityText(task.priority) : 'Media'}
-                            size="small"
-                            color={getPriorityColor(task.priority || 'medium')}
-                            sx={{ fontSize: '0.7rem', height: '20px' }}
-                        />
-                    </Box>
-                    <Chip
-                        label={getStatusText(task.status)}
-                        size="small"
-                        sx={{ 
-                            bgcolor: `${getStatusColor(task.status)}20`,
-                            color: getStatusColor(task.status),
-                            borderColor: getStatusColor(task.status),
-                        }}
-                        variant="outlined"
-                    />
-                </Box>
-
-                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                    {task.title || `Tarea ${task.task_type ? getTaskTypeText(task.task_type) : 'Sin título'}`}
-                </Typography>
-
-                <Stack spacing={1} sx={{ mb: 2 }}>
-                    {task.staff_member_name && (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <PersonIcon sx={{ fontSize: 14, mr: 1, color: 'text.secondary' }} />
-                            <Typography variant="caption" color="text.secondary">
-                                {task.staff_member_name}
-                            </Typography>
-                        </Box>
-                    )}
-                    {task.property_name && (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <PropertyIcon sx={{ fontSize: 14, mr: 1, color: 'text.secondary' }} />
-                            <Typography variant="caption" color="text.secondary">
-                                {task.property_name}
-                            </Typography>
-                        </Box>
-                    )}
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <ScheduleIcon sx={{ fontSize: 14, mr: 1, color: 'text.secondary' }} />
-                        <Typography variant="caption" color="text.secondary">
-                            {task.scheduled_date ? new Date(task.scheduled_date).toLocaleDateString('es-ES') : 'Sin fecha'}
-                        </Typography>
-                    </Box>
-                </Stack>
-
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                    {task.status === 'assigned' && (
-                        <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<StartIcon />}
-                            onClick={() => handleStartWork(task.id)}
-                            color="success"
-                            sx={{ flex: 1, fontSize: '0.75rem' }}
-                        >
-                            Iniciar
-                        </Button>
-                    )}
-                    {task.status === 'in_progress' && (
-                        <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<CompleteIcon />}
-                            onClick={() => handleCompleteWork(task.id)}
-                            color="primary"
-                            sx={{ flex: 1, fontSize: '0.75rem' }}
-                        >
-                            Completar
-                        </Button>
-                    )}
-                    <IconButton
-                        size="small"
-                        onClick={() => console.log('Edit task:', task)}
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        <EditIcon fontSize="small" />
-                    </IconButton>
-                </Box>
-            </CardContent>
-        </Card>
-    )
-
     return (
         <Box sx={{ width: '100%' }}>
             {/* Header */}
-            <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                     <Box>
-                        <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            Gestión de Tareas
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            Tareas
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
                             {data?.count || 0} tareas en total
@@ -269,146 +322,157 @@ export default function TaskManagement() {
                         startIcon={<AddIcon />}
                         onClick={() => console.log('Add new task')}
                         size="large"
+                        sx={{ 
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                        }}
                     >
                         Crear Tarea
                     </Button>
                 </Box>
 
-                {/* Summary Cards */}
+                {/* Estadísticas */}
                 <Grid container spacing={2}>
-                    <Grid item xs={6} md={3}>
-                        <Card elevation={1} sx={{ bgcolor: 'warning.50' }}>
+                    <Grid item xs={6} sm={3}>
+                        <Card elevation={0} sx={{ bgcolor: 'warning.50', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h6" color="warning.main">{tasksByStatus.pending.length}</Typography>
-                                <Typography variant="caption">Pendientes</Typography>
+                                <Typography variant="h5" fontWeight="bold" color="warning.main">
+                                    {tasksByStatus.pending.length}
+                                </Typography>
+                                <Typography variant="body2" color="warning.dark">
+                                    Pendientes
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={3}>
-                        <Card elevation={1} sx={{ bgcolor: 'info.50' }}>
+                    <Grid item xs={6} sm={3}>
+                        <Card elevation={0} sx={{ bgcolor: 'info.50', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h6" color="info.main">{tasksByStatus.assigned.length}</Typography>
-                                <Typography variant="caption">Asignadas</Typography>
+                                <Typography variant="h5" fontWeight="bold" color="info.main">
+                                    {tasksByStatus.assigned.length}
+                                </Typography>
+                                <Typography variant="body2" color="info.dark">
+                                    Asignadas
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={3}>
-                        <Card elevation={1} sx={{ bgcolor: 'secondary.50' }}>
+                    <Grid item xs={6} sm={3}>
+                        <Card elevation={0} sx={{ bgcolor: 'secondary.50', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h6" color="secondary.main">{tasksByStatus.in_progress.length}</Typography>
-                                <Typography variant="caption">En Progreso</Typography>
+                                <Typography variant="h5" fontWeight="bold" color="secondary.main">
+                                    {tasksByStatus.in_progress.length}
+                                </Typography>
+                                <Typography variant="body2" color="secondary.dark">
+                                    En Progreso
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={6} md={3}>
-                        <Card elevation={1} sx={{ bgcolor: 'success.50' }}>
+                    <Grid item xs={6} sm={3}>
+                        <Card elevation={0} sx={{ bgcolor: 'success.50', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h6" color="success.main">{tasksByStatus.completed.length}</Typography>
-                                <Typography variant="caption">Completadas</Typography>
+                                <Typography variant="h5" fontWeight="bold" color="success.main">
+                                    {tasksByStatus.completed.length}
+                                </Typography>
+                                <Typography variant="body2" color="success.dark">
+                                    Completadas
+                                </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
             </Paper>
 
-            {/* Tasks List */}
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Paper elevation={1} sx={{ p: 2, bgcolor: 'grey.50', minHeight: 400 }}>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                            🟡 Pendientes ({tasksByStatus.pending.length})
-                        </Typography>
-                        <Divider sx={{ mb: 2 }} />
-                        {tasksByStatus.pending.map((task) => (
-                            <TaskCard key={task.id} task={task} />
-                        ))}
-                        {tasksByStatus.pending.length === 0 && (
-                            <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', mt: 4 }}>
-                                No hay tareas pendientes
-                            </Typography>
-                        )}
-                    </Paper>
-                </Grid>
-                
-                <Grid item xs={12} sm={6} md={3}>
-                    <Paper elevation={1} sx={{ p: 2, bgcolor: 'grey.50', minHeight: 400 }}>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                            🔵 Asignadas ({tasksByStatus.assigned.length})
-                        </Typography>
-                        <Divider sx={{ mb: 2 }} />
-                        {tasksByStatus.assigned.map((task) => (
-                            <TaskCard key={task.id} task={task} />
-                        ))}
-                        {tasksByStatus.assigned.length === 0 && (
-                            <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', mt: 4 }}>
-                                No hay tareas asignadas
-                            </Typography>
-                        )}
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <Paper elevation={1} sx={{ p: 2, bgcolor: 'grey.50', minHeight: 400 }}>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                            🟣 En Progreso ({tasksByStatus.in_progress.length})
-                        </Typography>
-                        <Divider sx={{ mb: 2 }} />
-                        {tasksByStatus.in_progress.map((task) => (
-                            <TaskCard key={task.id} task={task} />
-                        ))}
-                        {tasksByStatus.in_progress.length === 0 && (
-                            <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', mt: 4 }}>
-                                No hay tareas en progreso
-                            </Typography>
-                        )}
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={3}>
-                    <Paper elevation={1} sx={{ p: 2, bgcolor: 'grey.50', minHeight: 400 }}>
-                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                            🟢 Completadas ({tasksByStatus.completed.length})
-                        </Typography>
-                        <Divider sx={{ mb: 2 }} />
-                        {tasksByStatus.completed.map((task) => (
-                            <TaskCard key={task.id} task={task} />
-                        ))}
-                        {tasksByStatus.completed.length === 0 && (
-                            <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', mt: 4 }}>
-                                No hay tareas completadas
-                            </Typography>
-                        )}
-                    </Paper>
-                </Grid>
-            </Grid>
+            {/* Tabla de Tareas */}
+            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                <DataGrid
+                    rows={data?.results || []}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 25 },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                    sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                            borderBottom: '1px solid #f0f0f0',
+                            py: 2,
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f8f9fa',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            borderBottom: '2px solid #e0e0e0',
+                            color: '#374151',
+                        },
+                        '& .MuiDataGrid-row': {
+                            '&:hover': {
+                                backgroundColor: '#f9fafb',
+                            },
+                            '&:nth-of-type(even)': {
+                                backgroundColor: '#fafbfc',
+                            },
+                        },
+                        '& .MuiDataGrid-footerContainer': {
+                            borderTop: '2px solid #e0e0e0',
+                            backgroundColor: '#f8f9fa',
+                        },
+                    }}
+                />
+            </Paper>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
                 <Paper
-                    elevation={1}
+                    elevation={0}
                     sx={{
-                        p: 6,
+                        p: 8,
                         textAlign: 'center',
                         bgcolor: 'grey.50',
+                        borderRadius: 2,
+                        border: '2px dashed #e0e0e0',
                         mt: 3,
                     }}
                 >
-                    <TaskIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                    <TaskIcon sx={{ fontSize: 80, color: 'text.disabled', mb: 2 }} />
+                    <Typography variant="h5" color="text.secondary" gutterBottom fontWeight="600">
                         No hay tareas registradas
                     </Typography>
-                    <Typography variant="body2" color="text.disabled" sx={{ mb: 3 }}>
+                    <Typography variant="body1" color="text.disabled" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
                         Crea la primera tarea para comenzar la gestión de trabajo
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<AddIcon />}
                         onClick={() => console.log('Add new task')}
+                        size="large"
+                        sx={{ 
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                        }}
                     >
-                        Crear Tarea
+                        Crear Primera Tarea
                     </Button>
                 </Paper>
             )}
+
+            {/* Modal de Edición */}
+            <TaskEditModal
+                open={editModalOpen}
+                onClose={() => {
+                    setEditModalOpen(false)
+                    setSelectedTask(null)
+                }}
+                task={selectedTask}
+                onTaskUpdated={refetch}
+            />
         </Box>
     )
 }

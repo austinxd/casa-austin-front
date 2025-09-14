@@ -5,16 +5,10 @@ import {
     Button,
     IconButton,
     Chip,
-    Card,
-    CardContent,
     Avatar,
     Paper,
-    Stack,
     TextField,
     InputAdornment,
-    List,
-    ListItem,
-    Divider,
     Tooltip,
 } from '@mui/material'
 import {
@@ -25,8 +19,8 @@ import {
     Phone as PhoneIcon,
     Email as EmailIcon,
     Person as PersonIcon,
-    Work as WorkIcon,
 } from '@mui/icons-material'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllStaffQuery, useDeleteStaffMutation } from '@/services/staff/staffService'
 import { StaffMember } from '@/interfaces/staff.interface'
 
@@ -96,110 +90,154 @@ export default function StaffList() {
         }
     }
 
-    const StaffListItem = ({ staff }: { staff: StaffMember }) => (
-        <Card elevation={1} sx={{ mb: 2 }}>
-            <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                    {/* Avatar */}
-                    <Avatar
-                        sx={{ 
-                            width: 60, 
-                            height: 60,
-                            bgcolor: 'primary.main',
-                            fontSize: '1.5rem'
-                        }}
-                    >
-                        {staff.photo ? (
+    const columns: GridColDef[] = [
+        {
+            field: 'full_name',
+            headerName: 'EMPLEADO',
+            flex: 2,
+            minWidth: 200,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
+                    <Avatar sx={{ width: 40, height: 40, mr: 2, fontSize: '1rem' }}>
+                        {params.row.photo ? (
                             <img 
-                                src={staff.photo} 
-                                alt={staff.full_name || 'Usuario'} 
+                                src={params.row.photo} 
+                                alt={params.value || 'Usuario'} 
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                             />
                         ) : (
-                            staff.first_name?.[0] || staff.full_name?.[0] || '?'
+                            params.row.first_name?.[0] || params.row.full_name?.[0] || '?'
                         )}
                     </Avatar>
-
-                    {/* Info Principal */}
-                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="h6" fontWeight="bold" sx={{ mr: 2 }}>
-                                {staff.full_name || 'Sin nombre'}
+                    <Box>
+                        <Typography variant="subtitle2" fontWeight="600">
+                            {params.value || 'Sin nombre'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                            <Typography variant="caption" sx={{ mr: 0.5 }}>
+                                {getStaffTypeIcon(params.row.staff_type || '')}
                             </Typography>
-                            <Chip
-                                label={getStatusText(staff.status || 'inactive')}
-                                size="small"
-                                color={getStatusColor(staff.status || 'inactive')}
-                            />
-                        </Box>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <Typography variant="body2" sx={{ mr: 1 }}>
-                                {getStaffTypeIcon(staff.staff_type || '')}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" fontWeight="medium">
-                                {getStaffTypeText(staff.staff_type || '')}
+                            <Typography variant="caption" color="text.secondary">
+                                {getStaffTypeText(params.row.staff_type || '')}
                             </Typography>
                         </Box>
-
-                        {/* Detalles de contacto */}
-                        <Stack direction="row" spacing={3} flexWrap="wrap">
-                            {staff.email && (
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <EmailIcon sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        {staff.email}
-                                    </Typography>
-                                </Box>
-                            )}
-                            {staff.phone && (
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <PhoneIcon sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        {staff.phone}
-                                    </Typography>
-                                </Box>
-                            )}
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <WorkIcon sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-                                <Typography variant="body2" color="text.secondary">
-                                    <strong>{staff.tasks_today || 0}</strong> tareas hoy
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-                                    💰
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" fontWeight="medium">
-                                    S/{staff.daily_rate || 0}/día
-                                </Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
-
-                    {/* Acciones */}
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="Editar empleado">
-                            <IconButton
-                                onClick={() => handleEdit(staff)}
-                                sx={{ color: 'primary.main' }}
-                            >
-                                <EditIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Eliminar empleado">
-                            <IconButton
-                                onClick={() => handleDelete(staff.id)}
-                                sx={{ color: 'error.main' }}
-                            >
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
                     </Box>
                 </Box>
-            </CardContent>
-        </Card>
-    )
+            ),
+        },
+        {
+            field: 'contact',
+            headerName: 'CONTACTO',
+            flex: 2,
+            minWidth: 200,
+            renderCell: (params) => (
+                <Box sx={{ py: 1 }}>
+                    {params.row.email && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                            <EmailIcon sx={{ fontSize: 14, mr: 1, color: 'text.secondary' }} />
+                            <Typography variant="body2" noWrap>
+                                {params.row.email}
+                            </Typography>
+                        </Box>
+                    )}
+                    {params.row.phone && (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <PhoneIcon sx={{ fontSize: 14, mr: 1, color: 'text.secondary' }} />
+                            <Typography variant="body2">
+                                {params.row.phone}
+                            </Typography>
+                        </Box>
+                    )}
+                    {!params.row.email && !params.row.phone && (
+                        <Typography variant="body2" color="text.disabled">
+                            Sin contacto
+                        </Typography>
+                    )}
+                </Box>
+            ),
+        },
+        {
+            field: 'status',
+            headerName: 'ESTADO',
+            width: 120,
+            renderCell: (params) => (
+                <Chip
+                    label={getStatusText(params.value)}
+                    size="small"
+                    color={getStatusColor(params.value)}
+                    sx={{ 
+                        fontWeight: 'medium',
+                        minWidth: 80,
+                    }}
+                />
+            ),
+        },
+        {
+            field: 'tasks_today',
+            headerName: 'TAREAS HOY',
+            width: 120,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Chip
+                        label={params.value || 0}
+                        size="small"
+                        color={params.value > 0 ? 'primary' : 'default'}
+                        variant="outlined"
+                    />
+                </Box>
+            ),
+        },
+        {
+            field: 'daily_rate',
+            headerName: 'TARIFA DIARIA',
+            width: 130,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Typography variant="body2" fontWeight="600" color="success.main">
+                    S/{params.value || 0}
+                </Typography>
+            ),
+        },
+        {
+            field: 'actions',
+            headerName: 'ACCIONES',
+            width: 120,
+            align: 'center',
+            headerAlign: 'center',
+            sortable: false,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Tooltip title="Editar empleado">
+                        <IconButton
+                            size="small"
+                            onClick={() => handleEdit(params.row)}
+                            sx={{ 
+                                color: 'primary.main',
+                                '&:hover': { bgcolor: 'primary.50' }
+                            }}
+                        >
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Eliminar empleado">
+                        <IconButton
+                            size="small"
+                            onClick={() => handleDelete(params.row.id)}
+                            sx={{ 
+                                color: 'error.main',
+                                '&:hover': { bgcolor: 'error.50' }
+                            }}
+                        >
+                            <DeleteIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            ),
+        },
+    ]
 
     if (isLoading) {
         return (
@@ -219,7 +257,7 @@ export default function StaffList() {
                     Error al cargar personal
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    {JSON.stringify(error)}
+                    Por favor, inicia sesión para ver los datos
                 </Typography>
             </Box>
         )
@@ -228,11 +266,11 @@ export default function StaffList() {
     return (
         <Box sx={{ width: '100%' }}>
             {/* Header */}
-            <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                     <Box>
-                        <Typography variant="h5" fontWeight="bold" gutterBottom>
-                            Gestión de Personal
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            Personal
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
                             {data?.count || 0} empleados registrados
@@ -243,6 +281,11 @@ export default function StaffList() {
                         startIcon={<AddIcon />}
                         onClick={() => console.log('Add new staff')}
                         size="large"
+                        sx={{ 
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                        }}
                     >
                         Agregar Personal
                     </Button>
@@ -251,52 +294,105 @@ export default function StaffList() {
                 {/* Búsqueda */}
                 <TextField
                     fullWidth
-                    size="small"
-                    placeholder="Buscar personal por nombre, email o teléfono..."
+                    placeholder="Buscar por nombre, email o teléfono..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon />
+                                <SearchIcon color="action" />
                             </InputAdornment>
                         ),
                     }}
-                    sx={{ maxWidth: 400 }}
+                    sx={{ 
+                        maxWidth: 400,
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            bgcolor: 'white',
+                        }
+                    }}
                 />
             </Paper>
 
-            {/* Lista de Personal */}
-            <Box>
-                {(data?.results || []).map((staff) => (
-                    <StaffListItem key={staff.id} staff={staff} />
-                ))}
-            </Box>
+            {/* Tabla */}
+            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                <DataGrid
+                    rows={data?.results || []}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 25 },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                    sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                            borderBottom: '1px solid #f0f0f0',
+                            py: 2,
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f8f9fa',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            borderBottom: '2px solid #e0e0e0',
+                            color: '#374151',
+                        },
+                        '& .MuiDataGrid-row': {
+                            '&:hover': {
+                                backgroundColor: '#f9fafb',
+                            },
+                            '&:nth-of-type(even)': {
+                                backgroundColor: '#fafbfc',
+                            },
+                        },
+                        '& .MuiDataGrid-footerContainer': {
+                            borderTop: '2px solid #e0e0e0',
+                            backgroundColor: '#f8f9fa',
+                        },
+                    }}
+                />
+            </Paper>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
                 <Paper
-                    elevation={1}
+                    elevation={0}
                     sx={{
-                        p: 6,
+                        p: 8,
                         textAlign: 'center',
                         bgcolor: 'grey.50',
+                        borderRadius: 2,
+                        border: '2px dashed #e0e0e0',
                     }}
                 >
-                    <PersonIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                    <Typography variant="h6" color="text.secondary" gutterBottom>
-                        No hay personal registrado
+                    <PersonIcon sx={{ fontSize: 80, color: 'text.disabled', mb: 2 }} />
+                    <Typography variant="h5" color="text.secondary" gutterBottom fontWeight="600">
+                        {search ? 'No se encontraron resultados' : 'No hay personal registrado'}
                     </Typography>
-                    <Typography variant="body2" color="text.disabled" sx={{ mb: 3 }}>
-                        {search ? `No se encontraron resultados para "${search}"` : 'Agrega el primer empleado para comenzar la gestión de personal'}
+                    <Typography variant="body1" color="text.disabled" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
+                        {search 
+                            ? `No se encontraron empleados que coincidan con "${search}"`
+                            : 'Agrega el primer empleado para comenzar la gestión de personal'
+                        }
                     </Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => console.log('Add new staff')}
-                    >
-                        Agregar Personal
-                    </Button>
+                    {!search && (
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={() => console.log('Add new staff')}
+                            size="large"
+                            sx={{ 
+                                borderRadius: 2,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                            }}
+                        >
+                            Agregar Primer Empleado
+                        </Button>
+                    )}
                 </Paper>
             )}
         </Box>
