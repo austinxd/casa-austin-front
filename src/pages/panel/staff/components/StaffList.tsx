@@ -38,7 +38,7 @@ export default function StaffList() {
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards')
     const [search, setSearch] = useState('')
 
-    const { data, isLoading, refetch } = useGetAllStaffQuery({
+    const { data, isLoading, error, refetch } = useGetAllStaffQuery({
         page: 1,
         page_size: 50,
         search: search,
@@ -126,7 +126,7 @@ export default function StaffList() {
                         }}
                     >
                         {staff.photo ? (
-                            <img src={staff.photo} alt={staff.full_name} />
+                            <img src={staff.photo} alt={staff.full_name || 'Usuario'} />
                         ) : (
                             staff.first_name?.[0] || staff.full_name?.[0] || '?'
                         )}
@@ -219,13 +219,13 @@ export default function StaffList() {
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar sx={{ width: 32, height: 32, mr: 2, fontSize: '0.875rem' }}>
                         {params.row.photo ? (
-                            <img src={params.row.photo} alt={params.value} />
+                            <img src={params.row.photo} alt={params.value || 'Usuario'} />
                         ) : (
                             params.row.first_name?.[0] || params.row.full_name?.[0] || '?'
                         )}
                     </Avatar>
                     <Typography variant="body2" fontWeight="medium">
-                        {params.value}
+                        {params.value || 'Sin nombre'}
                     </Typography>
                 </Box>
             ),
@@ -329,6 +329,20 @@ export default function StaffList() {
         )
     }
 
+    if (error) {
+        console.error('StaffList API Error:', error)
+        return (
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+                <Typography variant="h6" color="error">
+                    Error al cargar personal
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    {JSON.stringify(error)}
+                </Typography>
+            </Box>
+        )
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
             {/* Header */}
@@ -390,11 +404,11 @@ export default function StaffList() {
             {/* Content */}
             {viewMode === 'cards' ? (
                 <Grid container spacing={3}>
-                    {data?.results?.map((staff) => (
+                    {(data?.results || []).map((staff) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={staff.id}>
                             <StaffCard staff={staff} />
                         </Grid>
-                    )) || []}
+                    ))}
                 </Grid>
             ) : (
                 <Paper elevation={1} sx={{ height: 600, width: '100%' }}>

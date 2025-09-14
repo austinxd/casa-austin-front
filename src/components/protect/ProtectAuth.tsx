@@ -9,8 +9,10 @@ interface Props {
 
 export default function ProtectAuth({ children, navigateTo }: Props) {
     const token = Cookies.get('token')
+    const tokenRefresh = Cookies.get('tokenRefresh')
     const roll = Cookies.get('rollTkn')
-    if (token) {
+    
+    if (token && tokenRefresh) {
         if (roll === 'mantenimiento') {
             return <Navigate to="/panel/disponibilidad" replace />
         } else {

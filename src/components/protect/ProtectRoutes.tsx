@@ -71,7 +71,7 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
       </div>
     )
   }
-  if (!token) return <Navigate to={navigateTo} replace />
+  if (!(token && tokenRefresh)) return <Navigate to={navigateTo} replace />
   if (roll === 'mantenimiento' && pathname !== '/panel/disponibilidad') {
     return <Navigate to="/panel/disponibilidad" replace />
   }
