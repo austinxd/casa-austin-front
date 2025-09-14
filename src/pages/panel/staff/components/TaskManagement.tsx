@@ -113,45 +113,9 @@ export default function TaskManagement() {
 
     const columns: GridColDef[] = [
         {
-            field: 'title',
-            headerName: 'TAREA',
-            flex: 2,
-            minWidth: 250,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
-                    <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
-                        {getTaskTypeIcon(params.row.task_type)}
-                    </Typography>
-                    <Box>
-                        <Typography variant="subtitle2" fontWeight="600">
-                            {params.value || `Tarea ${getTaskTypeText(params.row.task_type)}`}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                            {getTaskTypeText(params.row.task_type)}
-                        </Typography>
-                    </Box>
-                </Box>
-            ),
-        },
-        {
-            field: 'staff_member_name',
-            headerName: 'ASIGNADO A',
-            width: 150,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
-                        {params.value?.[0] || 'U'}
-                    </Avatar>
-                    <Typography variant="body2">
-                        {params.value || 'Sin asignar'}
-                    </Typography>
-                </Box>
-            ),
-        },
-        {
             field: 'property_name',
             headerName: 'PROPIEDAD',
-            width: 160,
+            width: 130,
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {params.row.property_background_color && (
@@ -169,6 +133,36 @@ export default function TaskManagement() {
                     )}
                     <Typography variant="body2" noWrap>
                         {params.value || 'Sin propiedad'}
+                    </Typography>
+                </Box>
+            ),
+        },
+        {
+            field: 'task_type',
+            headerName: 'TIPO',
+            width: 140,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
+                        {getTaskTypeIcon(params.value)}
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                        {getTaskTypeText(params.value)}
+                    </Typography>
+                </Box>
+            ),
+        },
+        {
+            field: 'staff_member_name',
+            headerName: 'ASIGNADO A',
+            width: 140,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                        {params.value?.[0] || 'U'}
+                    </Avatar>
+                    <Typography variant="body2">
+                        {params.value || 'Sin asignar'}
                     </Typography>
                 </Box>
             ),
