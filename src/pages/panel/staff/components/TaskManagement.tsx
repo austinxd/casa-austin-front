@@ -323,51 +323,51 @@ export default function TaskManagement() {
             </Box>
 
             {/* Estadísticas */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Grid container spacing={2}>
+            <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Grid container spacing={1.5}>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'warning.50', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="warning.main">
+                        <Card elevation={0} sx={{ bgcolor: '#ff9800', borderRadius: 2 }}>
+                            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+                                <Typography variant="h6" fontWeight="bold" color="white">
                                     {tasksByStatus.pending.length}
                                 </Typography>
-                                <Typography variant="body2" color="warning.dark">
+                                <Typography variant="caption" color="white">
                                     Pendientes
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: '#1976d2', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="white">
+                        <Card elevation={0} sx={{ bgcolor: '#2196f3', borderRadius: 2 }}>
+                            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+                                <Typography variant="h6" fontWeight="bold" color="white">
                                     {tasksByStatus.assigned.length}
                                 </Typography>
-                                <Typography variant="body2" color="white">
+                                <Typography variant="caption" color="white">
                                     Asignadas
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: '#9c27b0', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="white">
+                        <Card elevation={0} sx={{ bgcolor: '#e91e63', borderRadius: 2 }}>
+                            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+                                <Typography variant="h6" fontWeight="bold" color="white">
                                     {tasksByStatus.in_progress.length}
                                 </Typography>
-                                <Typography variant="body2" color="white">
+                                <Typography variant="caption" color="white">
                                     En Progreso
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'success.50', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="success.main">
+                        <Card elevation={0} sx={{ bgcolor: '#4caf50', borderRadius: 2 }}>
+                            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+                                <Typography variant="h6" fontWeight="bold" color="white">
                                     {tasksByStatus.completed.length}
                                 </Typography>
-                                <Typography variant="body2" color="success.dark">
+                                <Typography variant="caption" color="white">
                                     Completadas
                                 </Typography>
                             </CardContent>
