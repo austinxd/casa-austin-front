@@ -412,38 +412,18 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Typography>
                     </Box>
                     
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
-                        <Chip
-                            label={getPriorityText(task.priority)}
-                            size="small"
-                            sx={{
-                                backgroundColor: getPriorityColor(task.priority),
-                                color: 'white',
-                                fontWeight: 600,
-                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                                height: { xs: 22, sm: 24 }
-                            }}
-                        />
-                        {calculateDaysDifference() > 0 && (
-                            <Chip
-                                label={`Δ${calculateDaysDifference()}d`}
-                                size="small"
-                                icon={<span style={{ fontSize: '0.75rem' }}>⏰</span>}
-                                sx={{
-                                    backgroundColor: getCardBackgroundColor(),
-                                    color: getTextColor(),
-                                    fontWeight: 500,
-                                    fontSize: { xs: '0.6rem', sm: '0.65rem' },
-                                    height: { xs: 18, sm: 20 },
-                                    border: `1px solid ${getTextColor()}`,
-                                    '& .MuiChip-icon': {
-                                        fontSize: '0.7rem',
-                                        color: getTextColor()
-                                    }
-                                }}
-                            />
-                        )}
-                    </Box>
+                    <Chip
+                        label={getPriorityText(task.priority)}
+                        size="small"
+                        sx={{
+                            backgroundColor: getPriorityColor(task.priority),
+                            color: 'white',
+                            fontWeight: 600,
+                            fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                            height: { xs: 22, sm: 24 },
+                            alignSelf: { xs: 'flex-start', sm: 'center' }
+                        }}
+                    />
                 </Box>
 
                 {/* Description */}
