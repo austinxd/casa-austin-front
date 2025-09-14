@@ -154,7 +154,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     fontSize: task.property_name ? "0.75rem" : "0.8rem",
                                 }}
                             >
-                                {task.property_name || "NO ASIGNADA"}
+                                {task.property_name || "NO ASIGNADO"}
                             </Typography>
                         </Box>
                     </Box>
