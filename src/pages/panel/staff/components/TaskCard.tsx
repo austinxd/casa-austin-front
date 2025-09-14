@@ -133,17 +133,6 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 }),
             }}
         >
-            {/* Priority Strip */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 4,
-                    backgroundColor: getPriorityColor(task.priority),
-                }}
-            />
 
             <CardContent sx={{ p: 3, pb: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
                 {/* Header */}
