@@ -88,33 +88,38 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         return Math.max(0, diffDays) // Return 0 if scheduled date is before check-out
     }
 
-    // Get card background color based on days difference using darker theme colors
+    // Get card background color based on days difference using color progression: White → Yellow → Orange → Red
     const getCardBackgroundColor = (): string => {
         const daysDiff = calculateDaysDifference()
         
-        if (daysDiff === 0) return theme.palette.background.paper // Default background
-        if (daysDiff === 1) return theme.palette.grey[200] // Light gray for 1 day
-        if (daysDiff <= 3) return theme.palette.grey[300] // Medium gray for 2-3 days
-        if (daysDiff <= 7) return theme.palette.grey[400] // Darker gray for 4-7 days
-        if (daysDiff <= 14) return theme.palette.grey[500] // Much darker gray for 1-2 weeks
-        return theme.palette.grey[600] // Darkest gray for more than 2 weeks
+        if (daysDiff === 0) return theme.palette.background.paper // Blanco - mismo día
+        if (daysDiff <= 3) return theme.palette.mode === 'dark' ? '#3d3300' : '#fff59d' // Amarillo - 1-3 días
+        if (daysDiff <= 14) return theme.palette.mode === 'dark' ? '#4d2c00' : '#ffcc80' // Naranja - 4-14 días
+        return theme.palette.mode === 'dark' ? '#4d0000' : '#ffab91' // Rojo - 15+ días
     }
 
-    // Get text color based on background darkness for better contrast
+    // Get text color based on background color for better contrast
     const getTextColor = (): string => {
         const daysDiff = calculateDaysDifference()
-        // For all darker backgrounds, use primary text for better readability
-        if (daysDiff >= 1) return theme.palette.text.primary
-        // For default background, use secondary text
-        return theme.palette.text.secondary
+        
+        if (daysDiff === 0) return theme.palette.text.secondary // Default background
+        
+        // For colored backgrounds, use appropriate contrast
+        if (theme.palette.mode === 'dark') {
+            // In dark mode, colored backgrounds are dark, so use light text
+            return theme.palette.common.white
+        } else {
+            // In light mode, colored backgrounds are light, so use dark text
+            return theme.palette.common.black
+        }
     }
 
     // Get divider color based on background for better contrast
     const getDividerColor = (): string => {
         const daysDiff = calculateDaysDifference()
-        // For darker backgrounds, use a more visible divider
-        if (daysDiff >= 7) return theme.palette.grey[700]
-        // For lighter backgrounds, use standard divider
+        // For all colored backgrounds, use a darker divider for better visibility
+        if (daysDiff >= 1) return theme.palette.grey[600]
+        // For white background, use standard divider
         return theme.palette.divider
     }
 
@@ -407,18 +412,38 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Typography>
                     </Box>
                     
-                    <Chip
-                        label={getPriorityText(task.priority)}
-                        size="small"
-                        sx={{
-                            backgroundColor: getPriorityColor(task.priority),
-                            color: 'white',
-                            fontWeight: 600,
-                            fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                            height: { xs: 22, sm: 24 },
-                            alignSelf: { xs: 'flex-start', sm: 'center' }
-                        }}
-                    />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                        <Chip
+                            label={getPriorityText(task.priority)}
+                            size="small"
+                            sx={{
+                                backgroundColor: getPriorityColor(task.priority),
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                height: { xs: 22, sm: 24 }
+                            }}
+                        />
+                        {calculateDaysDifference() > 0 && (
+                            <Chip
+                                label={`Δ${calculateDaysDifference()}d`}
+                                size="small"
+                                icon={<span style={{ fontSize: '0.75rem' }}>⏰</span>}
+                                sx={{
+                                    backgroundColor: getCardBackgroundColor(),
+                                    color: getTextColor(),
+                                    fontWeight: 500,
+                                    fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                                    height: { xs: 18, sm: 20 },
+                                    border: `1px solid ${getTextColor()}`,
+                                    '& .MuiChip-icon': {
+                                        fontSize: '0.7rem',
+                                        color: getTextColor()
+                                    }
+                                }}
+                            />
+                        )}
+                    </Box>
                 </Box>
 
                 {/* Description */}
