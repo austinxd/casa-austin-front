@@ -25,16 +25,16 @@ export const schedulesApi = createApi({
     }),
     tagTypes: ['Schedule'],
     endpoints: (builder) => ({
-        getAllSchedules: builder.query<ApiResponse<Schedule[]>, ScheduleQueryParams>({
+        getAllSchedules: builder.query<Schedule[], ScheduleQueryParams>({
             query: (params) => ({
-                url: '/schedules/',
+                url: '/api/v1/schedules/',
                 params,
             }),
             providesTags: ['Schedule'],
         }),
         createSchedule: builder.mutation<Schedule, CreateScheduleRequest>({
             query: (data) => ({
-                url: '/schedules/',
+                url: '/api/v1/schedules/',
                 method: 'POST',
                 body: data,
             }),
@@ -42,7 +42,7 @@ export const schedulesApi = createApi({
         }),
         getCalendarView: builder.query<CalendarView[], ScheduleQueryParams>({
             query: (params) => ({
-                url: '/schedules/calendar/',
+                url: '/api/v1/schedules/calendar/',
                 params,
             }),
             providesTags: ['Schedule'],

@@ -22,20 +22,20 @@ export const tasksApi = createApi({
     }),
     tagTypes: ['Task', 'PropertySummary'],
     endpoints: (builder) => ({
-        getAllTasks: builder.query<ApiResponse<WorkTask[]>, TaskQueryParams>({
+        getAllTasks: builder.query<WorkTask[], TaskQueryParams>({
             query: (params) => ({
-                url: '/tasks/',
+                url: '/api/v1/tasks/',
                 params,
             }),
             providesTags: ['Task'],
         }),
         getTaskById: builder.query<WorkTask, string>({
-            query: (id) => `/tasks/${id}/`,
+            query: (id) => `/api/v1/tasks/${id}/`,
             providesTags: (_result, _error, id) => [{ type: 'Task', id }],
         }),
         createTask: builder.mutation<WorkTask, CreateTaskRequest>({
             query: (data) => ({
-                url: '/tasks/',
+                url: '/api/v1/tasks/',
                 method: 'POST',
                 body: data,
             }),
@@ -43,8 +43,8 @@ export const tasksApi = createApi({
         }),
         updateTask: builder.mutation<WorkTask, { id: string; data: Partial<WorkTask> }>({
             query: ({ id, data }) => ({
-                url: `/tasks/${id}/`,
-                method: 'PUT',
+                url: `/api/v1/tasks/${id}/`,
+                method: 'PATCH',
                 body: data,
             }),
             invalidatesTags: (_result, _error, { id }) => [
@@ -53,10 +53,10 @@ export const tasksApi = createApi({
                 'PropertySummary',
             ],
         }),
-        startWork: builder.mutation<WorkTask, { id: string; data: StartWorkRequest }>({
+        startWork: builder.mutation<WorkTask, { id: string; data: { status: string; actual_start_time: string } }>({
             query: ({ id, data }) => ({
-                url: `/tasks/${id}/start_work/`,
-                method: 'POST',
+                url: `/api/v1/tasks/${id}/`,
+                method: 'PATCH',
                 body: data,
             }),
             invalidatesTags: (_result, _error, { id }) => [
@@ -65,10 +65,10 @@ export const tasksApi = createApi({
                 'PropertySummary',
             ],
         }),
-        completeWork: builder.mutation<WorkTask, { id: string; data: FormData }>({
+        completeWork: builder.mutation<WorkTask, { id: string; data: { status: string; actual_end_time: string; completion_notes: string } }>({
             query: ({ id, data }) => ({
-                url: `/tasks/${id}/complete_work/`,
-                method: 'POST',
+                url: `/api/v1/tasks/${id}/`,
+                method: 'PATCH',
                 body: data,
             }),
             invalidatesTags: (_result, _error, { id }) => [

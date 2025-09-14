@@ -19,16 +19,16 @@ export const timeTrackingApi = createApi({
     }),
     tagTypes: ['TimeTracking'],
     endpoints: (builder) => ({
-        getAllTimeTracking: builder.query<ApiResponse<TimeTracking[]>, TimeTrackingQueryParams>({
+        getAllTimeTracking: builder.query<TimeTracking[], TimeTrackingQueryParams>({
             query: (params) => ({
-                url: '/time-tracking/',
+                url: '/api/v1/time-tracking/',
                 params,
             }),
             providesTags: ['TimeTracking'],
         }),
         createTimeTracking: builder.mutation<TimeTracking, FormData>({
             query: (data) => ({
-                url: '/time-tracking/',
+                url: '/api/v1/time-tracking/',
                 method: 'POST',
                 body: data,
             }),

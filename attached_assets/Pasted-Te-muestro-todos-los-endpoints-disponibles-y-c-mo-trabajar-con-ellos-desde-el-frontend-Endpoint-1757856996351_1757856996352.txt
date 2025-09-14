@@ -1,0 +1,319 @@
+Te muestro todos los endpoints disponibles y cómo trabajar con ellos desde el frontend:
+
+🚀 Endpoints Disponibles del Sistema de Personal
+🔐 Autenticación
+Todos los endpoints requieren JWT Bearer token:
+
+headers: {
+  'Authorization': 'Bearer YOUR_JWT_TOKEN',
+  'Content-Type': 'application/json'
+}
+📋 1. PERSONAL (/api/v1/staff/)
+GET /api/v1/staff/ - Listar Personal
+// Obtener todo el personal
+fetch('/api/v1/staff/', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+// Con filtros
+fetch('/api/v1/staff/?staff_type=cleaning&status=active', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+Respuesta:
+
+[
+  {
+    "id": "uuid",
+    "full_name": "Juan Pérez",
+    "first_name": "Juan",
+    "last_name": "Pérez", 
+    "phone": "+51999888777",
+    "email": "juan@example.com",
+    "staff_type": "cleaning", // cleaning, maintenance, both
+    "status": "active", // active, inactive, on_leave
+    "photo": "url_to_photo",
+    "hire_date": "2025-01-15",
+    "daily_rate": "120.00",
+    "can_work_weekends": true,
+    "max_properties_per_day": 3,
+    "tasks_today": 2
+  }
+]
+POST /api/v1/staff/ - Crear Personal
+fetch('/api/v1/staff/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    first_name: "María",
+    last_name: "García",
+    phone: "+51988777666",
+    staff_type: "cleaning",
+    daily_rate: "100.00",
+    can_work_weekends: true,
+    max_properties_per_day: 2
+  })
+})
+GET /api/v1/staff/dashboard/ - Dashboard Estadísticas
+fetch('/api/v1/staff/dashboard/', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+Respuesta:
+
+[
+  {
+    "id": "uuid",
+    "full_name": "Juan Pérez",
+    "staff_type": "cleaning",
+    "status": "active",
+    "photo": "url",
+    "tasks_pending": 5,
+    "tasks_completed_today": 2,
+    "current_task": {
+      "id": "task_uuid",
+      "title": "Limpieza checkout - Casa Austin 2",
+      "property": "Casa Austin 2"
+    }
+  }
+]
+GET /api/v1/staff/{id}/tasks/ - Tareas de Personal Específico
+// Tareas de hoy
+fetch('/api/v1/staff/uuid-staff/tasks/', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+// Tareas de fecha específica
+fetch('/api/v1/staff/uuid-staff/tasks/?date=2025-09-20', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+📋 2. TAREAS (/api/v1/tasks/)
+GET /api/v1/tasks/ - Listar Tareas
+// Todas las tareas
+fetch('/api/v1/tasks/', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+// Con filtros (estos dependen de la implementación del backend)
+fetch('/api/v1/tasks/?status=pending&date=2025-09-20', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+Respuesta:
+
+[
+  {
+    "id": "uuid",
+    "staff_member": "staff_uuid",
+    "staff_member_name": "Juan Pérez",
+    "building_property": "property_uuid",
+    "property_name": "Casa Austin 2",
+    "reservation": "reservation_uuid",
+    "task_type": "checkout_cleaning",
+    "title": "Limpieza checkout - Casa Austin 2",
+    "description": "Limpieza post-checkout para reserva #123...",
+    "scheduled_date": "2025-09-20",
+    "estimated_duration": "02:00:00",
+    "priority": "medium", // low, medium, high, urgent
+    "status": "assigned", // pending, assigned, in_progress, completed, cancelled
+    "actual_start_time": null,
+    "actual_end_time": null,
+    "actual_duration_display": null,
+    "requires_photo_evidence": true,
+    "completion_notes": null,
+    "supervisor_approved": false,
+    "photos": []
+  }
+]
+POST /api/v1/tasks/ - Crear Tarea Manual
+fetch('/api/v1/tasks/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    staff_member: "staff_uuid",
+    building_property: "property_uuid",
+    task_type: "maintenance",
+    title: "Revisar aire acondicionado",
+    description: "Revisar y limpiar filtros",
+    scheduled_date: "2025-09-20",
+    estimated_duration: "01:30:00",
+    priority: "medium",
+    requires_photo_evidence: true
+  })
+})
+PATCH /api/v1/tasks/{id}/ - Actualizar Tarea
+// Cambiar estado
+fetch('/api/v1/tasks/task-uuid/', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    status: "in_progress",
+    actual_start_time: "2025-09-20T08:00:00Z"
+  })
+})
+// Completar tarea
+fetch('/api/v1/tasks/task-uuid/', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    status: "completed",
+    actual_end_time: "2025-09-20T10:30:00Z",
+    completion_notes: "Limpieza completada sin problemas"
+  })
+})
+📋 3. SEGUIMIENTO DE TIEMPO (/api/v1/time-tracking/)
+POST /api/v1/time-tracking/ - Registrar Check-in/Check-out
+// Check-in
+fetch('/api/v1/time-tracking/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    staff_member: "staff_uuid",
+    building_property: "property_uuid",
+    work_task: "task_uuid",
+    action_type: "check_in",
+    latitude: -12.0464,
+    longitude: -77.0428,
+    notes: "Inicio de limpieza"
+  })
+})
+// Check-out
+fetch('/api/v1/time-tracking/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    staff_member: "staff_uuid",
+    building_property: "property_uuid", 
+    work_task: "task_uuid",
+    action_type: "check_out",
+    latitude: -12.0464,
+    longitude: -77.0428,
+    notes: "Limpieza finalizada"
+  })
+})
+📋 4. HORARIOS (/api/v1/schedules/)
+GET /api/v1/schedules/ - Obtener Horarios
+fetch('/api/v1/schedules/', {
+  headers: { 'Authorization': 'Bearer ' + token }
+})
+Respuesta:
+
+[
+  {
+    "id": "uuid",
+    "staff_member": "staff_uuid",
+    "staff_member_name": "Juan Pérez",
+    "date": "2025-09-20",
+    "schedule_type": "work_day",
+    "start_time": "08:00:00",
+    "end_time": "17:00:00",
+    "work_hours_display": "08:00 - 17:00",
+    "is_available": true,
+    "notes": null
+  }
+]
+🎯 Ejemplos de Uso en Frontend (React/Vue/Angular)
+1. Dashboard de Personal
+// Obtener estadísticas del dashboard
+const loadDashboard = async () => {
+  try {
+    const response = await fetch('/api/v1/staff/dashboard/', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+    const dashboard = await response.json();
+    
+    // Mostrar personal activo con sus estadísticas
+    dashboard.forEach(staff => {
+      console.log(`${staff.full_name}: ${staff.tasks_pending} pendientes, ${staff.tasks_completed_today} completadas hoy`);
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+2. Lista de Tareas del Día
+// Cargar tareas de hoy para mostrar en calendario
+const loadTodayTasks = async () => {
+  try {
+    const today = new Date().toISOString().split('T')[0]; // 2025-09-20
+    const response = await fetch(`/api/v1/tasks/?date=${today}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const tasks = await response.json();
+    
+    // Agrupar por personal
+    const tasksByStaff = tasks.reduce((acc, task) => {
+      if (!acc[task.staff_member_name]) {
+        acc[task.staff_member_name] = [];
+      }
+      acc[task.staff_member_name].push(task);
+      return acc;
+    }, {});
+    
+    return tasksByStaff;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+3. Marcar Tarea como Completada
+const completeTask = async (taskId, notes) => {
+  try {
+    const response = await fetch(`/api/v1/tasks/${taskId}/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        status: 'completed',
+        actual_end_time: new Date().toISOString(),
+        completion_notes: notes
+      })
+    });
+    
+    if (response.ok) {
+      alert('Tarea completada exitosamente');
+      // Actualizar lista de tareas
+      loadTodayTasks();
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+4. Filtros y Búsquedas
+// Filtrar personal por tipo
+const filterStaffByType = async (staffType) => {
+  const response = await fetch(`/api/v1/staff/?staff_type=${staffType}&status=active`, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  return await response.json();
+};
+// Obtener solo personal de limpieza activo
+const cleaningStaff = await filterStaffByType('cleaning');
+🔧 Estados y Valores Importantes
+Estados de Tareas:
+pending - Pendiente
+assigned - Asignada
+in_progress - En progreso
+completed - Completada
+cancelled - Cancelada
+Tipos de Personal:
+cleaning - Limpieza
+maintenance - Mantenimiento
+both - Ambos
+Prioridades:
+low - Baja
+medium - Media
+high - Alta
+urgent - Urgente

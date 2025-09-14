@@ -21,20 +21,20 @@ export const staffApi = createApi({
     }),
     tagTypes: ['Staff', 'StaffDashboard'],
     endpoints: (builder) => ({
-        getAllStaff: builder.query<ApiResponse<StaffMember[]>, StaffQueryParams>({
+        getAllStaff: builder.query<StaffMember[], StaffQueryParams>({
             query: (params) => ({
-                url: '/staff/',
+                url: '/api/v1/staff/',
                 params,
             }),
             providesTags: ['Staff'],
         }),
         getStaffById: builder.query<StaffMember, string>({
-            query: (id) => `/staff/${id}/`,
+            query: (id) => `/api/v1/staff/${id}/`,
             providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
         }),
         createStaff: builder.mutation<StaffMember, FormData>({
             query: (data) => ({
-                url: '/staff/',
+                url: '/api/v1/staff/',
                 method: 'POST',
                 body: data,
             }),
@@ -42,8 +42,8 @@ export const staffApi = createApi({
         }),
         updateStaff: builder.mutation<StaffMember, { id: string; data: FormData }>({
             query: ({ id, data }) => ({
-                url: `/staff/${id}/`,
-                method: 'PUT',
+                url: `/api/v1/staff/${id}/`,
+                method: 'PATCH',
                 body: data,
             }),
             invalidatesTags: (_result, _error, { id }) => [
@@ -54,17 +54,17 @@ export const staffApi = createApi({
         }),
         deleteStaff: builder.mutation<void, string>({
             query: (id) => ({
-                url: `/staff/${id}/`,
+                url: `/api/v1/staff/${id}/`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Staff', 'StaffDashboard'],
         }),
-        getStaffDashboard: builder.query<StaffDashboard, void>({
-            query: () => '/staff/dashboard/',
+        getStaffDashboard: builder.query<StaffDashboard[], void>({
+            query: () => '/api/v1/staff/dashboard/',
             providesTags: ['StaffDashboard'],
         }),
-        getStaffTasks: builder.query<ApiResponse<WorkTask[]>, string>({
-            query: (id) => `/staff/${id}/tasks/`,
+        getStaffTasks: builder.query<WorkTask[], string>({
+            query: (id) => `/api/v1/staff/${id}/tasks/`,
             providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
         }),
     }),
