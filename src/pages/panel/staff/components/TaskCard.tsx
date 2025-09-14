@@ -127,8 +127,6 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 minHeight: { xs: 'auto', sm: 180, md: 200 },
                 display: 'flex',
                 flexDirection: 'column',
-                // Fondo gris claro para tareas no asignadas
-                bgcolor: !task.staff_member_name ? '#f8f9fa' : 'background.paper',
                 '&:hover': {
                     elevation: 4,
                     transform: 'translateY(-2px)',

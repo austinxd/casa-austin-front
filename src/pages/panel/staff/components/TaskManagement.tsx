@@ -106,59 +106,6 @@ export default function TaskManagement() {
         ? data?.results?.filter(task => task.status === statusFilter) || []
         : data?.results || []
 
-    // Función para agrupar tareas por fecha
-    const groupTasksByDate = (tasks: any[]) => {
-        const groups: { [key: string]: any[] } = {}
-        
-        tasks.forEach(task => {
-            const date = task.scheduled_date 
-                ? new Date(task.scheduled_date).toLocaleDateString('es-ES', {
-                    weekday: 'long',
-                    year: 'numeric', 
-                    month: 'long',
-                    day: 'numeric'
-                })
-                : 'Sin fecha programada'
-            
-            if (!groups[date]) {
-                groups[date] = []
-            }
-            groups[date].push(task)
-        })
-
-        // Ordenar grupos por fecha
-        const sortedGroups = Object.entries(groups).sort(([dateA], [dateB]) => {
-            if (dateA === 'Sin fecha programada') return 1
-            if (dateB === 'Sin fecha programada') return -1
-            
-            // Comparar fechas correctamente
-            if (!dateA.includes(',') || !dateB.includes(',')) return 0
-            
-            const parseSpanishDate = (dateStr: string) => {
-                const parts = dateStr.split(',')
-                if (parts.length < 2) return new Date()
-                
-                const dayPart = parts[1].trim()
-                const dayMatch = dayPart.match(/(\d+) de (\w+) de (\d+)/)
-                if (!dayMatch) return new Date()
-                
-                const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                                 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-                const monthIndex = monthNames.indexOf(dayMatch[2])
-                
-                return new Date(parseInt(dayMatch[3]), monthIndex, parseInt(dayMatch[1]))
-            }
-            
-            const parseDateA = parseSpanishDate(dateA)
-            const parseDateB = parseSpanishDate(dateB)
-            return parseDateA.getTime() - parseDateB.getTime()
-        })
-
-        return sortedGroups
-    }
-
-    const groupedTasks = groupTasksByDate(filteredTasks)
-
     // Estado de filtros
     const statusFilterOptions = [
         { value: 'pending', label: 'Pendientes', color: 'warning' as const },
@@ -300,64 +247,22 @@ export default function TaskManagement() {
                 </Stack>
             </Paper>
 
-            {/* Tareas Agrupadas por Fecha */}
-            {groupedTasks.map(([date, tasks]) => (
-                <Box key={date} sx={{ mb: 4 }}>
-                    {/* Separador de Fecha */}
-                    <Paper
-                        elevation={0}
-                        sx={{
-                            p: { xs: 2, sm: 2.5 },
-                            mb: 3,
-                            bgcolor: 'primary.main',
-                            borderRadius: 2,
-                            background: 'linear-gradient(135deg, #0E6191 0%, #1976d2 100%)',
-                        }}
-                    >
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                color: 'white',
-                                fontWeight: 600,
-                                fontSize: { xs: '1rem', sm: '1.1rem' },
-                                textTransform: 'capitalize',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
+            {/* Grid de Cards de Tareas */}
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
+                {filteredTasks?.map((task) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={task.id}>
+                        <TaskCard
+                            task={task}
+                            onStartWork={handleStartWork}
+                            onCompleteWork={handleCompleteWork}
+                            onEdit={(task) => {
+                                setSelectedTask(task)
+                                setEditModalOpen(true)
                             }}
-                        >
-                            📅 {date}
-                            <Chip
-                                label={`${tasks.length} tarea${tasks.length !== 1 ? 's' : ''}`}
-                                size="small"
-                                sx={{
-                                    bgcolor: 'rgba(255,255,255,0.2)',
-                                    color: 'white',
-                                    fontWeight: 500,
-                                    fontSize: '0.75rem'
-                                }}
-                            />
-                        </Typography>
-                    </Paper>
-
-                    {/* Grid de Cards para esta fecha */}
-                    <Grid container spacing={{ xs: 2, sm: 3 }}>
-                        {tasks.map((task) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={task.id}>
-                                <TaskCard
-                                    task={task}
-                                    onStartWork={handleStartWork}
-                                    onCompleteWork={handleCompleteWork}
-                                    onEdit={(task) => {
-                                        setSelectedTask(task)
-                                        setEditModalOpen(true)
-                                    }}
-                                />
-                            </Grid>
-                        ))}
+                        />
                     </Grid>
-                </Box>
-            ))}
+                ))}
+            </Grid>
 
             {/* Empty State */}
             {(!filteredTasks || filteredTasks.length === 0) && !isLoading && (
