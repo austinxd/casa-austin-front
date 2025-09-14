@@ -88,14 +88,14 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         return Math.max(0, diffDays) // Return 0 if scheduled date is before check-out
     }
 
-    // Get card background color based on days difference using color progression: White → Yellow → Orange → Red
+    // Get card background color based on days difference: 0d=Blanco, 1d=Amarillo, 2d=Naranja, 3d+=Rojo
     const getCardBackgroundColor = (): string => {
         const daysDiff = calculateDaysDifference()
         
         if (daysDiff === 0) return theme.palette.background.paper // Blanco - mismo día
-        if (daysDiff <= 3) return theme.palette.mode === 'dark' ? '#3d3300' : '#fff59d' // Amarillo - 1-3 días
-        if (daysDiff <= 14) return theme.palette.mode === 'dark' ? '#4d2c00' : '#ffcc80' // Naranja - 4-14 días
-        return theme.palette.mode === 'dark' ? '#4d0000' : '#ffab91' // Rojo - 15+ días
+        if (daysDiff === 1) return theme.palette.mode === 'dark' ? '#3d3300' : '#fff59d' // Amarillo - 1 día
+        if (daysDiff === 2) return theme.palette.mode === 'dark' ? '#4d2c00' : '#ffcc80' // Naranja - 2 días
+        return theme.palette.mode === 'dark' ? '#4d0000' : '#ffab91' // Rojo - 3+ días
     }
 
     // Get text color based on background color for better contrast
@@ -479,17 +479,18 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 size="small"
                                 onClick={() => onStartWork(task.id.toString())}
                                 sx={{ 
-                                    color: 'success.main',
-                                    bgcolor: 'success.light',
+                                    color: '#ffffff',
+                                    bgcolor: '#6366f1',
                                     width: { xs: 44, sm: 32 },
                                     height: { xs: 44, sm: 32 },
                                     '&:hover': { 
-                                        bgcolor: 'success.main',
+                                        bgcolor: '#4f46e5',
                                         color: 'white',
-                                        transform: 'scale(1.1)'
+                                        transform: 'scale(1.1)',
+                                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)'
                                     },
-                                    border: '1px solid',
-                                    borderColor: 'success.main',
+                                    border: '1px solid #6366f1',
+                                    transition: 'all 0.3s ease'
                                 }}
                             >
                                 <StartIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
