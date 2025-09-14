@@ -183,7 +183,7 @@ export default function ScheduleManagement() {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">
-                    Gestión de Horarios {viewMode === 'list' && `(${scheduleData?.count || 0} horarios)`}
+                    Gestión de Horarios {viewMode === 'list' && `(${scheduleData?.length || 0} horarios)`}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button
@@ -316,12 +316,15 @@ export default function ScheduleManagement() {
             ) : (
                 <Box sx={{ height: 600, width: '100%' }}>
                     <DataGrid
-                        rows={scheduleData?.data || []}
+                        rows={scheduleData || []}
                         columns={columns}
-                        pageSize={pageSize}
-                        rowsPerPageOptions={[10, 25, 50]}
-                        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                        disableSelectionOnClick
+                        initialState={{
+                            pagination: {
+                                paginationModel: { pageSize: pageSize },
+                            },
+                        }}
+                        pageSizeOptions={[10, 25, 50]}
+                        disableRowSelectionOnClick
                         sx={{
                             '& .MuiDataGrid-cell': {
                                 borderBottom: '1px solid #f0f0f0',

@@ -171,7 +171,7 @@ export default function StaffList() {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">
-                    Personal ({data?.count || 0} empleados)
+                    Personal ({data?.length || 0} empleados)
                 </Typography>
                 <Button
                     variant="contained"
@@ -184,12 +184,15 @@ export default function StaffList() {
             
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={data?.data || []}
+                    rows={data || []}
                     columns={columns}
-                    pageSize={pageSize}
-                    rowsPerPageOptions={[10, 25, 50]}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    disableSelectionOnClick
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: pageSize },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
                     sx={{
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',

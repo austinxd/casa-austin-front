@@ -44,9 +44,8 @@ export default function TaskManagement() {
             await startWork({ 
                 id: taskId, 
                 data: { 
-                    notes: 'Iniciando trabajo',
-                    latitude: 0,
-                    longitude: 0
+                    status: 'in_progress',
+                    actual_start_time: new Date().toISOString()
                 } 
             }).unwrap()
             refetch()
@@ -57,9 +56,14 @@ export default function TaskManagement() {
 
     const handleCompleteWork = async (taskId: string) => {
         try {
-            const formData = new FormData()
-            formData.append('completion_notes', 'Trabajo completado')
-            await completeWork({ id: taskId, data: formData }).unwrap()
+            await completeWork({ 
+                id: taskId, 
+                data: {
+                    status: 'completed',
+                    actual_end_time: new Date().toISOString(),
+                    completion_notes: 'Trabajo completado'
+                }
+            }).unwrap()
             refetch()
         } catch (error) {
             console.error('Error completing work:', error)
@@ -236,7 +240,7 @@ export default function TaskManagement() {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">
-                    Tareas ({data?.count || 0} tareas)
+                    Tareas ({data?.length || 0} tareas)
                 </Typography>
                 <Button
                     variant="contained"
@@ -288,12 +292,15 @@ export default function TaskManagement() {
             
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={data?.data || []}
+                    rows={data || []}
                     columns={columns}
-                    pageSize={pageSize}
-                    rowsPerPageOptions={[10, 25, 50]}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    disableSelectionOnClick
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: pageSize },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
                     sx={{
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',

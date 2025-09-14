@@ -42,9 +42,11 @@ export default function TimeTracking() {
     const handleQuickCheckIn = async () => {
         try {
             const formData = new FormData()
-            formData.append('staff_member', 'current-user-id') // Este se obtendría del usuario logueado
-            formData.append('building_property', 'property-id')
+            formData.append('staff_member', 'staff-uuid-placeholder') // TODO: get from authenticated user
+            formData.append('building_property', 'property-uuid-placeholder') // TODO: get from selected property
             formData.append('action_type', 'check_in')
+            formData.append('latitude', '-12.0464') // TODO: get from geolocation
+            formData.append('longitude', '-77.0428') // TODO: get from geolocation
             formData.append('notes', 'Check-in rápido')
             
             await createTimeTracking(formData).unwrap()
@@ -57,9 +59,11 @@ export default function TimeTracking() {
     const handleQuickCheckOut = async () => {
         try {
             const formData = new FormData()
-            formData.append('staff_member', 'current-user-id')
-            formData.append('building_property', 'property-id')
+            formData.append('staff_member', 'staff-uuid-placeholder') // TODO: get from authenticated user
+            formData.append('building_property', 'property-uuid-placeholder') // TODO: get from selected property
             formData.append('action_type', 'check_out')
+            formData.append('latitude', '-12.0464') // TODO: get from geolocation
+            formData.append('longitude', '-77.0428') // TODO: get from geolocation
             formData.append('notes', 'Check-out rápido')
             
             await createTimeTracking(formData).unwrap()
@@ -155,7 +159,7 @@ export default function TimeTracking() {
     return (
         <Box sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ mb: 3 }}>
-                Seguimiento de Tiempo ({data?.count || 0} registros)
+                Seguimiento de Tiempo ({data?.length || 0} registros)
             </Typography>
 
             {/* Quick Actions */}
@@ -239,12 +243,15 @@ export default function TimeTracking() {
             
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={data?.data || []}
+                    rows={data || []}
                     columns={columns}
-                    pageSize={pageSize}
-                    rowsPerPageOptions={[10, 25, 50]}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    disableSelectionOnClick
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: pageSize },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
                     sx={{
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',
