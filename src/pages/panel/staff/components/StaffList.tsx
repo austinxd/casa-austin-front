@@ -128,25 +128,25 @@ export default function StaffList() {
                         {staff.photo ? (
                             <img src={staff.photo} alt={staff.full_name} />
                         ) : (
-                            staff.first_name[0]
+                            staff.first_name?.[0] || staff.full_name?.[0] || '?'
                         )}
                     </Avatar>
                     <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                         <Typography variant="h6" noWrap>
-                            {staff.full_name}
+                            {staff.full_name || 'Sin nombre'}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
                             <Typography variant="body2" sx={{ mr: 1 }}>
-                                {getStaffTypeIcon(staff.staff_type)}
+                                {getStaffTypeIcon(staff.staff_type || '')}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {getStaffTypeText(staff.staff_type)}
+                                {getStaffTypeText(staff.staff_type || '')}
                             </Typography>
                         </Box>
                         <Chip
-                            label={getStatusText(staff.status)}
+                            label={getStatusText(staff.status || 'inactive')}
                             size="small"
-                            color={getStatusColor(staff.status)}
+                            color={getStatusColor(staff.status || 'inactive')}
                             sx={{ mt: 1 }}
                         />
                     </Box>
@@ -221,7 +221,7 @@ export default function StaffList() {
                         {params.row.photo ? (
                             <img src={params.row.photo} alt={params.value} />
                         ) : (
-                            params.row.first_name[0]
+                            params.row.first_name?.[0] || params.row.full_name?.[0] || '?'
                         )}
                     </Avatar>
                     <Typography variant="body2" fontWeight="medium">
