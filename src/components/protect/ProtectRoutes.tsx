@@ -17,27 +17,60 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
 
   useEffect(() => {
     let cancelled = false
+    let timeoutId: NodeJS.Timeout
+    
     const validate = async () => {
       if (!(token && tokenRefresh)) { setChecking(false); return }
       try {
         setChecking(true)
+        
+        // Timeout después de 8 segundos
+        timeoutId = setTimeout(() => {
+          if (!cancelled) {
+            console.warn('Token validation timed out, logging out')
+            Cookies.remove('token')
+            Cookies.remove('tokenRefresh')
+            Cookies.remove('rollTkn')
+            setChecking(false)
+          }
+        }, 8000)
+        
         const res = await tokenValidate({ refresh: tokenRefresh })
         const access = res?.data?.access
         if (access && access !== token) {
           Cookies.set('token', access, { expires: 7 })
         }
-      } catch {
+      } catch (error) {
+        console.error('Token validation failed:', error)
         Cookies.remove('token')
         Cookies.remove('tokenRefresh')
+        Cookies.remove('rollTkn')
       } finally {
+        clearTimeout(timeoutId)
         if (!cancelled) setChecking(false)
       }
     }
+    
     validate()
-    return () => { cancelled = true }
+    return () => { 
+      cancelled = true 
+      clearTimeout(timeoutId)
+    }
   }, [tokenRefresh])
 
-  if (checking) return null
+  if (checking) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontSize: '16px'
+      }}>
+        Verificando sesión...
+      </div>
+    )
+  }
   if (!token) return <Navigate to={navigateTo} replace />
   if (roll === 'mantenimiento' && pathname !== '/panel/disponibilidad') {
     return <Navigate to="/panel/disponibilidad" replace />

@@ -10,6 +10,7 @@ import 'dayjs/locale/en'
 import 'react-phone-input-2/lib/material.css'
 import 'react-phone-input-2/lib/style.css'
 import { store } from './store/index.ts'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Provider store={store}>
