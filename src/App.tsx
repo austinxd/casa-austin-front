@@ -1,14 +1,16 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Suspense, lazy } from 'react'
 import ProtectAuth from './components/protect/ProtectAuth'
 import ProtectRoutes from './components/protect/ProtectRoutes'
 import Sidebar from './layout/panel/Sidebar'
-
-import CrudClients from './pages/panel/clients/CrudClients'
-import CrudCalender from './pages/panel/calender/CrudCalender'
-import CrudProfits from './pages/panel/profits/CrudProfits'
 import Login from './pages/auth/login/Login'
-import CrudDashboard from './pages/panel/dashboard/CrudDashboard'
-import CrudRentals from './pages/panel/reservations/CrudRentals'
+
+// Lazy loading para componentes pesados
+const CrudClients = lazy(() => import('./pages/panel/clients/CrudClients'))
+const CrudCalender = lazy(() => import('./pages/panel/calender/CrudCalender'))
+const CrudProfits = lazy(() => import('./pages/panel/profits/CrudProfits'))
+const CrudDashboard = lazy(() => import('./pages/panel/dashboard/CrudDashboard'))
+const CrudRentals = lazy(() => import('./pages/panel/reservations/CrudRentals'))
 
 function App() {
     return (
@@ -27,7 +29,9 @@ function App() {
                     element={
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
-                                <CrudDashboard />
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando...</div>}>
+                                    <CrudDashboard />
+                                </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
                     }
@@ -37,7 +41,9 @@ function App() {
                     element={
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
-                                <CrudProfits />
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando...</div>}>
+                                    <CrudProfits />
+                                </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
                     }
@@ -47,7 +53,9 @@ function App() {
                     element={
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
-                                <CrudCalender />
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando calendario...</div>}>
+                                    <CrudCalender />
+                                </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
                     }
@@ -57,7 +65,9 @@ function App() {
                     element={
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
-                                <CrudRentals />
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando...</div>}>
+                                    <CrudRentals />
+                                </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
                     }
@@ -67,7 +77,9 @@ function App() {
                     element={
                         <ProtectRoutes navigateTo="/">
                             <Sidebar>
-                                <CrudClients />
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando...</div>}>
+                                    <CrudClients />
+                                </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
                     }
