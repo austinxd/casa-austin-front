@@ -40,7 +40,7 @@ export const useLoginForm = () => {
                 }
             }
         } catch (error: any) {
-            if (error.response.request.status == 401) {
+            if (error.response && error.response.status === 401) {
                 setErrorMessage('Las credenciales son incorrectas')
             }
             setTimeout(() => {
