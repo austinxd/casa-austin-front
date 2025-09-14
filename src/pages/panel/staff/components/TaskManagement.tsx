@@ -3,26 +3,19 @@ import {
     Box,
     Typography,
     Button,
-    Chip,
+    Paper,
+    Grid,
     Card,
     CardContent,
-    Grid,
-    Paper,
-    IconButton,
-    Tooltip,
-    Avatar,
 } from '@mui/material'
 import {
     Add as AddIcon,
-    PlayArrow as StartIcon,
-    Stop as CompleteIcon,
-    Edit as EditIcon,
     Assignment as TaskIcon,
 } from '@mui/icons-material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
 import TaskEditModal from './TaskEditModal'
 import TaskAddModal from './TaskAddModal'
+import TaskCard from './TaskCard'
 import { WorkTask } from '@/interfaces/staff.interface'
 
 export default function TaskManagement() {
@@ -69,202 +62,6 @@ export default function TaskManagement() {
         }
     }
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'pending': return 'warning'
-            case 'assigned': return 'info'
-            case 'in_progress': return 'secondary'
-            case 'completed': return 'success'
-            case 'cancelled': return 'error'
-            default: return 'default'
-        }
-    }
-
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'pending': return 'Pendiente'
-            case 'assigned': return 'Asignada'
-            case 'in_progress': return 'En Progreso'
-            case 'completed': return 'Completada'
-            case 'cancelled': return 'Cancelada'
-            default: return status
-        }
-    }
-
-    const getTaskTypeText = (type: string) => {
-        switch (type) {
-            case 'checkout_cleaning': return 'Limpieza Salida'
-            case 'maintenance': return 'Mantenimiento'
-            case 'inspection': return 'Inspección'
-            case 'checkin_preparation': return 'Preparación Entrada'
-            default: return type
-        }
-    }
-
-    const getTaskTypeIcon = (type: string) => {
-        switch (type) {
-            case 'checkout_cleaning': return '🧹'
-            case 'maintenance': return '🔧'
-            case 'inspection': return '🔍'
-            case 'checkin_preparation': return '✨'
-            default: return '📋'
-        }
-    }
-
-    const columns: GridColDef[] = [
-        {
-            field: 'property_name',
-            headerName: 'PROPIEDAD',
-            width: 130,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {params.row.property_background_color && (
-                        <Box
-                            sx={{
-                                width: 12,
-                                height: 12,
-                                borderRadius: '50%',
-                                backgroundColor: params.row.property_background_color,
-                                mr: 1,
-                                border: '1px solid #ccc',
-                                flexShrink: 0,
-                            }}
-                        />
-                    )}
-                    <Typography variant="body2" noWrap>
-                        {params.value || 'Sin propiedad'}
-                    </Typography>
-                </Box>
-            ),
-        },
-        {
-            field: 'task_type',
-            headerName: 'TIPO',
-            width: 140,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
-                        {getTaskTypeIcon(params.value)}
-                    </Typography>
-                    <Typography variant="body2" fontWeight="500">
-                        {getTaskTypeText(params.value)}
-                    </Typography>
-                </Box>
-            ),
-        },
-        {
-            field: 'staff_member_name',
-            headerName: 'ASIGNADO A',
-            width: 140,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
-                        {params.value?.[0] || 'U'}
-                    </Avatar>
-                    <Typography variant="body2">
-                        {params.value || 'Sin asignar'}
-                    </Typography>
-                </Box>
-            ),
-        },
-        {
-            field: 'status',
-            headerName: 'ESTADO',
-            width: 130,
-            renderCell: (params) => (
-                <Chip
-                    label={getStatusText(params.value)}
-                    size="small"
-                    color={getStatusColor(params.value)}
-                    sx={{ fontWeight: 'medium', minWidth: 100 }}
-                />
-            ),
-        },
-        {
-            field: 'scheduled_date',
-            headerName: 'FECHA',
-            width: 110,
-            renderCell: (params) => (
-                <Typography variant="body2">
-                    {params.value ? new Date(params.value).toLocaleDateString('es-ES') : 'Sin fecha'}
-                </Typography>
-            ),
-        },
-        {
-            field: 'actions',
-            headerName: 'ACCIONES',
-            width: 160,
-            align: 'center',
-            headerAlign: 'center',
-            sortable: false,
-            disableColumnMenu: true,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                    {params.row.status === 'assigned' && (
-                        <Tooltip title="Iniciar trabajo">
-                            <IconButton
-                                size="medium"
-                                onClick={() => handleStartWork(params.row.id)}
-                                sx={{ 
-                                    color: 'success.main',
-                                    bgcolor: 'success.50',
-                                    '&:hover': { 
-                                        bgcolor: 'success.100',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    border: '1px solid',
-                                    borderColor: 'success.200',
-                                }}
-                            >
-                                <StartIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    )}
-                    {params.row.status === 'in_progress' && (
-                        <Tooltip title="Completar trabajo">
-                            <IconButton
-                                size="medium"
-                                onClick={() => handleCompleteWork(params.row.id)}
-                                sx={{ 
-                                    color: 'primary.main',
-                                    bgcolor: 'primary.50',
-                                    '&:hover': { 
-                                        bgcolor: 'primary.100',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    border: '1px solid',
-                                    borderColor: 'primary.200',
-                                }}
-                            >
-                                <CompleteIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    )}
-                    <Tooltip title="Editar tarea">
-                        <IconButton
-                            size="medium"
-                            onClick={() => {
-                                setSelectedTask(params.row)
-                                setEditModalOpen(true)
-                            }}
-                            sx={{ 
-                                color: 'warning.main',
-                                bgcolor: 'warning.50',
-                                '&:hover': { 
-                                    bgcolor: 'warning.100',
-                                    transform: 'scale(1.1)'
-                                },
-                                border: '1px solid',
-                                borderColor: 'warning.200',
-                            }}
-                        >
-                            <EditIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            ),
-        },
-    ]
 
     if (isLoading) {
         return (
@@ -383,60 +180,22 @@ export default function TaskManagement() {
                 </Grid>
             </Paper>
 
-            {/* Tabla de Tareas */}
-            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                <DataGrid
-                    rows={data?.results || []}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { pageSize: 25 },
-                        },
-                    }}
-                    pageSizeOptions={[10, 25, 50]}
-                    disableRowSelectionOnClick
-                    autoHeight
-                    sx={{
-                        border: 'none',
-                        '& .MuiDataGrid-cell': {
-                            borderBottom: '1px solid #f0f0f0',
-                            py: 2,
-                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                            px: { xs: 1, sm: 2 },
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#f8f9fa',
-                            fontWeight: 700,
-                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                            borderBottom: '2px solid #e0e0e0',
-                            color: '#374151',
-                        },
-                        '& .MuiDataGrid-row': {
-                            minHeight: { xs: '52px', sm: '60px' },
-                            '&:hover': {
-                                backgroundColor: '#f9fafb',
-                            },
-                            '&:nth-of-type(even)': {
-                                backgroundColor: '#fafbfc',
-                            },
-                        },
-                        '& .MuiDataGrid-footerContainer': {
-                            borderTop: '2px solid #e0e0e0',
-                            backgroundColor: '#f8f9fa',
-                            '& .MuiTablePagination-root': {
-                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                            },
-                        },
-                        '@media (max-width: 600px)': {
-                            '& .MuiDataGrid-cell': {
-                                whiteSpace: 'normal',
-                                wordWrap: 'break-word',
-                                lineHeight: '1.2',
-                            },
-                        },
-                    }}
-                />
-            </Paper>
+            {/* Grid de Cards de Tareas */}
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
+                {data?.results?.map((task) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={task.id}>
+                        <TaskCard
+                            task={task}
+                            onStartWork={handleStartWork}
+                            onCompleteWork={handleCompleteWork}
+                            onEdit={(task) => {
+                                setSelectedTask(task)
+                                setEditModalOpen(true)
+                            }}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
