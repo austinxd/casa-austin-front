@@ -5,14 +5,15 @@ import {
     Button,
     Paper,
     Grid,
-    Card,
-    CardContent,
     Chip,
     Stack,
+    TextField,
+    InputAdornment,
 } from '@mui/material'
 import {
     Add as AddIcon,
     Assignment as TaskIcon,
+    Search as SearchIcon,
 } from '@mui/icons-material'
 import ButtonPrimary from '@/components/common/button/ButtonPrimary'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
@@ -115,151 +116,9 @@ export default function TaskManagement() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* Header Compacto */}
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'flex-end', 
-                mb: 2,
-                '@media (max-width: 600px)': {
-                    justifyContent: 'flex-start',
-                },
-            }}>
-                <Box sx={{ 
-                    '@media (max-width: 600px)': {
-                        width: '100%',
-                    },
-                }}>
-                    <ButtonPrimary
-                        onClick={() => setAddModalOpen(true)}
-                        style={{
-                            background: '#0E6191',
-                            color: 'white',
-                            height: '45px',
-                            fontWeight: 600,
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                        }}
-                    >
-                        <AddIcon sx={{ fontSize: '20px' }} />
-                        Crear Tarea
-                    </ButtonPrimary>
-                </Box>
-            </Box>
 
-            {/* Estadísticas */}
-            <Paper elevation={0} sx={{ 
-                p: { xs: 1.5, sm: 2 }, 
-                mb: 3, 
-                bgcolor: 'grey.50', 
-                borderRadius: 2 
-            }}>
-                <Grid container spacing={{ xs: 1, sm: 1.5 }}>
-                    <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'warning.main', borderRadius: 2 }}>
-                            <CardContent sx={{ 
-                                textAlign: 'center', 
-                                py: { xs: 1, sm: 1.5 }, 
-                                px: { xs: 0.5, sm: 1 } 
-                            }}>
-                                <Typography 
-                                    variant="h6" 
-                                    fontWeight="bold" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-                                >
-                                    {tasksByStatus.pending.length}
-                                </Typography>
-                                <Typography 
-                                    variant="caption" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                >
-                                    Pendientes
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'info.main', borderRadius: 2 }}>
-                            <CardContent sx={{ 
-                                textAlign: 'center', 
-                                py: { xs: 1, sm: 1.5 }, 
-                                px: { xs: 0.5, sm: 1 } 
-                            }}>
-                                <Typography 
-                                    variant="h6" 
-                                    fontWeight="bold" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-                                >
-                                    {tasksByStatus.assigned.length}
-                                </Typography>
-                                <Typography 
-                                    variant="caption" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                >
-                                    Asignadas
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'secondary.main', borderRadius: 2 }}>
-                            <CardContent sx={{ 
-                                textAlign: 'center', 
-                                py: { xs: 1, sm: 1.5 }, 
-                                px: { xs: 0.5, sm: 1 } 
-                            }}>
-                                <Typography 
-                                    variant="h6" 
-                                    fontWeight="bold" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-                                >
-                                    {tasksByStatus.in_progress.length}
-                                </Typography>
-                                <Typography 
-                                    variant="caption" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                >
-                                    En Progreso
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'success.main', borderRadius: 2 }}>
-                            <CardContent sx={{ 
-                                textAlign: 'center', 
-                                py: { xs: 1, sm: 1.5 }, 
-                                px: { xs: 0.5, sm: 1 } 
-                            }}>
-                                <Typography 
-                                    variant="h6" 
-                                    fontWeight="bold" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-                                >
-                                    {tasksByStatus.completed.length}
-                                </Typography>
-                                <Typography 
-                                    variant="caption" 
-                                    color="white"
-                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                >
-                                    Completadas
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            </Paper>
 
-            {/* Filtros Rápidos */}
+            {/* Filtros y Acciones */}
             <Paper elevation={0} sx={{ 
                 p: { xs: 1.5, sm: 2 }, 
                 mb: 3, 
@@ -268,17 +127,77 @@ export default function TaskManagement() {
                 border: '1px solid',
                 borderColor: 'divider'
             }}>
-                <Typography 
-                    variant="subtitle2" 
-                    color="text.secondary" 
-                    sx={{ 
-                        mb: 1.5,
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        fontWeight: 600
-                    }}
-                >
-                    Filtrar por estado:
-                </Typography>
+                {/* Fila superior con botones de acción */}
+                <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    mb: 2,
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 2, sm: 1 }
+                }}>
+                    <Typography 
+                        variant="subtitle2" 
+                        color="text.secondary" 
+                        sx={{ 
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            fontWeight: 600,
+                            order: { xs: 2, sm: 1 }
+                        }}
+                    >
+                        Filtrar por estado:
+                    </Typography>
+                    
+                    <Box sx={{ 
+                        display: 'flex', 
+                        gap: 1.5,
+                        order: { xs: 1, sm: 2 },
+                        width: { xs: '100%', sm: 'auto' },
+                        flexDirection: { xs: 'column', sm: 'row' }
+                    }}>
+                        {/* Campo de búsqueda */}
+                        <TextField
+                            size="small"
+                            placeholder="Buscar tareas..."
+                            variant="outlined"
+                            sx={{ 
+                                minWidth: { xs: '100%', sm: 200 },
+                                '& .MuiOutlinedInput-root': {
+                                    height: 40,
+                                    bgcolor: 'white'
+                                }
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        
+                        {/* Botón crear tarea */}
+                        <ButtonPrimary
+                            onClick={() => setAddModalOpen(true)}
+                            style={{
+                                background: '#0E6191',
+                                color: 'white',
+                                height: '40px',
+                                fontWeight: 600,
+                                minWidth: '160px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                borderRadius: '6px'
+                            }}
+                        >
+                            <AddIcon sx={{ fontSize: '20px' }} />
+                            Crear Tarea
+                        </ButtonPrimary>
+                    </Box>
+                </Box>
+
+                {/* Fila inferior con filtros */}
                 <Stack 
                     direction="row" 
                     spacing={{ xs: 1, sm: 1.5 }}
