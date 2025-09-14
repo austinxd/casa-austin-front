@@ -6,7 +6,6 @@ import {
     TimeTrackingQueryParams,
 } from '../../interfaces/staff.interface'
 
-import { ApiResponse } from '../../interfaces/api.interface'
 
 export const timeTrackingApi = createApi({
     reducerPath: 'timeTrackingApi',
@@ -21,14 +20,14 @@ export const timeTrackingApi = createApi({
     endpoints: (builder) => ({
         getAllTimeTracking: builder.query<TimeTracking[], TimeTrackingQueryParams>({
             query: (params) => ({
-                url: '/api/v1/time-tracking/',
+                url: '/time-tracking/',
                 params,
             }),
             providesTags: ['TimeTracking'],
         }),
         createTimeTracking: builder.mutation<TimeTracking, FormData>({
             query: (data) => ({
-                url: '/api/v1/time-tracking/',
+                url: '/time-tracking/',
                 method: 'POST',
                 body: data,
             }),

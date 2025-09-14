@@ -5,11 +5,8 @@ import {
     WorkTask,
     TaskQueryParams,
     CreateTaskRequest,
-    StartWorkRequest,
     PropertySummary,
 } from '../../interfaces/staff.interface'
-
-import { ApiResponse } from '../../interfaces/api.interface'
 
 export const tasksApi = createApi({
     reducerPath: 'tasksApi',
@@ -24,18 +21,18 @@ export const tasksApi = createApi({
     endpoints: (builder) => ({
         getAllTasks: builder.query<WorkTask[], TaskQueryParams>({
             query: (params) => ({
-                url: '/api/v1/tasks/',
+                url: '/tasks/',
                 params,
             }),
             providesTags: ['Task'],
         }),
         getTaskById: builder.query<WorkTask, string>({
-            query: (id) => `/api/v1/tasks/${id}/`,
+            query: (id) => `/tasks/${id}/`,
             providesTags: (_result, _error, id) => [{ type: 'Task', id }],
         }),
         createTask: builder.mutation<WorkTask, CreateTaskRequest>({
             query: (data) => ({
-                url: '/api/v1/tasks/',
+                url: '/tasks/',
                 method: 'POST',
                 body: data,
             }),
@@ -43,7 +40,7 @@ export const tasksApi = createApi({
         }),
         updateTask: builder.mutation<WorkTask, { id: string; data: Partial<WorkTask> }>({
             query: ({ id, data }) => ({
-                url: `/api/v1/tasks/${id}/`,
+                url: `/tasks/${id}/`,
                 method: 'PATCH',
                 body: data,
             }),
@@ -55,7 +52,7 @@ export const tasksApi = createApi({
         }),
         startWork: builder.mutation<WorkTask, { id: string; data: { status: string; actual_start_time: string } }>({
             query: ({ id, data }) => ({
-                url: `/api/v1/tasks/${id}/`,
+                url: `/tasks/${id}/`,
                 method: 'PATCH',
                 body: data,
             }),
@@ -67,7 +64,7 @@ export const tasksApi = createApi({
         }),
         completeWork: builder.mutation<WorkTask, { id: string; data: { status: string; actual_end_time: string; completion_notes: string } }>({
             query: ({ id, data }) => ({
-                url: `/api/v1/tasks/${id}/`,
+                url: `/tasks/${id}/`,
                 method: 'PATCH',
                 body: data,
             }),

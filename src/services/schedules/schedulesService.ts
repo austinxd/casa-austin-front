@@ -7,7 +7,6 @@ import {
     CreateScheduleRequest,
 } from '../../interfaces/staff.interface'
 
-import { ApiResponse } from '../../interfaces/api.interface'
 
 export interface CalendarView {
     date: string
@@ -27,14 +26,14 @@ export const schedulesApi = createApi({
     endpoints: (builder) => ({
         getAllSchedules: builder.query<Schedule[], ScheduleQueryParams>({
             query: (params) => ({
-                url: '/api/v1/schedules/',
+                url: '/schedules/',
                 params,
             }),
             providesTags: ['Schedule'],
         }),
         createSchedule: builder.mutation<Schedule, CreateScheduleRequest>({
             query: (data) => ({
-                url: '/api/v1/schedules/',
+                url: '/schedules/',
                 method: 'POST',
                 body: data,
             }),
@@ -42,7 +41,7 @@ export const schedulesApi = createApi({
         }),
         getCalendarView: builder.query<CalendarView[], ScheduleQueryParams>({
             query: (params) => ({
-                url: '/api/v1/schedules/calendar/',
+                url: '/schedules/calendar/',
                 params,
             }),
             providesTags: ['Schedule'],
