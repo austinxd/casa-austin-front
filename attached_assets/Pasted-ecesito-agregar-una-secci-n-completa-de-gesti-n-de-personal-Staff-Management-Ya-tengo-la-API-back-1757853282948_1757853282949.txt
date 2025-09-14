@@ -1,0 +1,154 @@
+ecesito agregar una sección completa de gestión de personal (Staff Management). Ya tengo la API backend funcionando con autenticación JWT.
+
+🎯 Funcionalidades a desarrollar:
+1. Gestión de Personal
+
+Lista de empleados con filtros (tipo, estado)
+Crear/editar/eliminar empleados
+Dashboard con estadísticas diarias
+Vista de tareas asignadas por empleado
+2. Gestión de Tareas
+
+Lista de tareas con filtros (staff, propiedad, estado, fecha, tipo)
+Crear/asignar/editar tareas
+Iniciar/completar trabajo con geolocalización
+Subir fotos de evidencia
+Resumen de tareas por propiedad
+3. Seguimiento de Tiempo
+
+Registros de check-in/check-out
+Historia de tiempo trabajado
+Filtros por empleado y fecha
+4. Horarios
+
+Calendario mensual del personal
+Asignar/editar horarios
+Vista de calendario con todos los empleados
+🔌 API Endpoints disponibles:
+// Autenticación (ya debe estar implementada)
+POST /api/v1/login/
+POST /api/v1/token/refresh/
+// Personal
+GET    /api/v1/staff/           - Lista empleados
+POST   /api/v1/staff/           - Crear empleado  
+GET    /api/v1/staff/{id}/      - Ver empleado
+PUT    /api/v1/staff/{id}/      - Actualizar empleado
+DELETE /api/v1/staff/{id}/      - Eliminar empleado
+GET    /api/v1/staff/dashboard/ - Dashboard stats
+GET    /api/v1/staff/{id}/tasks/ - Tareas del empleado
+// Tareas
+GET    /api/v1/tasks/                    - Lista tareas
+POST   /api/v1/tasks/                    - Crear tarea
+GET    /api/v1/tasks/{id}/               - Ver tarea
+PUT    /api/v1/tasks/{id}/               - Actualizar tarea
+POST   /api/v1/tasks/{id}/start_work/    - Iniciar trabajo
+POST   /api/v1/tasks/{id}/complete_work/ - Completar trabajo
+POST   /api/v1/tasks/{id}/upload-photo/  - Subir foto
+GET    /api/v1/tasks/property_summary/   - Resumen propiedades
+// Tiempo
+GET    /api/v1/time-tracking/     - Registros tiempo
+POST   /api/v1/time-tracking/     - Nuevo registro
+// Horarios  
+GET    /api/v1/schedules/         - Lista horarios
+POST   /api/v1/schedules/         - Crear horario
+GET    /api/v1/schedules/calendar/ - Vista calendario
+📊 Estructuras de datos principales:
+// StaffMember
+{
+  id: "uuid",
+  full_name: "string",
+  first_name: "string", 
+  last_name: "string",
+  phone: "string",
+  email: "string",
+  staff_type: "cleaner|maintenance|supervisor|admin",
+  status: "active|inactive|on_leave",
+  photo: "url",
+  hire_date: "date",
+  daily_rate: "decimal",
+  can_work_weekends: boolean,
+  max_properties_per_day: number,
+  tasks_today: number
+}
+// WorkTask
+{
+  id: "uuid",
+  staff_member: "uuid",
+  staff_member_name: "string",
+  building_property: "uuid", 
+  property_name: "string",
+  reservation: "uuid",
+  task_type: "checkout_cleaning|maintenance|inspection|checkin_preparation",
+  title: "string",
+  description: "text",
+  scheduled_date: "date",
+  estimated_duration: "HH:MM:SS",
+  priority: "low|medium|high|urgent",
+  status: "pending|assigned|in_progress|completed|cancelled",
+  actual_start_time: "datetime",
+  actual_end_time: "datetime", 
+  actual_duration_display: "string",
+  requires_photo_evidence: boolean,
+  completion_notes: "text",
+  supervisor_approved: boolean,
+  photos: [TaskPhoto]
+}
+// TimeTracking
+{
+  id: "uuid",
+  staff_member: "uuid",
+  staff_member_name: "string",
+  building_property: "uuid",
+  property_name: "string", 
+  work_task: "uuid",
+  action_type: "check_in|check_out|break_start|break_end",
+  timestamp: "datetime",
+  latitude: "decimal",
+  longitude: "decimal",
+  location_verified: boolean,
+  photo: "url",
+  notes: "text"
+}
+🎨 Componentes sugeridos a desarrollar:
+Páginas principales:
+
+/staff - Lista de empleados
+/staff/create - Crear empleado
+/staff/{id} - Vista/edición empleado
+/staff/dashboard - Dashboard general
+/tasks - Lista de tareas
+/tasks/create - Crear tarea
+/tasks/{id} - Vista/edición tarea
+/time-tracking - Registros de tiempo
+/schedules - Calendario/horarios
+Componentes reutilizables:
+
+StaffCard - Tarjeta de empleado
+TaskCard - Tarjeta de tarea
+TaskStatusBadge - Badge de estado
+StaffTypeFilter - Filtro por tipo
+DateFilter - Filtro por fecha
+PhotoUpload - Subida de fotos
+LocationTracker - Componente geolocalización
+TimeTracker - Cronómetro trabajo
+StaffCalendar - Vista calendario
+📱 Features importantes:
+Geolocalización: Para check-in/out y verificación de ubicación
+Cámara/galería: Para subir fotos de evidencia
+Notificaciones: Para cambios de estado y asignaciones
+Filtros avanzados: Por fecha, staff, propiedad, estado
+Dashboard tiempo real: Con estadísticas y métricas
+Vista móvil responsive: Para uso en campo
+Offline support: Para áreas con mala conexión
+🔐 Autenticación:
+Usar JWT Bearer token en header: Authorization: Bearer {token}
+
+🚀 Requerimientos técnicos:
+Framework: React + Vite (integrar con ERP existente)
+UI: Componentes modulares y reutilizables
+Estado: Context API o Zustand
+HTTP: Axios con interceptors para auth
+Formas: React Hook Form + validación
+Fechas: date-fns o dayjs
+Iconos: Lucide React o similar
+Styling: Tailwind CSS recomendado

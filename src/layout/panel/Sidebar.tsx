@@ -6,6 +6,10 @@ import {
     PersonOutlined as PersonOutlinedIcon,
     LoginOutlined as LoginOutlinedIcon,
     Menu as MenuIcon,
+    People as PeopleIcon,
+    Task as TaskIcon,
+    AccessTime as AccessTimeIcon,
+    Schedule as ScheduleIcon,
 } from '@mui/icons-material'
 import {
     AppBar,
@@ -59,6 +63,30 @@ const menuItems = [
     },
     {
         id: 6,
+        text: 'Personal',
+        icon: PeopleIcon,
+        path: '/panel/personal',
+    },
+    {
+        id: 7,
+        text: 'Tareas',
+        icon: TaskIcon,
+        path: '/panel/tareas',
+    },
+    {
+        id: 8,
+        text: 'Tiempo',
+        icon: AccessTimeIcon,
+        path: '/panel/tiempo',
+    },
+    {
+        id: 9,
+        text: 'Horarios',
+        icon: ScheduleIcon,
+        path: '/panel/horarios',
+    },
+    {
+        id: 10,
         text: 'Cerrar sesión',
         icon: LoginOutlinedIcon,
         path: '/panel/cerrar-sesion',
@@ -128,7 +156,7 @@ export default function Sidebar(props: Props) {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 5).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 9).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
@@ -163,7 +191,7 @@ export default function Sidebar(props: Props) {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(5, 6).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(9, 10).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{

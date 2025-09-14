@@ -4,6 +4,10 @@ import { clientApi } from '../services/clients/clientsService'
 import { rentalApi } from '../services/rentals/rentalService'
 import { dashboardApi } from '../services/dashboard/dashboardSlice'
 import { profitsApi } from '../services/profits/profitsSlice'
+import { staffApi } from '../services/staff/staffService'
+import { tasksApi } from '../services/tasks/tasksService'
+import { timeTrackingApi } from '../services/time-tracking/timeTrackingService'
+import { schedulesApi } from '../services/schedules/schedulesService'
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +17,10 @@ export const store = configureStore({
         [clientApi.reducerPath]: clientApi.reducer,
         [dashboardApi.reducerPath]: dashboardApi.reducer,
         [profitsApi.reducerPath]: profitsApi.reducer,
+        [staffApi.reducerPath]: staffApi.reducer,
+        [tasksApi.reducerPath]: tasksApi.reducer,
+        [timeTrackingApi.reducerPath]: timeTrackingApi.reducer,
+        [schedulesApi.reducerPath]: schedulesApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -20,7 +28,11 @@ export const store = configureStore({
             rentalApi.middleware,
             clientApi.middleware,
             dashboardApi.middleware,
-            profitsApi.middleware
+            profitsApi.middleware,
+            staffApi.middleware,
+            tasksApi.middleware,
+            timeTrackingApi.middleware,
+            schedulesApi.middleware
         ),
 })
 
