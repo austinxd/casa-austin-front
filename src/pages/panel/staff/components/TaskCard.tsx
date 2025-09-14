@@ -252,9 +252,6 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     flex: 1
                                 }}
                             >
-                                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                                    Asignado a: 
-                                </Box>
                                 <strong>{task.staff_member_name}</strong>
                             </Typography>
                         </>
