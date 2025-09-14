@@ -322,11 +322,11 @@ export default function TaskManagement() {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setAddModalOpen(true)}
-                    fullWidth={isMobile}
                     sx={{ 
                         borderRadius: 2,
                         textTransform: 'none',
                         fontWeight: 600,
+                        width: { xs: '100%', sm: 'auto' },
                         maxWidth: { xs: '100%', sm: 'auto' }
                     }}
                 >
@@ -389,53 +389,8 @@ export default function TaskManagement() {
             </Paper>
 
             {/* Tabla de Tareas Responsive */}
-            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-                {isMobile ? (
-                    <Box sx={{ height: 400, width: '100%' }}>
-                        <DataGrid
-                            rows={data?.results || []}
-                            columns={columns}
-                            density="compact"
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { pageSize: 8 },
-                                },
-                            }}
-                            pageSizeOptions={[5, 8, 10]}
-                            disableRowSelectionOnClick
-                            sx={{
-                                border: 'none',
-                                '& .MuiDataGrid-cell': {
-                                    borderBottom: '1px solid #f0f0f0',
-                                    py: 0.5,
-                                    fontSize: '0.8rem',
-                                },
-                                '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#f8f9fa',
-                                    fontWeight: 700,
-                                    fontSize: '0.75rem',
-                                    borderBottom: '2px solid #e0e0e0',
-                                    color: '#374151',
-                                    minHeight: '36px !important',
-                                },
-                                '& .MuiDataGrid-row': {
-                                    minHeight: '44px !important',
-                                    '&:hover': {
-                                        backgroundColor: '#f9fafb',
-                                    },
-                                    '&:nth-of-type(even)': {
-                                        backgroundColor: '#fafbfc',
-                                    },
-                                },
-                                '& .MuiDataGrid-footerContainer': {
-                                    borderTop: '2px solid #e0e0e0',
-                                    backgroundColor: '#f8f9fa',
-                                    minHeight: '40px',
-                                },
-                            }}
-                        />
-                    </Box>
-                ) : (
+            <Box sx={{ height: { xs: 450, sm: 'auto' }, width: '100%' }}>
+                <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden', height: '100%' }}>
                     <DataGrid
                         rows={data?.results || []}
                         columns={columns}
@@ -445,26 +400,34 @@ export default function TaskManagement() {
                                 paginationModel: { pageSize: 25 },
                             },
                         }}
-                        pageSizeOptions={[10, 25, 50]}
+                        pageSizeOptions={[5, 10, 25, 50]}
                         disableRowSelectionOnClick
-                        autoHeight
+                        autoHeight={false}
                         sx={{
                             border: 'none',
+                            height: '100%',
                             '& .MuiDataGrid-cell': {
                                 borderBottom: '1px solid #f0f0f0',
-                                py: 2,
-                                fontSize: '0.875rem',
+                                py: { xs: 0.5, sm: 2 },
+                                px: { xs: 1, sm: 2 },
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: '#f8f9fa',
                                 fontWeight: 700,
-                                fontSize: '0.875rem',
+                                fontSize: { xs: '0.7rem', sm: '0.875rem' },
                                 borderBottom: '2px solid #e0e0e0',
                                 color: '#374151',
-                                minHeight: '56px !important',
+                                minHeight: { xs: '40px !important', sm: '56px !important' },
+                                '& .MuiDataGrid-columnHeaderTitle': {
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                },
                             },
                             '& .MuiDataGrid-row': {
-                                minHeight: '72px !important',
+                                minHeight: { xs: '48px !important', sm: '72px !important' },
                                 '&:hover': {
                                     backgroundColor: '#f9fafb',
                                 },
@@ -475,12 +438,18 @@ export default function TaskManagement() {
                             '& .MuiDataGrid-footerContainer': {
                                 borderTop: '2px solid #e0e0e0',
                                 backgroundColor: '#f8f9fa',
-                                minHeight: '52px',
+                                minHeight: { xs: '44px', sm: '52px' },
+                                '& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel': {
+                                    fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                                },
+                            },
+                            '& .MuiDataGrid-selectedRowCount': {
+                                display: { xs: 'none', sm: 'block' },
                             },
                         }}
                     />
-                )}
-            </Paper>
+                </Paper>
+            </Box>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
