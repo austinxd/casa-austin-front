@@ -100,6 +100,17 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         }
     }
 
+    const getPropertyColor = (propertyName: string) => {
+        // Colores por defecto para cada casa
+        switch (propertyName) {
+            case 'Casa Austin 1': return '#FF6B6B'  // Rojo
+            case 'Casa Austin 2': return '#4ECDC4'  // Verde azulado
+            case 'Casa Austin 3': return '#45B7D1'  // Azul
+            case 'Casa Austin 4': return '#F7D794'  // Amarillo
+            default: return '#9E9E9E' // Gris por defecto
+        }
+    }
+
     return (
         <Card
             elevation={2}
@@ -116,6 +127,10 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     transform: 'translateY(-2px)',
                 },
                 border: 'none',
+                // Agregar el color de fondo de la propiedad como borde
+                ...(task.property_name && {
+                    borderLeft: `4px solid ${getPropertyColor(task.property_name)}`,
+                }),
             }}
         >
             {/* Priority Strip */}
@@ -144,8 +159,11 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             </Typography>
                             <Typography 
                                 variant="caption" 
-                                color={task.property_name ? "text.secondary" : "error.main"}
-                                sx={{ fontWeight: task.property_name ? 400 : 600 }}
+                                sx={{ 
+                                    color: task.property_name ? "text.secondary" : "#d32f2f",
+                                    fontWeight: task.property_name ? 400 : 700,
+                                    fontSize: task.property_name ? "0.75rem" : "0.8rem",
+                                }}
                             >
                                 {task.property_name || "NO ASIGNADA"}
                             </Typography>
