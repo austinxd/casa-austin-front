@@ -22,7 +22,7 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+            {value === index && <Box>{children}</Box>}
         </div>
     )
 }
@@ -42,7 +42,7 @@ export default function PersonalManagement() {
     }
 
     return (
-        <Box sx={{ width: '100%', p: 3 }}>
+        <Box sx={{ width: '100%' }}>
             <Typography variant="h1" mb={3}>
                 Gestión de Personal
             </Typography>
