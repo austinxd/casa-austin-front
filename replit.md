@@ -15,7 +15,7 @@ Casa Austin is a property rental management system built with React and TypeScri
   - **Valid MUI color tokens**: Improved theme consistency
   - **Ellipsis overflow handling**: Property names and long text properly truncated
   - **Dual-date display**: Shows both check-out date (when reservation ended) and scheduled date (when task is programmed) with clear labeling and emojis
-  - **Dynamic color progression system**: Card backgrounds use White → Yellow → Orange → Red color progression based on time gap between check-out and scheduled dates, providing clear visual feedback for task urgency. Includes theme-aware colors for light/dark modes and numeric delay chips (Δ{days}d) for accessibility
+  - **Dynamic color progression system**: Card backgrounds use White → Yellow → Orange → Red color progression based on time gap between check-out and scheduled dates, providing clear visual feedback for task urgency. Includes theme-aware colors for light/dark modes and numeric delay chips (Δ{days}d) for accessibility. Updated to daily precision: 0d=White, 1d=Yellow, 2d=Orange, 3d+=Red
 - **TaskManagement Component**: Major UI restructuring for cleaner, more functional interface
   - **Removed statistics cards**: Eliminated summary cards showing task counts (Pendientes, Asignadas, En Progreso, Completadas) for cleaner interface
   - **Repositioned action buttons**: Moved create task and search buttons to filter level for better accessibility
