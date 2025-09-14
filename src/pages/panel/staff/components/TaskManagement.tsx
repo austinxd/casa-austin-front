@@ -396,17 +396,18 @@ export default function TaskManagement() {
                     density="compact"
                     initialState={{
                         pagination: {
-                            paginationModel: { pageSize: 25 },
+                            paginationModel: { pageSize: isMobile ? 10 : 25 },
                         },
                     }}
-                    pageSizeOptions={[10, 25, 50]}
+                    pageSizeOptions={[5, 10, 25, 50]}
                     disableRowSelectionOnClick
-                    autoHeight
+                    autoHeight={!isMobile}
+                    height={isMobile ? 400 : undefined}
                     sx={{
                         border: 'none',
                         '& .MuiDataGrid-cell': {
                             borderBottom: '1px solid #f0f0f0',
-                            py: { xs: 1, sm: 2 },
+                            py: { xs: 0.5, sm: 2 },
                             fontSize: { xs: '0.8rem', sm: '0.875rem' },
                         },
                         '& .MuiDataGrid-columnHeaders': {
@@ -415,10 +416,10 @@ export default function TaskManagement() {
                             fontSize: { xs: '0.75rem', sm: '0.875rem' },
                             borderBottom: '2px solid #e0e0e0',
                             color: '#374151',
-                            minHeight: { xs: '40px !important', sm: '56px !important' },
+                            minHeight: { xs: '36px !important', sm: '56px !important' },
                         },
                         '& .MuiDataGrid-row': {
-                            minHeight: { xs: '60px !important', sm: '72px !important' },
+                            minHeight: { xs: '44px !important', sm: '72px !important' },
                             '&:hover': {
                                 backgroundColor: '#f9fafb',
                             },
