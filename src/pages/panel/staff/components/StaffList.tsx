@@ -10,9 +10,6 @@ import {
     TextField,
     InputAdornment,
     Tooltip,
-    Stack,
-    useMediaQuery,
-    useTheme,
 } from '@mui/material'
 import {
     Edit as EditIcon,
@@ -27,13 +24,10 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllStaffQuery, useDeleteStaffMutation } from '@/services/staff/staffService'
 import { StaffMember } from '@/interfaces/staff.interface'
 import StaffAddModal from './StaffAddModal'
-import PanelContent from '@/components/layout/PanelContent'
 
 export default function StaffList() {
     const [search, setSearch] = useState('')
     const [addModalOpen, setAddModalOpen] = useState(false)
-    const theme = useTheme()
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
     const { data, isLoading, error, refetch } = useGetAllStaffQuery({
         page: 1,
@@ -103,7 +97,7 @@ export default function StaffList() {
             field: 'full_name',
             headerName: 'EMPLEADO',
             flex: 2,
-            minWidth: 150,
+            minWidth: 200,
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
                     <Avatar sx={{ width: 40, height: 40, mr: 2, fontSize: '1rem' }}>
@@ -137,7 +131,7 @@ export default function StaffList() {
             field: 'contact',
             headerName: 'CONTACTO',
             flex: 2,
-            minWidth: 150,
+            minWidth: 200,
             renderCell: (params) => (
                 <Box sx={{ py: 1 }}>
                     {params.row.email && (
@@ -272,20 +266,13 @@ export default function StaffList() {
     }
 
     return (
-        <PanelContent>
-            {/* Header Responsive */}
-            <Stack 
-                direction={{ xs: 'column', sm: 'row' }} 
-                justifyContent="space-between" 
-                alignItems={{ xs: 'stretch', sm: 'center' }} 
-                spacing={2} 
-                sx={{ mb: 3 }}
-            >
+        <Box sx={{ width: '100%' }}>
+            {/* Header Compacto */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <TextField
                     placeholder="Buscar por nombre, email o teléfono..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    fullWidth={isMobile}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -294,7 +281,7 @@ export default function StaffList() {
                         ),
                     }}
                     sx={{ 
-                        maxWidth: { xs: '100%', sm: 400 },
+                        maxWidth: 400,
                         '& .MuiOutlinedInput-root': {
                             borderRadius: 2,
                             bgcolor: 'white',
@@ -309,76 +296,53 @@ export default function StaffList() {
                         borderRadius: 2,
                         textTransform: 'none',
                         fontWeight: 600,
-                        width: { xs: '100%', sm: 'auto' },
-                        minWidth: { sm: 'auto' }
                     }}
                 >
                     Agregar Personal
                 </Button>
-            </Stack>
-
-            {/* Tabla Responsive */}
-            <Box sx={{ height: { xs: 450, sm: 'auto' }, width: '100%' }}>
-                <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden', height: '100%' }}>
-                    <DataGrid
-                        rows={data?.results || []}
-                        columns={columns}
-                        density="compact"
-                        initialState={{
-                            pagination: {
-                                paginationModel: { pageSize: 25 },
-                            },
-                        }}
-                        pageSizeOptions={[5, 10, 25, 50]}
-                        disableRowSelectionOnClick
-                        autoHeight={false}
-                        sx={{
-                            border: 'none',
-                            height: '100%',
-                            '& .MuiDataGrid-cell': {
-                                borderBottom: '1px solid #f0f0f0',
-                                py: { xs: 0.5, sm: 2 },
-                                px: { xs: 1, sm: 2 },
-                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: '#f8f9fa',
-                                fontWeight: 700,
-                                fontSize: { xs: '0.7rem', sm: '0.875rem' },
-                                borderBottom: '2px solid #e0e0e0',
-                                color: '#374151',
-                                minHeight: { xs: '40px !important', sm: '56px !important' },
-                                '& .MuiDataGrid-columnHeaderTitle': {
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                },
-                            },
-                            '& .MuiDataGrid-row': {
-                                minHeight: { xs: '48px !important', sm: '72px !important' },
-                                '&:hover': {
-                                    backgroundColor: '#f9fafb',
-                                },
-                                '&:nth-of-type(even)': {
-                                    backgroundColor: '#fafbfc',
-                                },
-                            },
-                            '& .MuiDataGrid-footerContainer': {
-                                borderTop: '2px solid #e0e0e0',
-                                backgroundColor: '#f8f9fa',
-                                minHeight: { xs: '44px', sm: '52px' },
-                                '& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel': {
-                                    fontSize: { xs: '0.7rem', sm: '0.875rem' },
-                                },
-                            },
-                            '& .MuiDataGrid-selectedRowCount': {
-                                display: { xs: 'none', sm: 'block' },
-                            },
-                        }}
-                    />
-                </Paper>
             </Box>
+
+            {/* Tabla */}
+            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                <DataGrid
+                    rows={data?.results || []}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 25 },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                    sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                            borderBottom: '1px solid #f0f0f0',
+                            py: 2,
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f8f9fa',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            borderBottom: '2px solid #e0e0e0',
+                            color: '#374151',
+                        },
+                        '& .MuiDataGrid-row': {
+                            '&:hover': {
+                                backgroundColor: '#f9fafb',
+                            },
+                            '&:nth-of-type(even)': {
+                                backgroundColor: '#fafbfc',
+                            },
+                        },
+                        '& .MuiDataGrid-footerContainer': {
+                            borderTop: '2px solid #e0e0e0',
+                            backgroundColor: '#f8f9fa',
+                        },
+                    }}
+                />
+            </Paper>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
@@ -426,6 +390,6 @@ export default function StaffList() {
                 onClose={() => setAddModalOpen(false)}
                 onStaffAdded={refetch}
             />
-        </PanelContent>
+        </Box>
     )
 }

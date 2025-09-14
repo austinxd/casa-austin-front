@@ -11,9 +11,6 @@ import {
     IconButton,
     Tooltip,
     Avatar,
-    Stack,
-    useMediaQuery,
-    useTheme,
 } from '@mui/material'
 import {
     Add as AddIcon,
@@ -26,15 +23,12 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
 import TaskEditModal from './TaskEditModal'
 import TaskAddModal from './TaskAddModal'
-import PanelContent from '@/components/layout/PanelContent'
 import { WorkTask } from '@/interfaces/staff.interface'
 
 export default function TaskManagement() {
     const [editModalOpen, setEditModalOpen] = useState(false)
     const [addModalOpen, setAddModalOpen] = useState(false)
     const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null)
-    const theme = useTheme()
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
@@ -122,7 +116,7 @@ export default function TaskManagement() {
             field: 'title',
             headerName: 'TAREA',
             flex: 2,
-            minWidth: 180,
+            minWidth: 250,
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
                     <Typography variant="body2" sx={{ mr: 1, fontSize: '1.2rem' }}>
@@ -157,7 +151,7 @@ export default function TaskManagement() {
         {
             field: 'property_name',
             headerName: 'PROPIEDAD',
-            width: 140,
+            width: 160,
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {params.row.property_background_color && (
@@ -311,13 +305,9 @@ export default function TaskManagement() {
     }
 
     return (
-        <PanelContent>
-            {/* Header Responsive */}
-            <Stack 
-                direction="row" 
-                justifyContent="flex-end"
-                sx={{ mb: 2 }}
-            >
+        <Box sx={{ width: '100%' }}>
+            {/* Header Compacto */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -326,20 +316,18 @@ export default function TaskManagement() {
                         borderRadius: 2,
                         textTransform: 'none',
                         fontWeight: 600,
-                        width: { xs: '100%', sm: 'auto' },
-                        maxWidth: { xs: '100%', sm: 'auto' }
                     }}
                 >
                     Crear Tarea
                 </Button>
-            </Stack>
+            </Box>
 
-            {/* Estadísticas Responsive */}
-            <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
+            {/* Estadísticas */}
+            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: 'warning.50', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
                                 <Typography variant="h5" fontWeight="bold" color="warning.main">
                                     {tasksByStatus.pending.length}
                                 </Typography>
@@ -349,9 +337,9 @@ export default function TaskManagement() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: '#1976d2', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
                                 <Typography variant="h5" fontWeight="bold" color="white">
                                     {tasksByStatus.assigned.length}
                                 </Typography>
@@ -361,9 +349,9 @@ export default function TaskManagement() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: '#9c27b0', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
                                 <Typography variant="h5" fontWeight="bold" color="white">
                                     {tasksByStatus.in_progress.length}
                                 </Typography>
@@ -373,9 +361,9 @@ export default function TaskManagement() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: 'success.50', borderRadius: 2 }}>
-                            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+                            <CardContent sx={{ textAlign: 'center', py: 2 }}>
                                 <Typography variant="h5" fontWeight="bold" color="success.main">
                                     {tasksByStatus.completed.length}
                                 </Typography>
@@ -388,68 +376,47 @@ export default function TaskManagement() {
                 </Grid>
             </Paper>
 
-            {/* Tabla de Tareas Responsive */}
-            <Box sx={{ height: { xs: 450, sm: 'auto' }, width: '100%' }}>
-                <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden', height: '100%' }}>
-                    <DataGrid
-                        rows={data?.results || []}
-                        columns={columns}
-                        density="compact"
-                        initialState={{
-                            pagination: {
-                                paginationModel: { pageSize: 25 },
+            {/* Tabla de Tareas */}
+            <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                <DataGrid
+                    rows={data?.results || []}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 25 },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                    sx={{
+                        border: 'none',
+                        '& .MuiDataGrid-cell': {
+                            borderBottom: '1px solid #f0f0f0',
+                            py: 2,
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f8f9fa',
+                            fontWeight: 700,
+                            fontSize: '0.875rem',
+                            borderBottom: '2px solid #e0e0e0',
+                            color: '#374151',
+                        },
+                        '& .MuiDataGrid-row': {
+                            '&:hover': {
+                                backgroundColor: '#f9fafb',
                             },
-                        }}
-                        pageSizeOptions={[5, 10, 25, 50]}
-                        disableRowSelectionOnClick
-                        autoHeight={false}
-                        sx={{
-                            border: 'none',
-                            height: '100%',
-                            '& .MuiDataGrid-cell': {
-                                borderBottom: '1px solid #f0f0f0',
-                                py: { xs: 0.5, sm: 2 },
-                                px: { xs: 1, sm: 2 },
-                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
+                            '&:nth-of-type(even)': {
+                                backgroundColor: '#fafbfc',
                             },
-                            '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: '#f8f9fa',
-                                fontWeight: 700,
-                                fontSize: { xs: '0.7rem', sm: '0.875rem' },
-                                borderBottom: '2px solid #e0e0e0',
-                                color: '#374151',
-                                minHeight: { xs: '40px !important', sm: '56px !important' },
-                                '& .MuiDataGrid-columnHeaderTitle': {
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                },
-                            },
-                            '& .MuiDataGrid-row': {
-                                minHeight: { xs: '48px !important', sm: '72px !important' },
-                                '&:hover': {
-                                    backgroundColor: '#f9fafb',
-                                },
-                                '&:nth-of-type(even)': {
-                                    backgroundColor: '#fafbfc',
-                                },
-                            },
-                            '& .MuiDataGrid-footerContainer': {
-                                borderTop: '2px solid #e0e0e0',
-                                backgroundColor: '#f8f9fa',
-                                minHeight: { xs: '44px', sm: '52px' },
-                                '& .MuiTablePagination-displayedRows, & .MuiTablePagination-selectLabel': {
-                                    fontSize: { xs: '0.7rem', sm: '0.875rem' },
-                                },
-                            },
-                            '& .MuiDataGrid-selectedRowCount': {
-                                display: { xs: 'none', sm: 'block' },
-                            },
-                        }}
-                    />
-                </Paper>
-            </Box>
+                        },
+                        '& .MuiDataGrid-footerContainer': {
+                            borderTop: '2px solid #e0e0e0',
+                            backgroundColor: '#f8f9fa',
+                        },
+                    }}
+                />
+            </Paper>
 
             {/* Empty State */}
             {(!data?.results || data.results.length === 0) && !isLoading && (
@@ -504,6 +471,6 @@ export default function TaskManagement() {
                 onClose={() => setAddModalOpen(false)}
                 onTaskAdded={refetch}
             />
-        </PanelContent>
+        </Box>
     )
 }
