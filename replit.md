@@ -14,6 +14,7 @@ Casa Austin is a property rental management system built with React and TypeScri
   - **Proper card layouts**: Stack efficiently on mobile devices with improved space utilization
   - **Valid MUI color tokens**: Improved theme consistency
   - **Ellipsis overflow handling**: Property names and long text properly truncated
+  - **Dual-date display**: Shows both check-out date (when reservation ended) and scheduled date (when task is programmed) with clear labeling and emojis
 - **TaskManagement Component**: Major UI restructuring for cleaner, more functional interface
   - **Removed statistics cards**: Eliminated summary cards showing task counts (Pendientes, Asignadas, En Progreso, Completadas) for cleaner interface
   - **Repositioned action buttons**: Moved create task and search buttons to filter level for better accessibility
