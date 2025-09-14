@@ -159,7 +159,7 @@ export default function TimeTracking() {
     return (
         <Box sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ mb: 3 }}>
-                Seguimiento de Tiempo ({data?.length || 0} registros)
+                Seguimiento de Tiempo ({data?.count || 0} registros)
             </Typography>
 
             {/* Quick Actions */}
@@ -243,7 +243,7 @@ export default function TimeTracking() {
             
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={data || []}
+                    rows={data?.results || []}
                     columns={columns}
                     initialState={{
                         pagination: {

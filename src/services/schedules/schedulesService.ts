@@ -6,6 +6,7 @@ import {
     ScheduleQueryParams,
     CreateScheduleRequest,
 } from '../../interfaces/staff.interface'
+import { PaginatedResponse } from '../../interfaces/api.interface'
 
 
 export interface CalendarView {
@@ -24,7 +25,7 @@ export const schedulesApi = createApi({
     }),
     tagTypes: ['Schedule'],
     endpoints: (builder) => ({
-        getAllSchedules: builder.query<Schedule[], ScheduleQueryParams>({
+        getAllSchedules: builder.query<PaginatedResponse<Schedule>, ScheduleQueryParams>({
             query: (params) => ({
                 url: '/schedules/',
                 params,
@@ -39,7 +40,7 @@ export const schedulesApi = createApi({
             }),
             invalidatesTags: ['Schedule'],
         }),
-        getCalendarView: builder.query<CalendarView[], ScheduleQueryParams>({
+        getCalendarView: builder.query<PaginatedResponse<CalendarView>, ScheduleQueryParams>({
             query: (params) => ({
                 url: '/schedules/calendar/',
                 params,

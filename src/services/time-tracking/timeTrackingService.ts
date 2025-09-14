@@ -5,6 +5,7 @@ import {
     TimeTracking,
     TimeTrackingQueryParams,
 } from '../../interfaces/staff.interface'
+import { PaginatedResponse } from '../../interfaces/api.interface'
 
 
 export const timeTrackingApi = createApi({
@@ -18,7 +19,7 @@ export const timeTrackingApi = createApi({
     }),
     tagTypes: ['TimeTracking'],
     endpoints: (builder) => ({
-        getAllTimeTracking: builder.query<TimeTracking[], TimeTrackingQueryParams>({
+        getAllTimeTracking: builder.query<PaginatedResponse<TimeTracking>, TimeTrackingQueryParams>({
             query: (params) => ({
                 url: '/time-tracking/',
                 params,

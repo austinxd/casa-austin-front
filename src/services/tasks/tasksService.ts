@@ -7,6 +7,7 @@ import {
     CreateTaskRequest,
     PropertySummary,
 } from '../../interfaces/staff.interface'
+import { PaginatedResponse } from '../../interfaces/api.interface'
 
 export const tasksApi = createApi({
     reducerPath: 'tasksApi',
@@ -19,7 +20,7 @@ export const tasksApi = createApi({
     }),
     tagTypes: ['Task', 'PropertySummary'],
     endpoints: (builder) => ({
-        getAllTasks: builder.query<WorkTask[], TaskQueryParams>({
+        getAllTasks: builder.query<PaginatedResponse<WorkTask>, TaskQueryParams>({
             query: (params) => ({
                 url: '/tasks/',
                 params,
@@ -82,7 +83,7 @@ export const tasksApi = createApi({
             }),
             invalidatesTags: (_result, _error, { id }) => [{ type: 'Task', id }],
         }),
-        getPropertySummary: builder.query<PropertySummary[], void>({
+        getPropertySummary: builder.query<PaginatedResponse<PropertySummary>, void>({
             query: () => '/tasks/property_summary/',
             providesTags: ['PropertySummary'],
         }),

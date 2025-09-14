@@ -171,7 +171,7 @@ export default function StaffList() {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">
-                    Personal ({data?.length || 0} empleados)
+                    Personal ({data?.count || 0} empleados)
                 </Typography>
                 <Button
                     variant="contained"
@@ -184,7 +184,7 @@ export default function StaffList() {
             
             <Box sx={{ height: 600, width: '100%' }}>
                 <DataGrid
-                    rows={data || []}
+                    rows={data?.results || []}
                     columns={columns}
                     initialState={{
                         pagination: {

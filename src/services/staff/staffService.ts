@@ -7,6 +7,7 @@ import {
     StaffDashboard,
     WorkTask,
 } from '../../interfaces/staff.interface'
+import { PaginatedResponse } from '../../interfaces/api.interface'
 
 
 export const staffApi = createApi({
@@ -20,7 +21,7 @@ export const staffApi = createApi({
     }),
     tagTypes: ['Staff', 'StaffDashboard'],
     endpoints: (builder) => ({
-        getAllStaff: builder.query<StaffMember[], StaffQueryParams>({
+        getAllStaff: builder.query<PaginatedResponse<StaffMember>, StaffQueryParams>({
             query: (params) => ({
                 url: '/staff/',
                 params,
@@ -58,11 +59,11 @@ export const staffApi = createApi({
             }),
             invalidatesTags: ['Staff', 'StaffDashboard'],
         }),
-        getStaffDashboard: builder.query<StaffDashboard[], void>({
+        getStaffDashboard: builder.query<PaginatedResponse<StaffDashboard>, void>({
             query: () => '/staff/dashboard/',
             providesTags: ['StaffDashboard'],
         }),
-        getStaffTasks: builder.query<WorkTask[], string>({
+        getStaffTasks: builder.query<PaginatedResponse<WorkTask>, string>({
             query: (id) => `/staff/${id}/tasks/`,
             providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
         }),
