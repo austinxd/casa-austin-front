@@ -89,7 +89,6 @@ export default function TaskManagement() {
         }
     }
 
-
     const getTaskTypeText = (type: string) => {
         switch (type) {
             case 'checkout_cleaning': return 'Limpieza Salida'
@@ -305,33 +304,24 @@ export default function TaskManagement() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* Header */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                    <Box>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
-                            Tareas
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            {data?.count || 0} tareas en total
-                        </Typography>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => console.log('Add new task')}
-                        size="large"
-                        sx={{ 
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Crear Tarea
-                    </Button>
-                </Box>
+            {/* Header Compacto */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => console.log('Add new task')}
+                    sx={{ 
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                    }}
+                >
+                    Crear Tarea
+                </Button>
+            </Box>
 
-                {/* Estadísticas */}
+            {/* Estadísticas */}
+            <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'grey.50', borderRadius: 2 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={6} sm={3}>
                         <Card elevation={0} sx={{ bgcolor: 'warning.50', borderRadius: 2 }}>
@@ -346,24 +336,24 @@ export default function TaskManagement() {
                         </Card>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'info.50', borderRadius: 2 }}>
+                        <Card elevation={0} sx={{ bgcolor: '#1976d2', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="info.main">
+                                <Typography variant="h5" fontWeight="bold" color="white">
                                     {tasksByStatus.assigned.length}
                                 </Typography>
-                                <Typography variant="body2" color="info.dark">
+                                <Typography variant="body2" color="white">
                                     Asignadas
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <Card elevation={0} sx={{ bgcolor: 'secondary.50', borderRadius: 2 }}>
+                        <Card elevation={0} sx={{ bgcolor: '#9c27b0', borderRadius: 2 }}>
                             <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="h5" fontWeight="bold" color="secondary.main">
+                                <Typography variant="h5" fontWeight="bold" color="white">
                                     {tasksByStatus.in_progress.length}
                                 </Typography>
-                                <Typography variant="body2" color="secondary.dark">
+                                <Typography variant="body2" color="white">
                                     En Progreso
                                 </Typography>
                             </CardContent>
