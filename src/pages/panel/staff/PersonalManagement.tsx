@@ -22,7 +22,7 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+            {value === index && <Box sx={{ p: { xs: 0, sm: 3 } }}>{children}</Box>}
         </div>
     )
 }
@@ -42,12 +42,12 @@ export default function PersonalManagement() {
     }
 
     return (
-        <Box sx={{ width: '100%', p: 3 }}>
-            <Typography variant="h1" mb={3}>
+        <Box sx={{ width: '100%', p: { xs: 0, sm: 3 } }}>
+            <Typography variant="h1" mb={3} sx={{ px: { xs: 1.5, sm: 0 } }}>
                 Gestión de Personal
             </Typography>
             
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', px: { xs: 1.5, sm: 0 } }}>
                 <Tabs value={value} onChange={handleChange} aria-label="staff management tabs">
                     <Tab label="Personal" {...a11yProps(0)} />
                     <Tab label="Tareas" {...a11yProps(1)} />

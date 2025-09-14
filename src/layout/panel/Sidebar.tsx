@@ -291,7 +291,7 @@ export default function Sidebar(props: Props) {
             </Box>
             <Box
                 sx={{
-                    p: 2,
+                    p: { xs: 0, sm: 2 },
                     width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 }}
             >
