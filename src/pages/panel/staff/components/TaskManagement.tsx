@@ -150,11 +150,26 @@ export default function TaskManagement() {
         {
             field: 'property_name',
             headerName: 'PROPIEDAD',
-            width: 140,
+            width: 160,
             renderCell: (params) => (
-                <Typography variant="body2">
-                    {params.value || 'Sin propiedad'}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {params.row.property_background_color && (
+                        <Box
+                            sx={{
+                                width: 12,
+                                height: 12,
+                                borderRadius: '50%',
+                                backgroundColor: params.row.property_background_color,
+                                mr: 1,
+                                border: '1px solid #ccc',
+                                flexShrink: 0,
+                            }}
+                        />
+                    )}
+                    <Typography variant="body2" noWrap>
+                        {params.value || 'Sin propiedad'}
+                    </Typography>
+                </Box>
             ),
         },
         {
