@@ -596,8 +596,12 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     '&:hover': { 
                                         bgcolor: '#4f46e5',
                                         color: 'white',
-                                        transform: 'scale(1.1)',
                                         boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)'
+                                    },
+                                    '@media (hover: hover)': {
+                                        '&:hover': {
+                                            transform: 'scale(1.1)'
+                                        }
                                     },
                                     border: '2px solid #6366f1',
                                     transition: 'all 0.3s ease',
@@ -623,8 +627,12 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                     '&:hover': { 
                                         bgcolor: '#16a34a',
                                         color: 'white',
-                                        transform: 'scale(1.1)',
                                         boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)'
+                                    },
+                                    '@media (hover: hover)': {
+                                        '&:hover': {
+                                            transform: 'scale(1.1)'
+                                        }
                                     },
                                     border: '2px solid #22c55e',
                                     transition: 'all 0.3s ease',
@@ -649,8 +657,12 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 '&:hover': { 
                                     bgcolor: '#d97706',
                                     color: 'white',
-                                    transform: 'scale(1.1)',
                                     boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
+                                },
+                                '@media (hover: hover)': {
+                                    '&:hover': {
+                                        transform: 'scale(1.1)'
+                                    }
                                 },
                                 border: '2px solid #f59e0b',
                                 transition: 'all 0.3s ease',
