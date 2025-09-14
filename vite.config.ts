@@ -18,5 +18,22 @@ export default defineConfig({
         },
     },
     plugins: [react()],
-    build: { chunkSizeWarningLimit: 2300 },
+    build: { 
+        chunkSizeWarningLimit: 1000,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['react', 'react-dom'],
+                    mui: ['@mui/material', '@mui/icons-material'],
+                    redux: ['@reduxjs/toolkit', 'react-redux'],
+                    calendar: ['@fullcalendar/react', '@fullcalendar/core', '@fullcalendar/daygrid'],
+                    charts: ['apexcharts', 'react-apexcharts'],
+                    router: ['react-router-dom'],
+                }
+            }
+        }
+    },
+    optimizeDeps: {
+        include: ['@mui/material', '@mui/icons-material', 'react', 'react-dom']
+    }
 })
