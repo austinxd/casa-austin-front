@@ -52,7 +52,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
 
     const getTaskTypeText = (type: string) => {
         switch (type) {
-            case 'checkout_cleaning': return 'Limpieza Salida'
+            case 'checkout_cleaning': return 'Limpieza'
             case 'maintenance': return 'Mantenimiento'
             case 'inspection': return 'Inspección'
             case 'checkin_preparation': return 'Preparación Entrada'
