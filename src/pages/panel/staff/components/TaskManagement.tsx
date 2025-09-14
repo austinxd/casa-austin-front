@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
     Box,
     Typography,
@@ -18,9 +18,6 @@ import {
     Stop as CompleteIcon,
     Edit as EditIcon,
     Assignment as TaskIcon,
-    Schedule as ScheduleIcon,
-    Person as PersonIcon,
-    Home as PropertyIcon,
 } from '@mui/icons-material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
@@ -92,25 +89,6 @@ export default function TaskManagement() {
         }
     }
 
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'low': return 'success'
-            case 'medium': return 'warning'
-            case 'high': return 'error'
-            case 'urgent': return 'error'
-            default: return 'default'
-        }
-    }
-
-    const getPriorityText = (priority: string) => {
-        switch (priority) {
-            case 'low': return 'Baja'
-            case 'medium': return 'Media'
-            case 'high': return 'Alta'
-            case 'urgent': return 'Urgente'
-            default: return priority || 'Media'
-        }
-    }
 
     const getTaskTypeText = (type: string) => {
         switch (type) {
@@ -180,19 +158,6 @@ export default function TaskManagement() {
             ),
         },
         {
-            field: 'priority',
-            headerName: 'PRIORIDAD',
-            width: 110,
-            renderCell: (params) => (
-                <Chip
-                    label={getPriorityText(params.value)}
-                    size="small"
-                    color={getPriorityColor(params.value || 'medium')}
-                    sx={{ minWidth: 70 }}
-                />
-            ),
-        },
-        {
             field: 'status',
             headerName: 'ESTADO',
             width: 130,
@@ -218,20 +183,27 @@ export default function TaskManagement() {
         {
             field: 'actions',
             headerName: 'ACCIONES',
-            width: 140,
+            width: 160,
             align: 'center',
             headerAlign: 'center',
             sortable: false,
+            disableColumnMenu: true,
             renderCell: (params) => (
-                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                     {params.row.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
                             <IconButton
-                                size="small"
+                                size="medium"
                                 onClick={() => handleStartWork(params.row.id)}
                                 sx={{ 
                                     color: 'success.main',
-                                    '&:hover': { bgcolor: 'success.50' }
+                                    bgcolor: 'success.50',
+                                    '&:hover': { 
+                                        bgcolor: 'success.100',
+                                        transform: 'scale(1.1)'
+                                    },
+                                    border: '1px solid',
+                                    borderColor: 'success.200',
                                 }}
                             >
                                 <StartIcon fontSize="small" />
@@ -241,11 +213,17 @@ export default function TaskManagement() {
                     {params.row.status === 'in_progress' && (
                         <Tooltip title="Completar trabajo">
                             <IconButton
-                                size="small"
+                                size="medium"
                                 onClick={() => handleCompleteWork(params.row.id)}
                                 sx={{ 
                                     color: 'primary.main',
-                                    '&:hover': { bgcolor: 'primary.50' }
+                                    bgcolor: 'primary.50',
+                                    '&:hover': { 
+                                        bgcolor: 'primary.100',
+                                        transform: 'scale(1.1)'
+                                    },
+                                    border: '1px solid',
+                                    borderColor: 'primary.200',
                                 }}
                             >
                                 <CompleteIcon fontSize="small" />
@@ -254,14 +232,20 @@ export default function TaskManagement() {
                     )}
                     <Tooltip title="Editar tarea">
                         <IconButton
-                            size="small"
+                            size="medium"
                             onClick={() => {
                                 setSelectedTask(params.row)
                                 setEditModalOpen(true)
                             }}
                             sx={{ 
-                                color: 'info.main',
-                                '&:hover': { bgcolor: 'info.50' }
+                                color: 'warning.main',
+                                bgcolor: 'warning.50',
+                                '&:hover': { 
+                                    bgcolor: 'warning.100',
+                                    transform: 'scale(1.1)'
+                                },
+                                border: '1px solid',
+                                borderColor: 'warning.200',
                             }}
                         >
                             <EditIcon fontSize="small" />
