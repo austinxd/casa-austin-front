@@ -30,7 +30,7 @@ export const staffApi = createApi({
         }),
         getStaffById: builder.query<StaffMember, string>({
             query: (id) => `/staff/${id}/`,
-            providesTags: (result, error, id) => [{ type: 'Staff', id }],
+            providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
         }),
         createStaff: builder.mutation<StaffMember, FormData>({
             query: (data) => ({
@@ -46,7 +46,7 @@ export const staffApi = createApi({
                 method: 'PUT',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [
+            invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Staff', id },
                 'Staff',
                 'StaffDashboard',
@@ -65,7 +65,7 @@ export const staffApi = createApi({
         }),
         getStaffTasks: builder.query<ApiResponse<WorkTask[]>, string>({
             query: (id) => `/staff/${id}/tasks/`,
-            providesTags: (result, error, id) => [{ type: 'Staff', id }],
+            providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
         }),
     }),
 })

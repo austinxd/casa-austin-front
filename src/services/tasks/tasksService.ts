@@ -6,7 +6,6 @@ import {
     TaskQueryParams,
     CreateTaskRequest,
     StartWorkRequest,
-    CompleteWorkRequest,
     PropertySummary,
 } from '../../interfaces/staff.interface'
 
@@ -32,7 +31,7 @@ export const tasksApi = createApi({
         }),
         getTaskById: builder.query<WorkTask, string>({
             query: (id) => `/tasks/${id}/`,
-            providesTags: (result, error, id) => [{ type: 'Task', id }],
+            providesTags: (_result, _error, id) => [{ type: 'Task', id }],
         }),
         createTask: builder.mutation<WorkTask, CreateTaskRequest>({
             query: (data) => ({
@@ -48,7 +47,7 @@ export const tasksApi = createApi({
                 method: 'PUT',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [
+            invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Task', id },
                 'Task',
                 'PropertySummary',
@@ -60,7 +59,7 @@ export const tasksApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [
+            invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Task', id },
                 'Task',
                 'PropertySummary',
@@ -72,7 +71,7 @@ export const tasksApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [
+            invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Task', id },
                 'Task',
                 'PropertySummary',
@@ -84,7 +83,7 @@ export const tasksApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: (result, error, { id }) => [{ type: 'Task', id }],
+            invalidatesTags: (_result, _error, { id }) => [{ type: 'Task', id }],
         }),
         getPropertySummary: builder.query<PropertySummary[], void>({
             query: () => '/tasks/property_summary/',
