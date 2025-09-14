@@ -9,6 +9,7 @@ import {
     Card,
     CardContent,
     Tooltip,
+    useTheme,
 } from '@mui/material'
 import {
     MoreVert as MoreVertIcon,
@@ -27,6 +28,7 @@ interface TaskCardProps {
 }
 
 export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: TaskCardProps) {
+    const theme = useTheme()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
 
@@ -67,6 +69,49 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
             case 'cancelled': return 'error'
             default: return 'default'
         }
+    }
+
+    // Calculate calendar days difference between check-out and scheduled date
+    const calculateDaysDifference = (): number => {
+        if (!task.check_out_date || !task.scheduled_date) return 0
+        
+        // Normalize dates to midnight to get calendar day difference
+        const checkOutDate = new Date(task.check_out_date)
+        checkOutDate.setHours(0, 0, 0, 0)
+        
+        const scheduledDate = new Date(task.scheduled_date)
+        scheduledDate.setHours(0, 0, 0, 0)
+        
+        const diffTime = scheduledDate.getTime() - checkOutDate.getTime()
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+        
+        return Math.max(0, diffDays) // Return 0 if scheduled date is before check-out
+    }
+
+    // Get card background color based on days difference using theme colors
+    const getCardBackgroundColor = (): string => {
+        const daysDiff = calculateDaysDifference()
+        
+        if (daysDiff === 0) return theme.palette.background.paper // Default background
+        if (daysDiff === 1) return theme.palette.grey[50] // Very light gray for 1 day
+        if (daysDiff <= 3) return theme.palette.grey[100] // Light gray for 2-3 days
+        if (daysDiff <= 7) return theme.palette.grey[200] // Medium gray for 4-7 days
+        if (daysDiff <= 14) return theme.palette.grey[300] // Darker gray for 1-2 weeks
+        return theme.palette.grey[400] // Darkest gray for more than 2 weeks
+    }
+
+    // Get text color based on background darkness for better contrast
+    const getTextColor = (): string => {
+        const daysDiff = calculateDaysDifference()
+        // For darker backgrounds, use primary text color
+        return daysDiff >= 14 ? theme.palette.text.primary : theme.palette.text.secondary
+    }
+
+    // Get divider color based on background for better contrast
+    const getDividerColor = (): string => {
+        const daysDiff = calculateDaysDifference()
+        // For darker backgrounds, use a darker divider
+        return daysDiff >= 7 ? theme.palette.divider : theme.palette.grey[100]
     }
 
     const getStatusText = (status: string) => {
@@ -127,6 +172,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 minHeight: { xs: 'auto', sm: 180, md: 200 },
                 display: 'flex',
                 flexDirection: 'column',
+                backgroundColor: getCardBackgroundColor(),
                 '&:hover': {
                     elevation: 4,
                     transform: 'translateY(-2px)',
@@ -305,12 +351,12 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         {task.check_out_date && (
                             <Typography 
                                 variant="caption" 
-                                color="text.secondary"
                                 sx={{ 
                                     fontSize: { xs: '0.65rem', sm: '0.7rem' },
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 0.4
+                                    gap: 0.4,
+                                    color: getTextColor()
                                 }}
                             >
                                 🏠 Check-out: {new Date(task.check_out_date).toLocaleDateString('es-ES')}
@@ -320,12 +366,12 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         {/* Scheduled Date */}
                         <Typography 
                             variant="caption" 
-                            color="text.secondary"
                             sx={{ 
                                 fontSize: { xs: '0.65rem', sm: '0.7rem' },
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 0.4
+                                gap: 0.4,
+                                color: getTextColor()
                             }}
                         >
                             📅 Programada: {task.scheduled_date 
@@ -353,7 +399,6 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 {task.description && (
                     <Typography 
                         variant="body2" 
-                        color="text.secondary" 
                         sx={{ 
                             mt: { xs: 0.8, sm: 1.5 }, 
                             fontSize: { xs: '0.7rem', sm: '0.75rem' },
@@ -361,7 +406,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             WebkitLineClamp: { xs: 2, sm: 2 },
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
-                            lineHeight: { xs: 1.2, sm: 1.3 }
+                            lineHeight: { xs: 1.2, sm: 1.3 },
+                            color: getTextColor()
                         }}
                     >
                         {task.description}
@@ -374,7 +420,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     gap: { xs: 1, sm: 0.8 }, 
                     mt: 'auto', 
                     pt: { xs: 1, sm: 1.5 }, 
-                    borderTop: '1px solid #f0f0f0' 
+                    borderTop: `1px solid ${getDividerColor()}` 
                 }}>
                     {task.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
