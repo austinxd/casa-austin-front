@@ -312,10 +312,13 @@ export default function TaskManagement() {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setAddModalOpen(true)}
+                    size="small"
                     sx={{ 
-                        borderRadius: 2,
+                        borderRadius: 1,
                         textTransform: 'none',
-                        fontWeight: 600,
+                        fontWeight: 500,
+                        px: 2,
+                        py: 0.5,
                     }}
                 >
                     Crear Tarea
@@ -442,11 +445,13 @@ export default function TaskManagement() {
                         variant="contained"
                         startIcon={<AddIcon />}
                         onClick={() => setAddModalOpen(true)}
-                        size="large"
+                        size="medium"
                         sx={{ 
-                            borderRadius: 2,
+                            borderRadius: 1,
                             textTransform: 'none',
-                            fontWeight: 600,
+                            fontWeight: 500,
+                            px: 3,
+                            py: 1,
                         }}
                     >
                         Crear Primera Tarea
