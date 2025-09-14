@@ -108,6 +108,9 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
+                minHeight: 280,
+                display: 'flex',
+                flexDirection: 'column',
                 '&:hover': {
                     elevation: 4,
                     transform: 'translateY(-2px)',
@@ -127,7 +130,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 }}
             />
 
-            <CardContent sx={{ p: 3, pb: 2 }}>
+            <CardContent sx={{ p: 3, pb: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
                 {/* Header */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
@@ -137,10 +140,14 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Typography>
                         <Box>
                             <Typography variant="h6" fontWeight="600" sx={{ lineHeight: 1.2 }}>
-                                {task.title || getTaskTypeText(task.task_type)}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
                                 {getTaskTypeText(task.task_type)}
+                            </Typography>
+                            <Typography 
+                                variant="caption" 
+                                color={task.property_name ? "text.secondary" : "error.main"}
+                                sx={{ fontWeight: task.property_name ? 400 : 600 }}
+                            >
+                                {task.property_name || "NO ASIGNADA"}
                             </Typography>
                         </Box>
                     </Box>
@@ -155,14 +162,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     </IconButton>
                 </Box>
 
-                {/* Property and Status Row */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant="body2" fontWeight="600">
-                            🏠 {task.property_name || 'Sin propiedad'}
-                        </Typography>
-                    </Box>
-                    
+                {/* Status Row */}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2 }}>
                     <Chip
                         label={getStatusText(task.status)}
                         color={getStatusColor(task.status) as any}
@@ -229,7 +230,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 )}
 
                 {/* Quick Action Buttons */}
-                <Box sx={{ display: 'flex', gap: 1, mt: 2, pt: 2, borderTop: '1px solid #f0f0f0' }}>
+                <Box sx={{ display: 'flex', gap: 1, mt: 'auto', pt: 2, borderTop: '1px solid #f0f0f0' }}>
                     {task.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
                             <IconButton
