@@ -285,30 +285,55 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     )}
                 </Box>
 
-                {/* Date and Priority */}
+                {/* Dates and Priority */}
                 <Box sx={{ 
                     display: 'flex', 
                     flexDirection: { xs: 'column', sm: 'row' },
                     justifyContent: { sm: 'space-between' }, 
-                    alignItems: { xs: 'stretch', sm: 'center' },
+                    alignItems: { xs: 'stretch', sm: 'flex-start' },
                     gap: { xs: 0.8, sm: 1 },
                     mb: { xs: 1, sm: 1.5 }
                 }}>
-                    <Typography 
-                        variant="caption" 
-                        color="text.secondary"
-                        sx={{ 
-                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 0.5
-                        }}
-                    >
-                        📅 {task.scheduled_date 
-                            ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
-                            : 'Sin fecha programada'
-                        }
-                    </Typography>
+                    {/* Dates Container */}
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        gap: 0.3,
+                        flex: 1
+                    }}>
+                        {/* Check-out Date */}
+                        {task.check_out_date && (
+                            <Typography 
+                                variant="caption" 
+                                color="text.secondary"
+                                sx={{ 
+                                    fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.4
+                                }}
+                            >
+                                🏠 Check-out: {new Date(task.check_out_date).toLocaleDateString('es-ES')}
+                            </Typography>
+                        )}
+                        
+                        {/* Scheduled Date */}
+                        <Typography 
+                            variant="caption" 
+                            color="text.secondary"
+                            sx={{ 
+                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.4
+                            }}
+                        >
+                            📅 Programada: {task.scheduled_date 
+                                ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
+                                : 'Sin fecha programada'
+                            }
+                        </Typography>
+                    </Box>
                     
                     <Chip
                         label={getPriorityText(task.priority)}
