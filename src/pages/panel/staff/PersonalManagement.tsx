@@ -73,16 +73,14 @@ export default function PersonalManagement() {
                         },
                     }}
                 >
-                    {isMaintenanceUser ? (
-                        <Tab label="Tareas" {...a11yProps(0)} />
-                    ) : (
-                        <>
-                            <Tab label="Personal" {...a11yProps(0)} />
-                            <Tab label="Tareas" {...a11yProps(1)} />
-                            <Tab label="Tiempo" {...a11yProps(2)} />
-                            <Tab label="Horarios" {...a11yProps(3)} />
-                        </>
-                    )}
+                    {isMaintenanceUser ? [
+                        <Tab key="tareas" label="Tareas" {...a11yProps(0)} />
+                    ] : [
+                        <Tab key="personal" label="Personal" {...a11yProps(0)} />,
+                        <Tab key="tareas" label="Tareas" {...a11yProps(1)} />,
+                        <Tab key="tiempo" label="Tiempo" {...a11yProps(2)} />,
+                        <Tab key="horarios" label="Horarios" {...a11yProps(3)} />
+                    ]}
                 </Tabs>
             </Box>
             
