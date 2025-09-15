@@ -457,7 +457,10 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         <Tooltip title="Iniciar trabajo">
                             <IconButton
                                 size="small"
-                                onClick={() => onStartWork(task.id.toString())}
+                                onClick={() => {
+                                    console.log('Play button clicked for task:', task.id)
+                                    onStartWork(task.id.toString())
+                                }}
                                 sx={{ 
                                     color: '#ffffff',
                                     bgcolor: '#6366f1',

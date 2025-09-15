@@ -46,9 +46,12 @@ export default function TaskManagement() {
                     actual_start_time: new Date().toISOString()
                 } 
             }).unwrap()
-            refetch()
+            console.log('Work started successfully for task:', taskId)
         } catch (error) {
             console.error('Error starting work:', error)
+        } finally {
+            // Siempre refrescar la vista, incluso si hay error
+            refetch()
         }
     }
 
@@ -62,9 +65,12 @@ export default function TaskManagement() {
                     completion_notes: 'Trabajo completado'
                 }
             }).unwrap()
-            refetch()
+            console.log('Work completed successfully for task:', taskId)
         } catch (error) {
             console.error('Error completing work:', error)
+        } finally {
+            // Siempre refrescar la vista, incluso si hay error
+            refetch()
         }
     }
 
