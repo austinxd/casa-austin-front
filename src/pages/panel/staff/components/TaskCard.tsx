@@ -11,6 +11,10 @@ import {
     Tooltip,
     useTheme,
     useMediaQuery,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Badge,
 } from '@mui/material'
 import {
     MoreVert as MoreVertIcon,
@@ -18,6 +22,8 @@ import {
     Stop as CompleteIcon,
     Edit as EditIcon,
     CameraAlt as CameraIcon,
+    Image as ImageIcon,
+    Close as CloseIcon,
 } from '@mui/icons-material'
 import { useState, useRef } from 'react'
 import { WorkTask } from '@/interfaces/staff.interface'
@@ -37,12 +43,17 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const [expandDescription, setExpandDescription] = useState(false)
     const [uploadTaskPhoto, { isLoading: isUploadingPhoto }] = useUploadTaskPhotoMutation()
+    const [photoDialogOpen, setPhotoDialogOpen] = useState(false)
+    const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const open = Boolean(anchorEl)
     
     // Obtener rol del usuario desde cookie
     const userRole = Cookies.get('rollTkn')
     const isMaintenanceUser = userRole === 'mantenimiento'
+    
+    // Verificar si la tarea tiene fotos
+    const hasPhotos = task.photos && task.photos.length > 0
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
@@ -78,6 +89,29 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
             console.log('Foto subida exitosamente para tarea:', task.id)
         } catch (error) {
             console.error('Error al subir foto:', error)
+        }
+    }
+
+    const handleViewPhotos = () => {
+        if (hasPhotos) {
+            setCurrentPhotoIndex(0)
+            setPhotoDialogOpen(true)
+        }
+    }
+
+    const handleClosePhotoDialog = () => {
+        setPhotoDialogOpen(false)
+    }
+
+    const handleNextPhoto = () => {
+        if (hasPhotos && currentPhotoIndex < task.photos.length - 1) {
+            setCurrentPhotoIndex(currentPhotoIndex + 1)
+        }
+    }
+
+    const handlePrevPhoto = () => {
+        if (hasPhotos && currentPhotoIndex > 0) {
+            setCurrentPhotoIndex(currentPhotoIndex - 1)
         }
     }
 
@@ -696,6 +730,43 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             <CameraIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
+                    
+                    {/* Botón para ver fotos - solo si existen */}
+                    {hasPhotos && (
+                        <Tooltip title={`Ver fotos (${task.photos.length})`}>
+                            <IconButton
+                                size="small"
+                                onClick={handleViewPhotos}
+                                sx={{ 
+                                    color: 'info.main',
+                                    bgcolor: 'grey.100',
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
+                                    '&:hover': { 
+                                        bgcolor: 'info.light',
+                                        color: 'info.dark',
+                                        transform: 'scale(1.1)'
+                                    },
+                                    border: '1px solid',
+                                    borderColor: 'info.main',
+                                }}
+                            >
+                                <Badge 
+                                    badgeContent={task.photos.length} 
+                                    color="primary" 
+                                    sx={{ 
+                                        '& .MuiBadge-badge': { 
+                                            fontSize: '0.6rem',
+                                            minWidth: 16,
+                                            height: 16
+                                        } 
+                                    }}
+                                >
+                                    <ImageIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
+                                </Badge>
+                            </IconButton>
+                        </Tooltip>
+                    )}
                     </Box>
                     
                     {/* Chip de Prioridad del tamaño del botón play */}
@@ -754,6 +825,14 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     <CameraIcon sx={{ mr: 1, fontSize: '1.1rem', color: 'success.main' }} />
                     Subir foto
                 </MenuItem>
+                
+                {/* Opción para ver fotos en menú - solo si existen */}
+                {hasPhotos && (
+                    <MenuItem onClick={() => { handleViewPhotos(); handleClose(); }}>
+                        <ImageIcon sx={{ mr: 1, fontSize: '1.1rem', color: 'info.main' }} />
+                        Ver fotos ({task.photos.length})
+                    </MenuItem>
+                )}
             </Menu>
             
             {/* Hidden file input for photo upload */}
@@ -764,6 +843,102 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
             />
+            
+            {/* Dialog para ver fotos */}
+            <Dialog
+                open={photoDialogOpen}
+                onClose={handleClosePhotoDialog}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 2,
+                        bgcolor: 'background.paper'
+                    }
+                }}
+            >
+                <DialogTitle sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    pb: 1
+                }}>
+                    <Typography variant="h6">
+                        Fotos de la tarea - {currentPhotoIndex + 1} de {hasPhotos ? task.photos.length : 0}
+                    </Typography>
+                    <IconButton onClick={handleClosePhotoDialog}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent sx={{ p: 2 }}>
+                    {hasPhotos && task.photos[currentPhotoIndex] && (
+                        <Box sx={{ textAlign: 'center' }}>
+                            <img
+                                src={task.photos[currentPhotoIndex].photo}
+                                alt={`Foto ${currentPhotoIndex + 1}`}
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '70vh',
+                                    objectFit: 'contain',
+                                    borderRadius: 8
+                                }}
+                            />
+                            
+                            {/* Descripción de la foto */}
+                            {task.photos[currentPhotoIndex].description && (
+                                <Typography 
+                                    variant="body2" 
+                                    sx={{ 
+                                        mt: 1, 
+                                        color: 'text.secondary',
+                                        fontStyle: 'italic'
+                                    }}
+                                >
+                                    {task.photos[currentPhotoIndex].description}
+                                </Typography>
+                            )}
+                            
+                            {/* Fecha de subida */}
+                            <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                    mt: 0.5, 
+                                    display: 'block',
+                                    color: 'text.secondary'
+                                }}
+                            >
+                                Subida: {new Date(task.photos[currentPhotoIndex].uploaded_at).toLocaleDateString('es-ES', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
+                            
+                            {/* Navegación entre fotos */}
+                            {task.photos.length > 1 && (
+                                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 1 }}>
+                                    <IconButton 
+                                        onClick={handlePrevPhoto}
+                                        disabled={currentPhotoIndex === 0}
+                                        sx={{ bgcolor: 'action.hover' }}
+                                    >
+                                        ←
+                                    </IconButton>
+                                    <IconButton 
+                                        onClick={handleNextPhoto}
+                                        disabled={currentPhotoIndex === task.photos.length - 1}
+                                        sx={{ bgcolor: 'action.hover' }}
+                                    >
+                                        →
+                                    </IconButton>
+                                </Box>
+                            )}
+                        </Box>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Card>
     )
 }
