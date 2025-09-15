@@ -51,7 +51,14 @@ export default function PersonalManagement() {
                 Gestión de Personal
             </Typography>
             
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ 
+                borderBottom: 1, 
+                borderColor: 'divider',
+                position: 'sticky',
+                top: 0,
+                zIndex: (theme) => theme.zIndex.appBar,
+                bgcolor: 'background.paper'
+            }}>
                 <Tabs 
                     value={value} 
                     onChange={handleChange} 
