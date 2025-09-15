@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
     Box,
     Typography,
-    Button,
     IconButton,
     Chip,
     Avatar,
@@ -20,6 +19,7 @@ import {
     Email as EmailIcon,
     Person as PersonIcon,
 } from '@mui/icons-material'
+import ButtonPrimary from '@/components/common/button/ButtonPrimary'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useGetAllStaffQuery, useDeleteStaffMutation } from '@/services/staff/staffService'
 import { StaffMember } from '@/interfaces/staff.interface'
@@ -267,52 +267,92 @@ export default function StaffList() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* Header Compacto */}
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: { xs: 'stretch', sm: 'center' },
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: { xs: 2, sm: 0 },
-                mb: 3 
+            {/* Filtros y Acciones */}
+            <Paper elevation={0} sx={{ 
+                p: { xs: 1.5, sm: 2 }, 
+                mb: 3, 
+                bgcolor: 'background.paper', 
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider'
             }}>
-                <TextField
-                    placeholder="Buscar por nombre, email o teléfono..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon color="action" />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ 
-                        maxWidth: { xs: '100%', sm: 400 },
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: 2,
-                            bgcolor: 'white',
-                        }
-                    }}
-                />
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => setAddModalOpen(true)}
-                    size="small"
-                    sx={{ 
-                        borderRadius: 1,
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        px: 2,
-                        py: 0.5,
-                        whiteSpace: 'nowrap',
-                        minWidth: { xs: '100%', sm: 'auto' },
-                    }}
-                >
-                    Agregar Personal
-                </Button>
-            </Box>
+                {/* Fila superior con botones de acción */}
+                <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 2, sm: 1 }
+                }}>
+                    <Typography 
+                        variant="subtitle2" 
+                        color="text.secondary" 
+                        sx={{ 
+                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            fontWeight: 600,
+                            order: { xs: 2, sm: 1 }
+                        }}
+                    >
+                        Gestión de Personal:
+                    </Typography>
+                    
+                    <Box sx={{ 
+                        display: 'flex', 
+                        gap: 1.5,
+                        order: { xs: 1, sm: 2 },
+                        width: { xs: '100%', sm: 'auto' },
+                        flexDirection: { xs: 'column', sm: 'row' }
+                    }}>
+                        {/* Campo de búsqueda */}
+                        <TextField
+                            size="small"
+                            placeholder="Buscar por nombre, email o teléfono..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            variant="outlined"
+                            sx={{ 
+                                minWidth: { xs: '100%', sm: 300 },
+                                '& .MuiOutlinedInput-root': {
+                                    height: 40,
+                                    bgcolor: 'white'
+                                }
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        
+                        {/* Botón agregar personal */}
+                        <ButtonPrimary
+                            onClick={() => setAddModalOpen(true)}
+                            style={{
+                                background: '#0E6191',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '8px 16px',
+                                fontSize: '0.875rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                height: '40px',
+                                minWidth: '140px',
+                                whiteSpace: 'nowrap' as const,
+                                transition: 'all 0.2s ease-in-out',
+                            }}
+                        >
+                            <AddIcon sx={{ fontSize: 16 }} />
+                            Agregar Personal
+                        </ButtonPrimary>
+                    </Box>
+                </Box>
+            </Paper>
 
             {/* Tabla */}
             <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
@@ -405,21 +445,28 @@ export default function StaffList() {
                         }
                     </Typography>
                     {!search && (
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
+                        <ButtonPrimary
                             onClick={() => setAddModalOpen(true)}
-                            size="medium"
-                            sx={{ 
-                                borderRadius: 1,
-                                textTransform: 'none',
-                                fontWeight: 500,
-                                px: 3,
-                                py: 1,
+                            style={{
+                                background: '#0E6191',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '12px 24px',
+                                fontSize: '0.875rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                minWidth: '180px',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s ease-in-out',
                             }}
                         >
+                            <AddIcon style={{ fontSize: 16 }} />
                             Agregar Primer Empleado
-                        </Button>
+                        </ButtonPrimary>
                     )}
                 </Paper>
             )}
