@@ -738,17 +738,17 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 size="small"
                                 onClick={handleViewPhotos}
                                 sx={{ 
-                                    color: 'info.main',
+                                    color: '#7c3aed',
                                     bgcolor: 'grey.100',
                                     width: { xs: 44, sm: 32 },
                                     height: { xs: 44, sm: 32 },
                                     '&:hover': { 
-                                        bgcolor: 'info.light',
-                                        color: 'info.dark',
+                                        bgcolor: '#ede9fe',
+                                        color: '#5b21b6',
                                         transform: 'scale(1.1)'
                                     },
                                     border: '1px solid',
-                                    borderColor: 'info.main',
+                                    borderColor: '#7c3aed',
                                 }}
                             >
                                 <Badge 
@@ -829,7 +829,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 {/* Opción para ver fotos en menú - solo si existen */}
                 {hasPhotos && (
                     <MenuItem onClick={() => { handleViewPhotos(); handleClose(); }}>
-                        <ImageIcon sx={{ mr: 1, fontSize: '1.1rem', color: 'info.main' }} />
+                        <ImageIcon sx={{ mr: 1, fontSize: '1.1rem', color: '#7c3aed' }} />
                         Ver fotos ({task.photos.length})
                     </MenuItem>
                 )}
