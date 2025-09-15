@@ -9,6 +9,8 @@ import {
     Stack,
     TextField,
     InputAdornment,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material'
 import {
     Add as AddIcon,
@@ -23,10 +25,13 @@ import TaskCard from './TaskCard'
 import { WorkTask } from '@/interfaces/staff.interface'
 
 export default function TaskManagement() {
+    const theme = useTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const [editModalOpen, setEditModalOpen] = useState(false)
     const [addModalOpen, setAddModalOpen] = useState(false)
     const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null)
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
+    const [searchQuery, setSearchQuery] = useState('')
 
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
@@ -124,133 +129,232 @@ export default function TaskManagement() {
         <Box sx={{ width: '100%' }}>
 
 
-            {/* Filtros y Acciones */}
+            {/* Filtros y Acciones Optimizados */}
             <Paper elevation={0} sx={{ 
-                p: { xs: 1.5, sm: 2 }, 
+                p: isMobile ? 1 : { sm: 2 }, 
                 mb: 3, 
                 bgcolor: 'background.paper', 
                 borderRadius: 2,
                 border: '1px solid',
                 borderColor: 'divider'
             }}>
-                {/* Fila superior con botones de acción */}
-                <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    mb: 2,
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 2, sm: 1 }
-                }}>
-                    <Typography 
-                        variant="subtitle2" 
-                        color="text.secondary" 
-                        sx={{ 
-                            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                            fontWeight: 600,
-                            order: { xs: 2, sm: 1 }
-                        }}
-                    >
-                        Filtrar por estado:
-                    </Typography>
-                    
-                    <Box sx={{ 
-                        display: 'flex', 
-                        gap: 1.5,
-                        order: { xs: 1, sm: 2 },
-                        width: { xs: '100%', sm: 'auto' },
-                        flexDirection: { xs: 'column', sm: 'row' }
+                {isMobile ? (
+                    /* Mobile: Todo en una sola línea scrollable */
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        overflowX: 'auto',
+                        pb: 0.5,
+                        '&::-webkit-scrollbar': {
+                            height: 4
+                        },
+                        '&::-webkit-scrollbar-track': {
+                            backgroundColor: '#f1f1f1',
+                            borderRadius: 4
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                            backgroundColor: '#c1c1c1',
+                            borderRadius: 4
+                        }
                     }}>
-                        {/* Campo de búsqueda */}
+                        {/* Campo de búsqueda compacto */}
                         <TextField
                             size="small"
-                            placeholder="Buscar tareas..."
+                            placeholder="Buscar..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             variant="outlined"
                             sx={{ 
-                                minWidth: { xs: '100%', sm: 200 },
+                                minWidth: 120,
+                                flexShrink: 0,
                                 '& .MuiOutlinedInput-root': {
-                                    height: 40,
-                                    bgcolor: 'white'
+                                    height: 32,
+                                    bgcolor: 'white',
+                                    fontSize: '0.75rem'
                                 }
                             }}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 16 }} />
                                     </InputAdornment>
                                 ),
                             }}
                         />
                         
-                        {/* Botón crear tarea */}
+                        {/* Filtros compactos */}
+                        <Chip
+                            label="Todas"
+                            variant={statusFilter === null ? 'filled' : 'outlined'}
+                            color={statusFilter === null ? 'primary' : 'default'}
+                            onClick={() => setStatusFilter(null)}
+                            size="small"
+                            sx={{
+                                height: 28,
+                                fontSize: '0.7rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                flexShrink: 0,
+                                '& .MuiChip-label': { px: 1 }
+                            }}
+                        />
+                        {statusFilterOptions.map((filter) => (
+                            <Chip
+                                key={filter.value}
+                                label={`${filter.label.split(' ')[0]} (${tasksByStatus[filter.value as keyof typeof tasksByStatus].length})`}
+                                variant={statusFilter === filter.value ? 'filled' : 'outlined'}
+                                color={statusFilter === filter.value ? filter.color : 'default'}
+                                onClick={() => setStatusFilter(filter.value)}
+                                size="small"
+                                sx={{
+                                    height: 28,
+                                    fontSize: '0.7rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    '& .MuiChip-label': { px: 1 }
+                                }}
+                            />
+                        ))}
+                        
+                        {/* Botón crear tarea compacto */}
                         <ButtonPrimary
                             onClick={() => setAddModalOpen(true)}
                             style={{
                                 background: '#0E6191',
                                 color: 'white',
-                                height: '40px',
+                                height: '32px',
                                 fontWeight: 600,
-                                minWidth: '160px',
+                                minWidth: '80px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '8px',
-                                borderRadius: '6px'
+                                gap: '4px',
+                                borderRadius: '6px',
+                                flexShrink: 0,
+                                fontSize: '0.75rem',
+                                padding: '0 12px'
                             }}
                         >
-                            <AddIcon sx={{ fontSize: '20px' }} />
-                            Crear Tarea
+                            <AddIcon sx={{ fontSize: '16px' }} />
+                            Nueva
                         </ButtonPrimary>
                     </Box>
-                </Box>
+                ) : (
+                    /* Desktop: Layout original */
+                    <>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            mb: 2
+                        }}>
+                            <Typography 
+                                variant="subtitle2" 
+                                color="text.secondary" 
+                                sx={{ 
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600
+                                }}
+                            >
+                                Filtrar por estado:
+                            </Typography>
+                            
+                            <Box sx={{ 
+                                display: 'flex', 
+                                gap: 1.5
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Buscar tareas..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    variant="outlined"
+                                    sx={{ 
+                                        minWidth: 200,
+                                        '& .MuiOutlinedInput-root': {
+                                            height: 40,
+                                            bgcolor: 'white'
+                                        }
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
+                                
+                                <ButtonPrimary
+                                    onClick={() => setAddModalOpen(true)}
+                                    style={{
+                                        background: '#0E6191',
+                                        color: 'white',
+                                        height: '40px',
+                                        fontWeight: 600,
+                                        minWidth: '160px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        borderRadius: '6px'
+                                    }}
+                                >
+                                    <AddIcon sx={{ fontSize: '20px' }} />
+                                    Crear Tarea
+                                </ButtonPrimary>
+                            </Box>
+                        </Box>
 
-                {/* Fila inferior con filtros */}
-                <Stack 
-                    direction="row" 
-                    spacing={{ xs: 1, sm: 1.5 }}
-                    sx={{ 
-                        flexWrap: 'wrap', 
-                        gap: { xs: 1, sm: 1.5 },
-                        '& > *': {
-                            flexShrink: 0
-                        }
-                    }}
-                >
-                    <Chip
-                        label="Todas"
-                        variant={statusFilter === null ? 'filled' : 'outlined'}
-                        color={statusFilter === null ? 'primary' : 'default'}
-                        onClick={() => setStatusFilter(null)}
-                        size="small"
-                        sx={{
-                            minHeight: { xs: 36, sm: 32 },
-                            fontSize: { xs: '0.75rem', sm: '0.8125rem' },
-                            fontWeight: 500,
-                            cursor: 'pointer',
-                            '&:hover': {
-                                transform: 'scale(1.05)'
-                            }
-                        }}
-                    />
-                    {statusFilterOptions.map((filter) => (
-                        <Chip
-                            key={filter.value}
-                            label={`${filter.label} (${tasksByStatus[filter.value as keyof typeof tasksByStatus].length})`}
-                            variant={statusFilter === filter.value ? 'filled' : 'outlined'}
-                            color={statusFilter === filter.value ? filter.color : 'default'}
-                            onClick={() => setStatusFilter(filter.value)}
-                            size="small"
-                            sx={{
-                                minHeight: { xs: 36, sm: 32 },
-                                fontSize: { xs: '0.75rem', sm: '0.8125rem' },
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    transform: 'scale(1.05)'
+                        <Stack 
+                            direction="row" 
+                            spacing={1.5}
+                            sx={{ 
+                                flexWrap: 'wrap', 
+                                gap: 1.5,
+                                '& > *': {
+                                    flexShrink: 0
                                 }
                             }}
-                        />
-                    ))}
-                </Stack>
+                        >
+                            <Chip
+                                label="Todas"
+                                variant={statusFilter === null ? 'filled' : 'outlined'}
+                                color={statusFilter === null ? 'primary' : 'default'}
+                                onClick={() => setStatusFilter(null)}
+                                size="small"
+                                sx={{
+                                    minHeight: 32,
+                                    fontSize: '0.8125rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)'
+                                    }
+                                }}
+                            />
+                            {statusFilterOptions.map((filter) => (
+                                <Chip
+                                    key={filter.value}
+                                    label={`${filter.label} (${tasksByStatus[filter.value as keyof typeof tasksByStatus].length})`}
+                                    variant={statusFilter === filter.value ? 'filled' : 'outlined'}
+                                    color={statusFilter === filter.value ? filter.color : 'default'}
+                                    onClick={() => setStatusFilter(filter.value)}
+                                    size="small"
+                                    sx={{
+                                        minHeight: 32,
+                                        fontSize: '0.8125rem',
+                                        fontWeight: 500,
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            transform: 'scale(1.05)'
+                                        }
+                                    }}
+                                />
+                            ))}
+                        </Stack>
+                    </>
+                )}
             </Paper>
 
             {/* Grid de Cards de Tareas */}
