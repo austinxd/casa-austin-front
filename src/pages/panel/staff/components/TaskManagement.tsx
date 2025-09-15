@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Box,
     Typography,
@@ -53,6 +53,10 @@ export default function TaskManagement() {
         ...(filterFromToday && { date_from: today }), // Solo aplicar filtro si está activo
     })
 
+    // Refrescar tareas cuando se monta el componente (al cambiar de pestaña)
+    useEffect(() => {
+        refetch()
+    }, [refetch])
 
     const [startWork] = useStartWorkMutation()
     const [completeWork] = useCompleteWorkMutation()
