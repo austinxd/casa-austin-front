@@ -112,6 +112,7 @@ export interface TaskQueryParams {
     status?: string
     task_type?: string
     scheduled_date?: string
+    date_from?: string
 }
 
 export interface TimeTrackingQueryParams {

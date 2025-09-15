@@ -37,9 +37,13 @@ export default function TaskManagement() {
     const [searchQuery, setSearchQuery] = useState('')
     const [showFilters, setShowFilters] = useState(false)
 
+    // Obtener la fecha de hoy en formato YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0]
+    
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
         page_size: 100,
+        date_from: today, // Filtrar tareas desde hoy en adelante
     })
 
 
