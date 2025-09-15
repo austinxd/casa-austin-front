@@ -18,7 +18,6 @@ import {
     Stop as CompleteIcon,
     Edit as EditIcon,
     CameraAlt as CameraIcon,
-    Visibility as ViewIcon,
 } from '@mui/icons-material'
 import { useState, useRef } from 'react'
 import { WorkTask } from '@/interfaces/staff.interface'
@@ -642,30 +641,25 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Tooltip>
                     )}
                     
-                    {/* Botón de Editar/Ver según el tipo de tarea */}
-                    <Tooltip title={task.task_type === 'maintenance' ? 'Ver tarea' : 'Editar tarea'}>
+                    <Tooltip title="Editar tarea">
                         <IconButton
                             size="small"
                             onClick={() => onEdit(task)}
                             sx={{ 
-                                color: task.task_type === 'maintenance' ? 'info.main' : 'warning.main',
+                                color: 'warning.main',
                                 bgcolor: 'grey.100',
                                 width: { xs: 44, sm: 32 },
                                 height: { xs: 44, sm: 32 },
                                 '&:hover': { 
-                                    bgcolor: task.task_type === 'maintenance' ? 'info.light' : 'warning.light',
-                                    color: task.task_type === 'maintenance' ? 'info.dark' : 'warning.dark',
+                                    bgcolor: 'warning.light',
+                                    color: 'warning.dark',
                                     transform: 'scale(1.1)'
                                 },
                                 border: '1px solid',
-                                borderColor: task.task_type === 'maintenance' ? 'info.main' : 'warning.main',
+                                borderColor: 'warning.main',
                             }}
                         >
-                            {task.task_type === 'maintenance' ? (
-                                <ViewIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
-                            ) : (
-                                <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
-                            )}
+                            <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
                     
@@ -728,17 +722,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 }}
             >
                 <MenuItem onClick={() => { onEdit(task); handleClose(); }}>
-                    {task.task_type === 'maintenance' ? (
-                        <>
-                            <ViewIcon sx={{ mr: 1, fontSize: '1.1rem', color: 'info.main' }} />
-                            Ver tarea
-                        </>
-                    ) : (
-                        <>
-                            <EditIcon sx={{ mr: 1, fontSize: '1.1rem' }} />
-                            Editar tarea
-                        </>
-                    )}
+                    <EditIcon sx={{ mr: 1, fontSize: '1.1rem' }} />
+                    Editar tarea
                 </MenuItem>
                 
                 {task.status === 'assigned' && (
