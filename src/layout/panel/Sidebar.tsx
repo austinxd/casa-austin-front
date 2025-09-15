@@ -141,7 +141,7 @@ export default function Sidebar(props: Props) {
                         sx={{
                             cursor: 'pointer',
                             display:
-                                roll === 'mantenimiento' && text != 'Disponibilidad'
+                                roll === 'mantenimiento' && text !== 'Disponibilidad' && text !== 'Personal'
                                     ? 'none'
                                     : 'flex',
                             px: 2,

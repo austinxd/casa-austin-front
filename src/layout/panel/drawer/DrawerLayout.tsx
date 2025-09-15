@@ -73,10 +73,6 @@ export default function DrawerLayout() {
         }
     }, [params.pathname])
     
-    // Debug logging
-    console.log('DrawerLayout - Current roll:', roll)
-    console.log('DrawerLayout - rollTkn cookie:', Cookies.get('rollTkn'))
-    console.log('DrawerLayout - Menu items count:', menuItems.length)
 
     const onLogOut = () => {
         dispatch(logout())
@@ -112,8 +108,6 @@ export default function DrawerLayout() {
                     const shouldDisplay = roll === 'mantenimiento' 
                         ? (text === 'Disponibilidad' || text === 'Personal')
                         : true
-                    
-                    console.log(`Menu item "${text}" - roll: "${roll}" - shouldDisplay: ${shouldDisplay}`)
                     
                     return (
                     <Box
