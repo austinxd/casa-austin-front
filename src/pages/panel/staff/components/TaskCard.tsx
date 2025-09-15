@@ -390,111 +390,117 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         flex: 1,
                         flexWrap: 'wrap'
                     }}>
-                        {/* Check-out Date - HORIZONTAL */}
+                        {/* Check-out Date - CUADRADA */}
                         {task.check_out_date && (
                             <Box sx={{
                                 display: 'flex',
+                                flexDirection: 'column',
                                 alignItems: 'center',
-                                gap: 0.6,
-                                p: isMobile ? 0.5 : 0.4,
-                                bgcolor: 'rgba(255,193,7,0.1)',
-                                borderRadius: 1,
-                                border: '1px solid rgba(255,193,7,0.3)',
-                                flex: '1 1 auto',
-                                minWidth: isMobile ? '120px' : '140px'
+                                justifyContent: 'center',
+                                p: isMobile ? 1 : 0.8,
+                                bgcolor: '#FFF8E1',
+                                borderRadius: 1.5,
+                                border: '2px solid #FFD54F',
+                                flex: '1 1 45%',
+                                minHeight: isMobile ? '60px' : '55px',
+                                boxShadow: '0 2px 8px rgba(255,193,7,0.15)'
                             }}>
                                 <Typography 
                                     sx={{ 
-                                        fontSize: isMobile ? '1.1rem' : '1rem',
-                                        lineHeight: 1
+                                        fontSize: isMobile ? '1.2rem' : '1.1rem',
+                                        lineHeight: 1,
+                                        mb: 0.3
                                     }}
                                 >
                                     🏠
                                 </Typography>
-                                <Box>
-                                    <Typography 
-                                        variant="caption"
-                                        sx={{ 
-                                            fontSize: isMobile ? '0.65rem' : '0.7rem',
-                                            fontWeight: 500,
-                                            color: 'text.secondary',
-                                            display: 'block',
-                                            lineHeight: 1
-                                        }}
-                                    >
-                                        Check-out:
-                                    </Typography>
-                                    <Typography 
-                                        variant="body2"
-                                        sx={{ 
-                                            fontSize: isMobile ? '0.8rem' : '0.85rem',
-                                            fontWeight: 600,
-                                            color: getTextColor(),
-                                            lineHeight: 1.1
-                                        }}
-                                    >
-                                        {new Date(task.check_out_date).toLocaleDateString('es-ES', { 
-                                            weekday: 'short', 
-                                            day: '2-digit', 
-                                            month: '2-digit' 
-                                        })}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        )}
-                        
-                        {/* Scheduled Date - HORIZONTAL */}
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 0.6,
-                            p: isMobile ? 0.5 : 0.4,
-                            bgcolor: 'rgba(25,118,210,0.1)',
-                            borderRadius: 1,
-                            border: '1px solid rgba(25,118,210,0.3)',
-                            flex: '1 1 auto',
-                            minWidth: isMobile ? '120px' : '140px'
-                        }}>
-                            <Typography 
-                                sx={{ 
-                                    fontSize: isMobile ? '1.1rem' : '1rem',
-                                    lineHeight: 1
-                                }}
-                            >
-                                📅
-                            </Typography>
-                            <Box>
                                 <Typography 
                                     variant="caption"
                                     sx={{ 
-                                        fontSize: isMobile ? '0.65rem' : '0.7rem',
-                                        fontWeight: 500,
-                                        color: 'text.secondary',
-                                        display: 'block',
-                                        lineHeight: 1
+                                        fontSize: isMobile ? '0.6rem' : '0.65rem',
+                                        fontWeight: 600,
+                                        color: '#F57F17',
+                                        textAlign: 'center',
+                                        lineHeight: 1,
+                                        mb: 0.2
                                     }}
                                 >
-                                    Programada:
+                                    CHECK-OUT
                                 </Typography>
                                 <Typography 
                                     variant="body2"
                                     sx={{ 
-                                        fontSize: isMobile ? '0.8rem' : '0.85rem',
-                                        fontWeight: 600,
-                                        color: getTextColor(),
-                                        lineHeight: 1.1
+                                        fontSize: isMobile ? '0.75rem' : '0.8rem',
+                                        fontWeight: 700,
+                                        color: '#E65100',
+                                        textAlign: 'center',
+                                        lineHeight: 1
                                     }}
                                 >
-                                    {task.scheduled_date 
-                                        ? new Date(task.scheduled_date).toLocaleDateString('es-ES', { 
-                                            weekday: 'short', 
-                                            day: '2-digit', 
-                                            month: '2-digit' 
-                                        })
-                                        : 'Sin fecha'
-                                    }
+                                    {new Date(task.check_out_date).toLocaleDateString('es-ES', { 
+                                        weekday: 'short', 
+                                        day: '2-digit', 
+                                        month: '2-digit' 
+                                    })}
                                 </Typography>
                             </Box>
+                        )}
+                        
+                        {/* Scheduled Date - CUADRADA */}
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: isMobile ? 1 : 0.8,
+                            bgcolor: '#E3F2FD',
+                            borderRadius: 1.5,
+                            border: '2px solid #42A5F5',
+                            flex: '1 1 45%',
+                            minHeight: isMobile ? '60px' : '55px',
+                            boxShadow: '0 2px 8px rgba(25,118,210,0.15)'
+                        }}>
+                            <Typography 
+                                sx={{ 
+                                    fontSize: isMobile ? '1.2rem' : '1.1rem',
+                                    lineHeight: 1,
+                                    mb: 0.3
+                                }}
+                            >
+                                📅
+                            </Typography>
+                            <Typography 
+                                variant="caption"
+                                sx={{ 
+                                    fontSize: isMobile ? '0.6rem' : '0.65rem',
+                                    fontWeight: 600,
+                                    color: '#1565C0',
+                                    textAlign: 'center',
+                                    lineHeight: 1,
+                                    mb: 0.2
+                                }}
+                            >
+                                PROGRAMADA
+                            </Typography>
+                            <Typography 
+                                variant="body2"
+                                sx={{ 
+                                    fontSize: isMobile ? '0.75rem' : '0.8rem',
+                                    fontWeight: 700,
+                                    color: '#0D47A1',
+                                    textAlign: 'center',
+                                    lineHeight: 1
+                                }}
+                            >
+                                {task.scheduled_date 
+                                    ? new Date(task.scheduled_date).toLocaleDateString('es-ES', { 
+                                        weekday: 'short', 
+                                        day: '2-digit', 
+                                        month: '2-digit' 
+                                    })
+                                    : 'Sin fecha'
+                                }
+                            </Typography>
                         </Box>
                     </Box>
                 </Box>
