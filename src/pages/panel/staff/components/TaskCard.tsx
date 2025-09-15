@@ -17,9 +17,11 @@ import {
     PlayArrow as StartIcon,
     Stop as CompleteIcon,
     Edit as EditIcon,
+    CameraAlt as CameraIcon,
 } from '@mui/icons-material'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { WorkTask } from '@/interfaces/staff.interface'
+import { useUploadTaskPhotoMutation } from '@/services/tasks/tasksService'
 
 interface TaskCardProps {
     task: WorkTask
@@ -33,6 +35,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const [expandDescription, setExpandDescription] = useState(false)
+    const [uploadTaskPhoto, { isLoading: isUploadingPhoto }] = useUploadTaskPhotoMutation()
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const open = Boolean(anchorEl)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,6 +45,35 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
     
     const handleClose = () => {
         setAnchorEl(null)
+    }
+
+    const handlePhotoUpload = () => {
+        fileInputRef.current?.click()
+    }
+
+    const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+
+        const formData = new FormData()
+        formData.append('photo', file)
+        formData.append('description', 'Evidencia de trabajo')
+
+        try {
+            await uploadTaskPhoto({ 
+                id: task.id.toString(), 
+                data: formData 
+            }).unwrap()
+            
+            // Reset input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+            
+            console.log('Foto subida exitosamente para tarea:', task.id)
+        } catch (error) {
+            console.error('Error al subir foto:', error)
+        }
     }
 
     const getTaskTypeIcon = (type: string) => {
@@ -629,6 +662,32 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
+                    
+                    <Tooltip title="Subir foto">
+                        <IconButton
+                            size="small"
+                            onClick={handlePhotoUpload}
+                            disabled={isUploadingPhoto}
+                            sx={{ 
+                                color: 'success.main',
+                                bgcolor: 'grey.100',
+                                width: { xs: 44, sm: 32 },
+                                height: { xs: 44, sm: 32 },
+                                '&:hover': { 
+                                    bgcolor: 'success.light',
+                                    color: 'success.dark',
+                                    transform: 'scale(1.1)'
+                                },
+                                '&:disabled': {
+                                    opacity: 0.6
+                                },
+                                border: '1px solid',
+                                borderColor: 'success.main',
+                            }}
+                        >
+                            <CameraIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
+                        </IconButton>
+                    </Tooltip>
                     </Box>
                     
                     {/* Chip de Prioridad del tamaño del botón play */}
@@ -680,7 +739,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         Completar trabajo
                     </MenuItem>
                 )}
+                <MenuItem onClick={() => { handlePhotoUpload(); handleClose(); }}>
+                    <CameraIcon sx={{ mr: 1, fontSize: '1.1rem', color: 'success.main' }} />
+                    Subir foto
+                </MenuItem>
             </Menu>
+            
+            {/* Hidden file input for photo upload */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+            />
         </Card>
     )
 }
