@@ -9,21 +9,17 @@ import {
 } from '@mui/icons-material'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import { useDispatch } from 'react-redux'
 import { logout } from '@/services/auth/authSlice'
+
 export default function DrawerLayout() {
     const params = useLocation()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [roll, setRoll] = useState(Cookies.get('rollTkn') || '')
 
-    const onLogOut = () => {
-        dispatch(logout())
-        navigate('/')
-        setRoll('')
-    }
     const menuItems = [
         {
             id: 1,
@@ -68,6 +64,25 @@ export default function DrawerLayout() {
             path: '/panel/cerrar-sesion',
         },
     ]
+    
+    // Update roll when cookie changes
+    useEffect(() => {
+        const currentRoll = Cookies.get('rollTkn') || ''
+        if (currentRoll !== roll) {
+            setRoll(currentRoll)
+        }
+    }, [params.pathname])
+    
+    // Debug logging
+    console.log('DrawerLayout - Current roll:', roll)
+    console.log('DrawerLayout - rollTkn cookie:', Cookies.get('rollTkn'))
+    console.log('DrawerLayout - Menu items count:', menuItems.length)
+
+    const onLogOut = () => {
+        dispatch(logout())
+        navigate('/')
+        setRoll('')
+    }
 
     return (
         <div>
@@ -93,15 +108,19 @@ export default function DrawerLayout() {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 7).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 6).map(({ text, icon: Icon, path, id }) => {
+                    const shouldDisplay = roll === 'mantenimiento' 
+                        ? (text === 'Disponibilidad' || text === 'Personal')
+                        : true
+                    
+                    console.log(`Menu item "${text}" - roll: "${roll}" - shouldDisplay: ${shouldDisplay}`)
+                    
+                    return (
                     <Box
                         key={id}
                         sx={{
                             cursor: 'pointer',
-                            display:
-                                roll === 'mantenimiento' && text !== 'Disponibilidad' && text !== 'Personal'
-                                    ? 'none'
-                                    : 'flex',
+                            display: shouldDisplay ? 'flex' : 'none',
                             px: 2,
                             py: 1,
                             mb: 1,
@@ -127,43 +146,42 @@ export default function DrawerLayout() {
                             {text}
                         </Typography>
                     </Box>
-                ))}
-                {menuItems.slice(7, 8).map(({ text, icon: Icon, id }) => (
-                    <Box
-                        key={id}
-                        sx={{
-                            display: 'flex',
-                            px: 2,
-                            py: 1,
-                            mb: 1,
-                            justifyContent: 'start',
-                            alignItems: 'center',
-                            background: 'none',
-                            color: '#000F08',
-                            borderRadius: '6px',
-                            ':hover': {
-                                background: '#F5F5F5',
+                    )
+                })}
+                {/* Logout button */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        px: 2,
+                        py: 1,
+                        mb: 1,
+                        justifyContent: 'start',
+                        alignItems: 'center',
+                        background: 'none',
+                        color: '#000F08',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        ':hover': {
+                            background: '#F5F5F5',
+                            color: '#0E6191',
+                            '& .MuiTypography-root': {
                                 color: '#0E6191',
-                                cursor: 'pointer',
-                                '& .MuiTypography-root': {
-                                    color: '#0E6191',
-                                },
                             },
+                        },
+                    }}
+                    onClick={onLogOut}
+                >
+                    <LoginOutlinedIcon fontSize="small" sx={{ mr: 1.2, ml: 0 }} />
+                    <Typography
+                        sx={{
+                            fontSize: '15px',
+                            color: '#000F08',
+                            fontWeight: 400,
                         }}
-                        onClick={onLogOut}
                     >
-                        <Icon fontSize="small" sx={{ mr: 1.2, ml: 0 }} />
-                        <Typography
-                            sx={{
-                                fontSize: '15px',
-                                color: '#000F08',
-                                fontWeight: 400,
-                            }}
-                        >
-                            {text}
-                        </Typography>
-                    </Box>
-                ))}
+                        Cerrar sesión
+                    </Typography>
+                </Box>
             </Box>
         </div>
     )
