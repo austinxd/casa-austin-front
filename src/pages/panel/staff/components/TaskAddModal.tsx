@@ -94,9 +94,10 @@ export default function TaskAddModal({ open, onClose, onTaskAdded }: TaskAddModa
                 task_type: data.task_type as any,
                 priority: data.priority as any,
                 staff_member: data.staff_member || '',
-                property_name: data.property_name,
+                building_property: data.property_name,
                 scheduled_date: data.scheduled_date ? `${data.scheduled_date}T09:00:00Z` : '',
                 estimated_duration: data.estimated_duration.toString(),
+                requires_photo_evidence: true,
             }).unwrap()
 
             onTaskAdded()
