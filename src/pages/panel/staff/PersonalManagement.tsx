@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Box, Typography, Tabs, Tab } from '@mui/material'
+import Cookies from 'js-cookie'
 import StaffList from './components/StaffList'
 import TaskManagement from './components/TaskManagement'
 import TimeTracking from './components/TimeTracking'
@@ -35,6 +36,9 @@ function a11yProps(index: number) {
 }
 
 export default function PersonalManagement() {
+    const userRole = Cookies.get('rollTkn') || ''
+    const isMaintenanceUser = userRole === 'mantenimiento'
+    
     const [value, setValue] = useState(0)
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -62,28 +66,42 @@ export default function PersonalManagement() {
                         },
                     }}
                 >
-                    <Tab label="Personal" {...a11yProps(0)} />
-                    <Tab label="Tareas" {...a11yProps(1)} />
-                    <Tab label="Tiempo" {...a11yProps(2)} />
-                    <Tab label="Horarios" {...a11yProps(3)} />
+                    {isMaintenanceUser ? (
+                        <Tab label="Tareas" {...a11yProps(0)} />
+                    ) : (
+                        <>
+                            <Tab label="Personal" {...a11yProps(0)} />
+                            <Tab label="Tareas" {...a11yProps(1)} />
+                            <Tab label="Tiempo" {...a11yProps(2)} />
+                            <Tab label="Horarios" {...a11yProps(3)} />
+                        </>
+                    )}
                 </Tabs>
             </Box>
             
-            <TabPanel value={value} index={0}>
-                <StaffList />
-            </TabPanel>
-            
-            <TabPanel value={value} index={1}>
-                <TaskManagement />
-            </TabPanel>
-            
-            <TabPanel value={value} index={2}>
-                <TimeTracking />
-            </TabPanel>
-            
-            <TabPanel value={value} index={3}>
-                <ScheduleManagement />
-            </TabPanel>
+            {isMaintenanceUser ? (
+                <TabPanel value={value} index={0}>
+                    <TaskManagement />
+                </TabPanel>
+            ) : (
+                <>
+                    <TabPanel value={value} index={0}>
+                        <StaffList />
+                    </TabPanel>
+                    
+                    <TabPanel value={value} index={1}>
+                        <TaskManagement />
+                    </TabPanel>
+                    
+                    <TabPanel value={value} index={2}>
+                        <TimeTracking />
+                    </TabPanel>
+                    
+                    <TabPanel value={value} index={3}>
+                        <ScheduleManagement />
+                    </TabPanel>
+                </>
+            )}
         </Box>
     )
 }

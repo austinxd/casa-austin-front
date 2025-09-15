@@ -30,6 +30,11 @@ Casa Austin is a property rental management system built with React and TypeScri
   - **Consistent design**: Replaced MUI Button with ButtonPrimary component for visual consistency
   - **Search field optimization**: Applied same styling patterns as TaskManagement section
   - **Layout harmony**: Implemented "Filtros y Acciones" paper container matching other sections
+- **Role-Based Tab Access Control**: Implemented role-based access restrictions for PersonalManagement section
+  - **Maintenance users restriction**: Users with "mantenimiento" role can only access the "Tareas" tab
+  - **Clean UI adaptation**: Tab interface dynamically adjusts to show only available tabs based on user permissions
+  - **Proper tab indexing**: Tab navigation works correctly with reduced tab count for maintenance users
+  - **Enhanced Time tab**: Removed header text and made interface more direct for cleaning time analysis
 
 **September 14, 2025 - Mobile-Optimized Task Management Interface & UI Restructuring**
 - **TaskCard Component**: Comprehensive responsive design improvements with mobile-first approach and compact layout
