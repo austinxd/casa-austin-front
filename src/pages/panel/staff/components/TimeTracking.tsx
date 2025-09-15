@@ -22,10 +22,13 @@ import {
     AccessTime as TimeIcon,
     Work as WorkIcon,
     FreeBreakfast as BreakIcon,
-    ExitToApp as ExitIcon 
+    ExitToApp as ExitIcon,
+    CleaningServices as CleaningIcon,
+    Schedule as DurationIcon 
 } from '@mui/icons-material'
 import { useState } from 'react'
 import { useGetAllTimeTrackingQuery, useCreateTimeTrackingMutation } from '@/services/time-tracking/timeTrackingService'
+import { useGetAllTasksQuery } from '@/services/tasks/tasksService'
 
 export default function TimeTracking() {
     const theme = useTheme()
@@ -36,6 +39,14 @@ export default function TimeTracking() {
     const { data, isLoading, error, refetch } = useGetAllTimeTrackingQuery({
         page,
         page_size: 20
+    })
+    
+    // Obtener tareas de limpieza completadas con tiempos
+    const { data: cleaningTasks, isLoading: loadingCleaning, refetch: refetchCleaning } = useGetAllTasksQuery({
+        task_type: 'checkout_cleaning',
+        status: 'completed',
+        page: 1,
+        page_size: 50
     })
     
     // Mutación para crear registro de tiempo
@@ -49,6 +60,7 @@ export default function TimeTracking() {
             
             await createTimeTracking(formData).unwrap()
             refetch()
+            refetchCleaning() // Refrescar también las tareas de limpieza
         } catch (error) {
             console.error('Error al registrar tiempo:', error)
         }
@@ -275,6 +287,116 @@ export default function TimeTracking() {
                                 Siguiente
                             </Button>
                         </Box>
+                    )}
+                </CardContent>
+            </Card>
+            
+            {/* Sección de Tiempos de Limpieza */}
+            <Card elevation={2} sx={{ mt: 3 }}>
+                <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <CleaningIcon sx={{ mr: 1, color: 'primary.main' }} />
+                        <Typography variant="h6">
+                            Tiempos de Limpieza Completadas
+                        </Typography>
+                    </Box>
+                    
+                    {loadingCleaning ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <TableContainer>
+                            <Table size={isMobile ? "small" : "medium"}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Fecha</TableCell>
+                                        <TableCell>Empleado</TableCell>
+                                        <TableCell>Propiedad</TableCell>
+                                        <TableCell>Duración</TableCell>
+                                        {!isMobile && <TableCell>Tiempo Estimado</TableCell>}
+                                        {!isMobile && <TableCell>Tiempo Inicio</TableCell>}
+                                        {!isMobile && <TableCell>Tiempo Fin</TableCell>}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {cleaningTasks?.results?.map((task) => {
+                                        const startTime = task.actual_start_time ? new Date(task.actual_start_time) : null
+                                        const endTime = task.actual_end_time ? new Date(task.actual_end_time) : null
+                                        
+                                        return (
+                                            <TableRow key={task.id}>
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {new Date(task.scheduled_date).toLocaleDateString('es-ES', {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {task.staff_member_name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {task.building_property}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                        <DurationIcon sx={{ fontSize: 16, mr: 0.5, color: 'success.main' }} />
+                                                        <Chip
+                                                            label={task.actual_duration_display || 'No calculado'}
+                                                            color="success"
+                                                            size="small"
+                                                            variant="outlined"
+                                                        />
+                                                    </Box>
+                                                </TableCell>
+                                                {!isMobile && (
+                                                    <TableCell>
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            {task.estimated_duration || '-'}
+                                                        </Typography>
+                                                    </TableCell>
+                                                )}
+                                                {!isMobile && (
+                                                    <TableCell>
+                                                        <Typography variant="body2">
+                                                            {startTime ? startTime.toLocaleTimeString('es-ES', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            }) : '-'}
+                                                        </Typography>
+                                                    </TableCell>
+                                                )}
+                                                {!isMobile && (
+                                                    <TableCell>
+                                                        <Typography variant="body2">
+                                                            {endTime ? endTime.toLocaleTimeString('es-ES', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            }) : '-'}
+                                                        </Typography>
+                                                    </TableCell>
+                                                )}
+                                            </TableRow>
+                                        )
+                                    }) || (
+                                        <TableRow>
+                                            <TableCell colSpan={isMobile ? 4 : 7} align="center">
+                                                <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                                                    No hay limpiezas completadas disponibles
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     )}
                 </CardContent>
             </Card>
