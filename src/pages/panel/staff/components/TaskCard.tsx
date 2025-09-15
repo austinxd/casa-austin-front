@@ -22,6 +22,7 @@ import {
 import { useState, useRef } from 'react'
 import { WorkTask } from '@/interfaces/staff.interface'
 import { useUploadTaskPhotoMutation } from '@/services/tasks/tasksService'
+import Cookies from 'js-cookie'
 
 interface TaskCardProps {
     task: WorkTask
@@ -38,6 +39,10 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
     const [uploadTaskPhoto, { isLoading: isUploadingPhoto }] = useUploadTaskPhotoMutation()
     const fileInputRef = useRef<HTMLInputElement>(null)
     const open = Boolean(anchorEl)
+    
+    // Obtener rol del usuario desde cookie
+    const userRole = Cookies.get('rollTkn')
+    const isMaintenanceUser = userRole === 'mantenimiento'
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
@@ -641,27 +646,30 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Tooltip>
                     )}
                     
-                    <Tooltip title="Editar tarea">
-                        <IconButton
-                            size="small"
-                            onClick={() => onEdit(task)}
-                            sx={{ 
-                                color: 'warning.main',
-                                bgcolor: 'grey.100',
-                                width: { xs: 44, sm: 32 },
-                                height: { xs: 44, sm: 32 },
-                                '&:hover': { 
-                                    bgcolor: 'warning.light',
-                                    color: 'warning.dark',
-                                    transform: 'scale(1.1)'
-                                },
-                                border: '1px solid',
-                                borderColor: 'warning.main',
-                            }}
-                        >
-                            <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
-                        </IconButton>
-                    </Tooltip>
+                    {/* Botón de editar - SOLO para usuarios NO mantenimiento */}
+                    {!isMaintenanceUser && (
+                        <Tooltip title="Editar tarea">
+                            <IconButton
+                                size="small"
+                                onClick={() => onEdit(task)}
+                                sx={{ 
+                                    color: 'warning.main',
+                                    bgcolor: 'grey.100',
+                                    width: { xs: 44, sm: 32 },
+                                    height: { xs: 44, sm: 32 },
+                                    '&:hover': { 
+                                        bgcolor: 'warning.light',
+                                        color: 'warning.dark',
+                                        transform: 'scale(1.1)'
+                                    },
+                                    border: '1px solid',
+                                    borderColor: 'warning.main',
+                                }}
+                            >
+                                <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
+                            </IconButton>
+                        </Tooltip>
+                    )}
                     
                     <Tooltip title="Subir foto">
                         <IconButton
@@ -721,10 +729,13 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     }
                 }}
             >
-                <MenuItem onClick={() => { onEdit(task); handleClose(); }}>
-                    <EditIcon sx={{ mr: 1, fontSize: '1.1rem' }} />
-                    Editar tarea
-                </MenuItem>
+                {/* Opción de editar en menú - SOLO para usuarios NO mantenimiento */}
+                {!isMaintenanceUser && (
+                    <MenuItem onClick={() => { onEdit(task); handleClose(); }}>
+                        <EditIcon sx={{ mr: 1, fontSize: '1.1rem' }} />
+                        Editar tarea
+                    </MenuItem>
+                )}
                 
                 {task.status === 'assigned' && (
                     <MenuItem onClick={() => { onStartWork(task.id.toString()); handleClose(); }}>
