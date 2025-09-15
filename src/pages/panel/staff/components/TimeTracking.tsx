@@ -181,12 +181,12 @@ export default function TimeTracking() {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Fecha</TableCell>
-                                        <TableCell>Empleado</TableCell>
                                         <TableCell>Propiedad</TableCell>
+                                        <TableCell>Empleado</TableCell>
+                                        <TableCell>Tiempo Inicio</TableCell>
+                                        <TableCell>Tiempo Fin</TableCell>
                                         <TableCell>Duración</TableCell>
                                         {!isMobile && <TableCell>Evidencia</TableCell>}
-                                        {!isMobile && <TableCell>Tiempo Inicio</TableCell>}
-                                        {!isMobile && <TableCell>Tiempo Fin</TableCell>}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -196,6 +196,7 @@ export default function TimeTracking() {
                                         
                                         return (
                                             <TableRow key={task.id}>
+                                                {/* Fecha */}
                                                 <TableCell>
                                                     <Typography variant="body2">
                                                         {new Date(task.scheduled_date).toLocaleDateString('es-ES', {
@@ -205,16 +206,37 @@ export default function TimeTracking() {
                                                         })}
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell>
-                                                    <Typography variant="body2">
-                                                        {task.staff_member_name}
-                                                    </Typography>
-                                                </TableCell>
+                                                {/* Propiedad */}
                                                 <TableCell>
                                                     <Typography variant="body2">
                                                         {task.property_name}
                                                     </Typography>
                                                 </TableCell>
+                                                {/* Empleado */}
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {task.staff_member_name}
+                                                    </Typography>
+                                                </TableCell>
+                                                {/* Tiempo Inicio */}
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {startTime ? startTime.toLocaleTimeString('es-ES', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        }) : '-'}
+                                                    </Typography>
+                                                </TableCell>
+                                                {/* Tiempo Fin */}
+                                                <TableCell>
+                                                    <Typography variant="body2">
+                                                        {endTime ? endTime.toLocaleTimeString('es-ES', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        }) : '-'}
+                                                    </Typography>
+                                                </TableCell>
+                                                {/* Duración */}
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                         <DurationIcon sx={{ fontSize: 16, mr: 0.5, color: 'success.main' }} />
@@ -226,6 +248,7 @@ export default function TimeTracking() {
                                                         />
                                                     </Box>
                                                 </TableCell>
+                                                {/* Evidencia */}
                                                 {!isMobile && (
                                                     <TableCell>
                                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -245,31 +268,11 @@ export default function TimeTracking() {
                                                         </Box>
                                                     </TableCell>
                                                 )}
-                                                {!isMobile && (
-                                                    <TableCell>
-                                                        <Typography variant="body2">
-                                                            {startTime ? startTime.toLocaleTimeString('es-ES', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            }) : '-'}
-                                                        </Typography>
-                                                    </TableCell>
-                                                )}
-                                                {!isMobile && (
-                                                    <TableCell>
-                                                        <Typography variant="body2">
-                                                            {endTime ? endTime.toLocaleTimeString('es-ES', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            }) : '-'}
-                                                        </Typography>
-                                                    </TableCell>
-                                                )}
                                             </TableRow>
                                         )
                                     }) || (
                                         <TableRow>
-                                            <TableCell colSpan={isMobile ? 4 : 7} align="center">
+                                            <TableCell colSpan={isMobile ? 6 : 7} align="center">
                                                 <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
                                                     No hay limpiezas completadas disponibles
                                                 </Typography>
