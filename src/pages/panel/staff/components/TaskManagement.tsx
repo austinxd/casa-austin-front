@@ -19,6 +19,7 @@ import {
     Assignment as TaskIcon,
     Search as SearchIcon,
     FilterList as FilterIcon,
+    Today as TodayIcon,
 } from '@mui/icons-material'
 import ButtonPrimary from '@/components/common/button/ButtonPrimary'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
@@ -36,6 +37,7 @@ export default function TaskManagement() {
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState('')
     const [showFilters, setShowFilters] = useState(false)
+    const [filterFromToday, setFilterFromToday] = useState(false)
 
     // Obtener la fecha de hoy en formato YYYY-MM-DD
     const today = new Date().toISOString().split('T')[0]
@@ -43,7 +45,7 @@ export default function TaskManagement() {
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
         page_size: 100,
-        date_from: today, // Filtrar tareas desde hoy en adelante
+        ...(filterFromToday && { date_from: today }), // Solo aplicar filtro si está activo
     })
 
 
@@ -269,6 +271,21 @@ export default function TaskManagement() {
                                         }}
                                     />
                                 ))}
+                                {/* Filtro desde hoy */}
+                                <Chip
+                                    icon={<TodayIcon sx={{ fontSize: 16 }} />}
+                                    label="Desde hoy"
+                                    variant={filterFromToday ? 'filled' : 'outlined'}
+                                    color={filterFromToday ? 'info' : 'default'}
+                                    onClick={() => setFilterFromToday(!filterFromToday)}
+                                    size="small"
+                                    sx={{
+                                        height: 32,
+                                        fontSize: '0.75rem',
+                                        fontWeight: 500,
+                                        cursor: 'pointer'
+                                    }}
+                                />
                             </Box>
                         </Collapse>
                     </Box>
@@ -384,6 +401,24 @@ export default function TaskManagement() {
                                     }}
                                 />
                             ))}
+                            {/* Filtro desde hoy */}
+                            <Chip
+                                icon={<TodayIcon sx={{ fontSize: 16 }} />}
+                                label="Desde hoy"
+                                variant={filterFromToday ? 'filled' : 'outlined'}
+                                color={filterFromToday ? 'info' : 'default'}
+                                onClick={() => setFilterFromToday(!filterFromToday)}
+                                size="small"
+                                sx={{
+                                    minHeight: 32,
+                                    fontSize: '0.8125rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)'
+                                    }
+                                }}
+                            />
                         </Stack>
                     </>
                 )}
