@@ -80,16 +80,6 @@ export default function TimeTracking() {
 
     return (
         <Box sx={{ p: { xs: 2, sm: 3 } }}>
-            {/* Header */}
-            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                    Tiempos de Limpieza
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Análisis de duración y eficiencia en tareas de limpieza
-                </Typography>
-            </Paper>
-
             {/* Filtros */}
             <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
