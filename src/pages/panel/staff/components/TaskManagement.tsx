@@ -11,11 +11,14 @@ import {
     InputAdornment,
     useMediaQuery,
     useTheme,
+    Collapse,
+    IconButton,
 } from '@mui/material'
 import {
     Add as AddIcon,
     Assignment as TaskIcon,
     Search as SearchIcon,
+    FilterList as FilterIcon,
 } from '@mui/icons-material'
 import ButtonPrimary from '@/components/common/button/ButtonPrimary'
 import { useGetAllTasksQuery, useStartWorkMutation, useCompleteWorkMutation } from '@/services/tasks/tasksService'
@@ -32,6 +35,7 @@ export default function TaskManagement() {
     const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null)
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState('')
+    const [showFilters, setShowFilters] = useState(false)
 
     const { data, isLoading, error, refetch } = useGetAllTasksQuery({
         page: 1,
@@ -139,106 +143,130 @@ export default function TaskManagement() {
                 borderColor: 'divider'
             }}>
                 {isMobile ? (
-                    /* Mobile: Todo en una sola línea scrollable */
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        overflowX: 'auto',
-                        pb: 0.5,
-                        '&::-webkit-scrollbar': {
-                            height: 4
-                        },
-                        '&::-webkit-scrollbar-track': {
-                            backgroundColor: '#f1f1f1',
-                            borderRadius: 4
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                            backgroundColor: '#c1c1c1',
-                            borderRadius: 4
-                        }
-                    }}>
-                        {/* Campo de búsqueda compacto */}
-                        <TextField
-                            size="small"
-                            placeholder="Buscar..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            variant="outlined"
-                            sx={{ 
-                                minWidth: 120,
-                                flexShrink: 0,
-                                '& .MuiOutlinedInput-root': {
-                                    height: 32,
-                                    bgcolor: 'white',
-                                    fontSize: '0.75rem'
-                                }
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 16 }} />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        
-                        {/* Filtros compactos */}
-                        <Chip
-                            label="Todas"
-                            variant={statusFilter === null ? 'filled' : 'outlined'}
-                            color={statusFilter === null ? 'primary' : 'default'}
-                            onClick={() => setStatusFilter(null)}
-                            size="small"
-                            sx={{
-                                height: 28,
-                                fontSize: '0.7rem',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                flexShrink: 0,
-                                '& .MuiChip-label': { px: 1 }
-                            }}
-                        />
-                        {statusFilterOptions.map((filter) => (
-                            <Chip
-                                key={filter.value}
-                                label={`${filter.label.split(' ')[0]} (${tasksByStatus[filter.value as keyof typeof tasksByStatus].length})`}
-                                variant={statusFilter === filter.value ? 'filled' : 'outlined'}
-                                color={statusFilter === filter.value ? filter.color : 'default'}
-                                onClick={() => setStatusFilter(filter.value)}
+                    /* Mobile: Línea principal con botón de filtros desplegable */
+                    <Box>
+                        {/* Línea principal */}
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            mb: showFilters ? 1.5 : 0
+                        }}>
+                            {/* Campo de búsqueda */}
+                            <TextField
                                 size="small"
-                                sx={{
-                                    height: 28,
-                                    fontSize: '0.7rem',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    flexShrink: 0,
-                                    '& .MuiChip-label': { px: 1 }
+                                placeholder="Buscar tareas..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                variant="outlined"
+                                sx={{ 
+                                    flex: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        height: 36,
+                                        bgcolor: 'white',
+                                        fontSize: '0.875rem'
+                                    }
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
+                                        </InputAdornment>
+                                    ),
                                 }}
                             />
-                        ))}
+                            
+                            {/* Botón de filtros con indicador de activo */}
+                            <IconButton
+                                onClick={() => setShowFilters(!showFilters)}
+                                size="small"
+                                sx={{
+                                    bgcolor: showFilters ? 'primary.light' : 'action.hover',
+                                    color: showFilters ? 'primary.main' : 'text.secondary',
+                                    width: 36,
+                                    height: 36,
+                                    '&:hover': {
+                                        bgcolor: showFilters ? 'primary.light' : 'action.selected'
+                                    }
+                                }}
+                            >
+                                <FilterIcon sx={{ fontSize: 18 }} />
+                                {statusFilter && (
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        top: 4,
+                                        right: 4,
+                                        width: 8,
+                                        height: 8,
+                                        bgcolor: 'error.main',
+                                        borderRadius: '50%'
+                                    }} />
+                                )}
+                            </IconButton>
+                            
+                            {/* Botón crear tarea */}
+                            <ButtonPrimary
+                                onClick={() => setAddModalOpen(true)}
+                                style={{
+                                    background: '#0E6191',
+                                    color: 'white',
+                                    height: '36px',
+                                    fontWeight: 600,
+                                    minWidth: '90px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.8rem',
+                                    padding: '0 12px'
+                                }}
+                            >
+                                <AddIcon sx={{ fontSize: '16px' }} />
+                                Nueva
+                            </ButtonPrimary>
+                        </Box>
                         
-                        {/* Botón crear tarea compacto */}
-                        <ButtonPrimary
-                            onClick={() => setAddModalOpen(true)}
-                            style={{
-                                background: '#0E6191',
-                                color: 'white',
-                                height: '32px',
-                                fontWeight: 600,
-                                minWidth: '80px',
+                        {/* Filtros desplegables */}
+                        <Collapse in={showFilters}>
+                            <Box sx={{
                                 display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                borderRadius: '6px',
-                                flexShrink: 0,
-                                fontSize: '0.75rem',
-                                padding: '0 12px'
-                            }}
-                        >
-                            <AddIcon sx={{ fontSize: '16px' }} />
-                            Nueva
-                        </ButtonPrimary>
+                                flexWrap: 'wrap',
+                                gap: 1,
+                                pt: 1,
+                                borderTop: '1px solid',
+                                borderColor: 'divider'
+                            }}>
+                                <Chip
+                                    label="Todas"
+                                    variant={statusFilter === null ? 'filled' : 'outlined'}
+                                    color={statusFilter === null ? 'primary' : 'default'}
+                                    onClick={() => setStatusFilter(null)}
+                                    size="small"
+                                    sx={{
+                                        height: 32,
+                                        fontSize: '0.75rem',
+                                        fontWeight: 500,
+                                        cursor: 'pointer'
+                                    }}
+                                />
+                                {statusFilterOptions.map((filter) => (
+                                    <Chip
+                                        key={filter.value}
+                                        label={`${filter.label} (${tasksByStatus[filter.value as keyof typeof tasksByStatus].length})`}
+                                        variant={statusFilter === filter.value ? 'filled' : 'outlined'}
+                                        color={statusFilter === filter.value ? filter.color : 'default'}
+                                        onClick={() => setStatusFilter(filter.value)}
+                                        size="small"
+                                        sx={{
+                                            height: 32,
+                                            fontSize: '0.75rem',
+                                            fontWeight: 500,
+                                            cursor: 'pointer'
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        </Collapse>
                     </Box>
                 ) : (
                     /* Desktop: Layout original */
