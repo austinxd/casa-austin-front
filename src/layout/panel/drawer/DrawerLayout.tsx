@@ -93,7 +93,7 @@ export default function DrawerLayout() {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 6).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 7).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
@@ -128,7 +128,7 @@ export default function DrawerLayout() {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(6, 7).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(7, 8).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{
