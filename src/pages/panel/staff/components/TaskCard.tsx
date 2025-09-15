@@ -492,19 +492,6 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             </Box>
                         </Box>
                     </Box>
-                    
-                    <Chip
-                        label={getPriorityText(task.priority)}
-                        size="small"
-                        sx={{
-                            backgroundColor: getPriorityColor(task.priority),
-                            color: 'white',
-                            fontWeight: 600,
-                            fontSize: isMobile ? '0.6rem' : { sm: '0.7rem' },
-                            height: isMobile ? 18 : { sm: 24 },
-                            alignSelf: isMobile ? 'flex-end' : { sm: 'center' }
-                        }}
-                    />
                 </Box>
 
                 {/* Description - Optimized for mobile */}
@@ -544,14 +531,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     </Box>
                 )}
 
-                {/* Quick Action Buttons */}
+                {/* Quick Action Buttons con Prioridad */}
                 <Box sx={{ 
                     display: 'flex', 
-                    gap: { xs: 1, sm: 0.8 }, 
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     mt: 'auto', 
                     pt: { xs: 1, sm: 1.5 }, 
                     borderTop: `1px solid ${getDividerColor()}` 
                 }}>
+                    {/* Botones de acción */}
+                    <Box sx={{
+                        display: 'flex',
+                        gap: { xs: 1, sm: 0.8 }
+                    }}>
                     {task.status === 'assigned' && (
                         <Tooltip title="Iniciar trabajo">
                             <IconButton
@@ -625,6 +618,20 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             <EditIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
                         </IconButton>
                     </Tooltip>
+                    </Box>
+                    
+                    {/* Chip de Prioridad a la derecha */}
+                    <Chip
+                        label={getPriorityText(task.priority)}
+                        size="small"
+                        sx={{
+                            backgroundColor: getPriorityColor(task.priority),
+                            color: 'white',
+                            fontWeight: 600,
+                            fontSize: isMobile ? '0.7rem' : { sm: '0.75rem' },
+                            height: isMobile ? 26 : { sm: 28 }
+                        }}
+                    />
                 </Box>
             </CardContent>
 
