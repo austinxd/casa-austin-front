@@ -5,6 +5,7 @@ import {
     AssignmentTurnedInOutlined as AssignmentTurnedInOutlinedIcon,
     PersonOutlined as PersonOutlinedIcon,
     LoginOutlined as LoginOutlinedIcon,
+    Groups as GroupsIcon,
 } from '@mui/icons-material'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -56,6 +57,12 @@ export default function DrawerLayout() {
         },
         {
             id: 6,
+            text: 'Personal',
+            icon: GroupsIcon,
+            path: '/panel/personal',
+        },
+        {
+            id: 7,
             text: 'Cerrar sesión',
             icon: LoginOutlinedIcon,
             path: '/panel/cerrar-sesion',
@@ -86,13 +93,13 @@ export default function DrawerLayout() {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 5).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 6).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
                             cursor: 'pointer',
                             display:
-                                roll === 'mantenimiento' && text != 'Disponibilidad'
+                                roll === 'mantenimiento' && text !== 'Disponibilidad' && text !== 'Personal'
                                     ? 'none'
                                     : 'flex',
                             px: 2,
@@ -121,7 +128,7 @@ export default function DrawerLayout() {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(5, 6).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(6, 7).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{
