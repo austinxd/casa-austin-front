@@ -314,7 +314,7 @@ export default function TimeTracking() {
                                         <TableCell>Empleado</TableCell>
                                         <TableCell>Propiedad</TableCell>
                                         <TableCell>Duración</TableCell>
-                                        {!isMobile && <TableCell>Tiempo Estimado</TableCell>}
+                                        {!isMobile && <TableCell>Evidencia</TableCell>}
                                         {!isMobile && <TableCell>Tiempo Inicio</TableCell>}
                                         {!isMobile && <TableCell>Tiempo Fin</TableCell>}
                                     </TableRow>
@@ -342,7 +342,7 @@ export default function TimeTracking() {
                                                 </TableCell>
                                                 <TableCell>
                                                     <Typography variant="body2">
-                                                        {task.building_property}
+                                                        {task.property_name}
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell>
@@ -358,9 +358,21 @@ export default function TimeTracking() {
                                                 </TableCell>
                                                 {!isMobile && (
                                                     <TableCell>
-                                                        <Typography variant="body2" color="text.secondary">
-                                                            {task.estimated_duration || '-'}
-                                                        </Typography>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                            {task.photos && task.photos.length > 0 ? (
+                                                                <Chip
+                                                                    label={`${task.photos.length} foto${task.photos.length !== 1 ? 's' : ''}`}
+                                                                    color="primary"
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    sx={{ fontSize: '0.75rem' }}
+                                                                />
+                                                            ) : (
+                                                                <Typography variant="body2" color="text.secondary">
+                                                                    Sin evidencia
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
                                                     </TableCell>
                                                 )}
                                                 {!isMobile && (
