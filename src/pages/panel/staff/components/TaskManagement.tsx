@@ -215,26 +215,28 @@ export default function TaskManagement() {
                                 )}
                             </IconButton>
                             
-                            {/* Botón crear tarea */}
-                            <ButtonPrimary
-                                onClick={() => setAddModalOpen(true)}
-                                style={{
-                                    background: '#0E6191',
-                                    color: 'white',
-                                    height: '36px',
-                                    fontWeight: 600,
-                                    minWidth: '90px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    borderRadius: '6px',
-                                    fontSize: '0.8rem',
-                                    padding: '0 12px'
-                                }}
-                            >
-                                <AddIcon sx={{ fontSize: '16px' }} />
-                                Nueva
-                            </ButtonPrimary>
+                            {/* Botón crear tarea - Solo visible para no-mantenimiento */}
+                            {!isMaintenanceUser && (
+                                <ButtonPrimary
+                                    onClick={() => setAddModalOpen(true)}
+                                    style={{
+                                        background: '#0E6191',
+                                        color: 'white',
+                                        height: '36px',
+                                        fontWeight: 600,
+                                        minWidth: '90px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.8rem',
+                                        padding: '0 12px'
+                                    }}
+                                >
+                                    <AddIcon sx={{ fontSize: '16px' }} />
+                                    Nueva
+                                </ButtonPrimary>
+                            )}
                         </Box>
                         
                         {/* Filtros desplegables */}
@@ -340,23 +342,26 @@ export default function TaskManagement() {
                                     }}
                                 />
                                 
-                                <ButtonPrimary
-                                    onClick={() => setAddModalOpen(true)}
-                                    style={{
-                                        background: '#0E6191',
-                                        color: 'white',
-                                        height: '40px',
-                                        fontWeight: 600,
-                                        minWidth: '160px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        borderRadius: '6px'
-                                    }}
-                                >
-                                    <AddIcon sx={{ fontSize: '20px' }} />
-                                    Crear Tarea
-                                </ButtonPrimary>
+                                {/* Botón crear tarea - Solo visible para no-mantenimiento */}
+                                {!isMaintenanceUser && (
+                                    <ButtonPrimary
+                                        onClick={() => setAddModalOpen(true)}
+                                        style={{
+                                            background: '#0E6191',
+                                            color: 'white',
+                                            height: '40px',
+                                            fontWeight: 600,
+                                            minWidth: '160px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            borderRadius: '6px'
+                                        }}
+                                    >
+                                        <AddIcon sx={{ fontSize: '20px' }} />
+                                        Crear Tarea
+                                    </ButtonPrimary>
+                                )}
                             </Box>
                         </Box>
 
@@ -524,25 +529,31 @@ export default function TaskManagement() {
                         No hay tareas registradas
                     </Typography>
                     <Typography variant="body1" color="text.disabled" sx={{ mb: 4, maxWidth: 400, mx: 'auto' }}>
-                        Crea la primera tarea para comenzar la gestión de trabajo
+                        {isMaintenanceUser 
+                            ? 'No hay tareas asignadas actualmente'
+                            : 'Crea la primera tarea para comenzar la gestión de trabajo'
+                        }
                     </Typography>
-                    <ButtonPrimary
-                        onClick={() => setAddModalOpen(true)}
-                        style={{
-                            background: '#0E6191',
-                            color: 'white',
-                            height: '48px',
-                            fontWeight: 600,
-                            width: '200px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            marginTop: '8px'
-                        }}
-                    >
-                        <AddIcon sx={{ fontSize: '20px' }} />
-                        Crear Primera Tarea
-                    </ButtonPrimary>
+                    {/* Botón crear primera tarea - Solo visible para no-mantenimiento */}
+                    {!isMaintenanceUser && (
+                        <ButtonPrimary
+                            onClick={() => setAddModalOpen(true)}
+                            style={{
+                                background: '#0E6191',
+                                color: 'white',
+                                height: '48px',
+                                fontWeight: 600,
+                                width: '200px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                marginTop: '8px'
+                            }}
+                        >
+                            <AddIcon sx={{ fontSize: '20px' }} />
+                            Crear Primera Tarea
+                        </ButtonPrimary>
+                    )}
                 </Paper>
             ))}
 
