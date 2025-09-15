@@ -10,6 +10,7 @@ import {
     CardContent,
     Tooltip,
     useTheme,
+    useMediaQuery,
 } from '@mui/material'
 import {
     MoreVert as MoreVertIcon,
@@ -29,7 +30,9 @@ interface TaskCardProps {
 
 export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: TaskCardProps) {
     const theme = useTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    const [expandDescription, setExpandDescription] = useState(false)
     const open = Boolean(anchorEl)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -178,7 +181,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
-                minHeight: { xs: 'auto', sm: 180, md: 200 },
+                minHeight: isMobile ? 140 : { sm: 180, md: 200 },
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: getCardBackgroundColor(),
@@ -195,8 +198,8 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
         >
 
             <CardContent sx={{ 
-                p: { xs: 1.5, sm: 2, md: 2.5 }, 
-                pb: { xs: 1, sm: 1.5 }, 
+                p: isMobile ? 1 : { sm: 2, md: 2.5 }, 
+                pb: isMobile ? 1 : { sm: 1.5 }, 
                 flex: 1, 
                 display: 'flex', 
                 flexDirection: 'column' 
@@ -205,9 +208,9 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                 <Box sx={{ 
                     display: 'flex', 
                     justifyContent: 'space-between', 
-                    alignItems: { xs: 'center', sm: 'flex-start' }, 
-                    mb: { xs: 1, sm: 1.5 },
-                    flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                    alignItems: 'center', 
+                    mb: isMobile ? 0.8 : { sm: 1.5 },
+                    flexWrap: 'nowrap'
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
                         {/* Task Type Icon */}
@@ -226,7 +229,7 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                                 fontWeight="600" 
                                 sx={{ 
                                     lineHeight: 1.1,
-                                    fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' },
+                                    fontSize: isMobile ? '0.8rem' : { sm: '0.95rem', md: '1rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
@@ -270,14 +273,15 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                         </Box>
                     </Box>
 
-                    {/* Status and Menu Row */}
+                    {/* Status and Menu Row - Mobile: same row as header */}
                     <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'center', 
-                        gap: 1,
-                        mt: { xs: 1, sm: 0 },
-                        width: { xs: '100%', sm: 'auto' },
-                        justifyContent: { xs: 'space-between', sm: 'flex-end' }
+                        gap: 0.5,
+                        mt: isMobile ? 0 : 0,
+                        ml: isMobile ? 0.5 : 0,
+                        width: 'auto',
+                        justifyContent: 'flex-end'
                     }}>
                         <Chip
                             label={getStatusText(task.status)}
@@ -285,43 +289,46 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             size="small"
                             sx={{ 
                                 fontWeight: 500,
-                                fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                                fontSize: isMobile ? '0.65rem' : { sm: '0.75rem' },
+                                height: isMobile ? 20 : 24
                             }}
                         />
-                        <IconButton
-                            size="small"
-                            onClick={handleClick}
-                            sx={{ 
-                                color: getTextColor(),
-                                width: { xs: 44, sm: 32 },
-                                height: { xs: 44, sm: 32 }
-                            }}
-                        >
-                            <MoreVertIcon fontSize="small" />
-                        </IconButton>
+                        {!isMobile && (
+                            <IconButton
+                                size="small"
+                                onClick={handleClick}
+                                sx={{ 
+                                    color: getTextColor(),
+                                    width: 32,
+                                    height: 32
+                                }}
+                            >
+                                <MoreVertIcon fontSize="small" />
+                            </IconButton>
+                        )}
                     </Box>
                 </Box>
 
-                {/* Assigned Staff */}
+                {/* Assigned Staff - Compressed for mobile */}
                 <Box sx={{ 
                     display: 'flex', 
                     alignItems: 'center', 
-                    mb: { xs: 1, sm: 1.5 }
+                    mb: isMobile ? 0.8 : { sm: 1.5 }
                 }}>
                     {task.staff_member_name ? (
                         <>
                             <Avatar sx={{ 
-                                width: { xs: 22, sm: 26 }, 
-                                height: { xs: 22, sm: 26 }, 
-                                mr: { xs: 0.8, sm: 1.2 }, 
-                                fontSize: { xs: '0.65rem', sm: '0.75rem' }
+                                width: isMobile ? 18 : { sm: 26 }, 
+                                height: isMobile ? 18 : { sm: 26 }, 
+                                mr: isMobile ? 0.5 : { sm: 1.2 }, 
+                                fontSize: isMobile ? '0.6rem' : { sm: '0.75rem' }
                             }}>
                                 {task.staff_member_name[0]}
                             </Avatar>
                             <Typography 
                                 variant="body2" 
                                 sx={{
-                                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                    fontSize: isMobile ? '0.75rem' : { sm: '0.875rem' },
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
@@ -362,54 +369,80 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     )}
                 </Box>
 
-                {/* Dates and Priority */}
+                {/* Dates and Priority - Compressed for mobile */}
                 <Box sx={{ 
                     display: 'flex', 
-                    flexDirection: { xs: 'column', sm: 'row' },
+                    flexDirection: isMobile ? 'column' : { sm: 'row' },
                     justifyContent: { sm: 'space-between' }, 
-                    alignItems: { xs: 'stretch', sm: 'flex-start' },
-                    gap: { xs: 0.8, sm: 1 },
-                    mb: { xs: 1, sm: 1.5 }
+                    alignItems: isMobile ? 'stretch' : { sm: 'flex-start' },
+                    gap: isMobile ? 0.5 : { sm: 1 },
+                    mb: isMobile ? 0.8 : { sm: 1.5 }
                 }}>
-                    {/* Dates Container */}
+                    {/* Dates Container - Single line on mobile */}
                     <Box sx={{ 
                         display: 'flex', 
-                        flexDirection: 'column',
-                        gap: 0.3,
-                        flex: 1
+                        flexDirection: isMobile ? 'row' : 'column',
+                        gap: isMobile ? 0.8 : 0.3,
+                        flex: 1,
+                        alignItems: isMobile ? 'center' : 'flex-start',
+                        flexWrap: isMobile ? 'wrap' : 'nowrap'
                     }}>
-                        {/* Check-out Date */}
-                        {task.check_out_date && (
+                        {/* Combined dates for mobile */}
+                        {isMobile ? (
                             <Typography 
                                 variant="caption" 
                                 sx={{ 
-                                    fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                    fontSize: '0.65rem',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 0.4,
-                                    color: getTextColor()
+                                    gap: 0.8,
+                                    color: getTextColor(),
+                                    lineHeight: 1.2
                                 }}
                             >
-                                🏠 Check-out: {new Date(task.check_out_date).toLocaleDateString('es-ES')}
+                                {task.check_out_date && (
+                                    <span>🏠 {new Date(task.check_out_date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}</span>
+                                )}
+                                <span>📅 {task.scheduled_date 
+                                    ? new Date(task.scheduled_date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
+                                    : 'Sin fecha'
+                                }</span>
                             </Typography>
+                        ) : (
+                            <>
+                                {/* Desktop dates - separate lines */}
+                                {task.check_out_date && (
+                                    <Typography 
+                                        variant="caption" 
+                                        sx={{ 
+                                            fontSize: '0.7rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.4,
+                                            color: getTextColor()
+                                        }}
+                                    >
+                                        🏠 Check-out: {new Date(task.check_out_date).toLocaleDateString('es-ES')}
+                                    </Typography>
+                                )}
+                                
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        fontSize: '0.7rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 0.4,
+                                        color: getTextColor()
+                                    }}
+                                >
+                                    📅 Programada: {task.scheduled_date 
+                                        ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
+                                        : 'Sin fecha programada'
+                                    }
+                                </Typography>
+                            </>
                         )}
-                        
-                        {/* Scheduled Date */}
-                        <Typography 
-                            variant="caption" 
-                            sx={{ 
-                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.4,
-                                color: getTextColor()
-                            }}
-                        >
-                            📅 Programada: {task.scheduled_date 
-                                ? new Date(task.scheduled_date).toLocaleDateString('es-ES')
-                                : 'Sin fecha programada'
-                            }
-                        </Typography>
                     </Box>
                     
                     <Chip
@@ -419,30 +452,48 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             backgroundColor: getPriorityColor(task.priority),
                             color: 'white',
                             fontWeight: 600,
-                            fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                            height: { xs: 22, sm: 24 },
-                            alignSelf: { xs: 'flex-start', sm: 'center' }
+                            fontSize: isMobile ? '0.6rem' : { sm: '0.7rem' },
+                            height: isMobile ? 18 : { sm: 24 },
+                            alignSelf: isMobile ? 'flex-end' : { sm: 'center' }
                         }}
                     />
                 </Box>
 
-                {/* Description */}
+                {/* Description - Optimized for mobile */}
                 {task.description && (
-                    <Typography 
-                        variant="body2" 
-                        sx={{ 
-                            mt: { xs: 0.8, sm: 1.5 }, 
-                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                            display: '-webkit-box',
-                            WebkitLineClamp: { xs: 2, sm: 2 },
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            lineHeight: { xs: 1.2, sm: 1.3 },
-                            color: getTextColor()
-                        }}
-                    >
-                        {task.description}
-                    </Typography>
+                    <Box>
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                mt: isMobile ? 0.6 : { sm: 1.5 }, 
+                                fontSize: isMobile ? '0.65rem' : { sm: '0.75rem' },
+                                display: '-webkit-box',
+                                WebkitLineClamp: isMobile && !expandDescription ? 1 : 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                lineHeight: isMobile ? 1.1 : { sm: 1.3 },
+                                color: getTextColor()
+                            }}
+                        >
+                            {task.description}
+                        </Typography>
+                        {isMobile && task.description.length > 50 && (
+                            <Typography
+                                variant="caption"
+                                onClick={() => setExpandDescription(!expandDescription)}
+                                sx={{
+                                    color: 'primary.main',
+                                    cursor: 'pointer',
+                                    fontSize: '0.6rem',
+                                    fontWeight: 500,
+                                    mt: 0.3,
+                                    '&:hover': { textDecoration: 'underline' }
+                                }}
+                            >
+                                {expandDescription ? 'Ver menos' : 'Ver más'}
+                            </Typography>
+                        )}
+                    </Box>
                 )}
 
                 {/* Quick Action Buttons */}
