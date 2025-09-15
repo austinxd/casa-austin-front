@@ -42,6 +42,11 @@ Casa Austin is a property rental management system built with React and TypeScri
   - **Responsive design**: Available in both mobile and desktop interfaces
   - **Role-based default**: Maintenance users have "Desde hoy" filter enabled by default, focusing on future tasks only
   - **Create task restrictions**: Maintenance users cannot see or access task creation buttons, limiting them to task execution only
+- **Real-Time Progress Timer**: Added live timer component for in-progress tasks
+  - **Automatic time tracking**: Shows elapsed time since work started (HH:MM:SS format)
+  - **Real-time updates**: Timer refreshes every second for accurate tracking
+  - **Visual integration**: Displays next to complete work button with icon and styled container
+  - **Conditional rendering**: Only appears when task status is "in_progress" and actual_start_time exists
 
 **September 14, 2025 - Mobile-Optimized Task Management Interface & UI Restructuring**
 - **TaskCard Component**: Comprehensive responsive design improvements with mobile-first approach and compact layout

@@ -28,6 +28,7 @@ import {
 import { useState, useRef } from 'react'
 import { WorkTask } from '@/interfaces/staff.interface'
 import { useUploadTaskPhotoMutation } from '@/services/tasks/tasksService'
+import TimerComponent from './TimerComponent'
 import Cookies from 'js-cookie'
 
 interface TaskCardProps {
@@ -657,27 +658,34 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     )}
                     
                     {task.status === 'in_progress' && (
-                        <Tooltip title="Completar trabajo">
-                            <IconButton
-                                size="small"
-                                onClick={() => onCompleteWork(task.id.toString())}
-                                sx={{ 
-                                    color: 'primary.main',
-                                    bgcolor: 'primary.light',
-                                    width: { xs: 44, sm: 32 },
-                                    height: { xs: 44, sm: 32 },
-                                    '&:hover': { 
-                                        bgcolor: 'primary.main',
-                                        color: 'white',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    border: '1px solid',
-                                    borderColor: 'primary.main',
-                                }}
-                            >
-                                <CompleteIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
-                            </IconButton>
-                        </Tooltip>
+                        <>
+                            {/* Timer de progreso */}
+                            {task.actual_start_time && (
+                                <TimerComponent startTime={task.actual_start_time} />
+                            )}
+                            
+                            <Tooltip title="Completar trabajo">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => onCompleteWork(task.id.toString())}
+                                    sx={{ 
+                                        color: 'primary.main',
+                                        bgcolor: 'primary.light',
+                                        width: { xs: 44, sm: 32 },
+                                        height: { xs: 44, sm: 32 },
+                                        '&:hover': { 
+                                            bgcolor: 'primary.main',
+                                            color: 'white',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        border: '1px solid',
+                                        borderColor: 'primary.main',
+                                    }}
+                                >
+                                    <CompleteIcon sx={{ fontSize: { xs: 20, sm: 18 } }} />
+                                </IconButton>
+                            </Tooltip>
+                        </>
                     )}
                     
                     {/* Botón de editar - SOLO para usuarios NO mantenimiento */}
