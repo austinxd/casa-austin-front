@@ -27,6 +27,7 @@ import TaskEditModal from './TaskEditModal'
 import TaskAddModal from './TaskAddModal'
 import TaskCard from './TaskCard'
 import { WorkTask } from '@/interfaces/staff.interface'
+import Cookies from 'js-cookie'
 
 export default function TaskManagement() {
     const theme = useTheme()
@@ -37,7 +38,11 @@ export default function TaskManagement() {
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState('')
     const [showFilters, setShowFilters] = useState(false)
-    const [filterFromToday, setFilterFromToday] = useState(false)
+    
+    // Detectar si el usuario es de mantenimiento para aplicar filtro por defecto
+    const userRole = Cookies.get('rollTkn') || ''
+    const isMaintenanceUser = userRole === 'mantenimiento'
+    const [filterFromToday, setFilterFromToday] = useState(isMaintenanceUser) // Activo por defecto para mantenimiento
 
     // Obtener la fecha de hoy en formato YYYY-MM-DD
     const today = new Date().toISOString().split('T')[0]
