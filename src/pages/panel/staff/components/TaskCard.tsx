@@ -382,23 +382,26 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     borderRadius: 1.5,
                     border: `1px solid ${getDividerColor()}`
                 }}>
-                    {/* Dates Container - FECHAS MAS PROMINENTES */}
+                    {/* Dates Container - FECHAS LADO A LADO */}
                     <Box sx={{ 
                         display: 'flex', 
-                        flexDirection: isMobile ? 'column' : 'column',
-                        gap: isMobile ? 0.8 : 0.6,
-                        flex: 1
+                        flexDirection: 'row',
+                        gap: isMobile ? 1 : 1.2,
+                        flex: 1,
+                        flexWrap: 'wrap'
                     }}>
-                        {/* Check-out Date - MAS GRANDE */}
+                        {/* Check-out Date - HORIZONTAL */}
                         {task.check_out_date && (
                             <Box sx={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 0.8,
-                                p: isMobile ? 0.6 : 0.5,
+                                gap: 0.6,
+                                p: isMobile ? 0.5 : 0.4,
                                 bgcolor: 'rgba(255,193,7,0.1)',
                                 borderRadius: 1,
-                                border: '1px solid rgba(255,193,7,0.3)'
+                                border: '1px solid rgba(255,193,7,0.3)',
+                                flex: '1 1 auto',
+                                minWidth: isMobile ? '120px' : '140px'
                             }}>
                                 <Typography 
                                     sx={{ 
@@ -440,15 +443,17 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                             </Box>
                         )}
                         
-                        {/* Scheduled Date - MAS GRANDE */}
+                        {/* Scheduled Date - HORIZONTAL */}
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 0.8,
-                            p: isMobile ? 0.6 : 0.5,
+                            gap: 0.6,
+                            p: isMobile ? 0.5 : 0.4,
                             bgcolor: 'rgba(25,118,210,0.1)',
                             borderRadius: 1,
-                            border: '1px solid rgba(25,118,210,0.3)'
+                            border: '1px solid rgba(25,118,210,0.3)',
+                            flex: '1 1 auto',
+                            minWidth: isMobile ? '120px' : '140px'
                         }}>
                             <Typography 
                                 sx={{ 
@@ -620,16 +625,19 @@ export default function TaskCard({ task, onStartWork, onCompleteWork, onEdit }: 
                     </Tooltip>
                     </Box>
                     
-                    {/* Chip de Prioridad a la derecha */}
+                    {/* Chip de Prioridad del tamaño del botón play */}
                     <Chip
                         label={getPriorityText(task.priority)}
-                        size="small"
                         sx={{
                             backgroundColor: getPriorityColor(task.priority),
                             color: 'white',
                             fontWeight: 600,
-                            fontSize: isMobile ? '0.7rem' : { sm: '0.75rem' },
-                            height: isMobile ? 26 : { sm: 28 }
+                            fontSize: isMobile ? '0.75rem' : { sm: '0.8rem' },
+                            height: isMobile ? 44 : { sm: 32 },
+                            minWidth: isMobile ? 60 : 70,
+                            '& .MuiChip-label': {
+                                px: isMobile ? 1.5 : 1.2
+                            }
                         }}
                     />
                 </Box>
