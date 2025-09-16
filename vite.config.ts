@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: './',
+    base: '/',
     server: {
         port: 5000,
         host: '0.0.0.0',
