@@ -39,6 +39,17 @@ export default function ReservationMetricsSubTab() {
     })
 
     const { data: statsData, isLoading, error, refetch } = useGetStatsQuery(filters)
+    
+    // Debug: solo en desarrollo
+    if (process.env.NODE_ENV === 'development') {
+        console.log('ReservationMetrics - statsData summary:', {
+            hasData: !!statsData,
+            searchPeriods: statsData?.stats?.search_analytics?.searches_by_period?.length || 0,
+            activityPeriods: statsData?.stats?.activity_analytics?.activities_by_period?.length || 0,
+            isLoading,
+            hasError: !!error
+        })
+    }
 
     const handleFilterChange = (field: keyof StatsQueryParams, value: any) => {
         setFilters(prev => ({ ...prev, [field]: value }))
@@ -52,24 +63,24 @@ export default function ReservationMetricsSubTab() {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: statsData?.stats?.reservations_by_period?.map(item => 
+            categories: statsData?.stats?.search_analytics?.searches_by_period?.map(item => 
                 dayjs(item.period).format('DD/MM')
             ) || [],
             title: { text: 'Período' }
         },
         yaxis: [
             {
-                title: { text: 'Reservas' },
-                seriesName: 'Reservas'
+                title: { text: 'Búsquedas' },
+                seriesName: 'Búsquedas'
             },
             {
                 opposite: true,
-                title: { text: 'Ingresos ($)' },
-                seriesName: 'Ingresos'
+                title: { text: 'Actividades' },
+                seriesName: 'Actividades'
             }
         ],
         title: {
-            text: 'Evolución de Reservas e Ingresos',
+            text: 'Evolución de Búsquedas y Actividades',
             align: 'center'
         },
         colors: ['#0E6191', '#28a745'],
@@ -79,13 +90,13 @@ export default function ReservationMetricsSubTab() {
 
     const reservationTrendSeries = [
         {
-            name: 'Reservas',
-            data: statsData?.stats?.reservations_by_period?.map(item => item.reservations_count) || []
+            name: 'Búsquedas',
+            data: statsData?.stats?.search_analytics?.searches_by_period?.map(item => item.total_searches) || []
         },
         {
-            name: 'Ingresos',
+            name: 'Actividades',
             yAxisIndex: 1,
-            data: statsData?.stats?.reservations_by_period?.map(item => item.revenue) || []
+            data: statsData?.stats?.activity_analytics?.activities_by_period?.map(item => item.activity_count) || []
         }
     ]
 
@@ -167,7 +178,7 @@ export default function ReservationMetricsSubTab() {
                 </Grid>
             </Paper>
 
-            {/* Cards de métricas principales */}
+            {/* Cards de métricas principales - usando campos disponibles */}
             {statsData && (
                 <Grid container spacing={2} mb={3}>
                     <Grid item xs={12} sm={6} md={3}>
@@ -176,20 +187,11 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="primary">
-                                            {statsData.stats.summary.total_reservations?.toLocaleString() || 0}
+                                            {statsData.stats?.summary?.total_searches?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Total Reservas
+                                            Total Búsquedas
                                         </Typography>
-                                        {statsData.stats.growth_metrics?.reservations_growth && (
-                                            <Typography 
-                                                variant="caption" 
-                                                color={statsData.stats.growth_metrics.reservations_growth > 0 ? "success.main" : "error.main"}
-                                            >
-                                                {statsData.stats.growth_metrics.reservations_growth > 0 ? "+" : ""}
-                                                {statsData.stats.growth_metrics.reservations_growth.toFixed(1)}% vs período anterior
-                                            </Typography>
-                                        )}
                                     </Box>
                                     <CalendarMonthIcon color="primary" sx={{ fontSize: 40 }} />
                                 </Stack>
@@ -203,20 +205,11 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="success.main">
-                                            ${statsData.stats.summary.total_revenue?.toLocaleString() || 0}
+                                            {statsData.stats?.summary?.total_activities?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Ingresos Totales
+                                            Total Actividades
                                         </Typography>
-                                        {statsData.stats.growth_metrics?.revenue_growth && (
-                                            <Typography 
-                                                variant="caption" 
-                                                color={statsData.stats.growth_metrics.revenue_growth > 0 ? "success.main" : "error.main"}
-                                            >
-                                                {statsData.stats.growth_metrics.revenue_growth > 0 ? "+" : ""}
-                                                {statsData.stats.growth_metrics.revenue_growth.toFixed(1)}% vs período anterior
-                                            </Typography>
-                                        )}
                                     </Box>
                                     <TrendingUpIcon color="success" sx={{ fontSize: 40 }} />
                                 </Stack>
@@ -230,10 +223,10 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="warning.main">
-                                            {statsData.stats.summary.average_occupancy?.toFixed(1) || 0}%
+                                            {statsData.stats?.summary?.unique_searchers?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Ocupación Promedio
+                                            Usuarios Únicos
                                         </Typography>
                                     </Box>
                                     <HotelIcon color="warning" sx={{ fontSize: 40 }} />
@@ -248,10 +241,10 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="info.main">
-                                            {statsData.stats.summary.average_stay_duration?.toFixed(1) || 0}
+                                            {statsData.stats?.summary?.new_clients?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Días Promedio
+                                            Nuevos Clientes
                                         </Typography>
                                     </Box>
                                     <TimeIcon color="info" sx={{ fontSize: 40 }} />
@@ -264,12 +257,19 @@ export default function ReservationMetricsSubTab() {
 
             {/* Gráfico de tendencias */}
             <Paper sx={{ p: 2, mb: 3 }}>
-                <Chart
-                    options={reservationTrendOptions}
-                    series={reservationTrendSeries}
-                    type="line"
-                    height={400}
-                />
+                {statsData?.stats?.search_analytics?.searches_by_period?.length || statsData?.stats?.activity_analytics?.activities_by_period?.length ? (
+                    <Chart
+                        options={reservationTrendOptions}
+                        series={reservationTrendSeries}
+                        type="line"
+                        height={400}
+                    />
+                ) : (
+                    <Alert severity="info" sx={{ m: 2 }}>
+                        No hay datos suficientes para mostrar el gráfico de tendencias. 
+                        Intenta ajustar los filtros de fecha o período.
+                    </Alert>
+                )}
             </Paper>
 
             {/* Información del período */}

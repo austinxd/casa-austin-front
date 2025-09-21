@@ -4,10 +4,6 @@ import {
     Typography,
     Paper,
     Grid,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     TextField,
     Button,
     Card,
@@ -47,6 +43,10 @@ export default function UpcomingCheckinsSubTab() {
     })
 
     const { data: upcomingData, isLoading, error, refetch } = useGetUpcomingCheckinsQuery(filters)
+    
+    // Debug: log para ver estructura real de datos
+    console.log('UpcomingCheckins - upcomingData:', upcomingData)
+    console.log('UpcomingCheckins - error:', error)
 
     const handleFilterChange = (field: keyof UpcomingCheckinsQueryParams, value: any) => {
         setFilters(prev => ({ ...prev, [field]: value }))
