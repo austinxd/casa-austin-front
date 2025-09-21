@@ -33,8 +33,8 @@ import { StatsQueryParams } from '@/interfaces/stats.interface'
 
 export default function StatsManagement() {
     const [filters, setFilters] = useState<StatsQueryParams>({
-        period: 'day',
-        days_back: 7,
+        period: 'month',
+        days_back: 30,
         include_anonymous: true
     })
     
