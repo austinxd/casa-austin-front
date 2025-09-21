@@ -45,10 +45,6 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
         include_anonymous: filters.includeAnonymous
     })
 
-    // Debug logging
-    console.log('SearchDashboard - searchData:', searchData)
-    console.log('SearchDashboard - error:', error)
-    console.log('SearchDashboard - isLoading:', isLoading)
 
     // Configuración del gráfico de búsquedas por día de semana
     const weekdayChartOptions: ApexOptions = {
@@ -336,6 +332,282 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                 ) : (
                     <Alert severity="info">
                         No hay datos de IPs anónimas disponibles.
+                    </Alert>
+                )}
+            </Paper>
+
+            {/* Nuevas secciones de análisis */}
+            
+            {/* Búsquedas por hora del día */}
+            <Paper sx={{ p: 3, mb: 4 }}>
+                <Typography variant="h6" mb={2}>
+                    ⏰ Búsquedas por Hora del Día
+                </Typography>
+                
+                {safeArray(searchData?.data?.searches_by_hour).length ? (
+                    <Chart
+                        options={{
+                            chart: {
+                                type: 'line',
+                                height: 350,
+                                toolbar: { show: true }
+                            },
+                            xaxis: {
+                                categories: safeArray(searchData.data.searches_by_hour).map((item: any) => safeString(item?.hour_label, 'N/A')),
+                                title: { text: 'Hora del Día' }
+                            },
+                            yaxis: {
+                                title: { text: 'Número de Búsquedas' }
+                            },
+                            title: {
+                                text: 'Actividad de Búsquedas por Hora',
+                                align: 'center'
+                            },
+                            colors: ['#FF6B35'],
+                            dataLabels: { enabled: false },
+                            stroke: { curve: 'smooth' }
+                        }}
+                        series={[{
+                            name: 'Búsquedas',
+                            data: safeArray(searchData.data.searches_by_hour).map((item: any) => safeNumber(item?.searches_count, 0))
+                        }]}
+                        type="line"
+                        height={350}
+                    />
+                ) : (
+                    <Alert severity="info">
+                        No hay datos de búsquedas por hora disponibles.
+                    </Alert>
+                )}
+            </Paper>
+
+            {/* Actividad diaria de búsquedas */}
+            <Paper sx={{ p: 3, mb: 4 }}>
+                <Typography variant="h6" mb={2}>
+                    📊 Actividad Diaria de Búsquedas
+                </Typography>
+                
+                {safeArray(searchData?.data?.daily_search_activity).length ? (
+                    <Chart
+                        options={{
+                            chart: {
+                                type: 'area',
+                                height: 350,
+                                toolbar: { show: true }
+                            },
+                            xaxis: {
+                                categories: safeArray(searchData.data.daily_search_activity).map((item: any) => safeString(item?.date, 'N/A')),
+                                title: { text: 'Fecha' }
+                            },
+                            yaxis: {
+                                title: { text: 'Número de Búsquedas' }
+                            },
+                            title: {
+                                text: 'Evolución Diaria de Búsquedas',
+                                align: 'center'
+                            },
+                            colors: ['#4CAF50'],
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    shadeIntensity: 1,
+                                    opacityFrom: 0.7,
+                                    opacityTo: 0.3
+                                }
+                            }
+                        }}
+                        series={[{
+                            name: 'Búsquedas Diarias',
+                            data: safeArray(searchData.data.daily_search_activity).map((item: any) => safeNumber(item?.searches_count, 0))
+                        }]}
+                        type="area"
+                        height={350}
+                    />
+                ) : (
+                    <Alert severity="info">
+                        No hay datos de actividad diaria disponibles.
+                    </Alert>
+                )}
+            </Paper>
+
+            {/* Fechas de check-in populares y análisis de estadía */}
+            <Grid container spacing={3} mb={4}>
+                <Grid item xs={12} lg={6}>
+                    <Paper sx={{ p: 3 }}>
+                        <Typography variant="h6" mb={2}>
+                            🗓️ Fechas de Check-in Más Populares
+                        </Typography>
+                        
+                        {safeArray(searchData?.data?.popular_checkin_dates).length ? (
+                            <List>
+                                {safeArray(searchData.data.popular_checkin_dates).slice(0, 5).map((date: any, index: number) => (
+                                    <ListItem key={safeString(date?.checkin_date, `date-${index}`)} sx={{ px: 0 }}>
+                                        <ListItemText
+                                            primary={
+                                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                                    <Typography variant="body1" fontWeight="medium">
+                                                        {safeString(date?.checkin_date, 'N/A')}
+                                                    </Typography>
+                                                    <Chip 
+                                                        label={`${formatNumber(date?.searches_count)} búsquedas`}
+                                                        size="small"
+                                                        color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
+                                                    />
+                                                </Stack>
+                                            }
+                                            secondary={`${formatNumber(date?.unique_searchers)} buscadores únicos • ${formatNumber(date?.avg_stay_duration)} días promedio`}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        ) : (
+                            <Alert severity="info">
+                                No hay datos de fechas populares disponibles.
+                            </Alert>
+                        )}
+                    </Paper>
+                </Grid>
+
+                <Grid item xs={12} lg={6}>
+                    <Paper sx={{ p: 3 }}>
+                        <Typography variant="h6" mb={2}>
+                            📅 Análisis de Duración de Estadía
+                        </Typography>
+                        
+                        {safeArray(searchData?.data?.stay_duration_analysis).length ? (
+                            <List>
+                                {safeArray(searchData.data.stay_duration_analysis).slice(0, 5).map((duration: any, index: number) => (
+                                    <ListItem key={safeString(duration?.duration_label, `duration-${index}`)} sx={{ px: 0 }}>
+                                        <ListItemText
+                                            primary={
+                                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                                    <Typography variant="body1" fontWeight="medium">
+                                                        {safeString(duration?.duration_label, 'N/A')}
+                                                    </Typography>
+                                                    <Chip 
+                                                        label={formatPercent(safeNumber(duration?.percentage, 0))}
+                                                        size="small"
+                                                        color="primary"
+                                                    />
+                                                </Stack>
+                                            }
+                                            secondary={`${formatNumber(duration?.searches_count)} búsquedas • ${formatNumber(duration?.avg_guests)} huéspedes promedio`}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        ) : (
+                            <Alert severity="info">
+                                No hay datos de duración de estadía disponibles.
+                            </Alert>
+                        )}
+                    </Paper>
+                </Grid>
+            </Grid>
+
+            {/* Análisis por número de huéspedes */}
+            <Paper sx={{ p: 3, mb: 4 }}>
+                <Typography variant="h6" mb={2}>
+                    👥 Análisis por Número de Huéspedes
+                </Typography>
+                
+                {safeArray(searchData?.data?.guest_count_analysis).length ? (
+                    <Chart
+                        options={{
+                            chart: {
+                                type: 'donut',
+                                height: 350
+                            },
+                            labels: safeArray(searchData.data.guest_count_analysis).map((item: any) => safeString(item?.guest_range, 'N/A')),
+                            title: {
+                                text: 'Distribución de Búsquedas por Número de Huéspedes',
+                                align: 'center'
+                            },
+                            colors: ['#FF6B35', '#F7931E', '#FFD23F', '#06FFA5', '#118AB2'],
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function(val: number) {
+                                    return val.toFixed(1) + '%'
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    donut: {
+                                        labels: {
+                                            show: true,
+                                            total: {
+                                                show: true,
+                                                label: 'Total Búsquedas'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }}
+                        series={safeArray(searchData.data.guest_count_analysis).map((item: any) => safeNumber(item?.searches_count, 0))}
+                        type="donut"
+                        height={350}
+                    />
+                ) : (
+                    <Alert severity="info">
+                        No hay datos de análisis por huéspedes disponibles.
+                    </Alert>
+                )}
+            </Paper>
+
+            {/* Búsquedas por cliente específico */}
+            <Paper sx={{ p: 3 }}>
+                <Typography variant="h6" mb={2}>
+                    🔍 Detalle de Búsquedas por Cliente
+                </Typography>
+                
+                {safeArray(searchData?.data?.searches_per_client).length ? (
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Cliente</TableCell>
+                                    <TableCell align="center">Búsquedas</TableCell>
+                                    <TableCell align="center">Huéspedes Promedio</TableCell>
+                                    <TableCell>Última Búsqueda</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {safeArray(searchData.data.searches_per_client).slice(0, 10).map((client: any, index: number) => (
+                                    <TableRow key={safeString(client?.client_id, `client-${index}`)}>
+                                        <TableCell>
+                                            <Stack>
+                                                <Typography variant="body2" fontWeight="medium">
+                                                    {safeString(client?.client_name, 'N/A')}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    {safeString(client?.client_email, 'N/A')}
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="h6" color="primary">
+                                                {formatNumber(client?.searches_count)}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="body2">
+                                                {formatNumber(client?.avg_guests_searched)}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="body2">
+                                                {safeString(client?.last_search_date, 'N/A')}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <Alert severity="info">
+                        No hay datos de búsquedas por cliente disponibles.
                     </Alert>
                 )}
             </Paper>
