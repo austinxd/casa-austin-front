@@ -10,6 +10,10 @@ import { timeTrackingApi } from '../services/time-tracking/timeTrackingService'
 import { schedulesApi } from '../services/schedules/schedulesService'
 import { statsApi } from '../services/stats/statsService'
 import { upcomingCheckinsApi } from '../services/upcoming-checkins/upcomingCheckinsService'
+// Nuevos servicios de analytics
+import { searchTrackingApi } from '../services/analytics/searchTrackingService'
+import { ingresosApi } from '../services/analytics/ingresosService'
+import { newUpcomingCheckinsApi } from '../services/analytics/newUpcomingCheckinsService'
 
 export const store = configureStore({
     reducer: {
@@ -25,6 +29,10 @@ export const store = configureStore({
         [schedulesApi.reducerPath]: schedulesApi.reducer,
         [statsApi.reducerPath]: statsApi.reducer,
         [upcomingCheckinsApi.reducerPath]: upcomingCheckinsApi.reducer,
+        // Nuevos servicios de analytics
+        [searchTrackingApi.reducerPath]: searchTrackingApi.reducer,
+        [ingresosApi.reducerPath]: ingresosApi.reducer,
+        [newUpcomingCheckinsApi.reducerPath]: newUpcomingCheckinsApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -38,7 +46,11 @@ export const store = configureStore({
             timeTrackingApi.middleware,
             schedulesApi.middleware,
             statsApi.middleware,
-            upcomingCheckinsApi.middleware
+            upcomingCheckinsApi.middleware,
+            // Nuevos servicios de analytics
+            searchTrackingApi.middleware,
+            ingresosApi.middleware,
+            newUpcomingCheckinsApi.middleware
         ),
 })
 

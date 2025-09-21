@@ -1,118 +1,331 @@
 import { useState } from 'react'
-import { Box, Tabs, Tab, Typography, Container } from '@mui/material'
 import {
-    Dashboard as DashboardIcon,
-    Analytics as AnalyticsIcon,
-    TrendingUp as OpportunitiesIcon,
+    Box,
+    Container,
+    Typography,
+    Paper,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TextField,
+    Button,
+    Stack,
+    useTheme,
+    useMediaQuery,
+    Chip,
+} from '@mui/material'
+import {
     Search as SearchIcon,
+    AttachMoney as MoneyIcon,
+    CalendarToday as CalendarIcon,
+    DateRange as DateRangeIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material'
+import dayjs from 'dayjs'
 
-// Nuevos componentes principales basados en la guía API
-import ExecutiveDashboard from './components/executive/ExecutiveDashboard'
-import AnalyticsCenter from './components/analytics/AnalyticsCenter'
-import OpportunitiesCenter from './components/opportunities/OpportunitiesCenter'
-import SearchIntelligenceCenter from './components/search-intelligence/SearchIntelligenceCenter'
+// Componentes de dashboard
+import SearchDashboard from './components/analytics/SearchDashboard'
+import IngresosDashboard from './components/analytics/IngresosDashboard'
+import CheckinsDashboard from './components/analytics/CheckinsDashboard'
 
-interface TabPanelProps {
-    children?: React.ReactNode
-    index: number
-    value: number
-}
+// Interfaces
+import { GlobalFilters, FilterPreset } from '@/interfaces/analytics.interface'
 
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props
+const DRAWER_WIDTH = 280
 
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`stats-tabpanel-${index}`}
-            aria-labelledby={`stats-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box>{children}</Box>}
-        </div>
-    )
-}
-
-function a11yProps(index: number) {
-    return {
-        id: `stats-tab-${index}`,
-        'aria-controls': `stats-tabpanel-${index}`,
-    }
-}
+const filterPresets: FilterPreset[] = [
+    { label: 'Últimos 7 días', days: 7, value: '7d' },
+    { label: 'Últimos 30 días', days: 30, value: '30d' },
+    { label: 'Últimos 90 días', days: 90, value: '90d' },
+    { label: 'Personalizado', days: 0, value: 'custom' },
+]
 
 export default function StatsPage() {
-    const [selectedTab, setSelectedTab] = useState(0)
+    const theme = useTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+    
+    const [selectedDashboard, setSelectedDashboard] = useState<'search' | 'ingresos' | 'checkins'>('search')
+    const [mobileOpen, setMobileOpen] = useState(false)
+    
+    // Filtros globales
+    const [globalFilters, setGlobalFilters] = useState<GlobalFilters>({
+        dateRange: {
+            date_from: dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
+            date_to: dayjs().format('YYYY-MM-DD')
+        },
+        preset: '30d',
+        includeClients: true,
+        includeAnonymous: true,
+        period: 'week',
+        currency: 'PEN',
+        limit: 20,
+        daysAhead: 60
+    })
 
-    const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-        setSelectedTab(newValue)
+    const handlePresetChange = (preset: string) => {
+        setGlobalFilters(prev => {
+            const selectedPreset = filterPresets.find(p => p.value === preset)
+            if (selectedPreset && selectedPreset.days > 0) {
+                return {
+                    ...prev,
+                    preset,
+                    dateRange: {
+                        date_from: dayjs().subtract(selectedPreset.days, 'day').format('YYYY-MM-DD'),
+                        date_to: dayjs().format('YYYY-MM-DD')
+                    }
+                }
+            }
+            return { ...prev, preset }
+        })
+    }
+
+    const handleDateChange = (field: 'date_from' | 'date_to', value: string) => {
+        setGlobalFilters(prev => ({
+            ...prev,
+            dateRange: {
+                ...prev.dateRange,
+                [field]: value
+            },
+            preset: 'custom'
+        }))
+    }
+
+    const handleFilterChange = <K extends keyof GlobalFilters>(
+        field: K,
+        value: GlobalFilters[K]
+    ) => {
+        setGlobalFilters(prev => ({ ...prev, [field]: value }))
+    }
+
+    const navigation = [
+        {
+            id: 'search',
+            label: 'Análisis de Búsquedas',
+            icon: <SearchIcon />,
+            description: 'Tracking de búsquedas y conversión'
+        },
+        {
+            id: 'ingresos',
+            label: 'Análisis de Ingresos',
+            icon: <MoneyIcon />,
+            description: 'Revenue, precios y crecimiento'
+        },
+        {
+            id: 'checkins',
+            label: 'Check-ins Próximos',
+            icon: <CalendarIcon />,
+            description: 'Demanda y fechas trending'
+        }
+    ]
+
+    const renderFilters = () => (
+        <Paper sx={{ p: 2, mb: 3 }}>
+            <Stack spacing={2}>
+                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <DateRangeIcon />
+                    Filtros Globales
+                </Typography>
+                
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    {/* Preset de fechas */}
+                    <FormControl size="small" sx={{ minWidth: 150 }}>
+                        <InputLabel>Período</InputLabel>
+                        <Select
+                            value={globalFilters.preset}
+                            label="Período"
+                            onChange={(e) => handlePresetChange(e.target.value)}
+                        >
+                            {filterPresets.map(preset => (
+                                <MenuItem key={preset.value} value={preset.value}>
+                                    {preset.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    {/* Fecha desde */}
+                    <TextField
+                        size="small"
+                        label="Desde"
+                        type="date"
+                        value={globalFilters.dateRange.date_from}
+                        onChange={(e) => handleDateChange('date_from', e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ minWidth: 150 }}
+                    />
+
+                    {/* Fecha hasta */}
+                    <TextField
+                        size="small"
+                        label="Hasta"
+                        type="date"
+                        value={globalFilters.dateRange.date_to}
+                        onChange={(e) => handleDateChange('date_to', e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ minWidth: 150 }}
+                    />
+
+                    {/* Botón refrescar */}
+                    <Button
+                        variant="outlined"
+                        startIcon={<RefreshIcon />}
+                        onClick={() => window.location.reload()}
+                    >
+                        Refrescar
+                    </Button>
+                </Stack>
+
+                {/* Chips de filtros específicos */}
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                    <Chip
+                        label={`Clientes: ${globalFilters.includeClients ? 'Incluir' : 'Excluir'}`}
+                        color={globalFilters.includeClients ? 'primary' : 'default'}
+                        variant={globalFilters.includeClients ? 'filled' : 'outlined'}
+                        onClick={() => handleFilterChange('includeClients', !globalFilters.includeClients)}
+                        size="small"
+                    />
+                    <Chip
+                        label={`Anónimos: ${globalFilters.includeAnonymous ? 'Incluir' : 'Excluir'}`}
+                        color={globalFilters.includeAnonymous ? 'primary' : 'default'}
+                        variant={globalFilters.includeAnonymous ? 'filled' : 'outlined'}
+                        onClick={() => handleFilterChange('includeAnonymous', !globalFilters.includeAnonymous)}
+                        size="small"
+                    />
+                    <Chip
+                        label={`Moneda: ${globalFilters.currency}`}
+                        color="info"
+                        variant="outlined"
+                        onClick={() => handleFilterChange('currency', globalFilters.currency === 'PEN' ? 'USD' : 'PEN')}
+                        size="small"
+                    />
+                    <Chip
+                        label={`Período: ${globalFilters.period}`}
+                        color="secondary"
+                        variant="outlined"
+                        size="small"
+                    />
+                </Stack>
+            </Stack>
+        </Paper>
+    )
+
+    const renderSidebar = () => (
+        <List>
+            {navigation.map((item) => (
+                <ListItem key={item.id} disablePadding>
+                    <ListItemButton
+                        selected={selectedDashboard === item.id}
+                        onClick={() => {
+                            setSelectedDashboard(item.id as typeof selectedDashboard)
+                            if (isMobile) setMobileOpen(false)
+                        }}
+                        sx={{
+                            '&.Mui-selected': {
+                                backgroundColor: theme.palette.primary.light,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.primary.light,
+                                },
+                            },
+                        }}
+                    >
+                        <ListItemIcon sx={{ color: selectedDashboard === item.id ? theme.palette.primary.main : 'inherit' }}>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText
+                            primary={item.label}
+                            secondary={item.description}
+                            primaryTypographyProps={{
+                                fontWeight: selectedDashboard === item.id ? 'bold' : 'normal',
+                                color: selectedDashboard === item.id ? theme.palette.primary.main : 'inherit'
+                            }}
+                        />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+    )
+
+    const renderDashboard = () => {
+        switch (selectedDashboard) {
+            case 'search':
+                return <SearchDashboard filters={globalFilters} />
+            case 'ingresos':
+                return <IngresosDashboard filters={globalFilters} />
+            case 'checkins':
+                return <CheckinsDashboard filters={globalFilters} />
+            default:
+                return <SearchDashboard filters={globalFilters} />
+        }
     }
 
     return (
-        <Container maxWidth={false} sx={{ py: 3 }}>
-            {/* Header */}
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    📊 Casa Austin Analytics
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    Centro de inteligencia de negocio y análisis de rendimiento
-                </Typography>
-            </Box>
-
-            {/* Navigation Tabs */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-                <Tabs 
-                    value={selectedTab} 
-                    onChange={handleTabChange} 
-                    aria-label="stats navigation tabs"
-                    variant="scrollable"
-                    scrollButtons="auto"
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            {/* Sidebar */}
+            <Box
+                component="nav"
+                sx={{ width: { md: DRAWER_WIDTH }, flexShrink: { md: 0 } }}
+            >
+                <Drawer
+                    variant={isMobile ? 'temporary' : 'permanent'}
+                    open={isMobile ? mobileOpen : true}
+                    onClose={() => setMobileOpen(false)}
+                    ModalProps={{ keepMounted: true }}
+                    sx={{
+                        '& .MuiDrawer-paper': {
+                            boxSizing: 'border-box',
+                            width: DRAWER_WIDTH,
+                            position: 'relative',
+                            height: '100%'
+                        },
+                    }}
                 >
-                    <Tab 
-                        icon={<DashboardIcon />} 
-                        label="Dashboard Ejecutivo" 
-                        {...a11yProps(0)} 
-                        iconPosition="start"
-                    />
-                    <Tab 
-                        icon={<AnalyticsIcon />} 
-                        label="Analytics Detallado" 
-                        {...a11yProps(1)} 
-                        iconPosition="start"
-                    />
-                    <Tab 
-                        icon={<OpportunitiesIcon />} 
-                        label="Centro de Oportunidades" 
-                        {...a11yProps(2)} 
-                        iconPosition="start"
-                    />
-                    <Tab 
-                        icon={<SearchIcon />} 
-                        label="Search Intelligence" 
-                        {...a11yProps(3)} 
-                        iconPosition="start"
-                    />
-                </Tabs>
+                    <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+                        <Typography variant="h6" color="primary" fontWeight="bold">
+                            📊 Casa Austin Analytics
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Dashboard de análisis de negocio
+                        </Typography>
+                    </Box>
+                    {renderSidebar()}
+                </Drawer>
             </Box>
 
-            {/* Tab Content */}
-            <TabPanel value={selectedTab} index={0}>
-                <ExecutiveDashboard />
-            </TabPanel>
+            {/* Contenido principal */}
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+                    height: '100vh',
+                    overflow: 'auto'
+                }}
+            >
+                <Container maxWidth={false} sx={{ py: 3 }}>
+                    {/* Header */}
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="h4" component="h1" gutterBottom>
+                            {navigation.find(nav => nav.id === selectedDashboard)?.label}
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                            {navigation.find(nav => nav.id === selectedDashboard)?.description}
+                        </Typography>
+                    </Box>
 
-            <TabPanel value={selectedTab} index={1}>
-                <AnalyticsCenter />
-            </TabPanel>
+                    {/* Filtros globales */}
+                    {renderFilters()}
 
-            <TabPanel value={selectedTab} index={2}>
-                <OpportunitiesCenter />
-            </TabPanel>
-
-            <TabPanel value={selectedTab} index={3}>
-                <SearchIntelligenceCenter />
-            </TabPanel>
-        </Container>
+                    {/* Dashboard específico */}
+                    {renderDashboard()}
+                </Container>
+            </Box>
+        </Box>
     )
 }

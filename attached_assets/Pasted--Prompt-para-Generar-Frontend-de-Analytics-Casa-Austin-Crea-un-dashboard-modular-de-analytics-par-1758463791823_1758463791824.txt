@@ -1,0 +1,153 @@
+# Prompt para Generar Frontend de Analytics - Casa Austin
+Crea un dashboard modular de analytics para Casa Austin (sistema de reservas de propiedades) que consuma 3 endpoints específicos del backend Django. El sistema debe ser responsive, moderno y permitir análisis detallado de datos.
+## Backend API Disponible
+**Base URL:** `https://api.casaaustin.pe`  
+**Autenticación:** Bearer Token requerido en header `Authorization: Bearer <token>`
+### 📊 Endpoint 1: Análisis de Búsquedas
+**URL:** `/api/v1/stats/search-tracking/`  
+**Método:** GET
+**Parámetros disponibles:**
+- `date_from` (YYYY-MM-DD): Fecha inicio (default: hace 30 días)
+- `date_to` (YYYY-MM-DD): Fecha fin (default: hoy)
+- `include_clients` (boolean): Incluir clientes registrados (default: true)
+- `include_anonymous` (boolean): Incluir IPs anónimas (default: true)
+**Estructura de respuesta:**
+```json
+{
+  "success": true,
+  "data": {
+    "period_info": {
+      "date_from": "2025-08-22",
+      "date_to": "2025-09-21",
+      "total_days": 30
+    },
+    "search_summary": {
+      "total_searches": 0,
+      "unique_clients_searching": 0,
+      "anonymous_searches": 0,
+      "conversion_rate": 3.5,
+      "avg_searches_per_day": 0.0
+    },
+    "searches_by_weekday": [...],
+    "top_searched_properties": [...],
+    "top_searching_clients": [...],
+    "anonymous_ips_analysis": [...]
+  }
+}
+💰 Endpoint 2: Análisis de Ingresos
+URL: /api/v1/stats/ingresos/
+Método: GET
+
+Parámetros disponibles:
+
+date_from (YYYY-MM-DD): Fecha inicio (default: hace 30 días)
+date_to (YYYY-MM-DD): Fecha fin (default: hoy)
+period (string): day/week/month (default: week)
+currency (string): PEN/USD (default: PEN)
+Estructura de respuesta:
+
+{
+  "success": true,
+  "data": {
+    "period_info": {...},
+    "revenue_summary": {
+      "total_revenue": 1550.00,
+      "total_nights": 13,
+      "total_reservations": 5,
+      "avg_revenue_per_reservation": 310.00,
+      "revenue_per_night": 119.23,
+      "avg_revenue_per_day": 51.67
+    },
+    "revenue_by_period": [...],
+    "payment_distribution": [...],
+    "price_analysis": {...},
+    "growth_metrics": {...}
+  }
+}
+📅 Endpoint 3: Check-ins Próximos
+URL: /api/v1/upcoming-checkins/
+Método: GET
+
+Parámetros disponibles:
+
+days_ahead (integer): Días hacia adelante (default: 60)
+limit (integer): Máximo de fechas (default: 20)
+include_anonymous (boolean): Incluir búsquedas anónimas (default: true)
+Estructura de respuesta:
+
+{
+  "success": true,
+  "data": {
+    "period_info": {...},
+    "top_upcoming_checkins": [...],
+    "summary_metrics": {...}
+  }
+}
+Requerimientos del Frontend
+🎨 Diseño y UX
+Framework: React, Vue, o Angular (elige el más apropiado)
+Diseño: Moderno, limpio, responsive
+Colores: Esquema profesional (azules, grises, verdes para métricas positivas)
+Layout: Dashboard con sidebar y tarjetas modulares
+📱 Componentes Requeridos
+1. Sidebar de Navegación
+Análisis de Búsquedas
+Análisis de Ingresos
+Check-ins Próximos
+Selector de fechas global
+Botón de refrescar datos
+2. Dashboard de Búsquedas (/analytics/searches)
+Métricas principales: Total búsquedas, conversión, búsquedas por día
+Gráfico de barras: Búsquedas por día de la semana
+Top lists: Propiedades más buscadas, top clientes
+Tabla: Análisis de IPs anónimas (últimas 4 cifras)
+Filtros: Incluir/excluir clientes registrados y anónimos
+3. Dashboard de Ingresos (/analytics/revenue)
+KPIs principales: Ingresos totales, RevPAR, promedio por reserva
+Gráfico temporal: Evolución de ingresos por período
+Distribución: Gráfico de torta por métodos de pago
+Métricas de crecimiento: % vs período anterior
+Análisis de precios: Rangos, mín/máx, promedio por noche
+4. Dashboard Check-ins (/analytics/checkins)
+Fechas trending: Próximos check-ins más buscados
+Calendario visual: Marcadores de popularidad
+Métricas de demanda: Interés por períodos específicos
+🔧 Funcionalidades Técnicas
+Gestión de Estado
+Manejo de loading states para cada endpoint
+Cache de datos (5-10 minutos)
+Error handling con retry automático
+Estado global para filtros de fechas
+Filtros y Parámetros
+Selector de fechas: DatePicker con presets (7d, 30d, 90d, custom)
+Período: Dropdown (día/semana/mes) para ingresos
+Toggles: Incluir clientes/anónimos para búsquedas
+Límites: Input numérico para cantidad de resultados
+Visualizaciones
+Charts: Chart.js, D3.js, o Recharts
+Tipos: Line charts, bar charts, pie charts, area charts
+Interactividad: Tooltips, zoom, drill-down
+Responsivo: Adaptable a móviles y tablets
+Autenticación
+Header Authorization: Bearer <token>
+Manejo de token expiration (401 responses)
+Redirección a login si no autorizado
+📊 Componentes de UI Específicos
+Tarjetas de Métricas
+<MetricCard 
+  title="Ingresos Totales"
+  value="S/ 1,550.00"
+  change="+12.5%"
+  trend="up"
+  icon="revenue"
+/>
+Gráficos Temporales
+X-axis: Fechas/períodos
+Y-axis: Valores (ingresos, búsquedas)
+Múltiples series si es necesario
+Leyenda clara
+Tablas de Rankings
+Top 10 propiedades/clientes
+Columnas: Nombre, Valor, Porcentaje
+Ordenamiento dinámico
+Paginación si hay muchos datos
