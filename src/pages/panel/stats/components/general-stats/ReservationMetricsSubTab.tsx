@@ -44,7 +44,7 @@ export default function ReservationMetricsSubTab() {
         setFilters(prev => ({ ...prev, [field]: value }))
     }
 
-    // Configuración del gráfico de tendencias (usando datos de búsquedas)
+    // Configuración del gráfico de tendencias
     const reservationTrendOptions: ApexOptions = {
         chart: {
             type: 'line',
@@ -52,24 +52,24 @@ export default function ReservationMetricsSubTab() {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: statsData?.stats?.search_analytics?.searches_by_period?.map(item => 
+            categories: statsData?.stats?.reservations_by_period?.map(item => 
                 dayjs(item.period).format('DD/MM')
             ) || [],
             title: { text: 'Período' }
         },
         yaxis: [
             {
-                title: { text: 'Búsquedas Totales' },
-                seriesName: 'Búsquedas Totales'
+                title: { text: 'Reservas' },
+                seriesName: 'Reservas'
             },
             {
                 opposite: true,
-                title: { text: 'Búsquedas de Clientes' },
-                seriesName: 'Búsquedas de Clientes'
+                title: { text: 'Ingresos ($)' },
+                seriesName: 'Ingresos'
             }
         ],
         title: {
-            text: 'Evolución de Búsquedas por Período',
+            text: 'Evolución de Reservas e Ingresos',
             align: 'center'
         },
         colors: ['#0E6191', '#28a745'],
@@ -79,13 +79,13 @@ export default function ReservationMetricsSubTab() {
 
     const reservationTrendSeries = [
         {
-            name: 'Búsquedas Totales',
-            data: statsData?.stats?.search_analytics?.searches_by_period?.map(item => item.total_searches) || []
+            name: 'Reservas',
+            data: statsData?.stats?.reservations_by_period?.map(item => item.reservations_count) || []
         },
         {
-            name: 'Búsquedas de Clientes',
+            name: 'Ingresos',
             yAxisIndex: 1,
-            data: statsData?.stats?.search_analytics?.searches_by_period?.map(item => item.client_searches) || []
+            data: statsData?.stats?.reservations_by_period?.map(item => item.revenue) || []
         }
     ]
 
@@ -176,14 +176,20 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="primary">
-                                            {statsData.stats.summary.total_searches?.toLocaleString() || 0}
+                                            {statsData.stats.summary.total_reservations?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Total Búsquedas
+                                            Total Reservas
                                         </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            Interés en propiedades
-                                        </Typography>
+                                        {statsData.stats.growth_metrics?.reservations_growth && (
+                                            <Typography 
+                                                variant="caption" 
+                                                color={statsData.stats.growth_metrics.reservations_growth > 0 ? "success.main" : "error.main"}
+                                            >
+                                                {statsData.stats.growth_metrics.reservations_growth > 0 ? "+" : ""}
+                                                {statsData.stats.growth_metrics.reservations_growth.toFixed(1)}% vs período anterior
+                                            </Typography>
+                                        )}
                                     </Box>
                                     <CalendarMonthIcon color="primary" sx={{ fontSize: 40 }} />
                                 </Stack>
@@ -197,14 +203,12 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="success.main">
-                                            {statsData.stats.summary.total_activities?.toLocaleString() || 0}
+                                            ${statsData.stats.summary.total_revenue?.toLocaleString() || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Total Actividades
+                                            Ingresos Totales
                                         </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            Acciones en plataforma
-                                        </Typography>
+                                        {statsData.stats.growth_metrics?.revenue_growth && (
                                             <Typography 
                                                 variant="caption" 
                                                 color={statsData.stats.growth_metrics.revenue_growth > 0 ? "success.main" : "error.main"}
@@ -226,10 +230,10 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="warning.main">
-                                            {statsData.stats.summary.unique_searchers?.toLocaleString() || 0}
+                                            {statsData.stats.summary.average_occupancy?.toFixed(1) || 0}%
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Usuarios Únicos
+                                            Ocupación Promedio
                                         </Typography>
                                     </Box>
                                     <HotelIcon color="warning" sx={{ fontSize: 40 }} />
@@ -244,10 +248,10 @@ export default function ReservationMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="info.main">
-                                            {statsData.stats.summary.new_clients?.toLocaleString() || 0}
+                                            {statsData.stats.summary.average_stay_duration?.toFixed(1) || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Nuevos Clientes
+                                            Días Promedio
                                         </Typography>
                                     </Box>
                                     <TimeIcon color="info" sx={{ fontSize: 40 }} />
