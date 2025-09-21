@@ -27,7 +27,7 @@ export const statsApi = createApi({
                 if (params.date_to) searchParams.append('date_to', params.date_to)
                 
                 const queryString = searchParams.toString()
-                return queryString ? `/?${queryString}` : '/'
+                return queryString ? `?${queryString}` : ''
             },
             providesTags: ['Stats'],
         }),
