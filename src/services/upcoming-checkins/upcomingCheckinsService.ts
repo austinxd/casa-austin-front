@@ -31,7 +31,7 @@ export const upcomingCheckinsApi = createApi({
                 }
                 
                 const queryString = searchParams.toString()
-                return queryString ? `/?${queryString}` : '/'
+                return queryString ? `?${queryString}` : ''
             },
             providesTags: ['UpcomingCheckins'],
         }),
