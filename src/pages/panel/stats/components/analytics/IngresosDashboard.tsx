@@ -56,9 +56,8 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: safeArray(ingresosData?.data?.revenue_by_period).map(item => {
-                const period = safeString(item?.period, new Date().toISOString())
-                return dayjs(period).isValid() ? dayjs(period).format('DD/MM') : 'N/A'
+            categories: safeArray(ingresosData?.data?.revenue_by_period).map((item: any) => {
+                return safeString(item?.period_label, 'N/A')
             }),
             title: { text: 'Período' }
         },
