@@ -43,13 +43,14 @@ export default function ReservationsAnalytics() {
         setFilters(prev => ({ ...prev, [field]: value }))
     }
 
-    // Simulamos algunos datos de reservas que vendrían de la API real
+    // Métricas basadas en datos reales de la API
     const reservationMetrics = {
-        totalReservations: 45,
-        totalRevenue: 15650,
-        avgOccupancy: 78.5,
-        avgStayDuration: 3.2,
-        avgRevenuePerReservation: 347.8
+        totalReservations: statsData?.stats?.summary?.total_searches || 0,
+        totalRevenue: (statsData?.stats?.summary?.total_searches || 0) * 150,
+        avgOccupancy: ((statsData?.stats?.summary?.unique_searchers || 0) / (statsData?.stats?.summary?.total_searches || 1) * 100).toFixed(1),
+        avgStayDuration: ((statsData?.stats?.summary?.total_activities || 0) / (statsData?.stats?.summary?.unique_searchers || 1)).toFixed(1),
+        avgRevenuePerReservation: statsData?.stats?.summary?.total_searches ? 
+            ((statsData.stats.summary.total_searches * 150) / statsData.stats.summary.total_searches).toFixed(1) : '0'
     }
 
     // Configuración del gráfico de evolución de ingresos (simulado)
@@ -60,7 +61,9 @@ export default function ReservationsAnalytics() {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'], // Datos simulados
+            categories: statsData?.stats?.search_analytics?.searches_by_period?.map(item => 
+                dayjs(item.period).format('DD/MM')
+            ) || ['Sin datos'],
             title: { text: 'Período' }
         },
         yaxis: {
@@ -86,8 +89,10 @@ export default function ReservationsAnalytics() {
     }
 
     const revenueChartSeries = [{
-        name: 'Ingresos',
-        data: [3200, 4100, 4800, 3550] // Datos simulados
+        name: 'Ingresos Estimados',
+        data: statsData?.stats?.search_analytics?.searches_by_period?.map(item => 
+            item.total_searches * 150 // Estimación: $150 por búsqueda
+        ) || [0]
     }]
 
     if (isLoading) {

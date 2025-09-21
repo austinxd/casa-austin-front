@@ -42,7 +42,7 @@ export default function ClientsAnalytics() {
         },
         labels: statsData?.stats?.guest_distribution?.map(item => 
             `${item.guest_count} ${item.guest_count === 1 ? 'huésped' : 'huéspedes'}`
-        ) || [],
+        ) || ['Sin datos'],
         title: {
             text: 'Distribución por Número de Huéspedes',
             align: 'center'
