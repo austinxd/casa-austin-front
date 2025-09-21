@@ -4,12 +4,8 @@ import {
     Container,
     Typography,
     Paper,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
+    Tabs,
+    Tab,
     FormControl,
     InputLabel,
     Select,
@@ -17,8 +13,6 @@ import {
     TextField,
     Button,
     Stack,
-    useTheme,
-    useMediaQuery,
     Chip,
 } from '@mui/material'
 import {
@@ -38,8 +32,6 @@ import CheckinsDashboard from '@/pages/panel/stats/components/analytics/Checkins
 // Interfaces
 import { GlobalFilters, FilterPreset } from '@/interfaces/analytics.interface'
 
-const DRAWER_WIDTH = 280
-
 const filterPresets: FilterPreset[] = [
     { label: 'Últimos 7 días', days: 7, value: '7d' },
     { label: 'Últimos 30 días', days: 30, value: '30d' },
@@ -47,12 +39,41 @@ const filterPresets: FilterPreset[] = [
     { label: 'Personalizado', days: 0, value: 'custom' },
 ]
 
+interface TabPanelProps {
+    children?: React.ReactNode
+    index: number
+    value: number
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`analytics-tabpanel-${index}`}
+            aria-labelledby={`analytics-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ pt: 3 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    )
+}
+
+function a11yProps(index: number) {
+    return {
+        id: `analytics-tab-${index}`,
+        'aria-controls': `analytics-tabpanel-${index}`,
+    }
+}
+
 export default function StatsPage() {
-    const theme = useTheme()
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-    
-    const [selectedDashboard, setSelectedDashboard] = useState<'search' | 'ingresos' | 'checkins'>('search')
-    const [mobileOpen, setMobileOpen] = useState(false)
+    const [selectedTab, setSelectedTab] = useState(0)
     
     // Filtros globales
     const [globalFilters, setGlobalFilters] = useState<GlobalFilters>({
@@ -104,26 +125,9 @@ export default function StatsPage() {
         setGlobalFilters(prev => ({ ...prev, [field]: value }))
     }
 
-    const navigation = [
-        {
-            id: 'search',
-            label: 'Análisis de Búsquedas',
-            icon: <SearchIcon />,
-            description: 'Tracking de búsquedas y conversión'
-        },
-        {
-            id: 'ingresos',
-            label: 'Análisis de Ingresos',
-            icon: <MoneyIcon />,
-            description: 'Revenue, precios y crecimiento'
-        },
-        {
-            id: 'checkins',
-            label: 'Check-ins Próximos',
-            icon: <CalendarIcon />,
-            description: 'Demanda y fechas trending'
-        }
-    ]
+    const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+        setSelectedTab(newValue)
+    }
 
     const renderFilters = () => (
         <Paper sx={{ p: 2, mb: 3 }}>
@@ -216,116 +220,64 @@ export default function StatsPage() {
         </Paper>
     )
 
-    const renderSidebar = () => (
-        <List>
-            {navigation.map((item) => (
-                <ListItem key={item.id} disablePadding>
-                    <ListItemButton
-                        selected={selectedDashboard === item.id}
-                        onClick={() => {
-                            setSelectedDashboard(item.id as typeof selectedDashboard)
-                            if (isMobile) setMobileOpen(false)
-                        }}
-                        sx={{
-                            '&.Mui-selected': {
-                                backgroundColor: theme.palette.primary.light,
-                                '&:hover': {
-                                    backgroundColor: theme.palette.primary.light,
-                                },
-                            },
-                        }}
-                    >
-                        <ListItemIcon sx={{ color: selectedDashboard === item.id ? theme.palette.primary.main : 'inherit' }}>
-                            {item.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={item.label}
-                            secondary={item.description}
-                            primaryTypographyProps={{
-                                fontWeight: selectedDashboard === item.id ? 'bold' : 'normal',
-                                color: selectedDashboard === item.id ? theme.palette.primary.main : 'inherit'
-                            }}
-                        />
-                    </ListItemButton>
-                </ListItem>
-            ))}
-        </List>
-    )
-
-    const renderDashboard = () => {
-        switch (selectedDashboard) {
-            case 'search':
-                return <SearchDashboard filters={globalFilters} />
-            case 'ingresos':
-                return <IngresosDashboard filters={globalFilters} />
-            case 'checkins':
-                return <CheckinsDashboard filters={globalFilters} />
-            default:
-                return <SearchDashboard filters={globalFilters} />
-        }
-    }
 
     return (
-        <Box sx={{ display: 'flex', height: '100vh' }}>
-            {/* Sidebar */}
-            <Box
-                component="nav"
-                sx={{ width: { md: DRAWER_WIDTH }, flexShrink: { md: 0 } }}
-            >
-                <Drawer
-                    variant={isMobile ? 'temporary' : 'permanent'}
-                    open={isMobile ? mobileOpen : true}
-                    onClose={() => setMobileOpen(false)}
-                    ModalProps={{ keepMounted: true }}
-                    sx={{
-                        '& .MuiDrawer-paper': {
-                            boxSizing: 'border-box',
-                            width: DRAWER_WIDTH,
-                            position: 'relative',
-                            height: '100%'
-                        },
-                    }}
+        <Container maxWidth={false} sx={{ py: 3 }}>
+            {/* Header */}
+            <Box sx={{ mb: 3 }}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    📊 Casa Austin Analytics
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                    Dashboard de análisis de negocio y métricas de rendimiento
+                </Typography>
+            </Box>
+
+            {/* Filtros globales */}
+            {renderFilters()}
+
+            {/* Navigation Tabs */}
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+                <Tabs 
+                    value={selectedTab} 
+                    onChange={handleTabChange} 
+                    aria-label="analytics tabs"
+                    variant="scrollable"
+                    scrollButtons="auto"
                 >
-                    <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-                        <Typography variant="h6" color="primary" fontWeight="bold">
-                            📊 Casa Austin Analytics
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Dashboard de análisis de negocio
-                        </Typography>
-                    </Box>
-                    {renderSidebar()}
-                </Drawer>
+                    <Tab 
+                        icon={<SearchIcon />} 
+                        label="Análisis de Búsquedas" 
+                        {...a11yProps(0)} 
+                        iconPosition="start"
+                    />
+                    <Tab 
+                        icon={<MoneyIcon />} 
+                        label="Análisis de Ingresos" 
+                        {...a11yProps(1)} 
+                        iconPosition="start"
+                    />
+                    <Tab 
+                        icon={<CalendarIcon />} 
+                        label="Check-ins Próximos" 
+                        {...a11yProps(2)} 
+                        iconPosition="start"
+                    />
+                </Tabs>
             </Box>
 
-            {/* Contenido principal */}
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-                    height: '100vh',
-                    overflow: 'auto'
-                }}
-            >
-                <Container maxWidth={false} sx={{ py: 3 }}>
-                    {/* Header */}
-                    <Box sx={{ mb: 3 }}>
-                        <Typography variant="h4" component="h1" gutterBottom>
-                            {navigation.find(nav => nav.id === selectedDashboard)?.label}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                            {navigation.find(nav => nav.id === selectedDashboard)?.description}
-                        </Typography>
-                    </Box>
+            {/* Tab Content */}
+            <TabPanel value={selectedTab} index={0}>
+                <SearchDashboard filters={globalFilters} />
+            </TabPanel>
 
-                    {/* Filtros globales */}
-                    {renderFilters()}
+            <TabPanel value={selectedTab} index={1}>
+                <IngresosDashboard filters={globalFilters} />
+            </TabPanel>
 
-                    {/* Dashboard específico */}
-                    {renderDashboard()}
-                </Container>
-            </Box>
-        </Box>
+            <TabPanel value={selectedTab} index={2}>
+                <CheckinsDashboard filters={globalFilters} />
+            </TabPanel>
+        </Container>
     )
 }

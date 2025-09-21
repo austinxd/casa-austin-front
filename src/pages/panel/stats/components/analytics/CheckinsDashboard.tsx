@@ -30,6 +30,7 @@ import dayjs from 'dayjs'
 // Services y tipos
 import { useGetNewUpcomingCheckinsQuery } from '@/services/analytics/newUpcomingCheckinsService'
 import { GlobalFilters } from '@/interfaces/analytics.interface'
+import { formatNumber, formatPercent, formatDecimal, safeArray, safeString, safeNumber } from '@/utils/formatters'
 
 interface CheckinsDashboardProps {
     filters: GlobalFilters
@@ -45,6 +46,10 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
         include_anonymous: filters.includeAnonymous
     })
 
+    // Debug logging
+    console.log('CheckinsDashboard - checkinsData:', checkinsData)
+    console.log('CheckinsDashboard - error:', error)
+
     if (isLoading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -54,23 +59,33 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
     }
 
     if (error) {
+        console.error('CheckinsDashboard API Error:', error)
         return (
             <Alert severity="error" sx={{ m: 2 }}>
                 Error al cargar el análisis de check-ins próximos. Por favor intenta nuevamente.
+                <br />
+                <small>Error: {JSON.stringify(error)}</small>
             </Alert>
         )
     }
 
-    if (!checkinsData?.success) {
+    if (!checkinsData?.success || !checkinsData?.data) {
         return (
             <Alert severity="warning" sx={{ m: 2 }}>
                 No se pudieron cargar los datos de check-ins próximos.
+                <br />
+                <small>Data: {JSON.stringify(checkinsData)}</small>
             </Alert>
         )
     }
 
-    const summary = checkinsData.data.summary_metrics
-    const upcomingCheckins = checkinsData.data.top_upcoming_checkins
+    const summary = checkinsData.data.summary_metrics || {
+        total_upcoming_dates: 0,
+        avg_searches_per_date: 0,
+        most_popular_checkin: '',
+        peak_demand_day: ''
+    }
+    const upcomingCheckins = checkinsData.data.top_upcoming_checkins || []
 
     return (
         <Box>
@@ -117,7 +132,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="primary">
-                                        {summary.total_upcoming_dates}
+                                        {formatNumber(summary.total_upcoming_dates)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Fechas con Demanda
@@ -135,7 +150,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="info.main">
-                                        {summary.avg_searches_per_date.toFixed(1)}
+                                        {formatDecimal(summary.avg_searches_per_date)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Búsquedas/Fecha
@@ -153,7 +168,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h5" color="success.main">
-                                        {dayjs(summary.most_popular_checkin).format('DD/MM')}
+                                        {summary.most_popular_checkin ? dayjs(summary.most_popular_checkin).format('DD/MM') : 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Check-in Más Popular
@@ -171,7 +186,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h6" color="warning.main">
-                                        {dayjs(summary.peak_demand_day).format('dddd')}
+                                        {summary.peak_demand_day ? dayjs(summary.peak_demand_day).format('dddd') : 'N/A'}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Día Pico de Demanda
@@ -190,10 +205,10 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                     📅 Fechas Trending - Check-ins Más Buscados
                 </Typography>
                 
-                {upcomingCheckins?.length ? (
+                {safeArray(upcomingCheckins).length ? (
                     <Grid container spacing={2}>
-                        {upcomingCheckins.slice(0, 8).map((checkin, index) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={checkin.checkin_date}>
+                        {safeArray(upcomingCheckins).slice(0, 8).map((checkin, index) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={safeString(checkin?.checkin_date, `checkin-${index}`)}>
                                 <Card 
                                     variant="outlined"
                                     sx={{ 
@@ -208,7 +223,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                         <Stack spacing={1}>
                                             <Box display="flex" justifyContent="space-between" alignItems="center">
                                                 <Typography variant="h6" color="primary">
-                                                    {dayjs(checkin.checkin_date).format('DD/MM/YYYY')}
+                                                    {checkin?.checkin_date ? dayjs(checkin.checkin_date).format('DD/MM/YYYY') : 'N/A'}
                                                 </Typography>
                                                 <Chip 
                                                     label={`#${index + 1}`}
@@ -218,21 +233,21 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                             </Box>
                                             
                                             <Typography variant="body2" color="text.secondary">
-                                                {dayjs(checkin.checkin_date).format('dddd')}
+                                                {checkin?.checkin_date ? dayjs(checkin.checkin_date).format('dddd') : 'N/A'}
                                             </Typography>
 
                                             <Stack spacing={0.5}>
                                                 <Box display="flex" justifyContent="space-between">
                                                     <Typography variant="body2">Búsquedas:</Typography>
                                                     <Typography variant="body2" fontWeight="bold">
-                                                        {checkin.searches_count}
+                                                        {formatNumber(checkin?.searches_count)}
                                                     </Typography>
                                                 </Box>
                                                 
                                                 <Box display="flex" justifyContent="space-between">
                                                     <Typography variant="body2">Usuarios únicos:</Typography>
                                                     <Typography variant="body2" fontWeight="bold">
-                                                        {checkin.unique_searchers}
+                                                        {formatNumber(checkin?.unique_searchers)}
                                                     </Typography>
                                                 </Box>
 
@@ -242,12 +257,12 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                                     </Typography>
                                                     <LinearProgress 
                                                         variant="determinate" 
-                                                        value={checkin.popularity_score} 
+                                                        value={safeNumber(checkin?.popularity_score, 0)} 
                                                         sx={{ mt: 0.5, height: 6, borderRadius: 3 }}
                                                         color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
                                                     />
                                                     <Typography variant="caption" color="text.secondary">
-                                                        {checkin.popularity_score.toFixed(1)}% score
+                                                        {formatPercent(checkin?.popularity_score, 1, 0)} score
                                                     </Typography>
                                                 </Box>
                                             </Stack>
@@ -257,7 +272,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                                     Propiedad más buscada:
                                                 </Typography>
                                                 <Typography variant="body2" fontWeight="medium">
-                                                    {checkin.most_searched_property}
+                                                    {safeString(checkin?.most_searched_property, 'N/A')}
                                                 </Typography>
                                             </Box>
                                         </Stack>
@@ -279,11 +294,11 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                     📋 Lista Detallada de Fechas con Mayor Demanda
                 </Typography>
                 
-                {upcomingCheckins?.length ? (
+                {safeArray(upcomingCheckins).length ? (
                     <List>
-                        {upcomingCheckins.map((checkin, index) => (
+                        {safeArray(upcomingCheckins).map((checkin, index) => (
                             <ListItem 
-                                key={checkin.checkin_date} 
+                                key={safeString(checkin?.checkin_date, `checkin-detail-${index}`)} 
                                 sx={{ 
                                     px: 2, 
                                     borderLeft: index < 3 ? 4 : 0,
@@ -299,16 +314,16 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                     primary={
                                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                                             <Typography variant="body1" fontWeight="bold">
-                                                {dayjs(checkin.checkin_date).format('DD/MM/YYYY - dddd')}
+                                                {checkin?.checkin_date ? dayjs(checkin.checkin_date).format('DD/MM/YYYY - dddd') : 'N/A'}
                                             </Typography>
                                             <Stack direction="row" spacing={1}>
                                                 <Chip 
-                                                    label={`${checkin.searches_count} búsquedas`}
+                                                    label={`${formatNumber(checkin?.searches_count)} búsquedas`}
                                                     size="small"
                                                     color="primary"
                                                 />
                                                 <Chip 
-                                                    label={`${checkin.unique_searchers} usuarios`}
+                                                    label={`${formatNumber(checkin?.unique_searchers)} usuarios`}
                                                     size="small"
                                                     color="info"
                                                     variant="outlined"
@@ -318,8 +333,8 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                     }
                                     secondary={
                                         <Typography variant="body2" color="text.secondary">
-                                            Propiedad más buscada: <strong>{checkin.most_searched_property}</strong> 
-                                            • Score de popularidad: {checkin.popularity_score.toFixed(1)}%
+                                            Propiedad más buscada: <strong>{safeString(checkin?.most_searched_property, 'N/A')}</strong> 
+                                            • Score de popularidad: {formatPercent(checkin?.popularity_score)}
                                         </Typography>
                                     }
                                 />

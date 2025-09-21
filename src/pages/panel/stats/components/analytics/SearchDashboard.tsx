@@ -31,6 +31,7 @@ import { ApexOptions } from 'apexcharts'
 // Services y tipos
 import { useGetSearchTrackingQuery } from '@/services/analytics/searchTrackingService'
 import { GlobalFilters } from '@/interfaces/analytics.interface'
+import { formatNumber, formatPercent, formatDecimal, safeArray, safeString, safeNumber } from '@/utils/formatters'
 
 interface SearchDashboardProps {
     filters: GlobalFilters
@@ -44,6 +45,11 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
         include_anonymous: filters.includeAnonymous
     })
 
+    // Debug logging
+    console.log('SearchDashboard - searchData:', searchData)
+    console.log('SearchDashboard - error:', error)
+    console.log('SearchDashboard - isLoading:', isLoading)
+
     // Configuración del gráfico de búsquedas por día de semana
     const weekdayChartOptions: ApexOptions = {
         chart: {
@@ -52,7 +58,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: searchData?.data?.searches_by_weekday?.map(item => item.weekday) || [],
+            categories: safeArray(searchData?.data?.searches_by_weekday).map(item => safeString(item?.weekday, 'N/A')),
             title: { text: 'Día de la Semana' }
         },
         yaxis: {
@@ -74,7 +80,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
 
     const weekdayChartSeries = [{
         name: 'Búsquedas',
-        data: searchData?.data?.searches_by_weekday?.map(item => item.searches_count) || []
+        data: safeArray(searchData?.data?.searches_by_weekday).map(item => safeNumber(item?.searches_count, 0))
     }]
 
     if (isLoading) {
@@ -86,22 +92,33 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
     }
 
     if (error) {
+        console.error('SearchDashboard API Error:', error)
         return (
             <Alert severity="error" sx={{ m: 2 }}>
                 Error al cargar el análisis de búsquedas. Por favor intenta nuevamente.
+                <br />
+                <small>Error: {JSON.stringify(error)}</small>
             </Alert>
         )
     }
 
-    if (!searchData?.success) {
+    if (!searchData?.success || !searchData?.data) {
         return (
             <Alert severity="warning" sx={{ m: 2 }}>
                 No se pudieron cargar los datos de búsquedas.
+                <br />
+                <small>Data: {JSON.stringify(searchData)}</small>
             </Alert>
         )
     }
 
-    const summary = searchData.data.search_summary
+    const summary = searchData.data.search_summary || {
+        total_searches: 0,
+        unique_clients_searching: 0,
+        conversion_rate: 0,
+        avg_searches_per_day: 0,
+        anonymous_searches: 0
+    }
 
     return (
         <Box>
@@ -113,7 +130,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="primary">
-                                        {summary.total_searches.toLocaleString()}
+                                        {formatNumber(summary.total_searches)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Total Búsquedas
@@ -131,7 +148,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="info.main">
-                                        {summary.unique_clients_searching.toLocaleString()}
+                                        {formatNumber(summary.unique_clients_searching)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Clientes Únicos
@@ -149,7 +166,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="warning.main">
-                                        {summary.conversion_rate.toFixed(1)}%
+                                        {formatPercent(summary.conversion_rate)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Tasa de Conversión
@@ -167,7 +184,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="h4" color="success.main">
-                                        {summary.avg_searches_per_day.toFixed(1)}
+                                        {formatDecimal(summary.avg_searches_per_day)}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         Búsquedas/Día
@@ -204,24 +221,24 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             🏠 Propiedades Más Buscadas
                         </Typography>
                         
-                        {searchData.data.top_searched_properties?.length ? (
+                        {safeArray(searchData?.data?.top_searched_properties).length ? (
                             <List>
-                                {searchData.data.top_searched_properties.slice(0, 5).map((property, index) => (
-                                    <ListItem key={property.property_name} sx={{ px: 0 }}>
+                                {safeArray(searchData.data.top_searched_properties).slice(0, 5).map((property, index) => (
+                                    <ListItem key={safeString(property?.property_name, `property-${index}`)} sx={{ px: 0 }}>
                                         <ListItemText
                                             primary={
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                                     <Typography variant="body1" fontWeight="medium">
-                                                        #{index + 1} {property.property_name}
+                                                        #{index + 1} {safeString(property?.property_name, 'N/A')}
                                                     </Typography>
                                                     <Chip 
-                                                        label={`${property.search_count} búsquedas`}
+                                                        label={`${formatNumber(property?.search_count)} búsquedas`}
                                                         size="small"
                                                         color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
                                                     />
                                                 </Stack>
                                             }
-                                            secondary={`${property.percentage.toFixed(1)}% del total`}
+                                            secondary={`${formatPercent(property?.percentage)} del total`}
                                         />
                                     </ListItem>
                                 ))}
@@ -240,24 +257,24 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                             👥 Top Clientes Buscadores
                         </Typography>
                         
-                        {searchData.data.top_searching_clients?.length ? (
+                        {safeArray(searchData?.data?.top_searching_clients).length ? (
                             <List>
-                                {searchData.data.top_searching_clients.slice(0, 5).map((client, index) => (
-                                    <ListItem key={client.client_email} sx={{ px: 0 }}>
+                                {safeArray(searchData.data.top_searching_clients).slice(0, 5).map((client, index) => (
+                                    <ListItem key={safeString(client?.client_email, `client-${index}`)} sx={{ px: 0 }}>
                                         <ListItemText
                                             primary={
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                                     <Typography variant="body1" fontWeight="medium">
-                                                        #{index + 1} {client.client_name}
+                                                        #{index + 1} {safeString(client?.client_name, 'N/A')}
                                                     </Typography>
                                                     <Chip 
-                                                        label={`${client.search_count} búsquedas`}
+                                                        label={`${formatNumber(client?.search_count)} búsquedas`}
                                                         size="small"
                                                         color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
                                                     />
                                                 </Stack>
                                             }
-                                            secondary={`Última búsqueda: ${client.last_search_date}`}
+                                            secondary={`Última búsqueda: ${safeString(client?.last_search_date, 'N/A')}`}
                                         />
                                     </ListItem>
                                 ))}
@@ -277,7 +294,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                     🔍 Análisis de IPs Anónimas
                 </Typography>
                 
-                {searchData.data.anonymous_ips_analysis?.length ? (
+                {safeArray(searchData?.data?.anonymous_ips_analysis).length ? (
                     <TableContainer>
                         <Table>
                             <TableHead>
@@ -289,26 +306,26 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {searchData.data.anonymous_ips_analysis.map((ip) => (
-                                    <TableRow key={ip.ip_last_4}>
+                                {safeArray(searchData.data.anonymous_ips_analysis).map((ip, index) => (
+                                    <TableRow key={safeString(ip?.ip_last_4, `ip-${index}`)}>
                                         <TableCell>
                                             <Typography variant="body2" fontFamily="monospace">
-                                                ****{ip.ip_last_4}
+                                                ****{safeString(ip?.ip_last_4, 'N/A')}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Typography variant="h6" color="primary">
-                                                {ip.search_count}
+                                                {formatNumber(ip?.search_count)}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Typography variant="body2">
-                                                {ip.unique_dates}
+                                                {formatNumber(ip?.unique_dates)}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
                                             <Typography variant="body2" fontWeight="medium">
-                                                {ip.most_searched_property}
+                                                {safeString(ip?.most_searched_property, 'N/A')}
                                             </Typography>
                                         </TableCell>
                                     </TableRow>
