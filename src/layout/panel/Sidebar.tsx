@@ -177,7 +177,7 @@ export default function Sidebar(props: Props) {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(6, 7).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(7, 8).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{
