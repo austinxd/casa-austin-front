@@ -21,7 +21,7 @@ export const statsApi = createApi({
                 
                 // Agregar parámetros opcionales
                 if (params.period) searchParams.append('period', params.period)
-                if (params.days_back !== undefined) searchParams.append('days_back', params.days_back.toString())
+                if (params.days_back !== undefined && Number.isFinite(params.days_back)) searchParams.append('days_back', params.days_back.toString())
                 if (params.include_anonymous !== undefined) searchParams.append('include_anonymous', params.include_anonymous.toString())
                 if (params.date_from) searchParams.append('date_from', params.date_from)
                 if (params.date_to) searchParams.append('date_to', params.date_to)

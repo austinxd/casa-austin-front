@@ -206,7 +206,11 @@ export default function StatsManagement() {
                                 label="Días Atrás"
                                 type="number"
                                 value={filters.days_back}
-                                onChange={(e) => handleFilterChange('days_back', parseInt(e.target.value))}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    const numValue = parseInt(value)
+                                    handleFilterChange('days_back', value === '' || isNaN(numValue) ? undefined : numValue)
+                                }}
                             />
                         </Grid>
                     )}
