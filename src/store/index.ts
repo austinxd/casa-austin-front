@@ -8,6 +8,7 @@ import { staffApi } from '../services/staff/staffService'
 import { tasksApi } from '../services/tasks/tasksService'
 import { timeTrackingApi } from '../services/time-tracking/timeTrackingService'
 import { schedulesApi } from '../services/schedules/schedulesService'
+import { statsApi } from '../services/stats/statsService'
 
 export const store = configureStore({
     reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
         [tasksApi.reducerPath]: tasksApi.reducer,
         [timeTrackingApi.reducerPath]: timeTrackingApi.reducer,
         [schedulesApi.reducerPath]: schedulesApi.reducer,
+        [statsApi.reducerPath]: statsApi.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -32,7 +34,8 @@ export const store = configureStore({
             staffApi.middleware,
             tasksApi.middleware,
             timeTrackingApi.middleware,
-            schedulesApi.middleware
+            schedulesApi.middleware,
+            statsApi.middleware
         ),
 })
 
