@@ -162,10 +162,17 @@ Preferred communication style: Simple, everyday language.
 - **Vite Dev Server**: Hot module replacement on port 5000
 - **Preview Server**: Production preview on port 5000 with host binding
 
-**September 21, 2025 - Stats Page Migration to Main Navigation**
-- **Stats Navigation Change**: Moved Stats from PersonalManagement sub-tab to main navigation menu
-  - **Main Menu Item**: Added "Stats" as primary navigation item in sidebar with BarChart icon
-  - **Independent Route**: Created dedicated /panel/stats route with lazy-loaded component
-  - **Page Structure**: Standalone StatsPage component with full stats dashboard functionality
-  - **Access Control**: Available to all authorized users (not restricted by role)
-  - **Clean Migration**: Removed Stats tab from PersonalManagement section completely
+**September 21, 2025 - Complete Analytics System Rebuild with New API Architecture**
+- **Analytics System Overhaul**: Complete reconstruction of stats system based on new Django backend endpoints
+  - **New API Endpoints**: Implemented support for 3 specialized endpoints: /api/v1/stats/search-tracking/, /api/v1/stats/ingresos/, and /api/v1/upcoming-checkins/
+  - **TypeScript Interfaces**: Created comprehensive type definitions for all endpoint responses including SearchTrackingData, IngresosData, and UpcomingCheckinsData
+  - **RTK Query Services**: Built specialized services (searchTrackingService, ingresosService, newUpcomingCheckinsService) with proper query parameter handling
+  - **Sidebar Navigation Architecture**: Replaced 4-tab system with 3-dashboard sidebar navigation for better user experience
+  - **SearchDashboard**: Comprehensive search analysis with metrics, weekday patterns, top properties, client behavior, and anonymous IP tracking
+  - **IngresosDashboard**: Revenue analysis with KPIs, growth metrics, temporal charts, payment distribution, and price analysis
+  - **CheckinsDashboard**: Demand forecasting with trending dates, popularity scores, and upcoming check-in insights
+  - **Global Filtering System**: Unified filter controls for date ranges, user types, currency selection, and period grouping
+  - **Real API Integration**: All charts and metrics now use live backend data instead of mock values
+  - **Mobile Responsive**: Drawer-based sidebar with proper mobile optimization and responsive breakpoints
+- **Store Architecture**: Updated Redux store to include new API services while maintaining existing functionality
+- **Chart Integration**: Enhanced ApexCharts implementation with area charts, bar charts, and donut charts for comprehensive data visualization

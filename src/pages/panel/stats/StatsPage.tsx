@@ -31,9 +31,9 @@ import {
 import dayjs from 'dayjs'
 
 // Componentes de dashboard
-import SearchDashboard from './components/analytics/SearchDashboard'
-import IngresosDashboard from './components/analytics/IngresosDashboard'
-import CheckinsDashboard from './components/analytics/CheckinsDashboard'
+import SearchDashboard from '@/pages/panel/stats/components/analytics/SearchDashboard'
+import IngresosDashboard from '@/pages/panel/stats/components/analytics/IngresosDashboard'
+import CheckinsDashboard from '@/pages/panel/stats/components/analytics/CheckinsDashboard'
 
 // Interfaces
 import { GlobalFilters, FilterPreset } from '@/interfaces/analytics.interface'
