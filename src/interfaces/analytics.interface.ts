@@ -15,6 +15,8 @@ export interface PeriodInfo {
     date_from: string
     date_to: string
     total_days: number
+    period_grouping?: string
+    currency?: string
 }
 
 export interface SearchSummary {
@@ -26,9 +28,11 @@ export interface SearchSummary {
 }
 
 export interface SearchByWeekday {
-    weekday: string
+    day_name: string
+    day_number: number
     searches_count: number
     percentage: number
+    avg_guests_searched: number
 }
 
 export interface TopSearchedProperty {
@@ -44,11 +48,16 @@ export interface TopSearchingClient {
     last_search_date: string
 }
 
-export interface AnonymousIpAnalysis {
+export interface AnonymousIpAnalysisItem {
     ip_last_4: string
     search_count: number
     unique_dates: number
     most_searched_property: string
+}
+
+export interface AnonymousIpAnalysis {
+    top_searching_ips: AnonymousIpAnalysisItem[]
+    total_anonymous_ips: number
 }
 
 export interface SearchTrackingData {
@@ -57,12 +66,13 @@ export interface SearchTrackingData {
     searches_by_weekday: SearchByWeekday[]
     top_searched_properties: TopSearchedProperty[]
     top_searching_clients: TopSearchingClient[]
-    anonymous_ips_analysis: AnonymousIpAnalysis[]
+    anonymous_ips_analysis: AnonymousIpAnalysis
 }
 
 export interface SearchTrackingResponse {
     success: boolean
     data: SearchTrackingData
+    generated_at: string
 }
 
 // ========================================
@@ -87,35 +97,43 @@ export interface RevenueSummary {
 
 export interface RevenueByPeriod {
     period: string
+    period_label: string
     revenue: number
-    nights: number
-    reservations: number
+    reservations_count: number
+    nights_count: number
+    avg_revenue_per_reservation: number
+    revenue_per_night: number
 }
 
 export interface PaymentDistribution {
     payment_method: string
-    amount: number
+    reservations_count: number
+    total_revenue: number
     percentage: number
-    count: number
+}
+
+export interface PriceDistributionItem {
+    price_range: string
+    reservations_count: number
+    percentage: number
 }
 
 export interface PriceAnalysis {
-    min_price: number
-    max_price: number
-    avg_price: number
-    median_price: number
-    price_ranges: {
-        range: string
-        count: number
-        percentage: number
-    }[]
+    avg_total_cost: number
+    min_total_cost: number
+    max_total_cost: number
+    avg_price_per_night: number
+    avg_nights_per_reservation: number
+    price_distribution: PriceDistributionItem[]
 }
 
 export interface GrowthMetrics {
-    revenue_growth: number
-    reservations_growth: number
-    avg_price_growth: number
-    comparison_period: string
+    revenue_growth_percentage: number
+    reservations_growth_percentage: number
+    current_period_revenue: number
+    previous_period_revenue: number
+    current_period_reservations: number
+    previous_period_reservations: number
 }
 
 export interface IngresosData {
@@ -130,6 +148,7 @@ export interface IngresosData {
 export interface IngresosResponse {
     success: boolean
     data: IngresosData
+    generated_at: string
 }
 
 // ========================================
@@ -142,34 +161,43 @@ export interface UpcomingCheckinsParams {
     include_anonymous?: boolean
 }
 
-export interface TopUpcomingCheckin {
-    checkin_date: string
-    searches_count: number
-    unique_searchers: number
-    most_searched_property: string
-    popularity_score: number
+export interface SearchingClient {
+    client_id: string
+    client_name: string
+    client_email: string
+    checkout_date: string
+    guests: number
+    property: string | null
 }
 
-export interface SummaryMetrics {
-    total_upcoming_dates: number
-    avg_searches_per_date: number
-    most_popular_checkin: string
-    peak_demand_day: string
+export interface TopUpcomingCheckin {
+    checkin_date: string
+    weekday: string
+    days_until_checkin: number
+    total_searches: number
+    client_searches: number
+    anonymous_searches: number
+    avg_stay_duration: number
+    searching_clients: SearchingClient[]
+}
+
+// SummaryMetrics interface removed as it's not present in the actual API response
+
+export interface UpcomingCheckinsPeriodInfo {
+    analysis_from: string
+    analysis_to: string
+    days_ahead: number
 }
 
 export interface UpcomingCheckinsData {
-    period_info: {
-        date_from: string
-        date_to: string
-        days_ahead: number
-    }
+    period_info: UpcomingCheckinsPeriodInfo
     top_upcoming_checkins: TopUpcomingCheckin[]
-    summary_metrics: SummaryMetrics
 }
 
 export interface UpcomingCheckinsResponse {
     success: boolean
     data: UpcomingCheckinsData
+    generated_at: string
 }
 
 // ========================================

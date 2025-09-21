@@ -150,17 +150,20 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
         avg_revenue_per_day: 0
     }
     const growth = ingresosData.data.growth_metrics || {
-        revenue_growth: 0,
-        reservations_growth: 0,
-        avg_price_growth: 0,
-        comparison_period: ''
+        revenue_growth_percentage: 0,
+        reservations_growth_percentage: 0,
+        current_period_revenue: 0,
+        previous_period_revenue: 0,
+        current_period_reservations: 0,
+        previous_period_reservations: 0
     }
     const priceAnalysis = ingresosData.data.price_analysis || {
-        min_price: 0,
-        max_price: 0,
-        avg_price: 0,
-        median_price: 0,
-        price_ranges: []
+        avg_total_cost: 0,
+        min_total_cost: 0,
+        max_total_cost: 0,
+        avg_price_per_night: 0,
+        avg_nights_per_reservation: 0,
+        price_distribution: []
     }
 
     return (
@@ -199,9 +202,9 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                                     </Typography>
                                     {growth && (
                                         <Chip 
-                                            label={`${safeNumber(growth.revenue_growth) > 0 ? '+' : ''}${formatPercent(growth.revenue_growth)}`}
+                                            label={`${safeNumber(growth.revenue_growth_percentage) > 0 ? '+' : ''}${formatPercent(growth.revenue_growth_percentage)}`}
                                             size="small"
-                                            color={safeNumber(growth.revenue_growth) > 0 ? "success" : "error"}
+                                            color={safeNumber(growth.revenue_growth_percentage) > 0 ? "success" : "error"}
                                             sx={{ mt: 1 }}
                                         />
                                     )}
@@ -243,9 +246,9 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                                     </Typography>
                                     {growth && (
                                         <Chip 
-                                            label={`${safeNumber(growth.reservations_growth) > 0 ? '+' : ''}${formatPercent(growth.reservations_growth)}`}
+                                            label={`${safeNumber(growth.reservations_growth_percentage) > 0 ? '+' : ''}${formatPercent(growth.reservations_growth_percentage)}`}
                                             size="small"
-                                            color={safeNumber(growth.reservations_growth) > 0 ? "success" : "error"}
+                                            color={safeNumber(growth.reservations_growth_percentage) > 0 ? "success" : "error"}
                                             sx={{ mt: 1 }}
                                         />
                                     )}
@@ -326,25 +329,25 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                             <Box display="flex" justifyContent="space-between">
                                 <Typography variant="body2">Precio Mínimo:</Typography>
                                 <Typography variant="body2" fontWeight="bold">
-                                    {formatCurrency(priceAnalysis.min_price, filters.currency)}
+                                    {formatCurrency(priceAnalysis.min_total_cost, filters.currency)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
                                 <Typography variant="body2">Precio Máximo:</Typography>
                                 <Typography variant="body2" fontWeight="bold">
-                                    {formatCurrency(priceAnalysis.max_price, filters.currency)}
+                                    {formatCurrency(priceAnalysis.max_total_cost, filters.currency)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
                                 <Typography variant="body2">Precio Promedio:</Typography>
                                 <Typography variant="body2" fontWeight="bold">
-                                    {formatCurrency(priceAnalysis.avg_price, filters.currency)}
+                                    {formatCurrency(priceAnalysis.avg_total_cost, filters.currency)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
                                 <Typography variant="body2">Precio Mediano:</Typography>
                                 <Typography variant="body2" fontWeight="bold">
-                                    {formatCurrency(priceAnalysis.median_price, filters.currency)}
+                                    {formatCurrency(priceAnalysis.avg_price_per_night, filters.currency)}
                                 </Typography>
                             </Box>
                         </Stack>
@@ -355,12 +358,12 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                             Rangos de Precios:
                         </Typography>
                         <Stack spacing={1}>
-                            {safeArray(priceAnalysis.price_ranges).map((range, index) => (
+                            {safeArray(priceAnalysis.price_distribution).map((range, index) => (
                                 <Box key={index} display="flex" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2">{safeString(range?.range, 'N/A')}:</Typography>
+                                    <Typography variant="body2">{safeString(range?.price_range, 'N/A')}:</Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="body2" fontWeight="bold">
-                                            {formatNumber(range?.count)} reservas
+                                            {formatNumber(range?.reservations_count)} reservas
                                         </Typography>
                                         <Chip 
                                             label={formatPercent(range?.percentage)}

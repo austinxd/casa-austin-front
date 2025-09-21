@@ -58,7 +58,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: safeArray(searchData?.data?.searches_by_weekday).map(item => safeString(item?.weekday, 'N/A')),
+            categories: safeArray(searchData?.data?.searches_by_weekday).map((item: any) => safeString(item?.day_name, 'N/A')),
             title: { text: 'Día de la Semana' }
         },
         yaxis: {
@@ -80,7 +80,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
 
     const weekdayChartSeries = [{
         name: 'Búsquedas',
-        data: safeArray(searchData?.data?.searches_by_weekday).map(item => safeNumber(item?.searches_count, 0))
+        data: safeArray(searchData?.data?.searches_by_weekday).map((item: any) => safeNumber(item?.searches_count, 0))
     }]
 
     if (isLoading) {
@@ -294,7 +294,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                     🔍 Análisis de IPs Anónimas
                 </Typography>
                 
-                {safeArray(searchData?.data?.anonymous_ips_analysis).length ? (
+                {safeArray(searchData?.data?.anonymous_ips_analysis?.top_searching_ips).length ? (
                     <TableContainer>
                         <Table>
                             <TableHead>
@@ -306,7 +306,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {safeArray(searchData.data.anonymous_ips_analysis).map((ip, index) => (
+                                {safeArray(searchData.data.anonymous_ips_analysis.top_searching_ips).map((ip, index) => (
                                     <TableRow key={safeString(ip?.ip_last_4, `ip-${index}`)}>
                                         <TableCell>
                                             <Typography variant="body2" fontFamily="monospace">

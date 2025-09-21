@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { UpcomingCheckinsResponse, UpcomingCheckinsQueryParams } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsResponse, UpcomingCheckinsParams } from '@/interfaces/analytics.interface'
 import { ENV } from '../../core/constants/config'
 import { cookiesGetString } from '@/core/utils/cookie-storage'
 
@@ -15,7 +15,7 @@ export const upcomingCheckinsApi = createApi({
     tagTypes: ['UpcomingCheckins'],
     endpoints: (builder) => ({
         // Obtener check-ins próximos
-        getUpcomingCheckins: builder.query<UpcomingCheckinsResponse, UpcomingCheckinsQueryParams>({
+        getUpcomingCheckins: builder.query<UpcomingCheckinsResponse, UpcomingCheckinsParams>({
             query: (params = {}) => {
                 const searchParams = new URLSearchParams()
                 
