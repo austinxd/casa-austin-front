@@ -48,6 +48,39 @@ export interface TopSearchingClient {
     search_count: number
 }
 
+// New interfaces for Stats2 dashboard
+export interface FavoriteProperty {
+    property__name: string
+    count: number
+}
+
+export interface ClientSearchGroup {
+    client_id: number
+    client_name: string
+    client_email: string
+    total_searches: number
+    unique_dates_searched: number
+    favorite_properties: FavoriteProperty[]
+}
+
+export interface ClientSearchGroups {
+    top_searching_clients: ClientSearchGroup[]
+    total_clients_searching: number
+}
+
+export interface IpSearchGroup {
+    ip_address: string
+    total_searches: number
+    unique_dates_searched: number
+    different_devices: number
+    favorite_properties: FavoriteProperty[]
+}
+
+export interface IpSearchGroups {
+    top_searching_ips: IpSearchGroup[]
+    total_anonymous_ips: number
+}
+
 export interface SearchAnalytics {
     searches_by_period: SearchByPeriod[]
     user_type_breakdown: UserTypeBreakdown
@@ -57,6 +90,8 @@ export interface SearchAnalytics {
     guest_count_patterns: GuestCountPattern[]
     popular_checkin_dates: CheckinDate[]
     top_searching_clients: TopSearchingClient[]
+    client_search_groups?: ClientSearchGroups
+    ip_search_groups?: IpSearchGroups
 }
 
 export interface ActivityByPeriod {

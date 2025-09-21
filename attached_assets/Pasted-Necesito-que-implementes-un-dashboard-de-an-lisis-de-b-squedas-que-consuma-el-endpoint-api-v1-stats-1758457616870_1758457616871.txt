@@ -1,0 +1,86 @@
+Necesito que implementes un dashboard de análisis de búsquedas que consuma el endpoint /api/v1/stats/ y muestre dos tablas principales:
+
+🎯 Objetivo:
+Crear una página de dashboard que muestre búsquedas agrupadas por usuario:
+
+Tabla 1: Clientes registrados (tienen client_id)
+Tabla 2: Usuarios anónimos (agrupados por IP)
+🔗 API Endpoint:
+GET /api/v1/stats/?date_from=2025-09-01&date_to=2025-09-21&period=week
+📋 Estructura de datos que recibirás:
+El endpoint devuelve esta estructura JSON:
+
+{
+  "success": true,
+  "stats": {
+    "search_analytics": {
+      "client_search_groups": {
+        "top_searching_clients": [
+          {
+            "client_id": 123,
+            "client_name": "Juan P.",
+            "client_email": "juan@email.com", 
+            "total_searches": 8,
+            "unique_dates_searched": 5,
+            "favorite_properties": [
+              {"property__name": "Casa Playa", "count": 3},
+              {"property__name": "Casa 1", "count": 2}
+            ]
+          }
+        ],
+        "total_clients_searching": 15
+      },
+      "ip_search_groups": {
+        "top_searching_ips": [
+          {
+            "ip_address": "192.168.1.100",
+            "total_searches": 12,
+            "unique_dates_searched": 7,
+            "different_devices": 2,
+            "favorite_properties": [
+              {"property__name": "Casa Playa", "count": 4}
+            ]
+          }
+        ],
+        "total_anonymous_ips": 8
+      }
+    }
+  }
+}
+🎨 Diseño de las tablas:
+Tabla 1: Clientes Registrados
+
+Cliente	Email	Total Búsquedas	Fechas Únicas	Propiedades Favoritas
+Juan P.	juan@email.com	8	5	Casa Playa (3), Casa 1 (2)
+Tabla 2: Usuarios Anónimos (por IP)
+
+IP	Total Búsquedas	Fechas Únicas	Dispositivos	Propiedades Favoritas
+192.168.1.100	12	7	2	Casa Playa (4)
+🔧 Funcionalidades requeridas:
+Filtros de fecha: Inputs para date_from y date_to
+Selector de período: Dropdown con day, week, month
+Toggle: Checkbox para include_anonymous
+Ordenamiento: Poder ordenar por total de búsquedas, fechas únicas, etc.
+Paginación: Para listas largas
+Loading state: Mientras carga la API
+Error handling: Si falla la API
+📊 Información adicional a mostrar:
+Agrega cards con métricas resumidas del summary_metrics:
+
+Total de búsquedas
+IPs únicas anónimas
+Clientes únicos que buscaron
+Duración promedio de estadía
+🎯 Ejemplo de llamada completa:
+// Ejemplo de fetch
+const response = await fetch('/api/v1/stats/?date_from=2025-09-01&date_to=2025-09-21&period=week&include_anonymous=true');
+const data = await response.json();
+// Extraer datos para las tablas
+const clientData = data.stats.search_analytics.client_search_groups.top_searching_clients;
+const ipData = data.stats.search_analytics.ip_search_groups.top_searching_ips;
+🎨 Estilo sugerido:
+Usa un diseño limpio y profesional
+Tablas con hover effects
+Colores diferenciados para clientes vs anónimos
+Icons para representar clientes registrados vs IPs anónimas
+Responsive design
