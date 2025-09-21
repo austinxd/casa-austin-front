@@ -28,7 +28,7 @@ export interface SearchSummary {
 }
 
 export interface SearchByWeekday {
-    day_name: string
+    weekday: string
     day_number: number
     searches_count: number
     percentage: number
@@ -60,12 +60,66 @@ export interface AnonymousIpAnalysis {
     total_anonymous_ips: number
 }
 
+// New interfaces for additional fields
+export interface SearchByHour {
+    hour: number
+    hour_label: string
+    period: string
+    searches_count: number
+    percentage: number
+}
+
+export interface DailySearchActivity {
+    date: string
+    searches_count: number
+    unique_users: number
+    searches_per_user: number
+}
+
+export interface PopularCheckinDate {
+    checkin_date: string
+    searches_count: number
+    unique_searchers: number
+    avg_stay_duration: number
+}
+
+export interface StayDurationAnalysis {
+    duration_days: number
+    duration_label: string
+    searches_count: number
+    percentage: number
+    avg_guests: number
+}
+
+export interface GuestCountAnalysis {
+    guest_count: number
+    guest_range: string
+    searches_count: number
+    percentage: number
+    avg_stay_duration: number
+}
+
+export interface SearchPerClient {
+    client_id: string
+    client_name: string
+    client_email: string
+    searches_count: number
+    last_search_date: string
+    avg_guests_searched: number
+}
+
 export interface SearchTrackingData {
     period_info: PeriodInfo
     search_summary: SearchSummary
     searches_by_weekday: SearchByWeekday[]
+    searches_by_hour: SearchByHour[]
+    daily_search_activity: DailySearchActivity[]
+    popular_checkin_dates: PopularCheckinDate[]
+    stay_duration_analysis: StayDurationAnalysis[]
+    guest_count_analysis: GuestCountAnalysis[]
     top_searched_properties: TopSearchedProperty[]
     top_searching_clients: TopSearchingClient[]
+    searches_per_client: SearchPerClient[]
     anonymous_ips_analysis: AnonymousIpAnalysis
 }
 

@@ -58,7 +58,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: safeArray(searchData?.data?.searches_by_weekday).map((item: any) => safeString(item?.day_name, 'N/A')),
+            categories: safeArray(searchData?.data?.searches_by_weekday).map((item: any) => safeString(item?.weekday, 'N/A')),
             title: { text: 'Día de la Semana' }
         },
         yaxis: {
