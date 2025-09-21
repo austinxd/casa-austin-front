@@ -342,14 +342,14 @@ export default function StatsManagement() {
                             <CardContent>
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
-                                        <Typography variant="h6" color="info.main" noWrap>
+                                        <Typography variant="h6" color="secondary.main" noWrap>
                                             {statsData.stats.summary.most_searched_property}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Propiedad Top
                                         </Typography>
                                     </Box>
-                                    <HomeIcon color="info" sx={{ fontSize: 40 }} />
+                                    <HomeIcon color="secondary" sx={{ fontSize: 40 }} />
                                 </Stack>
                             </CardContent>
                         </Card>

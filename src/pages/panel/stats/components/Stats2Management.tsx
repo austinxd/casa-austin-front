@@ -315,14 +315,14 @@ export default function Stats2Management() {
                             <CardContent>
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
-                                        <Typography variant="h4" color="info.main">
+                                        <Typography variant="h4" color="secondary.main">
                                             {statsData.stats.summary.unique_searchers.toLocaleString()}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Total Usuarios
                                         </Typography>
                                     </Box>
-                                    <TrendingUpIcon color="info" sx={{ fontSize: 40 }} />
+                                    <TrendingUpIcon color="secondary" sx={{ fontSize: 40 }} />
                                 </Stack>
                             </CardContent>
                         </Card>
