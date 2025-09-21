@@ -1,0 +1,171 @@
+📊 GUÍA COMPLETA - CASA AUSTIN ANALYTICS API
+Todo lo que puedes hacer con los endpoints para crear un frontend increíble
+
+🌐 BASE URL DE TU API
+https://api.casaaustin.pe
+🎯 ENDPOINT 1: ESTADÍSTICAS COMPREHENSIVAS
+URL Completa
+GET https://api.casaaustin.pe/api/v1/stats/
+¿QUÉ PUEDES HACER CON ESTE ENDPOINT?
+📈 1. Dashboard Principal con Métricas Clave
+Total de reservas en período seleccionado
+Ingresos totales con formato de moneda
+Duración promedio de estadías
+Tasa de ocupación por período
+Crecimiento vs período anterior (porcentajes de crecimiento/decrecimiento)
+📊 2. Gráficos y Visualizaciones
+Gráfico de líneas - Evolución de reservas en el tiempo
+Gráfico de barras - Ingresos por período (día/semana/mes)
+Gráfico de área - Ocupación a lo largo del tiempo
+Gauge charts - Tasa de ocupación actual vs objetivo
+Gráficos de dona - Distribución de huéspedes (1, 2, 3, 4+ personas)
+🏠 3. Análisis por Propiedades
+Tabla ranking de propiedades más rentables
+Cards comparativas entre propiedades
+Heatmap de ocupación por propiedad
+Gráfico de burbujas (ocupación vs ingresos vs precio promedio)
+Detalles drill-down para cada propiedad específica
+👥 4. Análisis de Comportamiento de Clientes
+Distribución de grupo - Cuántas reservas por número de huéspedes
+Patrones temporales - Qué días de la semana buscan más
+Mapa de calor semanal - Búsquedas por día de la semana
+Análisis de conversión - Ratio búsquedas vs reservas reales
+🔍 5. SearchTracking Analytics Avanzado
+Top clientes potenciales que buscan pero no reservan
+Lista de seguimiento de usuarios con alta intención
+Análisis de IPs anónimas más activas
+Mapa geográfico de búsquedas (si tienes geolocalización)
+Propiedades más buscadas vs más reservadas
+PARÁMETROS PARA FILTROS DINÁMICOS
+// Ejemplos de URLs que puedes construir
+https://api.casaaustin.pe/api/v1/stats/?date_from=2025-09-01&date_to=2025-09-30&period=week
+https://api.casaaustin.pe/api/v1/stats/?period=day  // Último mes por días
+https://api.casaaustin.pe/api/v1/stats/?period=month // Análisis mensual
+🔍 ENDPOINT 2: CHECK-INS PRÓXIMOS
+URL Completa
+GET https://api.casaaustin.pe/api/v1/upcoming-checkins/
+¿QUÉ PUEDES HACER CON ESTE ENDPOINT?
+📅 1. Predicción de Demanda
+Calendario de demanda - Fechas más buscadas próximamente
+Heatmap temporal - Intensidad de búsquedas por fecha
+Alertas de alta demanda - Fechas que están trending
+Proyección de ocupación basada en búsquedas actuales
+💰 2. Optimización de Precios
+Sugerencias de pricing para fechas de alta demanda
+Alertas de oportunidad - Fechas populares con disponibilidad
+Análisis de elasticidad - Demanda vs disponibilidad actual
+Revenue forecasting basado en interés de búsqueda
+👤 3. Lead Management y Seguimiento
+Lista de prospectos calientes - Clientes que buscan fechas específicas
+Segmentación por interés - Preferencias de cada cliente potencial
+Campaign targeting - Usuarios para campañas de email marketing
+Análisis de comportamiento de búsqueda por cliente
+🎯 4. Conversiones y Oportunidades
+Fechas de alta conversión potencial
+Usuarios con alta intención de reserva
+Análisis de abandono - Por qué no convierten
+Remarketing lists basadas en búsquedas recientes
+📊 5. Analytics Avanzado de Búsquedas
+Tendencias temporales - Qué días de la semana prefieren para check-in
+Patrones de anticipación - Con cuánta antelación buscan
+Análisis de duración - Cuántos días buscan quedarse
+Preferencias por propiedad según fecha buscada
+PARÁMETROS PARA ANÁLISIS DINÁMICO
+// Análisis a corto plazo (próximo mes)
+https://api.casaaustin.pe/api/v1/upcoming-checkins/?days_ahead=30&limit=10
+// Análisis a largo plazo (próximos 3 meses) 
+https://api.casaaustin.pe/api/v1/upcoming-checkins/?days_ahead=90&limit=25
+// Solo clientes registrados (excluir anónimos)
+https://api.casaaustin.pe/api/v1/upcoming-checkins/?include_anonymous=false&limit=15
+// Análisis completo para dashboard ejecutivo
+https://api.casaaustin.pe/api/v1/upcoming-checkins/?days_ahead=180&limit=50
+🎨 IDEAS ESPECÍFICAS PARA MEJORAR TU FRONTEND
+📱 1. Dashboard Ejecutivo
+KPI Cards grandes con métricas principales y crecimiento
+Gráfico principal de tendencia de reservas (Chart.js/Recharts)
+Mini widgets de ocupación, ingresos, búsquedas
+Alertas dinámicas sobre fechas de alta demanda
+📊 2. Página de Analytics Detallado
+Filtros avanzados con date pickers y selectors
+Múltiples pestañas (Reservas, Búsquedas, Propiedades, Clientes)
+Gráficos interactivos con drill-down capabilities
+Tablas con sorting y paginación
+🎯 3. Centro de Oportunidades
+Lista de leads calientes con datos de contacto enmascarados
+Fechas trending con nivel de demanda
+Sugerencias de precios basadas en demanda
+Botones de acción para contactar clientes potenciales
+📈 4. Centro de Reportes
+Comparativas período a período
+Análisis de rendimiento por propiedad
+Reportes exportables en PDF/Excel
+Alertas y notificaciones automáticas
+🔍 5. Search Intelligence Center
+Mapa de calor de búsquedas por fecha
+Timeline de búsquedas por cliente
+Análisis de patrones de comportamiento
+Predicciones de conversión
+🛠️ COMPONENTES ESPECÍFICOS QUE PUEDES CREAR
+📊 Gráficos y Visualizaciones
+// Datos perfectos para:
+- Line Charts (reservas over time)
+- Bar Charts (ingresos por período) 
+- Donut Charts (distribución huéspedes)
+- Heat Maps (búsquedas por fecha)
+- Gauge Charts (ocupación vs objetivo)
+- Bubble Charts (precio vs ocupación vs ingresos)
+- Calendar Views (demanda por fecha)
+📋 Tablas y Listas
+// Tablas dinámicas para:
+- Ranking propiedades por ingresos
+- Lista clientes potenciales ordenada por interés
+- Fechas próximas por popularidad  
+- Análisis de búsquedas por IP/cliente
+- Comparativa período actual vs anterior
+🎯 Widgets Especializados
+// Widgets únicos:
+- "Lead Scorer" - Puntaje de probabilidad de conversión
+- "Demand Predictor" - Predictor de demanda por fecha
+- "Price Optimizer" - Sugerencias de precios
+- "Conversion Tracker" - Seguimiento búsqueda -> reserva
+- "Hot Dates Alert" - Alertas de fechas trending
+🎯 CASOS DE USO BUSINESS INTELLIGENCE
+🎯 Para Revenue Management
+Identificar fechas de alta demanda para subir precios
+Detectar oportunidades perdidas (mucha búsqueda, poca conversión)
+Optimizar disponibilidad en fechas populares
+Proyectar ingresos basado en búsquedas actuales
+📈 Para Marketing Digital
+Crear audiencias personalizadas de usuarios que buscan fechas específicas
+Segmentar campañas por preferencias de búsqueda
+Hacer remarketing a usuarios con alta intención
+Analizar efectividad de campañas vs búsquedas
+🎯 Para Operaciones
+Planificar staffing basado en ocupación proyectada
+Gestionar inventario según demanda futura
+Optimizar mantenimiento en fechas de baja demanda
+Coordinar limpieza según patrones de check-in
+📊 Para Análisis Estratégico
+Identificar tendencias estacionales en búsquedas y reservas
+Analizar competencia indirecta via patrones de búsqueda
+Detectar oportunidades de nuevos mercados
+Medir satisfacción via rate de conversión
+🚀 IMPLEMENTACIÓN TÉCNICA SUGERIDA
+🎨 Stack Frontend Recomendado
+React/Next.js con TypeScript
+Chart.js o Recharts para gráficos
+Tailwind CSS para diseño moderno
+React Query/SWR para manejo de data
+Date-fns para manejo de fechas
+📱 Estructura de Páginas
+/dashboard          - Overview principal con KPIs
+/analytics          - Análisis detallado con gráficos
+/opportunities      - Centro de oportunidades de venta
+/reports           - Reportes y exportaciones  
+/search-intel      - Inteligencia de búsquedas
+⚡ Optimizaciones
+Caching inteligente de respuestas API
+Loading states elegantes
+Error boundaries para manejo de errores
+Responsive design para móvil
+Dark/Light mode toggle

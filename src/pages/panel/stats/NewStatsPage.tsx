@@ -7,7 +7,7 @@ import {
     Search as SearchIcon,
 } from '@mui/icons-material'
 
-// Nuevos componentes principales basados en la guía API
+// Nuevos componentes principales
 import ExecutiveDashboard from './components/executive/ExecutiveDashboard'
 import AnalyticsCenter from './components/analytics/AnalyticsCenter'
 import OpportunitiesCenter from './components/opportunities/OpportunitiesCenter'
@@ -30,7 +30,11 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`stats-tab-${index}`}
             {...other}
         >
-            {value === index && <Box>{children}</Box>}
+            {value === index && (
+                <Box sx={{ pt: 3 }}>
+                    {children}
+                </Box>
+            )}
         </div>
     )
 }
@@ -42,7 +46,7 @@ function a11yProps(index: number) {
     }
 }
 
-export default function StatsPage() {
+export default function NewStatsPage() {
     const [selectedTab, setSelectedTab] = useState(0)
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
