@@ -7,6 +7,7 @@ import {
     LoginOutlined as LoginOutlinedIcon,
     Menu as MenuIcon,
     People as PeopleIcon,
+    BarChart as BarChartIcon,
 } from '@mui/icons-material'
 import {
     AppBar,
@@ -66,6 +67,12 @@ const menuItems = [
     },
     {
         id: 7,
+        text: 'Stats',
+        icon: BarChartIcon,
+        path: '/panel/stats',
+    },
+    {
+        id: 8,
         text: 'Cerrar sesión',
         icon: LoginOutlinedIcon,
         path: '/panel/cerrar-sesion',
@@ -135,7 +142,7 @@ export default function Sidebar(props: Props) {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 6).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 7).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{

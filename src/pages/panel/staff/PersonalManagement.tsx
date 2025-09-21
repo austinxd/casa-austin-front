@@ -5,7 +5,6 @@ import StaffList from './components/StaffList'
 import TaskManagement from './components/TaskManagement'
 import TimeTracking from './components/TimeTracking'
 import ScheduleManagement from './components/ScheduleManagement'
-import StatsManagement from './components/StatsManagement'
 
 interface TabPanelProps {
     children?: React.ReactNode
@@ -80,8 +79,7 @@ export default function PersonalManagement() {
                         <Tab key="personal" label="Personal" {...a11yProps(0)} />,
                         <Tab key="tareas" label="Tareas" {...a11yProps(1)} />,
                         <Tab key="tiempo" label="Tiempo" {...a11yProps(2)} />,
-                        <Tab key="horarios" label="Horarios" {...a11yProps(3)} />,
-                        <Tab key="estadisticas" label="Estadísticas" {...a11yProps(4)} />
+                        <Tab key="horarios" label="Horarios" {...a11yProps(3)} />
                     ]}
                 </Tabs>
             </Box>
@@ -106,10 +104,6 @@ export default function PersonalManagement() {
                     
                     <TabPanel value={value} index={3}>
                         <ScheduleManagement />
-                    </TabPanel>
-                    
-                    <TabPanel value={value} index={4}>
-                        <StatsManagement />
                     </TabPanel>
                 </>
             )}

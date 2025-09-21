@@ -15,6 +15,9 @@ const CrudRentals = lazy(() => import('./pages/panel/reservations/CrudRentals'))
 // Staff Management components
 const PersonalManagement = lazy(() => import('./pages/panel/staff/PersonalManagement'))
 
+// Stats components
+const StatsPage = lazy(() => import('./pages/panel/stats/StatsPage'))
+
 function App() {
     return (
         <BrowserRouter>
@@ -94,6 +97,18 @@ function App() {
                             <Sidebar>
                                 <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando personal...</div>}>
                                     <PersonalManagement />
+                                </Suspense>
+                            </Sidebar>
+                        </ProtectRoutes>
+                    }
+                />
+                <Route
+                    path="/panel/stats"
+                    element={
+                        <ProtectRoutes navigateTo="/">
+                            <Sidebar>
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando estadísticas...</div>}>
+                                    <StatsPage />
                                 </Suspense>
                             </Sidebar>
                         </ProtectRoutes>

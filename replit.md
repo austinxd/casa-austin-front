@@ -161,3 +161,11 @@ Preferred communication style: Simple, everyday language.
 - **Node.js**: Required for package management and build process
 - **Vite Dev Server**: Hot module replacement on port 5000
 - **Preview Server**: Production preview on port 5000 with host binding
+
+**September 21, 2025 - Stats Page Migration to Main Navigation**
+- **Stats Navigation Change**: Moved Stats from PersonalManagement sub-tab to main navigation menu
+  - **Main Menu Item**: Added "Stats" as primary navigation item in sidebar with BarChart icon
+  - **Independent Route**: Created dedicated /panel/stats route with lazy-loaded component
+  - **Page Structure**: Standalone StatsPage component with full stats dashboard functionality
+  - **Access Control**: Available to all authorized users (not restricted by role)
+  - **Clean Migration**: Removed Stats tab from PersonalManagement section completely
