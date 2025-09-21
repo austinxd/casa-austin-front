@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Typography, Tabs, Tab } from '@mui/material'
-import StatsManagement from './components/StatsManagement'
-import Stats2Management from './components/Stats2Management'
+import GeneralStatsTab from './components/GeneralStatsTab'
+import SearchAnalyticsTab from './components/SearchAnalyticsTab'
 
 interface TabPanelProps {
     children?: React.ReactNode
@@ -46,18 +46,46 @@ export default function StatsPage() {
             </Typography>
             
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-                <Tabs value={value} onChange={handleChange} aria-label="stats tabs">
-                    <Tab label="Estadísticas Generales" {...a11yProps(0)} />
-                    <Tab label="Análisis de Búsquedas" {...a11yProps(1)} />
+                <Tabs 
+                    value={value} 
+                    onChange={handleChange} 
+                    aria-label="analytics tabs"
+                    variant="fullWidth"
+                    sx={{ 
+                        '& .MuiTabs-indicator': {
+                            backgroundColor: '#0E6191'
+                        }
+                    }}
+                >
+                    <Tab 
+                        label="📊 Estadísticas Generales" 
+                        {...a11yProps(0)}
+                        sx={{ 
+                            fontWeight: 'bold',
+                            '&.Mui-selected': {
+                                color: '#0E6191'
+                            }
+                        }}
+                    />
+                    <Tab 
+                        label="🔍 Análisis de Búsquedas" 
+                        {...a11yProps(1)}
+                        sx={{ 
+                            fontWeight: 'bold',
+                            '&.Mui-selected': {
+                                color: '#0E6191'
+                            }
+                        }}
+                    />
                 </Tabs>
             </Box>
             
             <TabPanel value={value} index={0}>
-                <StatsManagement />
+                <GeneralStatsTab />
             </TabPanel>
             
             <TabPanel value={value} index={1}>
-                <Stats2Management />
+                <SearchAnalyticsTab />
             </TabPanel>
         </Box>
     )

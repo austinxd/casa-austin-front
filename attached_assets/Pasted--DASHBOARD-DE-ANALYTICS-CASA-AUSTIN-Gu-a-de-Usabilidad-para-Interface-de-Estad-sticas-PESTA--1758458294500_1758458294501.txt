@@ -1,0 +1,96 @@
+📊 DASHBOARD DE ANALYTICS - CASA AUSTIN
+Guía de Usabilidad para Interface de Estadísticas
+
+🎯 PESTAÑA 1: ESTADÍSTICAS GENERALES
+Endpoint principal: /api/v1/stats/
+
+📈 Subpestaña: Métricas de Reservas
+Resumen de período - Total de reservas, ingresos, ocupación promedio
+Gráfico de tendencias - Evolución temporal de reservas por semana/mes
+Comparativas - Período actual vs período anterior (% de crecimiento)
+Filtros disponibles: Rango de fechas, agrupación (día/semana/mes)
+🏠 Subpestaña: Análisis por Propiedades
+Ranking de propiedades - Más reservadas, mayor ingreso, mejor ocupación
+Métricas individuales - Ingresos por propiedad, noches reservadas, precio promedio
+Comparativa de rendimiento - Gráficos de barras entre propiedades
+Detalles específicos - Click en propiedad para ver estadísticas detalladas
+👥 Subpestaña: Comportamiento de Clientes
+Tipos de huéspedes - Distribución por número de personas
+Patrones de estadía - Duración promedio, días más populares
+Segmentación - Clientes nuevos vs recurrentes
+Análisis temporal - Estacionalidad en comportamiento de reservas
+💰 Subpestaña: Análisis Financiero
+Ingresos totales - Por período con desglose detallado
+Promedio por reserva - Ticket promedio y tendencias
+Previsiones - Proyecciones basadas en tendencias actuales
+Métricas de rentabilidad - RevPAR (Revenue per Available Room) por propiedad
+🔍 PESTAÑA 2: ANÁLISIS DE BÚSQUEDAS
+Endpoint principal: /api/v1/upcoming-checkins/
+
+📅 Subpestaña: Check-ins Próximos Populares
+Lista de fechas trending - Top fechas de check-in más buscadas (próximos 30-180 días)
+Detalles por fecha específica:
+Día de la semana y días restantes hasta la fecha
+Número total de búsquedas para esa fecha
+Duración promedio de estadía buscada
+Propiedades más buscadas para esa fecha
+👤 Subpestaña: Análisis de Usuarios Buscadores
+Clientes registrados interesados:
+
+Lista de clientes que buscan cada fecha (formato "FirstName L.")
+Email parcialmente enmascarado para contacto
+Preferencias: número de huéspedes, fechas de checkout, propiedades
+Historial de búsquedas del cliente
+Tráfico anónimo:
+
+IPs anonimizadas que buscan (formato "192.168.1.xxx")
+Patrones de búsqueda por IP: fechas, huéspedes, propiedades
+Frecuencia de búsquedas por IP anónima
+Dispositivos diferentes utilizados
+🎯 Subpestaña: Oportunidades de Conversión
+Fechas con alta demanda - Check-ins próximos con muchas búsquedas pero pocas reservas
+Clientes potenciales - Usuarios que buscan repetidamente pero no reservan
+Alertas de demanda - Fechas que se vuelven populares repentinamente
+Recomendaciones de pricing - Sugerencias basadas en demanda vs disponibilidad
+📊 Subpestaña: Métricas de Búsqueda
+Resumen del período analizado:
+
+Total de búsquedas próximas
+Fechas únicas buscadas
+Clientes únicos buscando
+IPs anónimas únicas
+Tendencias temporales:
+
+Búsquedas por día de la semana preferido para check-in
+Patrones estacionales en búsquedas futuras
+Anticipación promedio (cuántos días antes buscan)
+⚙️ Subpestaña: Configuración de Análisis
+Filtros temporales:
+
+Días hacia adelante: 1-180 días (slider)
+Límite de resultados: 1-100 fechas
+Incluir/excluir búsquedas anónimas
+Opciones de visualización:
+
+Agrupación temporal (diaria/semanal)
+Ordenamiento (popularidad/proximidad/alfabético)
+Nivel de detalle (resumen/completo)
+🔧 CONTROLES GLOBALES DEL DASHBOARD
+Filtros Principales
+Selector de fechas - Rango personalizable para estadísticas generales
+Filtro de propiedades - Análisis específico por propiedad o conjunto
+Período de comparación - Comparar con período anterior automáticamente
+Exportación y Reportes
+Descarga de datos - Excel/CSV con datos filtrados actuales
+Reportes programados - Configurar envío automático semanal/mensual
+Compartir dashboard - URLs con filtros aplicados para compartir vistas específicas
+Actualizaciones en Tiempo Real
+Indicador de última actualización - Timestamp de datos más recientes
+Botón de refrescar - Obtener datos más actuales manualmente
+Notificaciones - Alertas cuando hay cambios significativos en métricas
+💡 CASOS DE USO PRINCIPALES
+Análisis de demanda futura - Identificar fechas populares para optimizar precios
+Seguimiento de clientes potenciales - Contactar usuarios que buscan frecuentemente
+Optimización de inventario - Priorizar disponibilidad en fechas de alta demanda
+Estrategia de marketing - Dirigir campañas a segmentos específicos identificados
+Previsión de ingresos - Proyectar ocupación basada en búsquedas actuales

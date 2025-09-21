@@ -155,6 +155,45 @@ export interface StatsSummary {
     new_clients: number
     top_activity_type: string | null
     most_searched_property: string
+    // Nuevos campos para Pestaña 1
+    total_reservations?: number
+    total_revenue?: number
+    average_occupancy?: number
+    average_stay_duration?: number
+}
+
+// Nuevas interfaces para Pestaña 1: Estadísticas Generales
+export interface ReservationByPeriod {
+    period: string              // "2025-09-15"
+    reservations_count: number  // Número de reservas
+    revenue: number             // Ingresos del período
+    occupancy_rate: number      // % ocupación
+}
+
+export interface GrowthMetrics {
+    reservations_growth: number // % crecimiento reservas
+    revenue_growth: number      // % crecimiento ingresos
+}
+
+export interface PropertyBreakdown {
+    property_name: string       // Nombre propiedad
+    total_reservations: number  // Reservas totales
+    total_revenue: number       // Ingresos totales
+    occupancy_rate: number      // % ocupación
+    average_price: number       // Precio promedio noche
+    total_nights: number        // Noches reservadas
+}
+
+export interface GuestDistribution {
+    guest_count: number         // Número de huéspedes (1,2,3,etc)
+    reservations_count: number  // Cuántas reservas con esa cantidad
+    percentage: number          // % del total
+}
+
+export interface SearchPatternByDay {
+    day_name: string            // "Monday", "Tuesday", etc
+    searches_count: number      // Búsquedas en ese día
+    percentage: number          // % del total semanal
 }
 
 export interface StatsData {
@@ -164,6 +203,14 @@ export interface StatsData {
     client_analytics: ClientAnalytics
     property_analytics: PropertyAnalytics
     summary: StatsSummary
+    // Nuevos campos para Estadísticas Generales
+    reservations_by_period?: ReservationByPeriod[]
+    growth_metrics?: GrowthMetrics
+    properties_breakdown?: PropertyBreakdown[]
+    guest_distribution?: GuestDistribution[]
+    search_patterns?: {
+        by_day_of_week: SearchPatternByDay[]
+    }
 }
 
 export interface StatsResponse {

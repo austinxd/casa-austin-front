@@ -1,0 +1,180 @@
+🎯 PESTAÑA 1: ESTADÍSTICAS GENERALES
+Endpoint: GET /api/v1/stats/?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&period=week
+
+📈 Subpestaña: Métricas de Reservas
+// Variables del endpoint /api/v1/stats/
+const statsData = response.data;
+// Métricas principales
+statsData.total_reservations        // Total de reservas del período
+statsData.total_revenue             // Ingresos totales
+statsData.average_occupancy         // Ocupación promedio %
+statsData.average_stay_duration     // Duración promedio estadías
+// Series temporales para gráficos
+statsData.reservations_by_period[]  // Array de objetos:
+  .period                           // "2025-09-15" (fecha período)
+  .reservations_count              // Número de reservas
+  .revenue                         // Ingresos del período
+  .occupancy_rate                  // % ocupación
+// Comparativas período anterior
+statsData.growth_metrics.reservations_growth  // % crecimiento reservas
+statsData.growth_metrics.revenue_growth       // % crecimiento ingresos
+🏠 Subpestaña: Análisis por Propiedades
+// Variables de propiedades
+statsData.properties_breakdown[]    // Array de propiedades:
+  .property_name                    // Nombre propiedad
+  .total_reservations              // Reservas totales
+  .total_revenue                   // Ingresos totales  
+  .occupancy_rate                  // % ocupación
+  .average_price                   // Precio promedio noche
+  .total_nights                    // Noches reservadas
+// Para ranking dinámico
+const topByRevenue = statsData.properties_breakdown
+  .sort((a,b) => b.total_revenue - a.total_revenue);
+👥 Subpestaña: Comportamiento de Clientes
+// Distribución de huéspedes
+statsData.guest_distribution[]      // Array:
+  .guest_count                      // Número de huéspedes (1,2,3,etc)
+  .reservations_count              // Cuántas reservas con esa cantidad
+  .percentage                      // % del total
+// Análisis temporal búsquedas
+statsData.search_patterns.by_day_of_week[]  // Array:
+  .day_name                        // "Monday", "Tuesday", etc
+  .searches_count                  // Búsquedas en ese día
+  .percentage                      // % del total semanal
+🔍 PESTAÑA 2: ANÁLISIS DE BÚSQUEDAS
+Endpoint: GET /api/v1/upcoming-checkins/?days_ahead=60&limit=20&include_anonymous=true
+
+📅 Subpestaña: Check-ins Próximos Populares
+const upcomingData = response.data;
+// Información del período
+upcomingData.period_info.analysis_from     // "2025-09-21" 
+upcomingData.period_info.analysis_to       // "2025-11-20"
+upcomingData.period_info.days_ahead        // 60
+// Lista de fechas trending
+upcomingData.top_upcoming_checkins[]       // Array de fechas:
+  .checkin_date                            // "2025-10-15"
+  .weekday                                 // "Wednesday"  
+  .days_until_checkin                      // 24
+  .total_searches                          // 8
+  .client_searches                         // 3 (registrados)
+  .anonymous_searches                      // 5 (anónimos)
+  .avg_stay_duration                       // 3.5 días promedio
+  .unique_clients_count                    // Clientes únicos
+  .unique_ips_count                        // IPs únicas
+👤 Subpestaña: Análisis de Usuarios Buscadores
+// Para cada fecha específica:
+upcomingData.top_upcoming_checkins[i].searching_clients[]  // Array:
+  .client_id                               // ID único cliente
+  .client_name                            // "María L." (enmascarado)
+  .client_email                           // "mar***@gmail.com"
+  .checkout_date                          // "2025-10-18" 
+  .guests                                 // 4
+  .property                               // "Casa Principal"
+// Usuarios anónimos por fecha:
+upcomingData.top_upcoming_checkins[i].searching_ips[]      // Array:
+  .ip_address                             // "192.168.1.xxx"
+  .searches_count                         // 3 búsquedas
+  .checkout_dates[]                       // ["2025-10-18", "2025-10-20"]
+  .guests_counts[]                        // [2, 4] huéspedes buscados
+  .properties[]                           // ["Casa A", "Casa B"]
+🎯 Subpestaña: Oportunidades de Conversión
+// Identificar alta demanda sin reservas (lógica frontend):
+const highDemandDates = upcomingData.top_upcoming_checkins
+  .filter(date => date.total_searches > 5)  // Alta búsqueda
+  .map(date => ({
+    date: date.checkin_date,
+    searches: date.total_searches,
+    potential_clients: date.searching_clients.length,
+    anonymous_interest: date.searching_ips.length
+  }));
+// Clientes que buscan repetidamente:
+const repeatedSearchClients = upcomingData.top_upcoming_checkins
+  .flatMap(date => date.searching_clients)
+  .reduce((acc, client) => {
+    acc[client.client_id] = (acc[client.client_id] || 0) + 1;
+    return acc;
+  }, {});
+📊 Subpestaña: Métricas de Búsqueda
+// Resumen general
+upcomingData.summary_metrics.total_upcoming_searches      // 45
+upcomingData.summary_metrics.unique_dates_searched        // 12  
+upcomingData.summary_metrics.unique_clients_searching     // 8
+upcomingData.summary_metrics.unique_anonymous_ips         // 15
+upcomingData.summary_metrics.avg_searches_per_date        // 3.75
+// Para análisis de días de semana preferidos:
+const weekdayPreferences = upcomingData.top_upcoming_checkins
+  .reduce((acc, date) => {
+    acc[date.weekday] = (acc[date.weekday] || 0) + date.total_searches;
+    return acc;
+  }, {});
+⚙️ Subpestaña: Configuración de Análisis
+// Parámetros de filtrado (para formularios):
+const filterConfig = {
+  days_ahead: {
+    min: 1,
+    max: 180,
+    default: 60,
+    step: 1
+  },
+  limit: {
+    min: 1, 
+    max: 100,
+    default: 20,
+    step: 5
+  },
+  include_anonymous: {
+    type: 'boolean',
+    default: true
+  }
+};
+// URL dinámica basada en filtros:
+const buildUrl = (filters) => 
+  `/api/v1/upcoming-checkins/?days_ahead=${filters.daysAhead}&limit=${filters.limit}&include_anonymous=${filters.includeAnonymous}`;
+🔧 ESTRUCTURAS DE DATOS PARA COMPONENTES
+Para Gráficos de Líneas (Tendencias)
+// Datos para Chart.js/Recharts
+const chartData = statsData.reservations_by_period.map(item => ({
+  x: item.period,           // Eje X (fechas)
+  y: item.reservations_count, // Eje Y (reservas)
+  revenue: item.revenue     // Serie adicional
+}));
+Para Tablas de Ranking
+// Tabla de propiedades más exitosas
+const propertyTable = statsData.properties_breakdown
+  .sort((a,b) => b.total_revenue - a.total_revenue)
+  .map((prop, index) => ({
+    rank: index + 1,
+    name: prop.property_name,
+    revenue: prop.total_revenue,
+    occupancy: `${prop.occupancy_rate}%`,
+    avgPrice: prop.average_price
+  }));
+Para Cards de Métricas
+// Cards de resumen
+const summaryCards = [
+  {
+    title: "Total Reservas",
+    value: statsData.total_reservations,
+    growth: statsData.growth_metrics.reservations_growth,
+    icon: "calendar"
+  },
+  {
+    title: "Ingresos Totales", 
+    value: `$${statsData.total_revenue.toLocaleString()}`,
+    growth: statsData.growth_metrics.revenue_growth,
+    icon: "dollar"
+  }
+];
+Para Filtros Dinámicos
+// Estado de filtros para ambos endpoints
+const [filters, setFilters] = useState({
+  // Para /api/v1/stats/
+  dateFrom: '2025-09-01',
+  dateTo: '2025-09-21', 
+  period: 'week',
+  
+  // Para /api/v1/upcoming-checkins/
+  daysAhead: 60,
+  limit: 20,
+  includeAnonymous: true
+});
