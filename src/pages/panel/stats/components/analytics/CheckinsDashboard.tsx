@@ -79,13 +79,16 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
         )
     }
 
-    const summary = checkinsData.data.summary_metrics || {
-        total_upcoming_dates: 0,
-        avg_searches_per_date: 0,
-        most_popular_checkin: '',
-        peak_demand_day: ''
-    }
     const upcomingCheckins = checkinsData.data.top_upcoming_checkins || []
+    
+    const summary = {
+        total_upcoming_dates: upcomingCheckins.length,
+        avg_searches_per_date: upcomingCheckins.length > 0 
+            ? upcomingCheckins.reduce((sum, item) => sum + item.total_searches, 0) / upcomingCheckins.length 
+            : 0,
+        most_popular_checkin: upcomingCheckins.length > 0 ? upcomingCheckins[0].checkin_date : '',
+        peak_demand_day: upcomingCheckins.length > 0 ? upcomingCheckins[0].weekday : ''
+    }
 
     return (
         <Box>
@@ -207,7 +210,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                 
                 {safeArray(upcomingCheckins).length ? (
                     <Grid container spacing={2}>
-                        {safeArray(upcomingCheckins).slice(0, 8).map((checkin, index) => (
+                        {safeArray(upcomingCheckins).slice(0, 8).map((checkin: any, index: number) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={safeString(checkin?.checkin_date, `checkin-${index}`)}>
                                 <Card 
                                     variant="outlined"
@@ -238,43 +241,33 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
 
                                             <Stack spacing={0.5}>
                                                 <Box display="flex" justifyContent="space-between">
-                                                    <Typography variant="body2">Búsquedas:</Typography>
+                                                    <Typography variant="body2">Total Búsquedas:</Typography>
                                                     <Typography variant="body2" fontWeight="bold">
-                                                        {formatNumber(checkin?.searches_count)}
+                                                        {formatNumber(checkin?.total_searches)}
                                                     </Typography>
                                                 </Box>
                                                 
                                                 <Box display="flex" justifyContent="space-between">
-                                                    <Typography variant="body2">Usuarios únicos:</Typography>
+                                                    <Typography variant="body2">Clientes:</Typography>
                                                     <Typography variant="body2" fontWeight="bold">
-                                                        {formatNumber(checkin?.unique_searchers)}
+                                                        {formatNumber(checkin?.client_searches)}
                                                     </Typography>
                                                 </Box>
 
-                                                <Box sx={{ mt: 1 }}>
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        Popularidad:
+                                                <Box display="flex" justifyContent="space-between">
+                                                    <Typography variant="body2">Anónimos:</Typography>
+                                                    <Typography variant="body2" fontWeight="bold">
+                                                        {formatNumber(checkin?.anonymous_searches)}
                                                     </Typography>
-                                                    <LinearProgress 
-                                                        variant="determinate" 
-                                                        value={safeNumber(checkin?.popularity_score, 0)} 
-                                                        sx={{ mt: 0.5, height: 6, borderRadius: 3 }}
-                                                        color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
-                                                    />
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        {formatPercent(checkin?.popularity_score, 1, 0)} score
+                                                </Box>
+
+                                                <Box display="flex" justifyContent="space-between">
+                                                    <Typography variant="body2">Estadía Promedio:</Typography>
+                                                    <Typography variant="body2" fontWeight="bold">
+                                                        {formatDecimal(checkin?.avg_stay_duration)} días
                                                     </Typography>
                                                 </Box>
                                             </Stack>
-
-                                            <Box sx={{ mt: 1, p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    Propiedad más buscada:
-                                                </Typography>
-                                                <Typography variant="body2" fontWeight="medium">
-                                                    {safeString(checkin?.most_searched_property, 'N/A')}
-                                                </Typography>
-                                            </Box>
                                         </Stack>
                                     </CardContent>
                                 </Card>
@@ -296,7 +289,7 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                 
                 {safeArray(upcomingCheckins).length ? (
                     <List>
-                        {safeArray(upcomingCheckins).map((checkin, index) => (
+                        {safeArray(upcomingCheckins).map((checkin: any, index: number) => (
                             <ListItem 
                                 key={safeString(checkin?.checkin_date, `checkin-detail-${index}`)} 
                                 sx={{ 
@@ -318,12 +311,12 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                             </Typography>
                                             <Stack direction="row" spacing={1}>
                                                 <Chip 
-                                                    label={`${formatNumber(checkin?.searches_count)} búsquedas`}
+                                                    label={`${formatNumber(checkin?.total_searches)} búsquedas`}
                                                     size="small"
                                                     color="primary"
                                                 />
                                                 <Chip 
-                                                    label={`${formatNumber(checkin?.unique_searchers)} usuarios`}
+                                                    label={`${formatNumber(checkin?.client_searches)} clientes`}
                                                     size="small"
                                                     color="info"
                                                     variant="outlined"
@@ -333,8 +326,8 @@ export default function CheckinsDashboard({ filters }: CheckinsDashboardProps) {
                                     }
                                     secondary={
                                         <Typography variant="body2" color="text.secondary">
-                                            Propiedad más buscada: <strong>{safeString(checkin?.most_searched_property, 'N/A')}</strong> 
-                                            • Score de popularidad: {formatPercent(checkin?.popularity_score)}
+                                            Búsquedas Anónimas: <strong>{formatNumber(checkin?.anonymous_searches)}</strong> 
+                                            • Estadía Promedio: {formatDecimal(checkin?.avg_stay_duration)} días
                                         </Typography>
                                     }
                                 />
