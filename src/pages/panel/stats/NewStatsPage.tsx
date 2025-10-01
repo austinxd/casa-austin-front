@@ -5,6 +5,7 @@ import {
     Analytics as AnalyticsIcon,
     TrendingUp as OpportunitiesIcon,
     Search as SearchIcon,
+    Calculate as CalculateIcon,
 } from '@mui/icons-material'
 
 // Nuevos componentes principales
@@ -12,6 +13,7 @@ import ExecutiveDashboard from './components/executive/ExecutiveDashboard'
 import AnalyticsCenter from './components/analytics/AnalyticsCenter'
 import OpportunitiesCenter from './components/opportunities/OpportunitiesCenter'
 import SearchIntelligenceCenter from './components/search-intelligence/SearchIntelligenceCenter'
+import CotizadorCenter from './components/cotizador/CotizadorCenter'
 
 interface TabPanelProps {
     children?: React.ReactNode
@@ -98,6 +100,12 @@ export default function NewStatsPage() {
                         {...a11yProps(3)} 
                         iconPosition="start"
                     />
+                    <Tab 
+                        icon={<CalculateIcon />} 
+                        label="Cotizador" 
+                        {...a11yProps(4)} 
+                        iconPosition="start"
+                    />
                 </Tabs>
             </Box>
 
@@ -116,6 +124,10 @@ export default function NewStatsPage() {
 
             <TabPanel value={selectedTab} index={3}>
                 <SearchIntelligenceCenter />
+            </TabPanel>
+
+            <TabPanel value={selectedTab} index={4}>
+                <CotizadorCenter />
             </TabPanel>
         </Container>
     )

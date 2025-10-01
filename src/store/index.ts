@@ -14,6 +14,7 @@ import { upcomingCheckinsApi } from '../services/upcoming-checkins/upcomingCheck
 import { searchTrackingApi } from '../services/analytics/searchTrackingService'
 import { ingresosApi } from '../services/analytics/ingresosService'
 import { newUpcomingCheckinsApi } from '../services/analytics/newUpcomingCheckinsService'
+import { pricingService } from '../services/pricing/pricingService'
 
 export const store = configureStore({
     reducer: {
@@ -33,6 +34,7 @@ export const store = configureStore({
         [searchTrackingApi.reducerPath]: searchTrackingApi.reducer,
         [ingresosApi.reducerPath]: ingresosApi.reducer,
         [newUpcomingCheckinsApi.reducerPath]: newUpcomingCheckinsApi.reducer,
+        [pricingService.reducerPath]: pricingService.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -50,7 +52,8 @@ export const store = configureStore({
             // Nuevos servicios de analytics
             searchTrackingApi.middleware,
             ingresosApi.middleware,
-            newUpcomingCheckinsApi.middleware
+            newUpcomingCheckinsApi.middleware,
+            pricingService.middleware
         ),
 })
 
