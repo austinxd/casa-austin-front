@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Tabs, Tab } from '@mui/material'
 
-import { Typography, Paper, CircularProgress, Alert } from '@mui/material'
+import { Typography, Paper, Alert } from '@mui/material'
 
 // Componentes simplificados temporalmente para evitar errores de dependencias
 const UpcomingCheckinsSubTab = () => (

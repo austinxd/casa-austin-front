@@ -26,46 +26,48 @@ import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import dayjs from 'dayjs'
 import { useGetUpcomingCheckinsQuery } from '@/services/upcoming-checkins/upcomingCheckinsService'
-import { UpcomingCheckinsQueryParams, WeekdayPreference } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsParams, SearchByWeekday } from '@/interfaces/analytics.interface'
 
 export default function SearchMetricsSubTab() {
-    const [filters, setFilters] = useState<UpcomingCheckinsQueryParams>({
+    const [filters] = useState<UpcomingCheckinsParams>({
         days_ahead: 60,
-        limit: 50, // Más datos para mejores métricas
+        limit: 50,
         include_anonymous: true
     })
 
     const { data: upcomingData, isLoading, error, refetch } = useGetUpcomingCheckinsQuery(filters)
 
     // Calcular preferencias por día de semana
-    const weekdayPreferences: WeekdayPreference[] = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return []
+    const weekdayPreferences: SearchByWeekday[] = useMemo(() => {
+        if (!upcomingData?.data?.top_upcoming_checkins) return []
         
         const weekdayData: { [key: string]: number } = {}
         let totalSearches = 0
         
-        upcomingData.top_upcoming_checkins.forEach(date => {
+        upcomingData.data.top_upcoming_checkins.forEach(date => {
             const weekday = date.weekday
             weekdayData[weekday] = (weekdayData[weekday] || 0) + date.total_searches
             totalSearches += date.total_searches
         })
         
-        return Object.entries(weekdayData).map(([weekday, searches]) => ({
+        return Object.entries(weekdayData).map(([weekday, searches], index) => ({
             weekday,
-            total_searches: searches,
-            percentage: totalSearches > 0 ? (searches / totalSearches) * 100 : 0
-        })).sort((a, b) => b.total_searches - a.total_searches)
+            day_number: index,
+            searches_count: searches,
+            percentage: totalSearches > 0 ? (searches / totalSearches) * 100 : 0,
+            avg_guests_searched: 0
+        })).sort((a, b) => b.searches_count - a.searches_count)
     }, [upcomingData])
 
     // Calcular anticipación promedio (días antes de buscar)
     const averageAnticipation = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return 0
+        if (!upcomingData?.data?.top_upcoming_checkins) return 0
         
-        const totalDays = upcomingData.top_upcoming_checkins.reduce((sum, date) => {
+        const totalDays = upcomingData.data.top_upcoming_checkins.reduce((sum, date) => {
             return sum + (date.days_until_checkin * date.total_searches)
         }, 0)
         
-        const totalSearches = upcomingData.top_upcoming_checkins.reduce((sum, date) => {
+        const totalSearches = upcomingData.data.top_upcoming_checkins.reduce((sum, date) => {
             return sum + date.total_searches
         }, 0)
         
@@ -97,7 +99,7 @@ export default function SearchMetricsSubTab() {
 
     // Configuración del gráfico de anticipación
     const anticipationData = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return []
+        if (!upcomingData?.data?.top_upcoming_checkins) return []
         
         const ranges = [
             { label: '1-7 días', min: 1, max: 7, count: 0 },

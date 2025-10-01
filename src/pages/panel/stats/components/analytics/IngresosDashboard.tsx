@@ -23,12 +23,11 @@ import {
 import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import { useState } from 'react'
-import dayjs from 'dayjs'
 
 // Services y tipos
 import { useGetIngresosQuery } from '@/services/analytics/ingresosService'
 import { GlobalFilters } from '@/interfaces/analytics.interface'
-import { formatNumber, formatPercent, formatDecimal, formatCurrency, safeArray, safeString, safeNumber } from '@/utils/formatters'
+import { formatNumber, formatPercent, formatCurrency, safeArray, safeString, safeNumber } from '@/utils/formatters'
 
 interface IngresosDashboardProps {
     filters: GlobalFilters
@@ -85,7 +84,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
 
     const revenueChartSeries = [{
         name: `Ingresos (${filters.currency})`,
-        data: safeArray(ingresosData?.data?.revenue_by_period).map(item => safeNumber(item?.revenue, 0))
+        data: safeArray(ingresosData?.data?.revenue_by_period).map((item: any) => safeNumber(item?.revenue, 0))
     }]
 
     // Configuración del gráfico de distribución de pagos
@@ -94,7 +93,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
             type: 'donut',
             height: 350
         },
-        labels: safeArray(ingresosData?.data?.payment_distribution).map(item => safeString(item?.payment_method, 'N/A')),
+        labels: safeArray(ingresosData?.data?.payment_distribution).map((item: any) => safeString(item?.payment_method, 'N/A')),
         title: {
             text: 'Distribución por Método de Pago',
             align: 'center'
@@ -109,7 +108,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
         legend: { position: 'bottom' }
     }
 
-    const paymentChartSeries = safeArray(ingresosData?.data?.payment_distribution).map(item => safeNumber(item?.percentage, 0))
+    const paymentChartSeries = safeArray(ingresosData?.data?.payment_distribution).map((item: any) => safeNumber(item?.percentage, 0))
 
     if (isLoading) {
         return (
@@ -357,7 +356,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                             Rangos de Precios:
                         </Typography>
                         <Stack spacing={1}>
-                            {safeArray(priceAnalysis.price_distribution).map((range, index) => (
+                            {safeArray(priceAnalysis.price_distribution).map((range: any, index: number) => (
                                 <Box key={index} display="flex" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2">{safeString(range?.price_range, 'N/A')}:</Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
