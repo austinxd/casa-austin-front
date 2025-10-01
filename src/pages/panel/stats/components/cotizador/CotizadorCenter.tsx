@@ -8,21 +8,12 @@ import {
     Button,
     Alert,
     CircularProgress,
-    Card,
-    CardContent,
     Snackbar,
-    InputAdornment,
-    Divider,
-    Chip,
     Stack,
 } from '@mui/material'
 import {
     Calculate as CalculateIcon,
     ContentCopy as CopyIcon,
-    People as PeopleIcon,
-    Event as EventIcon,
-    CheckCircle as CheckCircleIcon,
-    ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -103,142 +94,113 @@ export default function CotizadorCenter() {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-            <Box>
-                <Grid container spacing={3}>
+            <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+                <Grid container spacing={4}>
                     <Grid item xs={12} md={5}>
+                        <Box sx={{ mb: 4 }}>
+                            <Typography variant="h5" sx={{ fontWeight: 500, mb: 1 }}>
+                                Cotizador
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Calcula el precio de tu estadía
+                            </Typography>
+                        </Box>
+
                         <Paper 
-                            elevation={3}
+                            elevation={0}
                             sx={{ 
-                                p: 4,
-                                borderRadius: 2,
-                                background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                                p: 3,
+                                border: '1px solid',
+                                borderColor: 'divider',
                             }}
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                <EventIcon sx={{ fontSize: 32, color: '#0E6191', mr: 1.5 }} />
-                                <Typography variant="h6" sx={{ fontWeight: 600, color: '#0E6191' }}>
-                                    Datos de Reserva
-                                </Typography>
-                            </Box>
-
-                            <Divider sx={{ mb: 3 }} />
-
-                            <Box sx={{ mt: 3 }}>
-                                <Paper 
-                                    variant="outlined" 
-                                    sx={{ 
-                                        p: 2.5, 
-                                        mb: 3,
-                                        backgroundColor: '#fafafa',
-                                        borderColor: checkInError || checkOutError ? '#d32f2f' : '#e0e0e0',
-                                        borderWidth: checkInError || checkOutError ? 2 : 1,
-                                    }}
-                                >
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block', fontWeight: 600 }}>
-                                        📅 FECHAS DE ESTADÍA
-                                    </Typography>
+                            <Stack spacing={3}>
+                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                    <DatePicker
+                                        label="Llegada"
+                                        value={checkInDate}
+                                        onChange={handleCheckInChange}
+                                        minDate={today}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                error: !!checkInError,
+                                            },
+                                            day: {
+                                                sx: {
+                                                    '&:not(.Mui-disabled)': {
+                                                        color: '#212121',
+                                                        fontWeight: 600,
+                                                    },
+                                                    '&.Mui-disabled': {
+                                                        color: '#bdbdbd',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        backgroundColor: '#0E6191 !important',
+                                                        color: '#ffffff !important',
+                                                        fontWeight: 700,
+                                                    },
+                                                },
+                                            },
+                                        }}
+                                    />
                                     
-                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
-                                        <DatePicker
-                                            label="Fecha de Llegada"
-                                            value={checkInDate}
-                                            onChange={handleCheckInChange}
-                                            minDate={today}
-                                            slotProps={{
-                                                textField: {
-                                                    fullWidth: true,
-                                                    size: 'small',
-                                                    error: !!checkInError,
-                                                },
-                                                day: {
-                                                    sx: {
-                                                        '&:not(.Mui-disabled)': {
-                                                            color: '#212121',
-                                                            fontWeight: 600,
-                                                        },
-                                                        '&.Mui-disabled': {
-                                                            color: '#bdbdbd',
-                                                        },
-                                                        '&.Mui-selected': {
-                                                            backgroundColor: '#0E6191 !important',
-                                                            color: '#ffffff !important',
-                                                            fontWeight: 700,
-                                                        },
+                                    <DatePicker
+                                        label="Salida"
+                                        value={checkOutDate}
+                                        onChange={(newValue) => setCheckOutDate(newValue)}
+                                        minDate={checkInDate ? checkInDate.add(1, 'day') : today.add(1, 'day')}
+                                        disabled={!checkInDate}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                error: !!checkOutError,
+                                            },
+                                            day: {
+                                                sx: {
+                                                    '&:not(.Mui-disabled)': {
+                                                        color: '#212121',
+                                                        fontWeight: 600,
+                                                    },
+                                                    '&.Mui-disabled': {
+                                                        color: '#bdbdbd',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        backgroundColor: '#0E6191 !important',
+                                                        color: '#ffffff !important',
+                                                        fontWeight: 700,
                                                     },
                                                 },
-                                            }}
-                                        />
-                                        
-                                        <ArrowForwardIcon sx={{ color: '#0E6191', display: { xs: 'none', sm: 'block' } }} />
-                                        
-                                        <DatePicker
-                                            label="Fecha de Salida"
-                                            value={checkOutDate}
-                                            onChange={(newValue) => setCheckOutDate(newValue)}
-                                            minDate={checkInDate ? checkInDate.add(1, 'day') : today.add(1, 'day')}
-                                            disabled={!checkInDate}
-                                            slotProps={{
-                                                textField: {
-                                                    fullWidth: true,
-                                                    size: 'small',
-                                                    error: !!checkOutError,
-                                                },
-                                                day: {
-                                                    sx: {
-                                                        '&:not(.Mui-disabled)': {
-                                                            color: '#212121',
-                                                            fontWeight: 600,
-                                                        },
-                                                        '&.Mui-disabled': {
-                                                            color: '#bdbdbd',
-                                                        },
-                                                        '&.Mui-selected': {
-                                                            backgroundColor: '#0E6191 !important',
-                                                            color: '#ffffff !important',
-                                                            fontWeight: 700,
-                                                        },
-                                                    },
-                                                },
-                                            }}
-                                        />
-                                    </Stack>
+                                            },
+                                        }}
+                                    />
+                                </Stack>
 
-                                    {(checkInError || checkOutError) && (
-                                        <Alert severity="error" sx={{ mt: 2 }}>
-                                            {checkInError 
-                                                ? 'La fecha de llegada no puede ser en el pasado' 
-                                                : 'La fecha de salida debe ser después de la llegada'}
-                                        </Alert>
-                                    )}
+                                {(checkInError || checkOutError) && (
+                                    <Alert severity="error" sx={{ py: 1 }}>
+                                        {checkInError 
+                                            ? 'La fecha de llegada no puede ser en el pasado' 
+                                            : 'La fecha de salida debe ser después de la llegada'}
+                                    </Alert>
+                                )}
 
-                                    {nightsCount > 0 && (
-                                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                                            <Chip 
-                                                icon={<CheckCircleIcon />}
-                                                label={`${nightsCount} ${nightsCount === 1 ? 'noche' : 'noches'}`}
-                                                color="primary"
-                                                sx={{ fontWeight: 600 }}
-                                            />
-                                        </Box>
-                                    )}
-                                </Paper>
+                                {nightsCount > 0 && (
+                                    <Box sx={{ py: 1, px: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+                                        <Typography variant="body2" color="text.secondary" align="center">
+                                            {nightsCount} {nightsCount === 1 ? 'noche' : 'noches'}
+                                        </Typography>
+                                    </Box>
+                                )}
 
                                 <TextField
                                     fullWidth
-                                    label="Cantidad de Huéspedes"
+                                    label="Huéspedes"
                                     type="number"
                                     value={guests}
                                     onChange={(e) => handleGuestsChange(e.target.value)}
                                     InputProps={{
                                         inputProps: { min: 1 },
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <PeopleIcon sx={{ color: 'text.secondary' }} />
-                                            </InputAdornment>
-                                        ),
                                     }}
-                                    sx={{ mb: 3 }}
-                                    helperText="Mínimo 1 huésped"
                                 />
 
                                 <Button
@@ -249,29 +211,27 @@ export default function CotizadorCenter() {
                                     onClick={handleCalculate}
                                     disabled={!isFormValid || isLoading}
                                     sx={{
-                                        py: 1.8,
+                                        py: 1.5,
+                                        textTransform: 'none',
                                         fontSize: '1rem',
-                                        fontWeight: 600,
-                                        backgroundColor: '#0E6191',
-                                        boxShadow: '0 4px 12px rgba(14, 97, 145, 0.3)',
+                                        fontWeight: 500,
+                                        backgroundColor: '#212121',
+                                        boxShadow: 'none',
                                         '&:hover': {
-                                            backgroundColor: '#0a4d73',
-                                            boxShadow: '0 6px 16px rgba(14, 97, 145, 0.4)',
-                                        },
-                                        '&:disabled': {
-                                            backgroundColor: '#e0e0e0',
+                                            backgroundColor: '#424242',
+                                            boxShadow: 'none',
                                         },
                                     }}
                                 >
-                                    {isLoading ? 'Calculando...' : 'Calcular Cotización'}
+                                    {isLoading ? 'Calculando...' : 'Calcular'}
                                 </Button>
-                            </Box>
 
-                            {error && (
-                                <Alert severity="error" sx={{ mt: 2 }}>
-                                    Error al calcular la cotización. Por favor, intenta nuevamente.
-                                </Alert>
-                            )}
+                                {error && (
+                                    <Alert severity="error" sx={{ py: 1 }}>
+                                        Error al calcular. Intenta nuevamente.
+                                    </Alert>
+                                )}
+                            </Stack>
                         </Paper>
                     </Grid>
 
@@ -282,67 +242,60 @@ export default function CotizadorCenter() {
                                 flexDirection: 'column',
                                 justifyContent: 'center', 
                                 alignItems: 'center', 
-                                minHeight: 400,
+                                minHeight: 300,
                                 gap: 2,
                             }}>
-                                <CircularProgress size={60} />
-                                <Typography variant="body1" color="text.secondary">
-                                    Calculando precios disponibles...
+                                <CircularProgress size={40} sx={{ color: '#212121' }} />
+                                <Typography variant="body2" color="text.secondary">
+                                    Calculando...
                                 </Typography>
                             </Box>
                         )}
 
                         {!isLoading && !data && (
-                            <Paper 
-                                elevation={2}
+                            <Box 
                                 sx={{ 
-                                    p: 5, 
+                                    p: 6, 
                                     textAlign: 'center', 
-                                    minHeight: 400, 
+                                    minHeight: 300, 
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     justifyContent: 'center',
-                                    borderRadius: 2,
-                                    background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
                                 }}
                             >
                                 <Box>
-                                    <CalculateIcon sx={{ fontSize: 100, color: '#0E6191', mb: 3, opacity: 0.7 }} />
-                                    <Typography variant="h5" color="text.primary" sx={{ mb: 2, fontWeight: 600 }}>
-                                        Listo para cotizar
-                                    </Typography>
-                                    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
-                                        Completa el formulario con las fechas de tu estadía y la cantidad de huéspedes para ver los precios disponibles
+                                    <Typography variant="body1" color="text.secondary">
+                                        Completa el formulario para ver los precios
                                     </Typography>
                                 </Box>
-                            </Paper>
+                            </Box>
                         )}
 
                         {!isLoading && data?.data && (
                             <Paper 
-                                elevation={3}
+                                elevation={0}
                                 sx={{ 
                                     p: 3, 
-                                    borderRadius: 2,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
                                 }}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <CheckCircleIcon sx={{ color: '#4caf50', mr: 1, fontSize: 28 }} />
-                                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                                            Cotización Lista
-                                        </Typography>
-                                    </Box>
+                                    <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                                        Cotización
+                                    </Typography>
                                     <Button
-                                        variant="contained"
+                                        variant="outlined"
                                         startIcon={<CopyIcon />}
                                         onClick={handleCopyToClipboard}
                                         disabled={!hasResultMessages}
-                                        size="medium"
                                         sx={{
-                                            backgroundColor: '#0E6191',
+                                            textTransform: 'none',
+                                            borderColor: '#212121',
+                                            color: '#212121',
                                             '&:hover': {
-                                                backgroundColor: '#0a4d73',
+                                                borderColor: '#424242',
+                                                backgroundColor: 'rgba(0, 0, 0, 0.04)',
                                             },
                                         }}
                                     >
@@ -350,60 +303,54 @@ export default function CotizadorCenter() {
                                     </Button>
                                 </Box>
 
-                                <Divider sx={{ mb: 3 }} />
-
-                                <Card 
-                                    sx={{ 
-                                        mb: 2, 
-                                        backgroundColor: '#f8f9fa',
-                                        border: '1px solid #e0e0e0',
-                                        boxShadow: 'none',
-                                    }}
-                                >
-                                    <CardContent>
+                                <Stack spacing={2}>
+                                    <Box 
+                                        sx={{ 
+                                            p: 2.5, 
+                                            bgcolor: '#f5f5f5',
+                                            borderRadius: 1,
+                                        }}
+                                    >
                                         <Typography 
-                                            variant="body1" 
+                                            variant="body2" 
                                             sx={{ 
                                                 whiteSpace: 'pre-line',
-                                                fontWeight: 500,
                                                 color: '#212121',
                                                 lineHeight: 1.8,
                                             }}
                                         >
                                             {data.data.message1}
                                         </Typography>
-                                    </CardContent>
-                                </Card>
+                                    </Box>
 
-                                <Card 
-                                    sx={{ 
-                                        backgroundColor: '#e3f2fd',
-                                        border: '1px solid #90caf9',
-                                        boxShadow: 'none',
-                                    }}
-                                >
-                                    <CardContent>
+                                    <Box 
+                                        sx={{ 
+                                            p: 2.5, 
+                                            bgcolor: '#f5f5f5',
+                                            borderRadius: 1,
+                                        }}
+                                    >
                                         <Typography 
-                                            variant="body1" 
+                                            variant="body2" 
                                             sx={{ 
                                                 whiteSpace: 'pre-line',
                                                 fontWeight: 600,
-                                                color: '#0d47a1',
+                                                color: '#212121',
                                                 lineHeight: 1.8,
                                             }}
                                         >
                                             {data.data.message2}
                                         </Typography>
-                                    </CardContent>
-                                </Card>
+                                    </Box>
 
-                                {data.data.general_recommendations && data.data.general_recommendations.length > 0 && (
-                                    <Alert severity="info" sx={{ mt: 2 }}>
-                                        <Typography variant="body2">
-                                            {data.data.general_recommendations.join(' • ')}
-                                        </Typography>
-                                    </Alert>
-                                )}
+                                    {data.data.general_recommendations && data.data.general_recommendations.length > 0 && (
+                                        <Alert severity="info" sx={{ py: 1 }}>
+                                            <Typography variant="body2">
+                                                {data.data.general_recommendations.join(' • ')}
+                                            </Typography>
+                                        </Alert>
+                                    )}
+                                </Stack>
                             </Paper>
                         )}
                     </Grid>
@@ -413,7 +360,7 @@ export default function CotizadorCenter() {
                     open={showCopySnackbar}
                     autoHideDuration={3000}
                     onClose={() => setShowCopySnackbar(false)}
-                    message="✅ Cotización copiada al portapapeles"
+                    message="Copiado al portapapeles"
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 />
             </Box>
