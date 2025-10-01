@@ -150,6 +150,22 @@ export default function CotizadorCenter() {
                                                     size: 'small',
                                                     error: !!checkInError,
                                                 },
+                                                day: {
+                                                    sx: {
+                                                        '&:not(.Mui-disabled)': {
+                                                            color: '#212121',
+                                                            fontWeight: 600,
+                                                        },
+                                                        '&.Mui-disabled': {
+                                                            color: '#bdbdbd',
+                                                        },
+                                                        '&.Mui-selected': {
+                                                            backgroundColor: '#0E6191 !important',
+                                                            color: '#ffffff !important',
+                                                            fontWeight: 700,
+                                                        },
+                                                    },
+                                                },
                                             }}
                                         />
                                         
@@ -166,6 +182,22 @@ export default function CotizadorCenter() {
                                                     fullWidth: true,
                                                     size: 'small',
                                                     error: !!checkOutError,
+                                                },
+                                                day: {
+                                                    sx: {
+                                                        '&:not(.Mui-disabled)': {
+                                                            color: '#212121',
+                                                            fontWeight: 600,
+                                                        },
+                                                        '&.Mui-disabled': {
+                                                            color: '#bdbdbd',
+                                                        },
+                                                        '&.Mui-selected': {
+                                                            backgroundColor: '#0E6191 !important',
+                                                            color: '#ffffff !important',
+                                                            fontWeight: 700,
+                                                        },
+                                                    },
                                                 },
                                             }}
                                         />
@@ -198,7 +230,7 @@ export default function CotizadorCenter() {
                                     value={guests}
                                     onChange={(e) => handleGuestsChange(e.target.value)}
                                     InputProps={{
-                                        inputProps: { min: 1, max: 20 },
+                                        inputProps: { min: 1 },
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 <PeopleIcon sx={{ color: 'text.secondary' }} />
@@ -206,7 +238,7 @@ export default function CotizadorCenter() {
                                         ),
                                     }}
                                     sx={{ mb: 3 }}
-                                    helperText="Mínimo 1, máximo 20 huéspedes"
+                                    helperText="Mínimo 1 huésped"
                                 />
 
                                 <Button
