@@ -15,6 +15,9 @@ const CrudRentals = lazy(() => import('./pages/panel/reservations/CrudRentals'))
 // Staff Management components
 const PersonalManagement = lazy(() => import('./pages/panel/staff/PersonalManagement'))
 
+// Cotizador component
+const CotizadorPage = lazy(() => import('./pages/panel/cotizador/CotizadorPage'))
+
 // Stats components
 const StatsPage = lazy(() => import('./pages/panel/stats/StatsPage'))
 
@@ -97,6 +100,18 @@ function App() {
                             <Sidebar>
                                 <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando personal...</div>}>
                                     <PersonalManagement />
+                                </Suspense>
+                            </Sidebar>
+                        </ProtectRoutes>
+                    }
+                />
+                <Route
+                    path="/panel/cotizador"
+                    element={
+                        <ProtectRoutes navigateTo="/">
+                            <Sidebar>
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando cotizador...</div>}>
+                                    <CotizadorPage />
                                 </Suspense>
                             </Sidebar>
                         </ProtectRoutes>

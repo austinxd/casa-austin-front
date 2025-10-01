@@ -47,7 +47,7 @@ Preferred communication style: Simple, everyday language.
 
 ## System Design Choices & Features
 - **Mobile-First Design**: Emphasis on responsive and compact layouts, especially for task management and filters.
-- **Property Pricing Calculator (Cotizador)**: Dedicated tab with real-time pricing calculation, integration with `/api/v1/properties/calculate-pricing/`, and copy-to-clipboard functionality.
+- **Property Pricing Calculator (Cotizador)**: Standalone page in main navigation menu with real-time pricing calculation, integration with `/api/v1/properties/calculate-pricing/`, client-side validation, and copy-to-clipboard functionality.
 - **Enhanced Date Display**: Color-coded and structured date presentation with weekday abbreviations for improved readability.
 - **Role-Based Access Control**: Dynamic UI adjustments based on user roles, restricting access to certain tabs and functionalities (e.g., maintenance users have restricted access and default filter settings).
 - **Real-Time Progress Timer**: Displays elapsed time for in-progress tasks.

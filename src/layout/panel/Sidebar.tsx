@@ -8,6 +8,7 @@ import {
     Menu as MenuIcon,
     People as PeopleIcon,
     BarChart as BarChartIcon,
+    Calculate as CalculateIcon,
 } from '@mui/icons-material'
 import {
     AppBar,
@@ -67,12 +68,18 @@ const menuItems = [
     },
     {
         id: 7,
+        text: 'Cotizador',
+        icon: CalculateIcon,
+        path: '/panel/cotizador',
+    },
+    {
+        id: 8,
         text: 'Stats',
         icon: BarChartIcon,
         path: '/panel/stats',
     },
     {
-        id: 8,
+        id: 9,
         text: 'Cerrar sesión',
         icon: LoginOutlinedIcon,
         path: '/panel/cerrar-sesion',
@@ -142,7 +149,7 @@ export default function Sidebar(props: Props) {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 7).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 8).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
@@ -177,7 +184,7 @@ export default function Sidebar(props: Props) {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(7, 8).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(8, 9).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{
