@@ -7,7 +7,6 @@ import {
     LoginOutlined as LoginOutlinedIcon,
     Menu as MenuIcon,
     People as PeopleIcon,
-    BarChart as BarChartIcon,
     Calculate as CalculateIcon,
 } from '@mui/icons-material'
 import {
@@ -71,12 +70,6 @@ const menuItems = [
         text: 'Cotizador',
         icon: CalculateIcon,
         path: '/panel/cotizador',
-    },
-    {
-        id: 8,
-        text: 'Stats',
-        icon: BarChartIcon,
-        path: '/panel/stats',
     },
     {
         id: 9,
