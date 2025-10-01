@@ -57,8 +57,6 @@ export default function CotizadorCenter() {
             setGuests(1)
         } else if (parsed < 1) {
             setGuests(1)
-        } else if (parsed > 20) {
-            setGuests(20)
         } else {
             setGuests(parsed)
         }
