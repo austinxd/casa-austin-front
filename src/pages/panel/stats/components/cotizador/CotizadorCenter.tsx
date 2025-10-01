@@ -39,26 +39,12 @@ export default function CotizadorCenter() {
     
     const [calculatePricing, { data, isLoading, error }] = useLazyCalculatePricingQuery()
 
-    const handleCheckInChange = (newValue: Dayjs | null) => {
-        setCheckInDate(newValue)
-        
-        if (newValue && checkOutDate) {
-            if (!checkOutDate.isAfter(newValue)) {
-                setCheckOutDate(newValue.add(1, 'day'))
-            }
-        } else if (newValue && !checkOutDate) {
-            setCheckOutDate(newValue.add(1, 'day'))
-        }
-    }
-
     const handleGuestsChange = (value: string) => {
         const parsed = parseInt(value)
         if (!value || isNaN(parsed)) {
             setGuests(1)
         } else if (parsed < 1) {
             setGuests(1)
-        } else if (parsed > 20) {
-            setGuests(20)
         } else {
             setGuests(parsed)
         }
@@ -144,7 +130,7 @@ export default function CotizadorCenter() {
                                         <DatePicker
                                             label="Fecha de Llegada"
                                             value={checkInDate}
-                                            onChange={handleCheckInChange}
+                                            onChange={(newValue) => setCheckInDate(newValue)}
                                             minDate={today}
                                             slotProps={{
                                                 textField: {
@@ -161,7 +147,7 @@ export default function CotizadorCenter() {
                                             label="Fecha de Salida"
                                             value={checkOutDate}
                                             onChange={(newValue) => setCheckOutDate(newValue)}
-                                            minDate={checkInDate ? checkInDate.add(1, 'day') : today.add(1, 'day')}
+                                            minDate={today}
                                             disabled={!checkInDate}
                                             slotProps={{
                                                 textField: {
@@ -200,7 +186,7 @@ export default function CotizadorCenter() {
                                     value={guests}
                                     onChange={(e) => handleGuestsChange(e.target.value)}
                                     InputProps={{
-                                        inputProps: { min: 1, max: 20 },
+                                        inputProps: { min: 1 },
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 <PeopleIcon sx={{ color: 'text.secondary' }} />
@@ -208,7 +194,7 @@ export default function CotizadorCenter() {
                                         ),
                                     }}
                                     sx={{ mb: 3 }}
-                                    helperText="Mínimo 1, máximo 20 huéspedes"
+                                    helperText="Mínimo 1 huésped"
                                 />
 
                                 <Button
