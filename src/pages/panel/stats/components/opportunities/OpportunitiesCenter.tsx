@@ -23,7 +23,6 @@ import {
     LocalFireDepartment as HotIcon,
     Person as PersonIcon,
     AttachMoney as MoneyIcon,
-    CalendarToday as CalendarIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
@@ -39,14 +38,14 @@ export default function OpportunitiesCenter() {
     const { data: upcomingData, isLoading, error, refetch } = useGetUpcomingCheckinsQuery(filters)
 
     // Calcular oportunidades de alta conversión
-    const highConversionOpportunities = upcomingData?.top_upcoming_checkins?.filter(
-        checkin => checkin.total_searches >= 5 && checkin.days_until_checkin <= 30
+    const highConversionOpportunities = upcomingData?.data?.top_upcoming_checkins?.filter(
+        (checkin: any) => checkin.total_searches >= 5 && checkin.days_until_checkin <= 30
     ) || []
 
     // Calcular leads calientes (clientes que buscan repetidamente)
-    const hotLeads = upcomingData?.top_upcoming_checkins?.reduce((acc: any[], checkin) => {
-        checkin.searching_clients?.forEach(client => {
-            const existingLead = acc.find(lead => lead.client_id === client.client_id)
+    const hotLeads = upcomingData?.data?.top_upcoming_checkins?.reduce((acc: any[], checkin: any) => {
+        checkin.searching_clients?.forEach((client: any) => {
+            const existingLead = acc.find((lead: any) => lead.client_id === client.client_id)
             if (existingLead) {
                 existingLead.search_count += 1
                 existingLead.dates_searched.push(checkin.checkin_date)
@@ -64,9 +63,9 @@ export default function OpportunitiesCenter() {
     }, []).filter((lead: any) => lead.search_count >= 2).sort((a: any, b: any) => b.search_count - a.search_count) || []
 
     // Fechas trending (alta demanda reciente)
-    const trendingDates = upcomingData?.top_upcoming_checkins?.filter(
-        checkin => checkin.total_searches >= 3
-    ).sort((a, b) => b.total_searches - a.total_searches).slice(0, 10) || []
+    const trendingDates = upcomingData?.data?.top_upcoming_checkins?.filter(
+        (checkin: any) => checkin.total_searches >= 3
+    ).sort((a: any, b: any) => b.total_searches - a.total_searches).slice(0, 10) || []
 
     if (isLoading) {
         return (
@@ -203,7 +202,7 @@ export default function OpportunitiesCenter() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {highConversionOpportunities.slice(0, 8).map((opportunity) => (
+                                        {highConversionOpportunities.slice(0, 8).map((opportunity: any) => (
                                             <TableRow key={opportunity.checkin_date}>
                                                 <TableCell>
                                                     <Typography variant="body2">
@@ -268,7 +267,7 @@ export default function OpportunitiesCenter() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {hotLeads.slice(0, 8).map((lead) => (
+                                        {hotLeads.slice(0, 8).map((lead: any) => (
                                             <TableRow key={lead.client_id}>
                                                 <TableCell>
                                                     <Typography variant="body2" fontWeight="medium">
@@ -323,7 +322,7 @@ export default function OpportunitiesCenter() {
                 
                 {trendingDates.length > 0 ? (
                     <Grid container spacing={2}>
-                        {trendingDates.map((date) => (
+                        {trendingDates.map((date: any) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={date.checkin_date}>
                                 <Card variant="outlined">
                                     <CardContent sx={{ p: 2 }}>

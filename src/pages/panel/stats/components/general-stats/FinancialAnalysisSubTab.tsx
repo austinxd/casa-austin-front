@@ -50,7 +50,7 @@ export default function FinancialAnalysisSubTab() {
     const averageRevenuePerReservation = totalReservations > 0 ? totalRevenue / totalReservations : 0
 
     // Calcular RevPAR por propiedad (Revenue per Available Room)
-    const propertiesWithRevPAR = statsData?.stats?.properties_breakdown?.map(prop => ({
+    const propertiesWithRevPAR = statsData?.stats?.properties_breakdown?.map((prop: any) => ({
         ...prop,
         revpar: prop.total_nights > 0 ? prop.total_revenue / prop.total_nights : 0
     })) || []
@@ -63,7 +63,7 @@ export default function FinancialAnalysisSubTab() {
             toolbar: { show: true }
         },
         xaxis: {
-            categories: statsData?.stats?.reservations_by_period?.map(item => 
+            categories: statsData?.stats?.reservations_by_period?.map((item: any) => 
                 dayjs(item.period).format('DD/MM')
             ) || [],
             title: { text: 'Período' }
@@ -92,7 +92,7 @@ export default function FinancialAnalysisSubTab() {
 
     const revenueChartSeries = [{
         name: 'Ingresos',
-        data: statsData?.stats?.reservations_by_period?.map(item => item.revenue) || []
+        data: statsData?.stats?.reservations_by_period?.map((item: any) => item.revenue) || []
     }]
 
     // Configuración del gráfico RevPAR por propiedad
@@ -102,7 +102,7 @@ export default function FinancialAnalysisSubTab() {
             height: 300
         },
         xaxis: {
-            categories: propertiesWithRevPAR.map(prop => prop.property_name)
+            categories: propertiesWithRevPAR.map((prop: any) => prop.property_name)
         },
         title: {
             text: 'RevPAR por Propiedad (Ingreso por Noche Disponible)',
@@ -114,7 +114,7 @@ export default function FinancialAnalysisSubTab() {
 
     const revparChartSeries = [{
         name: 'RevPAR ($)',
-        data: propertiesWithRevPAR.map(prop => prop.revpar)
+        data: propertiesWithRevPAR.map((prop: any) => prop.revpar)
     }]
 
     if (isLoading) {
@@ -315,7 +315,7 @@ export default function FinancialAnalysisSubTab() {
                     Análisis de Rentabilidad por Propiedad
                 </Typography>
                 <Grid container spacing={2}>
-                    {propertiesWithRevPAR.map((property, index) => (
+                    {propertiesWithRevPAR.map((property: any) => (
                         <Grid item xs={12} md={6} lg={4} key={property.property_name}>
                             <Card variant="outlined">
                                 <CardContent>

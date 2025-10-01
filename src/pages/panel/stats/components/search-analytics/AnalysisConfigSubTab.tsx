@@ -15,8 +15,6 @@ import {
     Slider,
     Switch,
     FormControlLabel,
-    Divider,
-    Chip,
     Alert,
 } from '@mui/material'
 import {
@@ -25,13 +23,12 @@ import {
     Refresh as RefreshIcon,
     Download as DownloadIcon,
     Share as ShareIcon,
-    Schedule as ScheduleIcon,
     Visibility as VisibilityIcon,
     FilterList as FilterIcon,
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { useGetUpcomingCheckinsQuery } from '@/services/upcoming-checkins/upcomingCheckinsService'
-import { UpcomingCheckinsQueryParams } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsParams } from '@/interfaces/analytics.interface'
 
 interface AnalysisConfig {
     temporal_filters: {
@@ -80,7 +77,7 @@ export default function AnalysisConfigSubTab() {
         }
     })
 
-    const [testFilters, setTestFilters] = useState<UpcomingCheckinsQueryParams>(config.temporal_filters)
+    const [testFilters, setTestFilters] = useState<UpcomingCheckinsParams>(config.temporal_filters)
     
     const { data: testData, isLoading, error, refetch } = useGetUpcomingCheckinsQuery(testFilters)
 
@@ -296,13 +293,13 @@ export default function AnalysisConfigSubTab() {
                             </Alert>
                         )}
                         
-                        {testData && (
+                        {testData?.data && (
                             <Grid container spacing={2}>
                                 <Grid item xs={6} sm={3}>
                                     <Card variant="outlined">
                                         <CardContent sx={{ textAlign: 'center' }}>
                                             <Typography variant="h6" color="primary">
-                                                {testData.summary_metrics.total_upcoming_searches}
+                                                {testData.data.top_upcoming_checkins?.reduce((sum, checkin) => sum + checkin.total_searches, 0) || 0}
                                             </Typography>
                                             <Typography variant="caption">Total Búsquedas</Typography>
                                         </CardContent>
@@ -312,7 +309,7 @@ export default function AnalysisConfigSubTab() {
                                     <Card variant="outlined">
                                         <CardContent sx={{ textAlign: 'center' }}>
                                             <Typography variant="h6" color="success.main">
-                                                {testData.summary_metrics.unique_dates_searched}
+                                                {testData.data.top_upcoming_checkins?.length || 0}
                                             </Typography>
                                             <Typography variant="caption">Fechas Únicas</Typography>
                                         </CardContent>
@@ -322,7 +319,7 @@ export default function AnalysisConfigSubTab() {
                                     <Card variant="outlined">
                                         <CardContent sx={{ textAlign: 'center' }}>
                                             <Typography variant="h6" color="warning.main">
-                                                {testData.top_upcoming_checkins.length}
+                                                {testData.data.top_upcoming_checkins?.length || 0}
                                             </Typography>
                                             <Typography variant="caption">Resultados</Typography>
                                         </CardContent>
@@ -332,7 +329,7 @@ export default function AnalysisConfigSubTab() {
                                     <Card variant="outlined">
                                         <CardContent sx={{ textAlign: 'center' }}>
                                             <Typography variant="h6" color="info.main">
-                                                {testData.period_info.days_ahead}
+                                                {testData.data.period_info?.days_ahead || 0}
                                             </Typography>
                                             <Typography variant="caption">Días Adelante</Typography>
                                         </CardContent>
@@ -386,7 +383,7 @@ export default function AnalysisConfigSubTab() {
                             />
                         </Stack>
                         
-                        <Divider sx={{ my: 2 }} />
+                        <Box sx={{ my: 2, borderBottom: 1, borderColor: 'divider' }} />
                         
                         <Button
                             variant="outlined"
@@ -404,7 +401,7 @@ export default function AnalysisConfigSubTab() {
                 <Grid item xs={12} lg={6}>
                     <Paper sx={{ p: 2, mb: 3 }}>
                         <Typography variant="h6" mb={2} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <ScheduleIcon />
+                            <RefreshIcon />
                             Reportes Programados
                         </Typography>
                         

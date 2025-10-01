@@ -219,7 +219,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                         
                         {safeArray(searchData?.data?.top_searched_properties).length ? (
                             <List>
-                                {safeArray(searchData.data.top_searched_properties).slice(0, 5).map((property, index) => (
+                                {safeArray(searchData.data.top_searched_properties).slice(0, 5).map((property: any, index: number) => (
                                     <ListItem key={safeString(property?.property_name, `property-${index}`)} sx={{ px: 0 }}>
                                         <ListItemText
                                             primary={
@@ -255,7 +255,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                         
                         {safeArray(searchData?.data?.top_searching_clients).length ? (
                             <List>
-                                {safeArray(searchData.data.top_searching_clients).slice(0, 5).map((client, index) => (
+                                {safeArray(searchData.data.top_searching_clients).slice(0, 5).map((client: any, index: number) => (
                                     <ListItem key={safeString(client?.client_email, `client-${index}`)} sx={{ px: 0 }}>
                                         <ListItemText
                                             primary={
@@ -302,7 +302,7 @@ export default function SearchDashboard({ filters }: SearchDashboardProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {safeArray(searchData.data.anonymous_ips_analysis.top_searching_ips).map((ip, index) => (
+                                {safeArray(searchData.data.anonymous_ips_analysis.top_searching_ips).map((ip: any, index: number) => (
                                     <TableRow key={safeString(ip?.ip_last_4, `ip-${index}`)}>
                                         <TableCell>
                                             <Typography variant="body2" fontFamily="monospace">

@@ -17,7 +17,6 @@ import {
     Hotel as HotelIcon,
     AttachMoney as MoneyIcon,
     EventAvailable as EventIcon,
-    Schedule as ScheduleIcon,
 } from '@mui/icons-material'
 import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
@@ -63,7 +62,7 @@ export default function ExecutiveDashboard() {
             sparkline: { enabled: false }
         },
         xaxis: {
-            categories: statsData?.stats?.search_analytics?.searches_by_period?.map(item => 
+            categories: statsData?.stats?.search_analytics?.searches_by_period?.map((item: any) => 
                 dayjs(item.period).format('DD/MM')
             ) || [],
             title: { text: 'Período' }
@@ -103,12 +102,12 @@ export default function ExecutiveDashboard() {
     const trendChartSeries = [
         {
             name: 'Búsquedas',
-            data: statsData?.stats?.search_analytics?.searches_by_period?.map(item => item.total_searches) || []
+            data: statsData?.stats?.search_analytics?.searches_by_period?.map((item: any) => item.total_searches) || []
         },
         {
             name: 'Actividades',
             yAxisIndex: 1,
-            data: statsData?.stats?.activity_analytics?.activities_by_period?.map(item => item.activity_count) || []
+            data: statsData?.stats?.activity_analytics?.activities_by_period?.map((item: any) => item.activity_count) || []
         }
     ]
 
@@ -226,7 +225,7 @@ export default function ExecutiveDashboard() {
                                         </Typography>
                                     </Stack>
                                 </Box>
-                                <ScheduleIcon color="warning" sx={{ fontSize: 40 }} />
+                                <HotelIcon color="warning" sx={{ fontSize: 40 }} />
                             </Stack>
                         </CardContent>
                     </Card>
@@ -260,7 +259,7 @@ export default function ExecutiveDashboard() {
                             <Typography variant="h6" mb={2}>
                                 🔥 Fechas de Alta Demanda
                             </Typography>
-                            {upcomingData?.top_upcoming_checkins?.slice(0, 3).map((checkin, index) => (
+                            {upcomingData?.data?.top_upcoming_checkins?.slice(0, 3).map((checkin: any) => (
                                 <Box key={checkin.checkin_date} mb={1}>
                                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                                         <Typography variant="body2">

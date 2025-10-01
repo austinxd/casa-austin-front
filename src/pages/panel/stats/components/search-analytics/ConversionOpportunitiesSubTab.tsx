@@ -34,10 +34,24 @@ import {
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { useGetUpcomingCheckinsQuery } from '@/services/upcoming-checkins/upcomingCheckinsService'
-import { UpcomingCheckinsQueryParams, HighDemandDate, RepeatedSearchClient } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsParams } from '@/interfaces/analytics.interface'
+
+interface HighDemandDate {
+    date: string
+    searches: number
+    potential_clients: number
+    anonymous_interest: number
+}
+
+interface RepeatedSearchClient {
+    client_id: number
+    client_name: string
+    search_count: number
+    dates_searched: string[]
+}
 
 export default function ConversionOpportunitiesSubTab() {
-    const [filters, setFilters] = useState<UpcomingCheckinsQueryParams>({
+    const [filters] = useState<UpcomingCheckinsParams>({
         days_ahead: 60,
         limit: 20,
         include_anonymous: true
@@ -47,27 +61,27 @@ export default function ConversionOpportunitiesSubTab() {
 
     // Calcular fechas con alta demanda
     const highDemandDates: HighDemandDate[] = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return []
+        if (!upcomingData?.data?.top_upcoming_checkins) return []
         
-        return upcomingData.top_upcoming_checkins
-            .filter(date => date.total_searches >= 5) // Alta demanda: 5+ búsquedas
-            .map(date => ({
+        return upcomingData.data.top_upcoming_checkins
+            .filter((date: any) => date.total_searches >= 5)
+            .map((date: any) => ({
                 date: date.checkin_date,
                 searches: date.total_searches,
-                potential_clients: date.unique_clients_count,
-                anonymous_interest: date.unique_ips_count
+                potential_clients: date.searching_clients?.length || 0,
+                anonymous_interest: date.searching_ips?.length || 0
             }))
             .sort((a, b) => b.searches - a.searches)
     }, [upcomingData])
 
     // Calcular clientes que buscan repetidamente
     const repeatedSearchClients: RepeatedSearchClient[] = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return []
+        if (!upcomingData?.data?.top_upcoming_checkins) return []
         
-        const clientSearchCount: { [key: number]: { count: number; name: string; dates: string[] } } = {}
+        const clientSearchCount: { [key: string]: { count: number; name: string; dates: string[] } } = {}
         
-        upcomingData.top_upcoming_checkins.forEach(date => {
-            date.searching_clients?.forEach(client => {
+        upcomingData.data.top_upcoming_checkins.forEach((date: any) => {
+            date.searching_clients?.forEach((client: any) => {
                 if (!clientSearchCount[client.client_id]) {
                     clientSearchCount[client.client_id] = {
                         count: 0,
@@ -81,7 +95,7 @@ export default function ConversionOpportunitiesSubTab() {
         })
         
         return Object.entries(clientSearchCount)
-            .filter(([_, data]) => data.count >= 2) // Clientes que buscan 2+ fechas
+            .filter(([_, data]) => data.count >= 2)
             .map(([clientId, data]) => ({
                 client_id: parseInt(clientId),
                 client_name: data.name,
@@ -93,16 +107,15 @@ export default function ConversionOpportunitiesSubTab() {
 
     // Detectar alertas de demanda (fechas que se vuelven populares)
     const demandAlerts = useMemo(() => {
-        if (!upcomingData?.top_upcoming_checkins) return []
+        if (!upcomingData?.data?.top_upcoming_checkins) return []
         
-        return upcomingData.top_upcoming_checkins
-            .filter(date => {
+        return upcomingData.data.top_upcoming_checkins
+            .filter((date: any) => {
                 const daysUntil = date.days_until_checkin
                 const searches = date.total_searches
-                // Alerta si es una fecha próxima (≤30 días) con alta demanda
                 return daysUntil <= 30 && searches >= 3
             })
-            .sort((a, b) => a.days_until_checkin - b.days_until_checkin)
+            .sort((a: any, b: any) => a.days_until_checkin - b.days_until_checkin)
     }, [upcomingData])
 
     if (isLoading) {
@@ -241,7 +254,7 @@ export default function ConversionOpportunitiesSubTab() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {highDemandDates.slice(0, 10).map((date) => (
+                                        {highDemandDates.slice(0, 10).map((date: any) => (
                                             <TableRow key={date.date} hover>
                                                 <TableCell>
                                                     <Box>
@@ -301,7 +314,7 @@ export default function ConversionOpportunitiesSubTab() {
                         {repeatedSearchClients.length > 0 ? (
                             <Box sx={{ p: 2 }}>
                                 <List dense>
-                                    {repeatedSearchClients.slice(0, 10).map((client) => (
+                                    {repeatedSearchClients.slice(0, 10).map((client: any) => (
                                         <ListItem key={client.client_id}>
                                             <ListItemIcon>
                                                 <PersonIcon color="primary" />
@@ -325,7 +338,7 @@ export default function ConversionOpportunitiesSubTab() {
                                                             Fechas buscadas:
                                                         </Typography>
                                                         <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-                                                            {client.dates_searched.slice(0, 3).map((date, idx) => (
+                                                            {client.dates_searched.slice(0, 3).map((date: any, idx: number) => (
                                                                 <Chip 
                                                                     key={idx}
                                                                     label={dayjs(date).format('DD/MM')}
@@ -374,7 +387,7 @@ export default function ConversionOpportunitiesSubTab() {
                         {demandAlerts.length > 0 ? (
                             <Box sx={{ p: 2 }}>
                                 <List dense>
-                                    {demandAlerts.slice(0, 8).map((alert) => (
+                                    {demandAlerts.slice(0, 8).map((alert: any) => (
                                         <ListItem key={alert.checkin_date}>
                                             <ListItemIcon>
                                                 <CalendarIcon 
@@ -401,7 +414,7 @@ export default function ConversionOpportunitiesSubTab() {
                                                 }
                                                 secondary={
                                                     <Typography variant="caption" color="text.secondary">
-                                                        {alert.weekday} • {alert.unique_clients_count} clientes • {alert.unique_ips_count} IPs anónimas
+                                                        {alert.weekday} • {alert.searching_clients?.length || 0} clientes • {alert.searching_ips?.length || 0} IPs anónimas
                                                     </Typography>
                                                 }
                                             />
@@ -435,7 +448,7 @@ export default function ConversionOpportunitiesSubTab() {
                         <Box sx={{ p: 2 }}>
                             <List dense>
                                 {/* Recomendación para fechas de alta demanda */}
-                                {highDemandDates.slice(0, 5).map((date) => (
+                                {highDemandDates.slice(0, 5).map((date: any) => (
                                     <ListItem key={date.date}>
                                         <ListItemIcon>
                                             <TrendingUpIcon color="success" />

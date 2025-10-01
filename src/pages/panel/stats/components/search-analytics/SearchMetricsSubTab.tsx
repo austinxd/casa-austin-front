@@ -59,6 +59,45 @@ export default function SearchMetricsSubTab() {
         })).sort((a, b) => b.searches_count - a.searches_count)
     }, [upcomingData])
 
+    // Calcular métricas resumen
+    const summaryMetrics = useMemo(() => {
+        if (!upcomingData?.data?.top_upcoming_checkins) {
+            return {
+                total_upcoming_searches: 0,
+                unique_dates_searched: 0,
+                avg_searches_per_date: 0,
+                unique_clients_searching: 0,
+                unique_anonymous_ips: 0
+            }
+        }
+        
+        const checkins = upcomingData.data.top_upcoming_checkins
+        const totalSearches = checkins.reduce((sum, date) => sum + date.total_searches, 0)
+        const uniqueDates = checkins.length
+        const avgSearchesPerDate = uniqueDates > 0 ? totalSearches / uniqueDates : 0
+        
+        // Track unique clients and IPs using Sets to avoid counting duplicates
+        const uniqueClientIds = new Set<string>()
+        const uniqueIpAddresses = new Set<string>()
+        
+        checkins.forEach(date => {
+            date.searching_clients?.forEach(client => {
+                uniqueClientIds.add(client.client_id)
+            })
+            date.searching_ips?.forEach(ip => {
+                uniqueIpAddresses.add(ip.ip_address)
+            })
+        })
+        
+        return {
+            total_upcoming_searches: totalSearches,
+            unique_dates_searched: uniqueDates,
+            avg_searches_per_date: avgSearchesPerDate,
+            unique_clients_searching: uniqueClientIds.size,
+            unique_anonymous_ips: uniqueIpAddresses.size
+        }
+    }, [upcomingData])
+
     // Calcular anticipación promedio (días antes de buscar)
     const averageAnticipation = useMemo(() => {
         if (!upcomingData?.data?.top_upcoming_checkins) return 0
@@ -109,7 +148,7 @@ export default function SearchMetricsSubTab() {
             { label: '60+ días', min: 61, max: 999, count: 0 }
         ]
         
-        upcomingData.top_upcoming_checkins.forEach(date => {
+        upcomingData.data.top_upcoming_checkins.forEach(date => {
             const days = date.days_until_checkin
             const range = ranges.find(r => days >= r.min && days <= r.max)
             if (range) {
@@ -185,7 +224,7 @@ export default function SearchMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="primary">
-                                            {upcomingData.summary_metrics.total_upcoming_searches}
+                                            {summaryMetrics.total_upcoming_searches}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Total Búsquedas
@@ -203,7 +242,7 @@ export default function SearchMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="success.main">
-                                            {upcomingData.summary_metrics.unique_dates_searched}
+                                            {summaryMetrics.unique_dates_searched}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Fechas Únicas
@@ -221,7 +260,7 @@ export default function SearchMetricsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="warning.main">
-                                            {upcomingData.summary_metrics.avg_searches_per_date.toFixed(1)}
+                                            {summaryMetrics.avg_searches_per_date.toFixed(1)}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Promedio por Fecha
@@ -295,7 +334,7 @@ export default function SearchMetricsSubTab() {
                                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                                         <Box>
                                             <Typography variant="h6" color="success.main">
-                                                {upcomingData?.summary_metrics.unique_clients_searching || 0}
+                                                {summaryMetrics.unique_clients_searching}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 Clientes Únicos Buscando
@@ -311,7 +350,7 @@ export default function SearchMetricsSubTab() {
                                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                                         <Box>
                                             <Typography variant="h6" color="info.main">
-                                                {upcomingData?.summary_metrics.unique_anonymous_ips || 0}
+                                                {summaryMetrics.unique_anonymous_ips}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 IPs Anónimas Únicas
@@ -349,7 +388,7 @@ export default function SearchMetricsSubTab() {
                                         </Stack>
                                         <Stack direction="row" alignItems="center" spacing={1}>
                                             <Typography variant="body2" color="primary">
-                                                {day.total_searches} búsquedas
+                                                {day.searches_count} búsquedas
                                             </Typography>
                                             <Chip 
                                                 label={`${day.percentage.toFixed(1)}%`}
@@ -424,7 +463,7 @@ export default function SearchMetricsSubTab() {
                         <Card variant="outlined">
                             <CardContent sx={{ textAlign: 'center' }}>
                                 <Typography variant="h6" color="info.main">
-                                    {((upcomingData?.summary_metrics.unique_clients_searching || 0) / (upcomingData?.summary_metrics.total_upcoming_searches || 1) * 100).toFixed(1)}%
+                                    {((summaryMetrics.unique_clients_searching) / (summaryMetrics.total_upcoming_searches || 1) * 100).toFixed(1)}%
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     Ratio Clientes/Total
@@ -443,9 +482,9 @@ export default function SearchMetricsSubTab() {
                 <Paper sx={{ p: 2 }}>
                     <Typography variant="body2" color="text.secondary">
                         <strong>Métricas calculadas:</strong> {dayjs(upcomingData.generated_at).format('DD/MM/YYYY HH:mm')} | {' '}
-                        <strong>Período de análisis:</strong> {dayjs(upcomingData.period_info.analysis_from).format('DD/MM/YYYY')} 
-                        - {dayjs(upcomingData.period_info.analysis_to).format('DD/MM/YYYY')} | {' '}
-                        <strong>Días analizados:</strong> {upcomingData.period_info.days_ahead}
+                        <strong>Período de análisis:</strong> {dayjs(upcomingData.data.period_info.analysis_from).format('DD/MM/YYYY')} 
+                        - {dayjs(upcomingData.data.period_info.analysis_to).format('DD/MM/YYYY')} | {' '}
+                        <strong>Días analizados:</strong> {upcomingData.data.period_info.days_ahead}
                     </Typography>
                 </Paper>
             )}

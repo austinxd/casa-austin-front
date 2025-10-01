@@ -224,6 +224,14 @@ export interface SearchingClient {
     property: string | null
 }
 
+export interface SearchingIp {
+    ip_address: string
+    searches_count: number
+    checkout_dates: string[]
+    guests_counts: number[]
+    properties: string[]
+}
+
 export interface TopUpcomingCheckin {
     checkin_date: string
     weekday: string
@@ -233,6 +241,7 @@ export interface TopUpcomingCheckin {
     anonymous_searches: number
     avg_stay_duration: number
     searching_clients: SearchingClient[]
+    searching_ips?: SearchingIp[]
 }
 
 // SummaryMetrics interface removed as it's not present in the actual API response

@@ -20,7 +20,6 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Divider,
 } from '@mui/material'
 import {
     Person as PersonIcon,
@@ -33,10 +32,10 @@ import {
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { useGetUpcomingCheckinsQuery } from '@/services/upcoming-checkins/upcomingCheckinsService'
-import { UpcomingCheckinsQueryParams } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsParams } from '@/interfaces/analytics.interface'
 
 export default function UserSearchersSubTab() {
-    const [filters, setFilters] = useState<UpcomingCheckinsQueryParams>({
+    const [filters] = useState<UpcomingCheckinsParams>({
         days_ahead: 60,
         limit: 20,
         include_anonymous: true
@@ -47,8 +46,8 @@ export default function UserSearchersSubTab() {
     const { data: upcomingData, isLoading, error, refetch } = useGetUpcomingCheckinsQuery(filters)
 
     // Obtener datos de la fecha seleccionada
-    const selectedDateData = upcomingData?.top_upcoming_checkins?.find(
-        checkin => checkin.checkin_date === selectedDate
+    const selectedDateData = upcomingData?.data?.top_upcoming_checkins?.find(
+        (checkin: any) => checkin.checkin_date === selectedDate
     )
 
     if (isLoading) {
@@ -92,7 +91,7 @@ export default function UserSearchersSubTab() {
                     Seleccionar Fecha para Análisis Detallado
                 </Typography>
                 <Grid container spacing={1}>
-                    {upcomingData?.top_upcoming_checkins?.slice(0, 10).map((checkin) => (
+                    {upcomingData?.data?.top_upcoming_checkins?.slice(0, 10).map((checkin: any) => (
                         <Grid item key={checkin.checkin_date}>
                             <Button
                                 variant={selectedDate === checkin.checkin_date ? "contained" : "outlined"}
@@ -186,7 +185,7 @@ export default function UserSearchersSubTab() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {selectedDateData.searching_clients.map((client, index) => (
+                                        {selectedDateData.searching_clients.map((client: any) => (
                                             <TableRow key={client.client_id} hover>
                                                 <TableCell>
                                                     <Stack direction="row" alignItems="center" spacing={1}>
@@ -250,9 +249,9 @@ export default function UserSearchersSubTab() {
                             </Typography>
                         </Box>
                         
-                        {selectedDateData.searching_ips?.length > 0 ? (
+                        {selectedDateData.searching_ips && selectedDateData.searching_ips.length > 0 ? (
                             <Box sx={{ p: 2 }}>
-                                {selectedDateData.searching_ips.map((ip, index) => (
+                                {selectedDateData.searching_ips.map((ip: any) => (
                                     <Accordion key={ip.ip_address}>
                                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                             <Stack direction="row" alignItems="center" spacing={2} width="100%">
@@ -274,7 +273,7 @@ export default function UserSearchersSubTab() {
                                                         Fechas de Check-out Buscadas:
                                                     </Typography>
                                                     <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                                                        {ip.checkout_dates.map((date, idx) => (
+                                                        {ip.checkout_dates.map((date: any, idx: number) => (
                                                             <Chip 
                                                                 key={idx}
                                                                 label={dayjs(date).format('DD/MM')}
@@ -290,7 +289,7 @@ export default function UserSearchersSubTab() {
                                                         Número de Huéspedes:
                                                     </Typography>
                                                     <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                                                        {ip.guests_counts.map((guests, idx) => (
+                                                        {ip.guests_counts.map((guests: any, idx: number) => (
                                                             <Chip 
                                                                 key={idx}
                                                                 label={`${guests} ${guests === 1 ? 'persona' : 'personas'}`}
@@ -306,7 +305,7 @@ export default function UserSearchersSubTab() {
                                                         Propiedades de Interés:
                                                     </Typography>
                                                     <Stack spacing={1}>
-                                                        {ip.properties.map((property, idx) => (
+                                                        {ip.properties.map((property: any, idx: number) => (
                                                             <Stack key={idx} direction="row" alignItems="center" spacing={1}>
                                                                 <HomeIcon color="action" fontSize="small" />
                                                                 <Typography variant="body2">
@@ -346,8 +345,8 @@ export default function UserSearchersSubTab() {
                 <Paper sx={{ p: 2, mt: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                         <strong>Análisis generado:</strong> {dayjs(upcomingData.generated_at).format('DD/MM/YYYY HH:mm')} | {' '}
-                        <strong>Período:</strong> {dayjs(upcomingData.period_info.analysis_from).format('DD/MM/YYYY')} 
-                        - {dayjs(upcomingData.period_info.analysis_to).format('DD/MM/YYYY')}
+                        <strong>Período:</strong> {dayjs(upcomingData.data?.period_info?.analysis_from).format('DD/MM/YYYY')} 
+                        - {dayjs(upcomingData.data?.period_info?.analysis_to).format('DD/MM/YYYY')}
                     </Typography>
                 </Paper>
             )}

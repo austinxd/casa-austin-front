@@ -16,7 +16,6 @@ import {
     List,
     ListItem,
     ListItemText,
-    LinearProgress,
 } from '@mui/material'
 import {
     CalendarToday as CalendarIcon,
@@ -30,7 +29,7 @@ import dayjs from 'dayjs'
 // Services y tipos
 import { useGetNewUpcomingCheckinsQuery } from '@/services/analytics/newUpcomingCheckinsService'
 import { GlobalFilters } from '@/interfaces/analytics.interface'
-import { formatNumber, formatPercent, formatDecimal, safeArray, safeString, safeNumber } from '@/utils/formatters'
+import { formatNumber, formatDecimal, safeArray, safeString } from '@/utils/formatters'
 
 interface CheckinsDashboardProps {
     filters: GlobalFilters

@@ -33,10 +33,10 @@ import {
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { useGetUpcomingCheckinsQuery } from '@/services/upcoming-checkins/upcomingCheckinsService'
-import { UpcomingCheckinsQueryParams } from '@/interfaces/upcoming-checkins.interface'
+import { UpcomingCheckinsParams } from '@/interfaces/analytics.interface'
 
 export default function UpcomingCheckinsSubTab() {
-    const [filters, setFilters] = useState<UpcomingCheckinsQueryParams>({
+    const [filters, setFilters] = useState<UpcomingCheckinsParams>({
         days_ahead: 60,
         limit: 20,
         include_anonymous: true
@@ -48,7 +48,7 @@ export default function UpcomingCheckinsSubTab() {
     console.log('UpcomingCheckins - upcomingData:', upcomingData)
     console.log('UpcomingCheckins - error:', error)
 
-    const handleFilterChange = (field: keyof UpcomingCheckinsQueryParams, value: any) => {
+    const handleFilterChange = (field: keyof UpcomingCheckinsParams, value: any) => {
         setFilters(prev => ({ ...prev, [field]: value }))
     }
 
@@ -153,7 +153,7 @@ export default function UpcomingCheckinsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="primary">
-                                            {upcomingData.summary_metrics.total_upcoming_searches}
+                                            {upcomingData.data?.top_upcoming_checkins?.reduce((sum: number, item: any) => sum + item.total_searches, 0) || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Total Búsquedas
@@ -171,7 +171,7 @@ export default function UpcomingCheckinsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="success.main">
-                                            {upcomingData.summary_metrics.unique_dates_searched}
+                                            {upcomingData.data?.top_upcoming_checkins?.length || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Fechas Únicas
@@ -189,7 +189,7 @@ export default function UpcomingCheckinsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="warning.main">
-                                            {upcomingData.summary_metrics.unique_clients_searching}
+                                            {upcomingData.data?.top_upcoming_checkins?.reduce((count: number, item: any) => count + (item.searching_clients?.length || 0), 0) || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             Clientes Únicos
@@ -207,7 +207,7 @@ export default function UpcomingCheckinsSubTab() {
                                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                                     <Box>
                                         <Typography variant="h4" color="info.main">
-                                            {upcomingData.summary_metrics.unique_anonymous_ips}
+                                            {upcomingData.data?.top_upcoming_checkins?.reduce((count: number, item: any) => count + (item.searching_ips?.length || 0), 0) || 0}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             IPs Anónimas
@@ -230,9 +230,9 @@ export default function UpcomingCheckinsSubTab() {
                     </Typography>
                     {upcomingData && (
                         <Typography variant="body2" color="text.secondary" mt={1}>
-                            Período de análisis: {dayjs(upcomingData.period_info.analysis_from).format('DD/MM/YYYY')} 
-                            - {dayjs(upcomingData.period_info.analysis_to).format('DD/MM/YYYY')} 
-                            ({upcomingData.period_info.days_ahead} días)
+                            Período de análisis: {dayjs(upcomingData.data?.period_info?.analysis_from).format('DD/MM/YYYY')} 
+                            - {dayjs(upcomingData.data?.period_info?.analysis_to).format('DD/MM/YYYY')} 
+                            ({upcomingData.data?.period_info?.days_ahead || 0} días)
                         </Typography>
                     )}
                 </Box>
@@ -252,7 +252,7 @@ export default function UpcomingCheckinsSubTab() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {upcomingData?.top_upcoming_checkins?.map((checkin) => (
+                            {upcomingData?.data?.top_upcoming_checkins?.map((checkin: any) => (
                                 <TableRow key={checkin.checkin_date} hover>
                                     <TableCell>
                                         <Box>
@@ -303,13 +303,13 @@ export default function UpcomingCheckinsSubTab() {
                                     <TableCell align="center">
                                         <Stack direction="row" spacing={1} justifyContent="center">
                                             <Chip 
-                                                label={`${checkin.unique_clients_count}c`}
+                                                label={`${checkin.searching_clients?.length || 0}c`}
                                                 color="success"
                                                 size="small"
                                                 variant="outlined"
                                             />
                                             <Chip 
-                                                label={`${checkin.unique_ips_count}ip`}
+                                                label={`${checkin.searching_ips?.length || 0}ip`}
                                                 color="info"
                                                 size="small"
                                                 variant="outlined"
@@ -328,7 +328,6 @@ export default function UpcomingCheckinsSubTab() {
                 <Paper sx={{ p: 2, mt: 3 }}>
                     <Typography variant="body2" color="text.secondary">
                         <strong>Análisis generado:</strong> {dayjs(upcomingData.generated_at).format('DD/MM/YYYY HH:mm')} | {' '}
-                        <strong>Promedio búsquedas por fecha:</strong> {upcomingData.summary_metrics.avg_searches_per_date.toFixed(1)} | {' '}
                         <strong>Configuración:</strong> {filters.days_ahead} días, máximo {filters.limit} resultados
                     </Typography>
                 </Paper>

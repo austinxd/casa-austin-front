@@ -28,7 +28,6 @@ import {
     Group as GroupIcon,
     Public as PublicIcon,
     TrendingUp as TrendingIcon,
-    Schedule as ScheduleIcon,
     Refresh as RefreshIcon,
 } from '@mui/icons-material'
 import Chart from 'react-apexcharts'
@@ -54,7 +53,7 @@ export default function SearchIntelligenceCenter() {
             height: 300
         },
         xaxis: {
-            categories: statsData?.stats?.search_patterns?.by_day_of_week?.map(item => 
+            categories: statsData?.stats?.search_patterns?.by_day_of_week?.map((item: any) => 
                 item.day_name
             ) || []
         },
@@ -74,7 +73,7 @@ export default function SearchIntelligenceCenter() {
 
     const weekdayPatternsSeries = [{
         name: 'Búsquedas',
-        data: statsData?.stats?.search_patterns?.by_day_of_week?.map(item => item.search_count) || []
+        data: statsData?.stats?.search_patterns?.by_day_of_week?.map((item: any) => item.searches_count) || []
     }]
 
     // Configuración del gráfico de distribución de huéspedes
@@ -83,7 +82,7 @@ export default function SearchIntelligenceCenter() {
             type: 'donut',
             height: 350
         },
-        labels: statsData?.stats?.guest_distribution?.map(item => 
+        labels: statsData?.stats?.guest_distribution?.map((item: any) => 
             `${item.guest_count} ${item.guest_count === 1 ? 'huésped' : 'huéspedes'}`
         ) || [],
         title: {
@@ -100,7 +99,7 @@ export default function SearchIntelligenceCenter() {
         legend: { position: 'bottom' }
     }
 
-    const guestDistributionSeries = statsData?.stats?.guest_distribution?.map(item => 
+    const guestDistributionSeries = statsData?.stats?.guest_distribution?.map((item: any) => 
         item.percentage
     ) || []
 
@@ -317,7 +316,7 @@ export default function SearchIntelligenceCenter() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {statsData.stats.search_analytics.most_searched_properties.slice(0, 8).map((property, index) => (
+                                        {statsData.stats.search_analytics.most_searched_properties.slice(0, 8).map((property: any, index: number) => (
                                             <TableRow key={property.property__name}>
                                                 <TableCell>
                                                     <Typography variant="body2" fontWeight="medium">
@@ -326,7 +325,7 @@ export default function SearchIntelligenceCenter() {
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <Chip 
-                                                        label={property.search_count}
+                                                        label={property.searches_count}
                                                         size="small"
                                                         color={index === 0 ? "error" : index <= 2 ? "warning" : "primary"}
                                                     />
@@ -370,7 +369,7 @@ export default function SearchIntelligenceCenter() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {statsData.stats.search_analytics.top_searching_clients.slice(0, 8).map((client, index) => (
+                                        {statsData.stats.search_analytics.top_searching_clients.slice(0, 8).map((client: any) => (
                                             <TableRow key={`${client.client__first_name}-${client.client__last_name}`}>
                                                 <TableCell>
                                                     <Typography variant="body2" fontWeight="medium">
@@ -379,19 +378,19 @@ export default function SearchIntelligenceCenter() {
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <Chip 
-                                                        label={client.search_count}
+                                                        label={client.searches_count}
                                                         size="small"
-                                                        color={client.search_count >= 10 ? "error" : 
-                                                               client.search_count >= 5 ? "warning" : "primary"}
+                                                        color={client.searches_count >= 10 ? "error" : 
+                                                               client.searches_count >= 5 ? "warning" : "primary"}
                                                     />
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     <Chip 
-                                                        label={client.search_count >= 10 ? "VIP" : 
-                                                               client.search_count >= 5 ? "ACTIVO" : "NORMAL"}
+                                                        label={client.searches_count >= 10 ? "VIP" : 
+                                                               client.searches_count >= 5 ? "ACTIVO" : "NORMAL"}
                                                         size="small"
-                                                        color={client.search_count >= 10 ? "error" : 
-                                                               client.search_count >= 5 ? "warning" : "default"}
+                                                        color={client.searches_count >= 10 ? "error" : 
+                                                               client.searches_count >= 5 ? "warning" : "default"}
                                                     />
                                                 </TableCell>
                                             </TableRow>
