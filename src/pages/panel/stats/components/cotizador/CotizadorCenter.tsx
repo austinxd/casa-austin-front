@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Box,
     Typography,
@@ -11,6 +11,8 @@ import {
     Snackbar,
     Stack,
     Autocomplete,
+    Checkbox,
+    FormControlLabel,
 } from '@mui/material'
 import {
     Calculate as CalculateIcon,
@@ -19,9 +21,10 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useLazyCalculatePricingQuery } from '@/services/pricing/pricingService'
+import { useLazyCalculatePricingQuery, useLazyCalculateLateCheckoutQuery } from '@/services/pricing/pricingService'
 import { useGetAllClientsQuery } from '@/services/clients/clientsService'
 import { IRegisterClient } from '@/interfaces/clients/registerClients'
+import { LateCheckoutData } from '@/interfaces/pricing.interface'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/es'
 
@@ -32,8 +35,12 @@ export default function CotizadorCenter() {
     const [showCopySnackbar, setShowCopySnackbar] = useState(false)
     const [selectedClient, setSelectedClient] = useState<IRegisterClient | null>(null)
     const [clientSearchTerm, setClientSearchTerm] = useState<string>('')
+    const [includeLateCheckout, setIncludeLateCheckout] = useState<boolean>(false)
+    const [lateCheckoutData, setLateCheckoutData] = useState<Record<string, LateCheckoutData>>({})
+    const [isLoadingLateCheckout, setIsLoadingLateCheckout] = useState<boolean>(false)
     
     const [calculatePricing, { data, isLoading, error }] = useLazyCalculatePricingQuery()
+    const [calculateLateCheckout] = useLazyCalculateLateCheckoutQuery()
     const { data: clientsData, isFetching: isLoadingClients } = useGetAllClientsQuery({
         page: 1,
         page_size: 10,
@@ -118,6 +125,42 @@ ${bookingUrl}
     const hasResultMessages = data?.data?.message1 && data?.data?.message2
 
     const nightsCount = checkInDate && checkOutDate ? checkOutDate.diff(checkInDate, 'day') : 0
+
+    const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
+
+    useEffect(() => {
+        if (includeLateCheckout && data?.data?.properties && checkOutDate) {
+            const availableProperties = data.data.properties.filter(p => p.available)
+            
+            if (availableProperties.length > 0) {
+                setIsLoadingLateCheckout(true)
+                const formattedCheckOut = checkOutDate.format('YYYY-MM-DD')
+                
+                Promise.all(
+                    availableProperties.map(property =>
+                        calculateLateCheckout({
+                            property_id: property.property_id,
+                            checkout_date: formattedCheckOut,
+                            guests: guests,
+                        }).unwrap()
+                    )
+                ).then(results => {
+                    const lateCheckoutMap: Record<string, LateCheckoutData> = {}
+                    results.forEach(result => {
+                        if (result.success && result.data) {
+                            lateCheckoutMap[result.data.property_id] = result.data
+                        }
+                    })
+                    setLateCheckoutData(lateCheckoutMap)
+                    setIsLoadingLateCheckout(false)
+                }).catch(() => {
+                    setIsLoadingLateCheckout(false)
+                })
+            }
+        } else {
+            setLateCheckoutData({})
+        }
+    }, [includeLateCheckout, data, checkOutDate, guests, calculateLateCheckout])
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
@@ -247,6 +290,28 @@ ${bookingUrl}
                                     )}
                                     noOptionsText="No se encontraron clientes"
                                 />
+
+                                {data && hasAvailableProperties && (
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={includeLateCheckout}
+                                                onChange={(e) => setIncludeLateCheckout(e.target.checked)}
+                                                disabled={isLoadingLateCheckout}
+                                            />
+                                        }
+                                        label={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="body2">
+                                                    Incluir Late Checkout
+                                                </Typography>
+                                                {isLoadingLateCheckout && (
+                                                    <CircularProgress size={16} />
+                                                )}
+                                            </Box>
+                                        }
+                                    />
+                                )}
 
                                 <Button
                                     fullWidth
@@ -406,6 +471,53 @@ ${bookingUrl}
                                             {`🕒 Check-in: 3:00 PM\n🕚 Check-out: 11:00 AM\n📸  Fotos y detalles⬇️\nhttps://casaaustin.pe/disponibilidad?checkIn=${checkInDate?.format('YYYY-MM-DD')}&checkOut=${checkOutDate?.format('YYYY-MM-DD')}&guests=${guests}\n🎁 Beneficios exclusivos por reservar en nuestra web:\n•  5% de puntos en cada reserva\n•  Beneficios especiales para miembros de Casa Austin\n\n⚠️ Todo visitante (día o noche) cuenta como persona adicional.`}
                                         </Typography>
                                     </Box>
+
+                                    {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && (
+                                        <Box 
+                                            sx={{ 
+                                                p: 2.5, 
+                                                bgcolor: '#e3f2fd',
+                                                borderRadius: 1,
+                                                border: '1px solid #90caf9',
+                                            }}
+                                        >
+                                            <Typography 
+                                                variant="body2" 
+                                                sx={{ 
+                                                    fontWeight: 600,
+                                                    color: '#1976d2',
+                                                    mb: 1.5,
+                                                }}
+                                            >
+                                                🕐 Late Checkout Disponible
+                                            </Typography>
+                                            {Object.values(lateCheckoutData).map((lateCheckout) => (
+                                                <Box key={lateCheckout.property_id} sx={{ mb: 1 }}>
+                                                    {lateCheckout.late_checkout_available ? (
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            sx={{ 
+                                                                color: '#212121',
+                                                                lineHeight: 1.6,
+                                                            }}
+                                                        >
+                                                            • {lateCheckout.property_name}: S/ {lateCheckout.late_checkout_price_sol.toFixed(2)} (${lateCheckout.late_checkout_price_usd.toFixed(2)})
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            sx={{ 
+                                                                color: '#757575',
+                                                                lineHeight: 1.6,
+                                                            }}
+                                                        >
+                                                            • {lateCheckout.property_name}: No disponible
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    )}
 
                                     {data.data.general_recommendations && data.data.general_recommendations.length > 0 && (
                                         <Alert severity="info" sx={{ py: 1 }}>
