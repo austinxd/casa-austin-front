@@ -54,3 +54,25 @@ export interface PricingCalculationParams {
     guests: number
     client_id?: string
 }
+
+export interface LateCheckoutParams {
+    property_id: string
+    checkout_date: string
+    guests: number
+}
+
+export interface LateCheckoutData {
+    property_id: string
+    property_name: string
+    late_checkout_available: boolean
+    late_checkout_price_usd: number
+    late_checkout_price_sol: number
+    message: string
+}
+
+export interface LateCheckoutResponse {
+    success: boolean
+    error: number
+    data: LateCheckoutData
+    message: string
+}

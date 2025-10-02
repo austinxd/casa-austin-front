@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { PricingCalculationResponse, PricingCalculationParams } from '@/interfaces/pricing.interface'
+import { PricingCalculationResponse, PricingCalculationParams, LateCheckoutResponse, LateCheckoutParams } from '@/interfaces/pricing.interface'
 import { ENV } from '../../core/constants/config'
 import { cookiesGetString } from '@/core/utils/cookie-storage'
 
@@ -24,7 +24,17 @@ export const pricingService = createApi({
                 },
             }),
         }),
+        calculateLateCheckout: builder.query<LateCheckoutResponse, LateCheckoutParams>({
+            query: (params) => ({
+                url: '/properties/calculate-late-checkout/',
+                params: {
+                    property_id: params.property_id,
+                    checkout_date: params.checkout_date,
+                    guests: params.guests,
+                },
+            }),
+        }),
     }),
 })
 
-export const { useCalculatePricingQuery, useLazyCalculatePricingQuery } = pricingService
+export const { useCalculatePricingQuery, useLazyCalculatePricingQuery, useLazyCalculateLateCheckoutQuery } = pricingService
