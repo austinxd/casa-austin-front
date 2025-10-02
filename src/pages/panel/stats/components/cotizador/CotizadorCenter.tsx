@@ -79,14 +79,15 @@ export default function CotizadorCenter() {
 
         const additionalInfo = `
 
-*🕒 Check-in: 3:00 PM | 🕚 Check-out: 11:00 AM*
-📸  Fotos y detalles→ ${bookingUrl}
-*🎁 Beneficios exclusivos por reservar en nuestra web:*
-* 5% de puntos en cada reserva
-* Beneficios especiales para miembros de Casa Austin
-* Atención personalizada
+🕒 Check-in: 3:00 PM
+🕚 Check-out: 11:00 AM
+📸  Fotos y detalles⬇️
+${bookingUrl}
+🎁 Beneficios exclusivos por reservar en nuestra web:
+•  5% de puntos en cada reserva
+•  Beneficios especiales para miembros de Casa Austin
 
-⚠️ *Importante:* Cualquier visitante, sea de día o de noche, cuenta como persona adicional. Por favor, indícanos el número exacto de personas.`
+⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
         const fullMessage = `${data.data.message1}\n\n${data.data.message2}${additionalInfo}`
         
@@ -364,7 +365,7 @@ export default function CotizadorCenter() {
                                                 lineHeight: 1.8,
                                             }}
                                         >
-                                            {`*🕒 Check-in: 3:00 PM | 🕚 Check-out: 11:00 AM*\n📸  Fotos y detalles→ https://casaaustin.pe/disponibilidad?checkIn=${checkInDate?.format('YYYY-MM-DD')}&checkOut=${checkOutDate?.format('YYYY-MM-DD')}&guests=${guests}\n*🎁 Beneficios exclusivos por reservar en nuestra web:*\n* 5% de puntos en cada reserva\n* Beneficios especiales para miembros de Casa Austin\n* Atención personalizada\n\n⚠️ *Importante:* Cualquier visitante, sea de día o de noche, cuenta como persona adicional. Por favor, indícanos el número exacto de personas.`}
+                                            {`🕒 Check-in: 3:00 PM\n🕚 Check-out: 11:00 AM\n📸  Fotos y detalles⬇️\nhttps://casaaustin.pe/disponibilidad?checkIn=${checkInDate?.format('YYYY-MM-DD')}&checkOut=${checkOutDate?.format('YYYY-MM-DD')}&guests=${guests}\n🎁 Beneficios exclusivos por reservar en nuestra web:\n•  5% de puntos en cada reserva\n•  Beneficios especiales para miembros de Casa Austin\n\n⚠️ Todo visitante (día o noche) cuenta como persona adicional.`}
                                         </Typography>
                                     </Box>
 
