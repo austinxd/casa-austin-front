@@ -69,11 +69,26 @@ export default function CotizadorCenter() {
     }
 
     const handleCopyToClipboard = () => {
-        if (!data?.data?.message1 || !data?.data?.message2) {
+        if (!data?.data?.message1 || !data?.data?.message2 || !checkInDate || !checkOutDate) {
             return
         }
 
-        const fullMessage = `${data.data.message1}\n\n${data.data.message2}`
+        const formattedCheckIn = checkInDate.format('YYYY-MM-DD')
+        const formattedCheckOut = checkOutDate.format('YYYY-MM-DD')
+        const bookingUrl = `https://casaaustin.pe/disponibilidad?checkIn=${formattedCheckIn}&checkOut=${formattedCheckOut}&guests=${guests}`
+
+        const additionalInfo = `
+
+*🕒 Check-in: 3:00 PM | 🕚 Check-out: 11:00 AM*
+📸  Fotos y detalles→ ${bookingUrl}
+*🎁 Beneficios exclusivos por reservar en nuestra web:*
+* 5% de puntos en cada reserva
+* Beneficios especiales para miembros de Casa Austin
+* Atención personalizada
+
+⚠️ *Importante:* Cualquier visitante, sea de día o de noche, cuenta como persona adicional. Por favor, indícanos el número exacto de personas.`
+
+        const fullMessage = `${data.data.message1}\n\n${data.data.message2}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -331,6 +346,25 @@ export default function CotizadorCenter() {
                                             }}
                                         >
                                             {data.data.message2}
+                                        </Typography>
+                                    </Box>
+
+                                    <Box 
+                                        sx={{ 
+                                            p: 2.5, 
+                                            bgcolor: '#f5f5f5',
+                                            borderRadius: 1,
+                                        }}
+                                    >
+                                        <Typography 
+                                            variant="body2" 
+                                            sx={{ 
+                                                whiteSpace: 'pre-line',
+                                                color: '#212121',
+                                                lineHeight: 1.8,
+                                            }}
+                                        >
+                                            {`*🕒 Check-in: 3:00 PM | 🕚 Check-out: 11:00 AM*\n📸  Fotos y detalles→ https://casaaustin.pe/disponibilidad?checkIn=${checkInDate?.format('YYYY-MM-DD')}&checkOut=${checkOutDate?.format('YYYY-MM-DD')}&guests=${guests}\n*🎁 Beneficios exclusivos por reservar en nuestra web:*\n* 5% de puntos en cada reserva\n* Beneficios especiales para miembros de Casa Austin\n* Atención personalizada\n\n⚠️ *Importante:* Cualquier visitante, sea de día o de noche, cuenta como persona adicional. Por favor, indícanos el número exacto de personas.`}
                                         </Typography>
                                     </Box>
 
