@@ -99,7 +99,7 @@ export default function CotizadorCenter() {
         if (includeLateCheckout && Object.keys(lateCheckoutData).length > 0) {
             const availableLateCheckouts = Object.values(lateCheckoutData).filter(lc => lc.is_available)
             if (availableLateCheckouts.length > 0) {
-                lateCheckoutInfo = `\n\n🕐 *Late Checkout Disponible:*\n*PRECIO PARA ${guests} PERSONAS*`
+                lateCheckoutInfo = '\n\n🕐 *Late Checkout Disponible:*'
                 availableLateCheckouts.forEach((lateCheckout) => {
                     lateCheckoutInfo += `\n🏠 ${lateCheckout.property_name}: *$${lateCheckout.late_checkout_price_usd.toFixed(2)}* ó *S/.${lateCheckout.late_checkout_price_sol.toFixed(2)}*`
                 })
@@ -118,7 +118,7 @@ ${bookingUrl}
 
 ⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${data.data.message1}\n\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
+        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -467,6 +467,16 @@ ${bookingUrl}
                                         <Typography 
                                             variant="body2" 
                                             sx={{ 
+                                                fontWeight: 600,
+                                                color: '#212121',
+                                                mb: 1.5,
+                                            }}
+                                        >
+                                            PRECIO PARA {guests} PERSONAS
+                                        </Typography>
+                                        <Typography 
+                                            variant="body2" 
+                                            sx={{ 
                                                 whiteSpace: 'pre-line',
                                                 fontWeight: 600,
                                                 color: '#212121',
@@ -482,20 +492,10 @@ ${bookingUrl}
                                                     sx={{ 
                                                         fontWeight: 600,
                                                         color: '#212121',
-                                                        mb: 0.5,
-                                                    }}
-                                                >
-                                                    🕐 Late Checkout Disponible:
-                                                </Typography>
-                                                <Typography 
-                                                    variant="body2" 
-                                                    sx={{ 
-                                                        fontWeight: 600,
-                                                        color: '#212121',
                                                         mb: 1,
                                                     }}
                                                 >
-                                                    PRECIO PARA {guests} PERSONAS
+                                                    🕐 Late Checkout Disponible:
                                                 </Typography>
                                                 {Object.values(lateCheckoutData).map((lateCheckout, index) => (
                                                     lateCheckout.is_available && (
