@@ -97,7 +97,7 @@ export default function CotizadorCenter() {
 
         let lateCheckoutInfo = ''
         if (includeLateCheckout && Object.keys(lateCheckoutData).length > 0) {
-            const availableLateCheckouts = Object.values(lateCheckoutData).filter(lc => lc.late_checkout_available)
+            const availableLateCheckouts = Object.values(lateCheckoutData).filter(lc => lc.is_available)
             if (availableLateCheckouts.length > 0) {
                 lateCheckoutInfo = '\n\n🕐 *Late Checkout Disponible:*'
                 availableLateCheckouts.forEach((lateCheckout) => {
@@ -159,7 +159,10 @@ ${bookingUrl}
                             property_id: property.property_id,
                             checkout_date: formattedCheckOut,
                             guests: guests,
-                        }).unwrap()
+                        }).unwrap().then(result => ({
+                            ...result,
+                            property_id: property.property_id
+                        }))
                     )
                 ).then(results => {
                     console.log('=== LATE CHECKOUT RESULTS ===')
@@ -169,7 +172,11 @@ ${bookingUrl}
                         console.log('Processing result:', result)
                         if (result.success && result.data) {
                             console.log('Adding to map:', result.data)
-                            lateCheckoutMap[result.data.property_id] = result.data
+                            const lateCheckoutWithId = {
+                                ...result.data,
+                                property_id: result.property_id
+                            }
+                            lateCheckoutMap[result.property_id] = lateCheckoutWithId
                         }
                     })
                     console.log('Final lateCheckoutMap:', lateCheckoutMap)
@@ -481,15 +488,15 @@ ${bookingUrl}
                                             console.log('includeLateCheckout:', includeLateCheckout)
                                             console.log('lateCheckoutData:', lateCheckoutData)
                                             console.log('Object.keys length:', Object.keys(lateCheckoutData).length)
-                                            console.log('Has available?:', Object.values(lateCheckoutData).some(lc => lc.late_checkout_available))
+                                            console.log('Has available?:', Object.values(lateCheckoutData).some(lc => lc.is_available))
                                             console.log('All conditions:', 
                                                 includeLateCheckout && 
                                                 Object.keys(lateCheckoutData).length > 0 && 
-                                                Object.values(lateCheckoutData).some(lc => lc.late_checkout_available)
+                                                Object.values(lateCheckoutData).some(lc => lc.is_available)
                                             )
                                             return null
                                         })()}
-                                        {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.late_checkout_available) && (
+                                        {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.is_available) && (
                                             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
                                                 <Typography 
                                                     variant="body2" 
@@ -501,10 +508,10 @@ ${bookingUrl}
                                                 >
                                                     🕐 Late Checkout Disponible:
                                                 </Typography>
-                                                {Object.values(lateCheckoutData).map((lateCheckout) => (
-                                                    lateCheckout.late_checkout_available && (
+                                                {Object.values(lateCheckoutData).map((lateCheckout, index) => (
+                                                    lateCheckout.is_available && (
                                                         <Typography 
-                                                            key={lateCheckout.property_id}
+                                                            key={lateCheckout.property_id || index}
                                                             variant="body2" 
                                                             sx={{ 
                                                                 color: '#212121',

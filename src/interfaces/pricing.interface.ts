@@ -62,9 +62,16 @@ export interface LateCheckoutParams {
 }
 
 export interface LateCheckoutData {
-    property_id: string
+    property_id?: string
     property_name: string
-    late_checkout_available: boolean
+    is_available: boolean
+    checkout_date: string
+    checkout_day: string
+    base_price_usd: number
+    base_price_sol: number
+    discount_percentage: number
+    discount_amount_usd: number
+    discount_amount_sol: number
     late_checkout_price_usd: number
     late_checkout_price_sol: number
     message: string
