@@ -95,6 +95,17 @@ export default function CotizadorCenter() {
         const formattedCheckOut = checkOutDate.format('YYYY-MM-DD')
         const bookingUrl = `https://casaaustin.pe/disponibilidad?checkIn=${formattedCheckIn}&checkOut=${formattedCheckOut}&guests=${guests}`
 
+        let lateCheckoutInfo = ''
+        if (includeLateCheckout && Object.keys(lateCheckoutData).length > 0) {
+            const availableLateCheckouts = Object.values(lateCheckoutData).filter(lc => lc.late_checkout_available)
+            if (availableLateCheckouts.length > 0) {
+                lateCheckoutInfo = '\n\n🕐 *Late Checkout Disponible:*'
+                availableLateCheckouts.forEach((lateCheckout) => {
+                    lateCheckoutInfo += `\n• ${lateCheckout.property_name}: S/ ${lateCheckout.late_checkout_price_sol.toFixed(2)} ($${lateCheckout.late_checkout_price_usd.toFixed(2)})`
+                })
+            }
+        }
+
         const additionalInfo = `
 
 🕒 Check-in: 3:00 PM
@@ -107,7 +118,7 @@ ${bookingUrl}
 
 ⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${data.data.message1}\n\n${data.data.message2}${additionalInfo}`
+        const fullMessage = `${data.data.message1}\n\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -457,6 +468,34 @@ ${bookingUrl}
                                         >
                                             {data.data.message2}
                                         </Typography>
+                                        {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.late_checkout_available) && (
+                                            <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
+                                                <Typography 
+                                                    variant="body2" 
+                                                    sx={{ 
+                                                        fontWeight: 600,
+                                                        color: '#212121',
+                                                        mb: 1,
+                                                    }}
+                                                >
+                                                    🕐 Late Checkout Disponible:
+                                                </Typography>
+                                                {Object.values(lateCheckoutData).map((lateCheckout) => (
+                                                    lateCheckout.late_checkout_available && (
+                                                        <Typography 
+                                                            key={lateCheckout.property_id}
+                                                            variant="body2" 
+                                                            sx={{ 
+                                                                color: '#212121',
+                                                                lineHeight: 1.8,
+                                                            }}
+                                                        >
+                                                            • {lateCheckout.property_name}: S/ {lateCheckout.late_checkout_price_sol.toFixed(2)} (${lateCheckout.late_checkout_price_usd.toFixed(2)})
+                                                        </Typography>
+                                                    )
+                                                ))}
+                                            </Box>
+                                        )}
                                     </Box>
 
                                     <Box 
@@ -477,53 +516,6 @@ ${bookingUrl}
                                             {`🕒 Check-in: 3:00 PM\n🕚 Check-out: 11:00 AM\n📸  Fotos y detalles⬇️\nhttps://casaaustin.pe/disponibilidad?checkIn=${checkInDate?.format('YYYY-MM-DD')}&checkOut=${checkOutDate?.format('YYYY-MM-DD')}&guests=${guests}\n🎁 Beneficios exclusivos por reservar en nuestra web:\n•  5% de puntos en cada reserva\n•  Beneficios especiales para miembros de Casa Austin\n\n⚠️ Todo visitante (día o noche) cuenta como persona adicional.`}
                                         </Typography>
                                     </Box>
-
-                                    {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && (
-                                        <Box 
-                                            sx={{ 
-                                                p: 2.5, 
-                                                bgcolor: '#e3f2fd',
-                                                borderRadius: 1,
-                                                border: '1px solid #90caf9',
-                                            }}
-                                        >
-                                            <Typography 
-                                                variant="body2" 
-                                                sx={{ 
-                                                    fontWeight: 600,
-                                                    color: '#1976d2',
-                                                    mb: 1.5,
-                                                }}
-                                            >
-                                                🕐 Late Checkout Disponible
-                                            </Typography>
-                                            {Object.values(lateCheckoutData).map((lateCheckout) => (
-                                                <Box key={lateCheckout.property_id} sx={{ mb: 1 }}>
-                                                    {lateCheckout.late_checkout_available ? (
-                                                        <Typography 
-                                                            variant="body2" 
-                                                            sx={{ 
-                                                                color: '#212121',
-                                                                lineHeight: 1.6,
-                                                            }}
-                                                        >
-                                                            • {lateCheckout.property_name}: S/ {lateCheckout.late_checkout_price_sol.toFixed(2)} (${lateCheckout.late_checkout_price_usd.toFixed(2)})
-                                                        </Typography>
-                                                    ) : (
-                                                        <Typography 
-                                                            variant="body2" 
-                                                            sx={{ 
-                                                                color: '#757575',
-                                                                lineHeight: 1.6,
-                                                            }}
-                                                        >
-                                                            • {lateCheckout.property_name}: No disponible
-                                                        </Typography>
-                                                    )}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                    )}
 
                                     {data.data.general_recommendations && data.data.general_recommendations.length > 0 && (
                                         <Alert severity="info" sx={{ py: 1 }}>
