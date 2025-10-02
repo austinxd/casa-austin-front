@@ -20,6 +20,7 @@ export const pricingService = createApi({
                     check_in_date: params.check_in_date,
                     check_out_date: params.check_out_date,
                     guests: params.guests,
+                    ...(params.client_id && { client_id: params.client_id }),
                 },
             }),
         }),
