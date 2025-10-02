@@ -129,6 +129,12 @@ ${bookingUrl}
     const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
 
     useEffect(() => {
+        if (!hasAvailableProperties) {
+            setLateCheckoutData({})
+            setIncludeLateCheckout(false)
+            return
+        }
+
         if (includeLateCheckout && data?.data?.properties && checkOutDate) {
             const availableProperties = data.data.properties.filter(p => p.available)
             
@@ -160,7 +166,7 @@ ${bookingUrl}
         } else {
             setLateCheckoutData({})
         }
-    }, [includeLateCheckout, data, checkOutDate, guests, calculateLateCheckout])
+    }, [includeLateCheckout, data, checkOutDate, guests, calculateLateCheckout, hasAvailableProperties])
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
