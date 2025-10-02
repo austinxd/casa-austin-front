@@ -162,15 +162,23 @@ ${bookingUrl}
                         }).unwrap()
                     )
                 ).then(results => {
+                    console.log('=== LATE CHECKOUT RESULTS ===')
+                    console.log('Raw results:', results)
                     const lateCheckoutMap: Record<string, LateCheckoutData> = {}
                     results.forEach(result => {
+                        console.log('Processing result:', result)
                         if (result.success && result.data) {
+                            console.log('Adding to map:', result.data)
                             lateCheckoutMap[result.data.property_id] = result.data
                         }
                     })
+                    console.log('Final lateCheckoutMap:', lateCheckoutMap)
+                    console.log('Map keys:', Object.keys(lateCheckoutMap))
+                    console.log('Map values:', Object.values(lateCheckoutMap))
                     setLateCheckoutData(lateCheckoutMap)
                     setIsLoadingLateCheckout(false)
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error('=== LATE CHECKOUT ERROR ===', error)
                     setIsLoadingLateCheckout(false)
                 })
             }
@@ -468,6 +476,19 @@ ${bookingUrl}
                                         >
                                             {data.data.message2}
                                         </Typography>
+                                        {(() => {
+                                            console.log('=== RENDER CHECK ===')
+                                            console.log('includeLateCheckout:', includeLateCheckout)
+                                            console.log('lateCheckoutData:', lateCheckoutData)
+                                            console.log('Object.keys length:', Object.keys(lateCheckoutData).length)
+                                            console.log('Has available?:', Object.values(lateCheckoutData).some(lc => lc.late_checkout_available))
+                                            console.log('All conditions:', 
+                                                includeLateCheckout && 
+                                                Object.keys(lateCheckoutData).length > 0 && 
+                                                Object.values(lateCheckoutData).some(lc => lc.late_checkout_available)
+                                            )
+                                            return null
+                                        })()}
                                         {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.late_checkout_available) && (
                                             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
                                                 <Typography 
