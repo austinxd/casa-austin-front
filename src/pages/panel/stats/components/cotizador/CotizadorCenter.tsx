@@ -32,6 +32,7 @@ export default function CotizadorCenter() {
     const [checkInDate, setCheckInDate] = useState<Dayjs | null>(null)
     const [checkOutDate, setCheckOutDate] = useState<Dayjs | null>(null)
     const [guests, setGuests] = useState<number>(2)
+    const [guestsInput, setGuestsInput] = useState<string>('2')
     const [showCopySnackbar, setShowCopySnackbar] = useState(false)
     const [selectedClient, setSelectedClient] = useState<IRegisterClient | null>(null)
     const [clientSearchTerm, setClientSearchTerm] = useState<string>('')
@@ -60,13 +61,21 @@ export default function CotizadorCenter() {
     }
 
     const handleGuestsChange = (value: string) => {
+        setGuestsInput(value)
         const parsed = parseInt(value)
-        if (!value || isNaN(parsed)) {
-            setGuests(1)
-        } else if (parsed < 1) {
-            setGuests(1)
+        if (!isNaN(parsed) && parsed >= 1) {
+            setGuests(parsed)
+        }
+    }
+
+    const handleGuestsBlur = () => {
+        const parsed = parseInt(guestsInput)
+        if (!guestsInput || isNaN(parsed) || parsed < 1) {
+            setGuests(2)
+            setGuestsInput('2')
         } else {
             setGuests(parsed)
+            setGuestsInput(parsed.toString())
         }
     }
 
@@ -281,8 +290,9 @@ ${bookingUrl}
                                     fullWidth
                                     label="Huéspedes"
                                     type="number"
-                                    value={guests}
+                                    value={guestsInput}
                                     onChange={(e) => handleGuestsChange(e.target.value)}
+                                    onBlur={handleGuestsBlur}
                                     InputProps={{
                                         inputProps: { min: 1 },
                                     }}

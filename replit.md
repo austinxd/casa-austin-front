@@ -4,6 +4,13 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
+## October 2, 2025 - Cotizador UX Improvements
+- Fixed guest input field overlay issue where "1" prevented entering custom values
+- Implemented dual-state approach: string state for UI display, number state for API calls
+- Added blur validation to handle empty/invalid inputs gracefully
+- Relocated "PRECIO PARA X PERSONAS" header to main availability section (message2)
+- Updated clipboard format to include pricing header with WhatsApp/Telegram bold formatting
+
 ## October 1, 2025 - TypeScript Compilation Fixes
 - Fixed all TypeScript compilation errors across analytics components (109 errors resolved)
 - Corrected data access patterns for API responses (using `.data.` accessor properly)
