@@ -10,6 +10,7 @@ import {
     CircularProgress,
     Snackbar,
     Stack,
+    Autocomplete,
 } from '@mui/material'
 import {
     Calculate as CalculateIcon,
@@ -19,6 +20,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useLazyCalculatePricingQuery } from '@/services/pricing/pricingService'
+import { useGetAllClientsQuery } from '@/services/clients/clientsService'
+import { IRegisterClient } from '@/interfaces/clients/registerClients'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/es'
 
@@ -27,8 +30,15 @@ export default function CotizadorCenter() {
     const [checkOutDate, setCheckOutDate] = useState<Dayjs | null>(null)
     const [guests, setGuests] = useState<number>(2)
     const [showCopySnackbar, setShowCopySnackbar] = useState(false)
+    const [selectedClient, setSelectedClient] = useState<IRegisterClient | null>(null)
+    const [clientSearchTerm, setClientSearchTerm] = useState<string>('')
     
     const [calculatePricing, { data, isLoading, error }] = useLazyCalculatePricingQuery()
+    const { data: clientsData, isFetching: isLoadingClients } = useGetAllClientsQuery({
+        page: 1,
+        page_size: 10,
+        search: clientSearchTerm,
+    })
 
     const handleCheckInChange = (newValue: Dayjs | null) => {
         setCheckInDate(newValue)
@@ -65,6 +75,7 @@ export default function CotizadorCenter() {
             check_in_date: formattedCheckIn,
             check_out_date: formattedCheckOut,
             guests: guests,
+            ...(selectedClient && { client_id: selectedClient.id }),
         })
     }
 
@@ -208,6 +219,33 @@ ${bookingUrl}
                                     InputProps={{
                                         inputProps: { min: 1 },
                                     }}
+                                />
+
+                                <Autocomplete
+                                    fullWidth
+                                    options={clientsData?.results || []}
+                                    getOptionLabel={(option) => `${option.first_name} ${option.last_name} - ${option.number_doc}`}
+                                    value={selectedClient}
+                                    onChange={(_, newValue) => setSelectedClient(newValue)}
+                                    onInputChange={(_, newInputValue) => setClientSearchTerm(newInputValue)}
+                                    loading={isLoadingClients}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Cliente (opcional)"
+                                            placeholder="Buscar por nombre o documento"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                    <>
+                                                        {isLoadingClients ? <CircularProgress color="inherit" size={20} /> : null}
+                                                        {params.InputProps.endAdornment}
+                                                    </>
+                                                ),
+                                            }}
+                                        />
+                                    )}
+                                    noOptionsText="No se encontraron clientes"
                                 />
 
                                 <Button
