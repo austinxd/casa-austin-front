@@ -99,9 +99,9 @@ export default function CotizadorCenter() {
         if (includeLateCheckout && Object.keys(lateCheckoutData).length > 0) {
             const availableLateCheckouts = Object.values(lateCheckoutData).filter(lc => lc.is_available)
             if (availableLateCheckouts.length > 0) {
-                lateCheckoutInfo = '\n\n🕐 *Late Checkout Disponible:*'
+                lateCheckoutInfo = `\n\n🕐 *Late Checkout Disponible:*\n*PRECIO PARA ${guests} PERSONAS*`
                 availableLateCheckouts.forEach((lateCheckout) => {
-                    lateCheckoutInfo += `\n• ${lateCheckout.property_name}: *$${lateCheckout.late_checkout_price_usd.toFixed(2)}* ó *S/.${lateCheckout.late_checkout_price_sol.toFixed(2)}*`
+                    lateCheckoutInfo += `\n🏠 ${lateCheckout.property_name}: *$${lateCheckout.late_checkout_price_usd.toFixed(2)}* ó *S/.${lateCheckout.late_checkout_price_sol.toFixed(2)}*`
                 })
             }
         }
@@ -482,10 +482,20 @@ ${bookingUrl}
                                                     sx={{ 
                                                         fontWeight: 600,
                                                         color: '#212121',
-                                                        mb: 1,
+                                                        mb: 0.5,
                                                     }}
                                                 >
                                                     🕐 Late Checkout Disponible:
+                                                </Typography>
+                                                <Typography 
+                                                    variant="body2" 
+                                                    sx={{ 
+                                                        fontWeight: 600,
+                                                        color: '#212121',
+                                                        mb: 1,
+                                                    }}
+                                                >
+                                                    PRECIO PARA {guests} PERSONAS
                                                 </Typography>
                                                 {Object.values(lateCheckoutData).map((lateCheckout, index) => (
                                                     lateCheckout.is_available && (
@@ -497,7 +507,7 @@ ${bookingUrl}
                                                                 lineHeight: 1.8,
                                                             }}
                                                         >
-                                                            • {lateCheckout.property_name}: <strong>${lateCheckout.late_checkout_price_usd.toFixed(2)}</strong> ó <strong>S/.{lateCheckout.late_checkout_price_sol.toFixed(2)}</strong>
+                                                            🏠 {lateCheckout.property_name}: <strong>${lateCheckout.late_checkout_price_usd.toFixed(2)}</strong> ó <strong>S/.{lateCheckout.late_checkout_price_sol.toFixed(2)}</strong>
                                                         </Typography>
                                                     )
                                                 ))}
