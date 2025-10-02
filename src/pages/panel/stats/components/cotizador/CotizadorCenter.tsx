@@ -97,15 +97,6 @@ export default function CotizadorCenter() {
             <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={5}>
-                        <Box sx={{ mb: 4 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 500, mb: 1 }}>
-                                Cotizador
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Calcula el precio de tu estadía
-                            </Typography>
-                        </Box>
-
                         <Paper 
                             elevation={0}
                             sx={{ 
