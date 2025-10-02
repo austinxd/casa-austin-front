@@ -101,7 +101,7 @@ export default function CotizadorCenter() {
             if (availableLateCheckouts.length > 0) {
                 lateCheckoutInfo = '\n\n🕐 *Late Checkout Disponible:*'
                 availableLateCheckouts.forEach((lateCheckout) => {
-                    lateCheckoutInfo += `\n• ${lateCheckout.property_name}: S/ ${lateCheckout.late_checkout_price_sol.toFixed(2)} ($${lateCheckout.late_checkout_price_usd.toFixed(2)})`
+                    lateCheckoutInfo += `\n• ${lateCheckout.property_name}: *$${lateCheckout.late_checkout_price_usd.toFixed(2)}* ó *S/.${lateCheckout.late_checkout_price_sol.toFixed(2)}*`
                 })
             }
         }
@@ -165,13 +165,9 @@ ${bookingUrl}
                         }))
                     )
                 ).then(results => {
-                    console.log('=== LATE CHECKOUT RESULTS ===')
-                    console.log('Raw results:', results)
                     const lateCheckoutMap: Record<string, LateCheckoutData> = {}
                     results.forEach(result => {
-                        console.log('Processing result:', result)
                         if (result.success && result.data) {
-                            console.log('Adding to map:', result.data)
                             const lateCheckoutWithId = {
                                 ...result.data,
                                 property_id: result.property_id
@@ -179,13 +175,9 @@ ${bookingUrl}
                             lateCheckoutMap[result.property_id] = lateCheckoutWithId
                         }
                     })
-                    console.log('Final lateCheckoutMap:', lateCheckoutMap)
-                    console.log('Map keys:', Object.keys(lateCheckoutMap))
-                    console.log('Map values:', Object.values(lateCheckoutMap))
                     setLateCheckoutData(lateCheckoutMap)
                     setIsLoadingLateCheckout(false)
-                }).catch((error) => {
-                    console.error('=== LATE CHECKOUT ERROR ===', error)
+                }).catch(() => {
                     setIsLoadingLateCheckout(false)
                 })
             }
@@ -483,19 +475,6 @@ ${bookingUrl}
                                         >
                                             {data.data.message2}
                                         </Typography>
-                                        {(() => {
-                                            console.log('=== RENDER CHECK ===')
-                                            console.log('includeLateCheckout:', includeLateCheckout)
-                                            console.log('lateCheckoutData:', lateCheckoutData)
-                                            console.log('Object.keys length:', Object.keys(lateCheckoutData).length)
-                                            console.log('Has available?:', Object.values(lateCheckoutData).some(lc => lc.is_available))
-                                            console.log('All conditions:', 
-                                                includeLateCheckout && 
-                                                Object.keys(lateCheckoutData).length > 0 && 
-                                                Object.values(lateCheckoutData).some(lc => lc.is_available)
-                                            )
-                                            return null
-                                        })()}
                                         {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.is_available) && (
                                             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
                                                 <Typography 
@@ -518,7 +497,7 @@ ${bookingUrl}
                                                                 lineHeight: 1.8,
                                                             }}
                                                         >
-                                                            • {lateCheckout.property_name}: S/ {lateCheckout.late_checkout_price_sol.toFixed(2)} (${lateCheckout.late_checkout_price_usd.toFixed(2)})
+                                                            • {lateCheckout.property_name}: <strong>${lateCheckout.late_checkout_price_usd.toFixed(2)}</strong> ó <strong>S/.{lateCheckout.late_checkout_price_sol.toFixed(2)}</strong>
                                                         </Typography>
                                                     )
                                                 ))}
