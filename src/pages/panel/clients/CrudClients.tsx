@@ -300,6 +300,8 @@ export default function CrudClients() {
                                         comment={item.comentarios_clientes}
                                         handleEdit={() => onEdit(item)}
                                         handleDelete={() => onDelete(item)}
+                                        level_icon={item.level_info?.icon}
+                                        points_balance={item.points_balance}
                                     />
                                 ))}
                         </Box>

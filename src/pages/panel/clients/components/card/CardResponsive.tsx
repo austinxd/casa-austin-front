@@ -16,6 +16,8 @@ interface Props {
     email: string
     comment: string
     id: string
+    level_icon?: string
+    points_balance: string
 }
 
 export default function CardResponsive({
@@ -29,6 +31,8 @@ export default function CardResponsive({
     tel_number,
     document_type,
     id,
+    level_icon,
+    points_balance,
 }: Props) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
@@ -71,8 +75,11 @@ export default function CardResponsive({
                 position={'relative'}
                 flexDirection={'column'}
             >
-                <Box display={'flex'} alignItems={'center'}>
-                    <Typography fontWeight={600} mb={1} fontSize={15}>
+                <Box display={'flex'} alignItems={'center'} gap={0.5} mb={0.5}>
+                    {level_icon && (
+                        <Typography fontSize="1.2rem">{level_icon}</Typography>
+                    )}
+                    <Typography fontWeight={600} fontSize={15}>
                         {first_name}
                     </Typography>
                     {comment && (
@@ -81,6 +88,9 @@ export default function CardResponsive({
                         </IconButton>
                     )}
                 </Box>
+                <Typography variant="caption" color="text.secondary" mb={1}>
+                    Puntos: {parseFloat(points_balance || '0').toFixed(2)}
+                </Typography>
                 <Box display={'flex'} justifyContent={'space-between'}>
                     <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>
                         <strong>{getTypeDocument(document_type)}: </strong> {number_doc}{' '}
@@ -96,9 +106,6 @@ export default function CardResponsive({
                             sx={{ fontSize: '20px', color: palette.primary.main, opacity: 0.6 }}
                         />
                         <WhatsAppIcon sx={{ fontSize: '20px', color: '#65D072' }} />
-                        {/*                         <Typography variant="subtitle1" sx={{ color: '#2F2B3D', opacity: 0.7 }}>
-                            {tel_number}
-                        </Typography> */}
                     </Box>
                 </Box>
 
