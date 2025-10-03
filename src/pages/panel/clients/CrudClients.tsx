@@ -120,6 +120,15 @@ export default function CrudClients() {
         },
         { field: 'number_doc', headerName: 'DOCUMENTO', flex: 1, sortable: false },
         {
+            field: 'icon',
+            headerName: 'NIVEL',
+            flex: 0.5,
+            sortable: false,
+            renderCell: (params: { row: IRegisterClient }) => (
+                <Typography fontSize="1.5rem">{params.row.icon || '-'}</Typography>
+            ),
+        },
+        {
             field: 'actions',
             headerName: 'ACCIONES',
             flex: 1,

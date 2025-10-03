@@ -9,6 +9,7 @@ export interface IRegisterClient {
     date: any
     tel_number: string
     id: string
+    icon?: string
 }
 export interface IListClients {
     actual: number
