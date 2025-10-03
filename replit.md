@@ -8,7 +8,8 @@ Casa Austin is a comprehensive property rental management system developed with 
 - Added ordering filters to the clients page (/clientes)
 - Implemented sorting by points balance (highest first) using `-points_balance` parameter
 - Implemented sorting by level (highest first) using `-level` parameter  
-- Added ordering selector in SearchClient component with options: "Sin orden", "Mayor puntos", "Mayor nivel"
+- Implemented alphabetical sorting by last name using `last_name` parameter
+- Added ordering selector in SearchClient component with options: "Sin orden", "Mayor puntos", "Mayor nivel", "Apellido (A-Z)"
 - Integrated ordering state management with existing pagination and search functionality
 
 ## October 2, 2025 - Cotizador UX Improvements

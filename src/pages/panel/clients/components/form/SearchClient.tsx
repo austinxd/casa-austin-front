@@ -123,6 +123,7 @@ export default function SearchClient({
                         <MenuItem value="">Sin orden</MenuItem>
                         <MenuItem value="-points_balance">Mayor puntos</MenuItem>
                         <MenuItem value="-level">Mayor nivel</MenuItem>
+                        <MenuItem value="last_name">Apellido (A-Z)</MenuItem>
                     </Select>
                 </Box>
 
