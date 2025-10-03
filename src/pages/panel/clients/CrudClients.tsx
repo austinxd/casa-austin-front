@@ -19,10 +19,12 @@ export default function CrudClients() {
     const [pageSize, setPageSize] = useState<number>(10)
     const { palette } = useTheme()
     const [search, setSearch] = useState('')
+    const [ordering, setOrdering] = useState<string>('')
     const { data, isLoading, refetch } = useGetAllClientsQuery({
         page: currentPage,
         page_size: pageSize,
         search: search,
+        ordering: ordering,
     })
 
     const [openForm, setOpenForm] = useState(false)
@@ -206,6 +208,8 @@ export default function CrudClients() {
                         onSave={onCreate}
                         setCurrentPage={setCurrentPage}
                         setSearch={setSearch}
+                        ordering={ordering}
+                        setOrdering={setOrdering}
                     />
 
                     <Box

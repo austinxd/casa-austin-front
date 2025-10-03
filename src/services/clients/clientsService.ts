@@ -27,15 +27,16 @@ export const clientApi = createApi({
         }),
         getAllClients: builder.query<
             IListClients,
-            { page?: number; page_size?: number | string; search: string }
+            { page?: number; page_size?: number | string; search: string; ordering?: string }
         >({
-            query: ({ page = 1, page_size = 10, search = '' }) => ({
+            query: ({ page = 1, page_size = 10, search = '', ordering = '' }) => ({
                 url: '/clients/',
                 method: 'GET',
                 params: {
                     page: page.toString(),
                     page_size: page_size.toString(),
                     search: search,
+                    ...(ordering && { ordering }),
                 },
             }),
         }),

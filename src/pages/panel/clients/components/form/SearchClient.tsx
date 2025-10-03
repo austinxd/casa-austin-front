@@ -11,9 +11,13 @@ interface Props {
     text: string
     setPageSize: React.Dispatch<React.SetStateAction<number>>
     pageSize: number
+    setOrdering: React.Dispatch<React.SetStateAction<string>>
+    ordering: string
 }
 
 export default function SearchClient({
+    setOrdering,
+    ordering,
     setPageSize,
     pageSize,
     onSave,
@@ -34,6 +38,10 @@ export default function SearchClient({
     }
     const handlePageSizeChange = (event: any) => {
         setPageSize(event.target.value as number)
+    }
+    const handleOrderingChange = (event: any) => {
+        setOrdering(event.target.value as string)
+        setCurrentPage(1)
     }
     return (
         <>
@@ -91,6 +99,30 @@ export default function SearchClient({
                     >
                         <MenuItem value={10}>10</MenuItem>
                         <MenuItem value={20}>20</MenuItem>
+                    </Select>
+                    <Select
+                        value={ordering}
+                        onChange={handleOrderingChange}
+                        displayEmpty
+                        sx={{
+                            height: '45px',
+                            marginLeft: '6px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            '& .MuiSelect-outlined': {
+                                outline: 'none',
+                                borderRadius: '8px',
+                                border: 'none',
+                                padding: '8px',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                border: '1px solid #D1D0D4',
+                            },
+                        }}
+                    >
+                        <MenuItem value="">Sin orden</MenuItem>
+                        <MenuItem value="-points_balance">Mayor puntos</MenuItem>
+                        <MenuItem value="-level">Mayor nivel</MenuItem>
                     </Select>
                 </Box>
 
