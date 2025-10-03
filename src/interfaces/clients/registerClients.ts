@@ -1,3 +1,10 @@
+export interface ILevelInfo {
+    name: string
+    description: string
+    icon: string
+    earned_at: string
+}
+
 export interface IRegisterClient {
     comentarios_clientes: string
     document_type: string
@@ -9,7 +16,7 @@ export interface IRegisterClient {
     date: any
     tel_number: string
     id: string
-    icon?: string
+    level_info?: ILevelInfo
 }
 export interface IListClients {
     actual: number

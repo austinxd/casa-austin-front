@@ -11,7 +11,7 @@ Casa Austin is a comprehensive property rental management system developed with 
 - Implemented alphabetical sorting by last name using `last_name` parameter
 - Added ordering selector in SearchClient component with options: "Sin orden", "Mayor puntos", "Mayor nivel", "Apellido (A-Z)"
 - Integrated ordering state management with existing pagination and search functionality
-- Added "NIVEL" column to display client level icon (emoji)
+- Added "NIVEL" column to display client level icon (emoji) from level_info object
 
 ## October 2, 2025 - Cotizador UX Improvements
 - Fixed guest input field overlay issue where "1" prevented entering custom values
