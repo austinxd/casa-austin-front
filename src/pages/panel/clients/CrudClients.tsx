@@ -1,4 +1,4 @@
-import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from '@mui/material'
+import { Box, IconButton, Menu, MenuItem, Typography, useTheme, useMediaQuery } from '@mui/material'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import CommentIcon from '@mui/icons-material/Comment'
@@ -17,7 +17,8 @@ export default function CrudClients() {
     const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({})
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState<number>(10)
-    const { palette } = useTheme()
+    const { palette, breakpoints } = useTheme()
+    const isMobile = useMediaQuery(breakpoints.down('md'))
     const [search, setSearch] = useState('')
     const [ordering, setOrdering] = useState<string>('')
     const { data, isLoading, refetch } = useGetAllClientsQuery({
@@ -59,8 +60,19 @@ export default function CrudClients() {
             headerName: 'NIVEL',
             flex: 0.5,
             sortable: false,
+            hide: isMobile,
             renderCell: (params: { row: IRegisterClient }) => (
                 <Typography fontSize="1.5rem">{params.row.level_info?.icon || '-'}</Typography>
+            ),
+        },
+        {
+            field: 'points_balance',
+            headerName: 'PUNTOS',
+            flex: 0.7,
+            sortable: false,
+            hide: isMobile,
+            renderCell: (params: { row: IRegisterClient }) => (
+                <Typography>{parseFloat(params.row.points_balance || '0').toFixed(2)}</Typography>
             ),
         },
         {
@@ -69,16 +81,37 @@ export default function CrudClients() {
             flex: 1,
             sortable: false,
             renderCell: (params: { row: IRegisterClient }) => (
-                <Box display={'flex'} alignItems={'center'}>
-                    <Typography letterSpacing={0}>{params.row.first_name}</Typography>
-                    {params.row.comentarios_clientes && (
-                        <IconButton sx={{ p: 0.4 }} onClick={() => handleComment(params.row)}>
-                            <CommentIcon
-                                sx={{ color: palette.primary.main, opacity: 0.6, fontSize: '16px' }}
-                            />
-                        </IconButton>
-                    )}
-                </Box>
+                isMobile ? (
+                    <Box display="flex" flexDirection="column" gap={0.3}>
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                            {params.row.level_info?.icon && (
+                                <Typography fontSize="1.2rem">{params.row.level_info.icon}</Typography>
+                            )}
+                            <Typography letterSpacing={0}>{params.row.first_name}</Typography>
+                            {params.row.comentarios_clientes && (
+                                <IconButton sx={{ p: 0.4 }} onClick={() => handleComment(params.row)}>
+                                    <CommentIcon
+                                        sx={{ color: palette.primary.main, opacity: 0.6, fontSize: '16px' }}
+                                    />
+                                </IconButton>
+                            )}
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                            Puntos: {parseFloat(params.row.points_balance || '0').toFixed(2)}
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Box display={'flex'} alignItems={'center'}>
+                        <Typography letterSpacing={0}>{params.row.first_name}</Typography>
+                        {params.row.comentarios_clientes && (
+                            <IconButton sx={{ p: 0.4 }} onClick={() => handleComment(params.row)}>
+                                <CommentIcon
+                                    sx={{ color: palette.primary.main, opacity: 0.6, fontSize: '16px' }}
+                                />
+                            </IconButton>
+                        )}
+                    </Box>
+                )
             ),
         },
         {

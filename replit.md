@@ -4,14 +4,17 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
-## October 3, 2025 - Client Ordering Filters and Level Column
+## October 3, 2025 - Client Ordering Filters, Level Column, and Points Balance
 - Added ordering filters to the clients page (/clientes)
 - Implemented sorting by points balance (highest first) using `-points_balance` parameter
 - Implemented sorting by level (highest first) using `-level` parameter  
 - Implemented alphabetical sorting by last name using `last_name` parameter
 - Added ordering selector in SearchClient component with options: "Sin orden", "Mayor puntos", "Mayor nivel", "Apellido (A-Z)"
 - Integrated ordering state management with existing pagination and search functionality
-- Added "NIVEL" column to display client level icon (emoji) from level_info object
+- Added "NIVEL" column to display client level icon (emoji) from level_info object (desktop only)
+- Added "PUNTOS" column to display points_balance with decimal formatting (desktop only)
+- Implemented responsive mobile layout: NIVEL and PUNTOS columns hidden on mobile, level icon displays beside name, points shown below as "Puntos: XX"
+- Added points_balance field to IRegisterClient interface
 
 ## October 2, 2025 - Cotizador UX Improvements
 - Fixed guest input field overlay issue where "1" prevented entering custom values

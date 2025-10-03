@@ -17,6 +17,7 @@ export interface IRegisterClient {
     tel_number: string
     id: string
     level_info?: ILevelInfo
+    points_balance: string
 }
 export interface IListClients {
     actual: number
