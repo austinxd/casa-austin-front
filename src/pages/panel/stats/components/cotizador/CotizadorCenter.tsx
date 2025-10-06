@@ -95,8 +95,96 @@ export default function CotizadorCenter() {
         })
     }
 
+    const generateMessages = () => {
+        if (!data?.data) return { message1: '', message2: '' }
+
+        if (data.data.message1 && data.data.message2) {
+            return { message1: data.data.message1, message2: data.data.message2 }
+        }
+
+        const directAvailable = data.data.direct_available || []
+        const optionsWithMovements = data.data.options_with_movements || []
+        const legacyProperties = data.data.properties || []
+        
+        const hasNewFormat = directAvailable.length > 0 || optionsWithMovements.length > 0
+        
+        if (!hasNewFormat && legacyProperties.length === 0) {
+            return { 
+                message1: '❌ No hay disponibilidad', 
+                message2: 'Lo sentimos, no hay propiedades disponibles para las fechas seleccionadas.' 
+            }
+        }
+
+        let message1 = ''
+        let message2 = ''
+
+        if (hasNewFormat) {
+            if (directAvailable.length > 0) {
+                message1 = `✅ ${directAvailable.length === 1 ? 'Casa disponible' : `${directAvailable.length} casas disponibles`}`
+                
+                message2 = directAvailable.map(prop => {
+                    const hasDiscount = prop.discount_applied && prop.discount_applied.discount_percentage > 0
+                    let propMessage = `🏠 *${prop.property_name}*\n`
+                    
+                    if (hasDiscount && prop.discount_applied) {
+                        propMessage += `💰 Precio regular: $${prop.subtotal_usd.toFixed(2)} ó S/.${prop.subtotal_sol.toFixed(2)}\n`
+                        propMessage += `🎉 Con ${prop.discount_applied.discount_percentage}% descuento: *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*`
+                    } else {
+                        propMessage += `💰 *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*`
+                    }
+                    
+                    return propMessage
+                }).join('\n\n')
+            } else if (optionsWithMovements.length > 0) {
+                message1 = `⚠️ Sin disponibilidad directa - ${optionsWithMovements.length} ${optionsWithMovements.length === 1 ? 'alternativa disponible' : 'alternativas disponibles'}`
+                
+                message2 = optionsWithMovements.map(prop => {
+                    let propMessage = `🏠 *${prop.property_name}*\n`
+                    propMessage += `💰 *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*\n`
+                    
+                    if (prop.movement_required) {
+                        const movement = prop.movement_required
+                        propMessage += `⚠️ Requiere mover reserva:\n`
+                        propMessage += `   • Cliente: ${movement.client_name}\n`
+                        propMessage += `   • De ${movement.from_property} a ${movement.to_property}\n`
+                        propMessage += `   • Fechas afectadas: ${movement.reservation_dates.check_in} al ${movement.reservation_dates.check_out}`
+                    }
+                    
+                    return propMessage
+                }).join('\n\n')
+            }
+        } else {
+            const availableProperties = legacyProperties.filter(p => p.available)
+            
+            if (availableProperties.length > 0) {
+                message1 = `✅ ${availableProperties.length === 1 ? 'Casa disponible' : `${availableProperties.length} casas disponibles`}`
+                
+                message2 = availableProperties.map(prop => {
+                    const hasDiscount = prop.discount_applied && prop.discount_applied.discount_percentage > 0
+                    let propMessage = `🏠 *${prop.property_name}*\n`
+                    
+                    if (hasDiscount && prop.discount_applied) {
+                        propMessage += `💰 Precio regular: $${prop.subtotal_usd.toFixed(2)} ó S/.${prop.subtotal_sol.toFixed(2)}\n`
+                        propMessage += `🎉 Con ${prop.discount_applied.discount_percentage}% descuento: *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*`
+                    } else {
+                        propMessage += `💰 *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*`
+                    }
+                    
+                    return propMessage
+                }).join('\n\n')
+            } else {
+                message1 = '❌ No hay disponibilidad'
+                message2 = 'Lo sentimos, no hay propiedades disponibles para las fechas seleccionadas.'
+            }
+        }
+
+        return { message1, message2 }
+    }
+
+    const { message1, message2 } = generateMessages()
+
     const handleCopyToClipboard = () => {
-        if (!data?.data?.message1 || !data?.data?.message2 || !checkInDate || !checkOutDate) {
+        if (!message1 || !message2 || !checkInDate || !checkOutDate) {
             return
         }
 
@@ -127,7 +215,7 @@ ${bookingUrl}
 
 ⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
+        const fullMessage = `${message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${message2}${lateCheckoutInfo}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -142,11 +230,12 @@ ${bookingUrl}
     const checkOutError = checkOutDate && checkInDate && !checkOutDate.isAfter(checkInDate)
     
     const isFormValid = checkInDate && checkOutDate && guests > 0 && !checkInError && !checkOutError
-    const hasResultMessages = data?.data?.message1 && data?.data?.message2
+    const hasResultMessages = message1 && message2
 
     const nightsCount = checkInDate && checkOutDate ? checkOutDate.diff(checkInDate, 'day') : 0
 
-    const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
+    const directAvailable = data?.data?.direct_available || []
+    const hasAvailableProperties = directAvailable.length > 0 || (data?.data?.properties && data.data.properties.some(p => p.available))
 
     useEffect(() => {
         if (!hasAvailableProperties) {
@@ -155,8 +244,10 @@ ${bookingUrl}
             return
         }
 
-        if (includeLateCheckout && data?.data?.properties && checkOutDate) {
-            const availableProperties = data.data.properties.filter(p => p.available)
+        if (includeLateCheckout && checkOutDate) {
+            const availableProperties = data?.data?.direct_available && data.data.direct_available.length > 0
+                ? data.data.direct_available.filter(p => p.available)
+                : data?.data?.properties?.filter(p => p.available) || []
             
             if (availableProperties.length > 0) {
                 setIsLoadingLateCheckout(true)
@@ -463,7 +554,7 @@ ${bookingUrl}
                                                 lineHeight: 1.8,
                                             }}
                                         >
-                                            {data.data.message1}
+                                            {message1}
                                         </Typography>
                                     </Box>
 
@@ -493,7 +584,7 @@ ${bookingUrl}
                                                 lineHeight: 1.8,
                                             }}
                                         >
-                                            {data.data.message2}
+                                            {message2}
                                         </Typography>
                                         {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.is_available) && (
                                             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
