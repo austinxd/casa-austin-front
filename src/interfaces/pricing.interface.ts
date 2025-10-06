@@ -1,3 +1,16 @@
+export interface MovementRequired {
+    reservation_id: string
+    client_name: string
+    from_property: string
+    to_property: string
+    reservation_dates: {
+        check_in: string
+        check_out: string
+        nights: number
+    }
+    status: string
+}
+
 export interface Property {
     property_id: string
     property_name: string
@@ -26,19 +39,43 @@ export interface Property {
     services_applied_count: number
     cancellation_policy: string | null
     recommendations: string[]
+    option_type?: string
+    movement_required?: MovementRequired
+    discount_applied?: {
+        type: string
+        description: string
+        discount_percentage: number
+        discount_amount_usd: number
+        discount_amount_sol: number
+        code_used: string | null
+        apply_only_to_base_price: boolean
+    }
 }
 
 export interface PricingData {
-    totalCasasDisponibles: number
-    check_in_date: string
-    check_out_date: string
-    guests: number
-    total_nights: number
-    exchange_rate: number
-    properties: Property[]
-    general_recommendations: string[]
-    message1: string
-    message2: string
+    totalCasasDisponibles?: number
+    check_in_date?: string
+    check_out_date?: string
+    guests?: number
+    total_nights?: number
+    exchange_rate?: number
+    properties?: Property[]
+    general_recommendations?: string[]
+    message1?: string
+    message2?: string
+    requested_dates?: {
+        check_in: string
+        check_out: string
+        nights: number
+        guests: number
+    }
+    direct_available?: Property[]
+    options_with_movements?: Property[]
+    summary?: {
+        total_direct_available: number
+        total_options_with_movements: number
+        total_properties_checked: number
+    }
 }
 
 export interface PricingCalculationResponse {
