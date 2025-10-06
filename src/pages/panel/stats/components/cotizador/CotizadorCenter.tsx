@@ -95,8 +95,33 @@ export default function CotizadorCenter() {
         })
     }
 
+    const generateMessage2 = () => {
+        if (!data?.data) return ''
+        
+        const optionsWithMovements = data.data.options_with_movements || []
+        
+        if (optionsWithMovements.length > 0) {
+            return optionsWithMovements.map(prop => {
+                let propMessage = `🏠 *${prop.property_name}*\n`
+                propMessage += `💰 *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*\n`
+                
+                if (prop.movement_required) {
+                    const movement = prop.movement_required
+                    propMessage += `⚠️ Requiere mover reserva:\n`
+                    propMessage += `   • Cliente: ${movement.client_name}\n`
+                    propMessage += `   • De ${movement.from_property} a ${movement.to_property}\n`
+                    propMessage += `   • Fechas afectadas: ${movement.reservation_dates.check_in} al ${movement.reservation_dates.check_out}`
+                }
+                
+                return propMessage
+            }).join('\n\n')
+        }
+        
+        return data.data.message2 || ''
+    }
+
     const message1 = data?.data?.message1 || ''
-    const message2 = data?.data?.message2 || ''
+    const message2 = generateMessage2()
 
     const handleCopyToClipboard = () => {
         if (!message1 || !message2 || !checkInDate || !checkOutDate) {

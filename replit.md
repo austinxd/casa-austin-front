@@ -5,16 +5,22 @@ Casa Austin is a comprehensive property rental management system developed with 
 # Recent Changes
 
 ## October 6, 2025 - Cotizador ERP Endpoint Integration
-- **Cotizador API Update**: Migrated to new ERP pricing endpoint with backend-generated messages
+- **Cotizador API Update**: Migrated to new ERP pricing endpoint with hybrid message generation
   - Updated from `/api/v1/properties/calculate-pricing/` to `/api/v1/properties/calculate-pricing-erp/`
   - Modified in pricingService.ts to use new ERP endpoint
-  - New endpoint returns structured response with `direct_available`, `options_with_movements` arrays, and pre-generated `message1` and `message2`
+  - New endpoint returns structured response with `direct_available`, `options_with_movements` arrays, and `message1`/`message2`
   - Enhanced PricingData interface to support new API structure:
     - Added MovementRequired interface for reservation transfer details
     - Added optional fields: direct_available, options_with_movements, summary
     - Added discount_applied and movement_required to Property interface
-  - Simplified CotizadorCenter to use backend-generated messages directly
-  - Backend now handles all message generation including alternatives with movement requirements
+  - Implemented hybrid message generation in CotizadorCenter:
+    - Uses backend-generated `message1` for header
+    - Dynamically generates `message2` from `options_with_movements` to show alternatives with full movement details:
+      - Property name and pricing
+      - Client name requiring reservation move
+      - Property transfer details (from/to)
+      - Affected dates
+    - Falls back to backend `message2` when no alternatives exist
 
 ## October 6, 2025 - Logout Fix, Reservation Status & Points Features
 - **Logout Fix**: Fixed logout functionality that wasn't properly clearing session
