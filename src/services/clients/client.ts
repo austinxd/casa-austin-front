@@ -26,3 +26,11 @@ export const dataClientByDocument = async (
         console.log(error)
     }
 }
+
+export const adjustClientPoints = async (client_id: string, points: number, reason: string) => {
+    return await casaApi.post('/clients/points/adjust/', {
+        client_id,
+        points,
+        reason,
+    })
+}

@@ -5,6 +5,7 @@ import CommentIcon from '@mui/icons-material/Comment'
 import CloseIcon from '@mui/icons-material/Close'
 import FormClients from './components/form/FormClients'
 import DeleteClient from './components/form/DeleteClient'
+import AdjustPoints from './components/form/AdjustPoints'
 import CardResponsive from './components/card/CardResponsive'
 import SearchClient from './components/form/SearchClient'
 import { useGetAllClientsQuery } from '@/services/clients/clientsService'
@@ -32,6 +33,7 @@ export default function CrudClients() {
     const [openComment, setOpenComment] = useState(false)
     const [dataClient, setDataClient] = useState<IRegisterClient | null>(null)
     const [del, setDel] = useState(false)
+    const [adjustPoints, setAdjustPoints] = useState(false)
     const [clienById, setClienById] = useState<IRegisterClient | null>(null)
     const [title, setTitle] = useState('')
     const [btn, setBtn] = useState('')
@@ -208,6 +210,9 @@ export default function CrudClients() {
                         <MenuItem sx={{ color: '#000F08' }} onClick={() => onEdit(params.row)}>
                             Editar
                         </MenuItem>
+                        <MenuItem sx={{ color: '#000F08' }} onClick={() => onAdjustPoints(params.row)}>
+                            Puntos
+                        </MenuItem>
                         <MenuItem sx={{ color: '#FF4C51' }} onClick={() => onDelete(params.row)}>
                             Eliminar
                         </MenuItem>
@@ -232,6 +237,10 @@ export default function CrudClients() {
     const onDelete = (data: IRegisterClient) => {
         setClienById(data)
         setDel(true)
+    }
+    const onAdjustPoints = (data: IRegisterClient) => {
+        setClienById(data)
+        setAdjustPoints(true)
     }
 
     return (
@@ -300,6 +309,7 @@ export default function CrudClients() {
                                         comment={item.comentarios_clientes}
                                         handleEdit={() => onEdit(item)}
                                         handleDelete={() => onDelete(item)}
+                                        handleAdjustPoints={() => onAdjustPoints(item)}
                                         level_icon={item.level_info?.icon}
                                         points_balance={item.points_balance}
                                     />
@@ -327,6 +337,19 @@ export default function CrudClients() {
                         refetch={refetch}
                         onCancel={() => {
                             setDel(false)
+                            setClienById(null)
+                        }}
+                    />
+                )}
+            </BasicModal>
+
+            <BasicModal open={adjustPoints}>
+                {clienById && (
+                    <AdjustPoints
+                        data={clienById}
+                        refetch={refetch}
+                        onCancel={() => {
+                            setAdjustPoints(false)
                             setClienById(null)
                         }}
                     />

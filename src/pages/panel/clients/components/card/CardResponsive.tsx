@@ -9,6 +9,7 @@ interface Props {
     handleEdit: () => void
     handleComment: () => void
     handleDelete: (id: string) => void
+    handleAdjustPoints: () => void
     first_name: string
     tel_number: string
     number_doc: string
@@ -25,6 +26,7 @@ export default function CardResponsive({
     handleComment,
     comment,
     handleDelete,
+    handleAdjustPoints,
     number_doc,
     email,
     first_name,
@@ -139,6 +141,9 @@ export default function CardResponsive({
                 >
                     <MenuItem onClick={handleEdit} sx={{ color: '#000F08' }}>
                         Editar
+                    </MenuItem>
+                    <MenuItem onClick={handleAdjustPoints} sx={{ color: '#000F08' }}>
+                        Puntos
                     </MenuItem>
                     <MenuItem onClick={() => handleDelete(id)} sx={{ color: '#FF4C51' }}>
                         Eliminar
