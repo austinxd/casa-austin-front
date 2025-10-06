@@ -95,36 +95,8 @@ export default function CotizadorCenter() {
         })
     }
 
-    const generateMessage2 = () => {
-        if (!data?.data) return ''
-        
-        const optionsWithMovements = data.data.options_with_movements || []
-        
-        if (optionsWithMovements.length > 0) {
-            return optionsWithMovements.map(prop => {
-                let propMessage = `🏠 *${prop.property_name}*\n`
-                propMessage += `💰 *$${prop.final_price_with_services_usd.toFixed(2)}* ó *S/.${prop.final_price_with_services_sol.toFixed(2)}*\n`
-                
-                if (prop.movement_required) {
-                    const movement = prop.movement_required
-                    propMessage += `⚠️ Requiere mover reserva:\n`
-                    propMessage += `   • Cliente: ${movement.client_name}\n`
-                    propMessage += `   • De ${movement.from_property} a ${movement.to_property}\n`
-                    propMessage += `   • Fechas afectadas: ${movement.reservation_dates.check_in} al ${movement.reservation_dates.check_out}`
-                }
-                
-                return propMessage
-            }).join('\n\n')
-        }
-        
-        return data.data.message2 || ''
-    }
-
-    const message1 = data?.data?.message1 || ''
-    const message2 = generateMessage2()
-
     const handleCopyToClipboard = () => {
-        if (!message1 || !message2 || !checkInDate || !checkOutDate) {
+        if (!data?.data?.message1 || !data?.data?.message2 || !checkInDate || !checkOutDate) {
             return
         }
 
@@ -155,7 +127,7 @@ ${bookingUrl}
 
 ⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${message2}${lateCheckoutInfo}${additionalInfo}`
+        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -170,11 +142,11 @@ ${bookingUrl}
     const checkOutError = checkOutDate && checkInDate && !checkOutDate.isAfter(checkInDate)
     
     const isFormValid = checkInDate && checkOutDate && guests > 0 && !checkInError && !checkOutError
-    const hasResultMessages = message1 && message2
+    const hasResultMessages = data?.data?.message1 && data?.data?.message2
 
     const nightsCount = checkInDate && checkOutDate ? checkOutDate.diff(checkInDate, 'day') : 0
 
-    const hasAvailableProperties = data?.data?.direct_available && data.data.direct_available.length > 0
+    const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
 
     useEffect(() => {
         if (!hasAvailableProperties) {
@@ -183,10 +155,8 @@ ${bookingUrl}
             return
         }
 
-        if (includeLateCheckout && checkOutDate) {
-            const availableProperties = data?.data?.direct_available && data.data.direct_available.length > 0
-                ? data.data.direct_available.filter(p => p.available)
-                : data?.data?.properties?.filter(p => p.available) || []
+        if (includeLateCheckout && data?.data?.properties && checkOutDate) {
+            const availableProperties = data.data.properties.filter(p => p.available)
             
             if (availableProperties.length > 0) {
                 setIsLoadingLateCheckout(true)
@@ -493,7 +463,7 @@ ${bookingUrl}
                                                 lineHeight: 1.8,
                                             }}
                                         >
-                                            {message1}
+                                            {data.data.message1}
                                         </Typography>
                                     </Box>
 
@@ -523,7 +493,7 @@ ${bookingUrl}
                                                 lineHeight: 1.8,
                                             }}
                                         >
-                                            {message2}
+                                            {data.data.message2}
                                         </Typography>
                                         {includeLateCheckout && Object.keys(lateCheckoutData).length > 0 && Object.values(lateCheckoutData).some(lc => lc.is_available) && (
                                             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
