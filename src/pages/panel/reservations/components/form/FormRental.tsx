@@ -178,6 +178,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
             value: 'approved',
             label: 'Aprobado',
         },
+        {
+            value: 'under_review',
+            label: 'En revision',
+        },
     ]
     const optionsClientsEdit = {
         value: dataEdit?.client.id ? dataEdit?.client.id : '',

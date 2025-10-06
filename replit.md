@@ -4,13 +4,17 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
-## October 6, 2025 - Points Adjustment Feature
-- Added "Puntos" option to client actions menu (3 dots) in both desktop and mobile views
-- Implemented AdjustPoints modal for adding or removing points from clients
-- Created API service function adjustClientPoints for POST requests to /clients/points/adjust/
-- Created useAdjustPoints hook for managing points adjustment logic
-- Modal features: displays current balance, validates numeric input, supports positive/negative values, shows success/error states
-- Integrated with existing client management workflow following DeleteClient pattern
+## October 6, 2025 - Reservation Status & Points Features
+- **Points Adjustment**: Added "Puntos" option to client actions menu (3 dots) in both desktop and mobile views
+  - Implemented AdjustPoints modal for adding or removing points from clients
+  - Created API service function adjustClientPoints for POST requests to /clients/points/adjust/
+  - Created useAdjustPoints hook for managing points adjustment logic
+  - Modal features: displays current balance, validates numeric input, supports positive/negative values, shows success/error states
+  - Integrated with existing client management workflow following DeleteClient pattern
+- **New Reservation Status**: Added "UNDER_REVIEW" status to reservation edit form (/alquileres)
+  - Value: "under_review" 
+  - Label: "En revision"
+  - Backend displays as "En Revisión - Segundo Voucher"
 
 ## October 3, 2025 - Client Ordering Filters, Level Column, and Points Balance
 - Added ordering filters to the clients page (/clientes)
