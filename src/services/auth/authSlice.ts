@@ -22,8 +22,12 @@ const authSlice = createSlice({
             Cookies.remove('token')
             Cookies.remove('tokenRefresh')
             Cookies.remove('rollTkn')
+            Cookies.remove('roll')
             Cookies.remove('idSellerAus')
             state.token = null
+            state.roll = null
+            state.idSeller = null
+            state.keyRefresh = null
         },
         setToken: (state, { payload }) => {
             state.token = payload.token

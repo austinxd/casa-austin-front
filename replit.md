@@ -4,6 +4,13 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
+## October 6, 2025 - Logout Fix, Reservation Status & Points Features
+- **Logout Fix**: Fixed logout functionality that wasn't properly clearing session
+  - Added missing 'roll' cookie removal (was only removing 'rollTkn')
+  - Added missing 'idSellerAus' cookie removal
+  - Reset all state properties to null (token, roll, idSeller, keyRefresh)
+  - Resolved inconsistency between cookie read/write/remove operations
+
 ## October 6, 2025 - Reservation Status & Points Features
 - **Points Adjustment**: Added "Puntos" option to client actions menu (3 dots) in both desktop and mobile views
   - Implemented AdjustPoints modal for adding or removing points from clients
