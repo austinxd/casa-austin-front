@@ -4,6 +4,11 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
+## October 6, 2025 - Cotizador Endpoint Update
+- **Cotizador API Update**: Changed pricing calculation endpoint
+  - Updated from `/api/v1/properties/calculate-pricing/` to `/api/v1/properties/calculate-pricing-erp/`
+  - Modified in pricingService.ts to use new ERP endpoint
+
 ## October 6, 2025 - Logout Fix, Reservation Status & Points Features
 - **Logout Fix**: Fixed logout functionality that wasn't properly clearing session
   - Added missing 'roll' cookie removal (was only removing 'rollTkn')

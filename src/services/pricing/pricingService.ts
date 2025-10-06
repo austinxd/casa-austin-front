@@ -15,7 +15,7 @@ export const pricingService = createApi({
     endpoints: (builder) => ({
         calculatePricing: builder.query<PricingCalculationResponse, PricingCalculationParams>({
             query: (params) => ({
-                url: '/properties/calculate-pricing/',
+                url: '/properties/calculate-pricing-erp/',
                 params: {
                     check_in_date: params.check_in_date,
                     check_out_date: params.check_out_date,
