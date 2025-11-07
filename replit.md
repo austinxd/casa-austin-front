@@ -4,6 +4,13 @@ Casa Austin is a comprehensive property rental management system developed with 
 
 # Recent Changes
 
+## November 7, 2025 - Rentals "Hoy" (Today) Filter
+- **Rentals Filter**: Added "Hoy" (Today) filter to rentals/alquileres page
+  - Shows reservations created today using `created_today=true` query parameter
+  - Added filterCreatedToday state management in CrudRentals.tsx
+  - Added "Hoy" checkbox in SearchRental component with proper styling
+  - Filter integrates with existing filter system alongside Airbnb, Clientes, Futuras, En curso, Pendientes
+
 ## October 6, 2025 - Logout Fix, Reservation Status & Points Features
 - **Logout Fix**: Fixed logout functionality that wasn't properly clearing session
   - Added missing 'roll' cookie removal (was only removing 'rollTkn')

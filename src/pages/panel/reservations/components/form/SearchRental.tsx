@@ -30,9 +30,10 @@ interface Props {
     filterInProgress: string
     setFilterStatus: React.Dispatch<React.SetStateAction<string>>
     filterStatus: string
-
     filterInClient: string
     setFilterClient: React.Dispatch<React.SetStateAction<string>>
+    filterCreatedToday: string
+    setFilterCreatedToday: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function SearchRental({
@@ -51,6 +52,8 @@ export default function SearchRental({
     filterStatus,
     filterInClient,
     setFilterClient,
+    filterCreatedToday,
+    setFilterCreatedToday,
 }: Props) {
     const [inputText, setInputText] = useState('')
     const textFilter: string = useDebounce(inputText, 400)
@@ -64,7 +67,6 @@ export default function SearchRental({
         setInputText(event.target.value)
     }
 
-    // Asegúrate de que esta es la única definición de handlePageSizeChange en este archivo
     const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
         setPageSize(Number(event.target.value))
     }
@@ -87,6 +89,10 @@ export default function SearchRental({
 
     const onCheckClient = () => {
         setFilterClient((prevState) => (prevState === '' ? 'client' : ''))
+    }
+
+    const onCheckCreatedToday = () => {
+        setFilterCreatedToday((prevState) => (prevState === '' ? 'true' : ''))
     }
 
     return (
@@ -174,10 +180,9 @@ export default function SearchRental({
                         container
                         spacing={{ xs: 1, sm: 1 }}
                         alignItems="center"
-                        sx={{ flexWrap: { xs: 'wrap', sm: 'wrap' } }} // xs: dos filas; sm+: una sola fila
+                        sx={{ flexWrap: { xs: 'wrap', sm: 'wrap' } }}
                     >
                         <Grid item xs={4} sm="auto">
-                            {/* Airbnb */}
                             <FormControlLabel
                                 sx={{ m: 0 }}
                                 onClick={onCheckAirbnb}
@@ -204,7 +209,6 @@ export default function SearchRental({
                         </Grid>
 
                         <Grid item xs={4} sm="auto">
-                            {/* Clientes */}
                             <FormControlLabel
                                 sx={{ m: 0 }}
                                 onClick={onCheckClient}
@@ -231,7 +235,6 @@ export default function SearchRental({
                         </Grid>
 
                         <Grid item xs={4} sm="auto">
-                            {/* Futuras */}
                             <FormControlLabel
                                 sx={{ m: 0 }}
                                 onClick={onCheckToday}
@@ -258,7 +261,6 @@ export default function SearchRental({
                         </Grid>
 
                         <Grid item xs={4} sm="auto">
-                            {/* En curso */}
                             <FormControlLabel
                                 sx={{ m: 0 }}
                                 onClick={onCheckInProgress}
@@ -285,7 +287,6 @@ export default function SearchRental({
                         </Grid>
 
                         <Grid item xs={4} sm="auto">
-                            {/* Pendientes */}
                             <FormControlLabel
                                 sx={{ m: 0 }}
                                 onClick={onCheckInStatus}
@@ -306,6 +307,32 @@ export default function SearchRental({
                                         sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
                                     >
                                         Pendientes
+                                    </Typography>
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={4} sm="auto">
+                            <FormControlLabel
+                                sx={{ m: 0 }}
+                                onClick={onCheckCreatedToday}
+                                control={
+                                    <Checkbox
+                                        icon={<RadioButtonUncheckedIcon fontSize="small" />}
+                                        checkedIcon={<RadioButtonCheckedIcon fontSize="small" />}
+                                        checked={filterCreatedToday === 'true'}
+                                        sx={{
+                                            p: 0.5,
+                                            color: '#2F2B3D',
+                                            '&.Mui-checked': { color: '#2F2B3D' },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography
+                                        sx={{ fontSize: { md: 15, sm: 14, xs: 13 }, opacity: 0.8 }}
+                                    >
+                                        Hoy
                                     </Typography>
                                 }
                             />

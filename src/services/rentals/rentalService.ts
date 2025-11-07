@@ -37,9 +37,10 @@ export const rentalApi = createApi({
                 search: string
                 from: string
                 type: string
+                created_today?: string
             }
         >({
-            query: ({ page = 1, page_size = 10, search = '', from = '', type = '' }) => ({
+            query: ({ page = 1, page_size = 10, search = '', from = '', type = '', created_today = '' }) => ({
                 url: '/reservations/',
                 method: 'GET',
                 params: {
@@ -47,6 +48,7 @@ export const rentalApi = createApi({
                     page_size: page_size.toString(),
                     search: search,
                     from: from,
+                    created_today: created_today,
                     type: type,
                 },
             }),

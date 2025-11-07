@@ -27,6 +27,7 @@ export default function CrudRentals() {
     const [filterInProgress, setFilterInProgress] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
     const [filterInClient, setFilterClient] = useState('')
+    const [filterCreatedToday, setFilterCreatedToday] = useState('')
 
     const [isLoadingContract, setIsLoadingContract] = useState(false)
 
@@ -36,6 +37,7 @@ export default function CrudRentals() {
         search: search,
         from: filterInProgress || filterToday || filterStatus,
         type: filterAirbnb || filterInClient,
+        created_today: filterCreatedToday,
     })
 
     const onSave = () => {
@@ -101,6 +103,8 @@ export default function CrudRentals() {
                         setFilterStatus={setFilterStatus}
                         filterInClient={filterInClient}
                         setFilterClient={setFilterClient}
+                        filterCreatedToday={filterCreatedToday}
+                        setFilterCreatedToday={setFilterCreatedToday}
                     />
 
                     <div style={{ marginTop: '16px' }}>
