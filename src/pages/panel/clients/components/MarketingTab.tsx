@@ -45,13 +45,42 @@ export default function MarketingTab() {
         include_anonymous: includeAnonymous,
     })
 
-    const handleWhatsApp = (tel: string, clientName: string) => {
-        if (!tel) return
-        const formattedPhone = tel.replace(/\D/g, '')
-        const message = encodeURIComponent(
-            `Hola ${clientName}, vi que buscaste disponibilidad para el ${selectedDate.format('DD [de] MMMM')}. ¿Te puedo ayudar con tu reserva?`
-        )
-        window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank')
+    const handleWhatsApp = (clientData: ISearchByClient) => {
+        if (!clientData.client.tel_number) return
+        const formattedPhone = clientData.client.tel_number.replace(/\D/g, '')
+
+        // Obtener la búsqueda más próxima (primera del array)
+        const search = clientData.searches[0]
+        if (!search || !search.pricing) return
+
+        const firstName = clientData.client.first_name
+        const checkIn = dayjs(search.check_in_date)
+        const checkOut = dayjs(search.check_out_date)
+
+        // Formatear fechas
+        const dateRange = `${checkIn.format('D')}–${checkOut.format('D [de] MMMM')}`
+
+        // Construir lista de propiedades disponibles
+        let propertiesList = ''
+        if (search.pricing.properties && search.pricing.properties.length > 0) {
+            propertiesList = search.pricing.properties
+                .map(p => `🏡 ${p.name} — $${p.price_usd.toFixed(0)} / S/. ${p.price_sol.toFixed(0)}`)
+                .join('\n')
+        } else if (search.pricing.price_usd) {
+            propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — $${search.pricing.price_usd.toFixed(0)} / S/. ${search.pricing.price_sol?.toFixed(0)}`
+        }
+
+        const message = `🎉 ¡Oferta especial en Casa Austin! 🏖️
+
+Hola ${firstName} 👋 Sobre tu consulta, las fechas que pediste están disponibles:
+📅 ${dateRange} | 👥 ${search.guests} personas
+
+✅ Opciones disponibles:
+${propertiesList}
+
+¿Te ayudo con tu reserva? 😊`
+
+        window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank')
     }
 
     const handleCall = (tel: string) => {
@@ -151,7 +180,7 @@ export default function MarketingTab() {
                                     <Tooltip title="WhatsApp">
                                         <IconButton
                                             size="small"
-                                            onClick={() => handleWhatsApp(clientData.client.tel_number, clientData.client.first_name)}
+                                            onClick={() => handleWhatsApp(clientData)}
                                             sx={{ color: '#25D366' }}
                                         >
                                             <WhatsAppIcon fontSize="small" />
