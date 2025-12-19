@@ -81,7 +81,7 @@ export default function MarketingTab() {
                         const originalSol = p.price_sol
                         const discountedUsd = originalUsd * (1 - discountPercent / 100)
                         const discountedSol = originalSol * (1 - discountPercent / 100)
-                        return `• *${p.name}*\n  Antes: $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}\n  Ahora: *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
+                        return `• *${p.name}*\n  ~$${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
                     })
                     .join('\n\n')
             } else {
@@ -96,7 +96,7 @@ export default function MarketingTab() {
             if (discountPercent > 0) {
                 const discountedUsd = originalUsd * (1 - discountPercent / 100)
                 const discountedSol = originalSol * (1 - discountPercent / 100)
-                propertiesList = `• *${propName}*\n  Antes: $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}\n  Ahora: *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
+                propertiesList = `• *${propName}*\n  ~$${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
             } else {
                 propertiesList = `• *${propName}* — $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}`
             }
