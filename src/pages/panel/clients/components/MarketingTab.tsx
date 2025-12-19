@@ -384,24 +384,24 @@ ${propertiesList}
                             slotProps={{
                                 textField: {
                                     size: 'small',
-                                    sx: { width: 160 },
+                                    sx: { width: 150 },
                                 },
                             }}
                         />
                     </Box>
                     <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                            Nivel de cliente:
+                            Nivel:
                         </Typography>
                         <TextField
                             select
                             size="small"
                             value={selectedLevel}
                             onChange={(e) => setSelectedLevel(e.target.value)}
-                            sx={{ width: 160 }}
+                            sx={{ width: 150 }}
                             placeholder="Todos"
                         >
-                            <MenuItem value="">Todos los niveles</MenuItem>
+                            <MenuItem value="">Todos</MenuItem>
                             {achievementsData?.data?.achievements?.map((achievement) => (
                                 <MenuItem key={achievement.id} value={achievement.id}>
                                     {achievement.icon} {achievement.name}
@@ -422,7 +422,7 @@ ${propertiesList}
                                 endAdornment: <InputAdornment position="end">%</InputAdornment>,
                             }}
                             inputProps={{ min: 0, max: 100 }}
-                            sx={{ width: 100 }}
+                            sx={{ width: 90 }}
                         />
                     </Box>
                     <FormControlLabel
@@ -434,7 +434,7 @@ ${propertiesList}
                             />
                         }
                         label={<Typography variant="body2">Incluir anónimas</Typography>}
-                        sx={{ ml: 1 }}
+                        sx={{ ml: 0 }}
                     />
                 </Box>
 

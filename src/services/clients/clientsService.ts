@@ -143,7 +143,7 @@ export const clientApi = createApi({
         // Obtener lista de achievements/niveles
         getAchievements: builder.query<IAchievementsResponse, void>({
             query: () => ({
-                url: '/clients/achievements/',
+                url: '/achievements/',
                 method: 'GET',
             }),
         }),
