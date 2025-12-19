@@ -70,42 +70,56 @@ export default function MarketingTab() {
         // Formatear fechas
         const dateRange = `${checkIn.format('D')}–${checkOut.format('D [de] MMMM')}`
 
-        // Calcular precios con descuento si aplica
-        const applyDiscount = (price: number) => {
-            if (discountPercent > 0) {
-                return price * (1 - discountPercent / 100)
-            }
-            return price
-        }
-
         // Construir lista de propiedades disponibles (con descuento si aplica)
         let propertiesList = ''
+        let totalSavings = 0
+
         if (search.pricing.properties && search.pricing.properties.length > 0) {
-            propertiesList = search.pricing.properties
-                .map(p => {
-                    const priceUsd = applyDiscount(p.price_usd)
-                    const priceSol = applyDiscount(p.price_sol)
-                    return `🏡 ${p.name} — $${priceUsd.toFixed(0)} / S/. ${priceSol.toFixed(0)}`
-                })
-                .join('\n')
+            if (discountPercent > 0) {
+                // Con descuento: mostrar precio original tachado y nuevo precio
+                propertiesList = search.pricing.properties
+                    .map(p => {
+                        const originalUsd = p.price_usd
+                        const discountedUsd = originalUsd * (1 - discountPercent / 100)
+                        const savingsUsd = originalUsd - discountedUsd
+                        totalSavings = Math.max(totalSavings, savingsUsd)
+                        return `🏡 ${p.name}\n   ~$${originalUsd.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} USD* ✨`
+                    })
+                    .join('\n')
+            } else {
+                propertiesList = search.pricing.properties
+                    .map(p => `🏡 ${p.name} — *$${p.price_usd.toFixed(0)} USD*`)
+                    .join('\n')
+            }
         } else if (search.pricing.price_usd) {
-            const priceUsd = applyDiscount(search.pricing.price_usd)
-            const priceSol = applyDiscount(search.pricing.price_sol || 0)
-            propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — $${priceUsd.toFixed(0)} / S/. ${priceSol.toFixed(0)}`
+            const originalUsd = search.pricing.price_usd
+            if (discountPercent > 0) {
+                const discountedUsd = originalUsd * (1 - discountPercent / 100)
+                totalSavings = originalUsd - discountedUsd
+                propertiesList = `🏡 ${search.property?.name || 'Casa Austin'}\n   ~$${originalUsd.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} USD* ✨`
+            } else {
+                propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — *$${originalUsd.toFixed(0)} USD*`
+            }
         }
 
-        // Texto de descuento
-        const discountText = discountPercent > 0 ? `\n🔥 ¡${discountPercent}% de descuento aplicado!` : ''
+        // Texto de descuento con ahorro
+        let discountText = ''
+        if (discountPercent > 0) {
+            discountText = `\n\n🔥 *¡OFERTA EXCLUSIVA: ${discountPercent}% OFF!*\n💰 Te ahorras hasta *$${totalSavings.toFixed(0)} USD*`
+        }
 
-        const message = `🎉 ¡Oferta especial en Casa Austin! 🏖️
+        const message = `🎉 ¡Hola ${firstName}! 🏖️
 
-Hola ${firstName} 👋 Sobre tu consulta, las fechas que pediste están disponibles:
-📅 ${dateRange} | 👥 ${search.guests} personas${discountText}
+Vi que buscaste disponibilidad y tengo excelentes noticias:
 
-✅ Opciones disponibles:
+📅 *${dateRange}*
+👥 ${search.guests} ${search.guests === 1 ? 'persona' : 'personas'}${discountText}
+
+✅ *Opciones disponibles:*
 ${propertiesList}
 
-¿Te ayudo con tu reserva? 😊`
+⏰ Esta oferta es por tiempo limitado.
+¿Reservamos tu escapada? 🌴`
 
         window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank')
     }
