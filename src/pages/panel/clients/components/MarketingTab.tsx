@@ -105,28 +105,28 @@ export default function MarketingTab() {
         // Mensaje según si hay descuento o no
         let message = ''
         if (discountPercent > 0) {
-            message = `Hola ${firstName}!
+            message = `Hola ${firstName}! 👋
 
 Tenemos una *promoción especial* para ti:
 
-Fechas: *${dateRange}*
-Huéspedes: ${search.guests}
-Descuento: *${discountPercent}% OFF*
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
+🎁 Descuento: *${discountPercent}% OFF*
 
 ${propertiesList}
 
-¿Te reservo?`
+¿Te reservo? 😊`
         } else {
-            message = `Hola ${firstName}!
+            message = `Hola ${firstName}! 👋
 
 Las fechas que buscaste están disponibles:
 
-Fechas: *${dateRange}*
-Huéspedes: ${search.guests}
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
 
 ${propertiesList}
 
-¿Te ayudo con la reserva?`
+¿Te ayudo con la reserva? 😊`
         }
 
         window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank')
