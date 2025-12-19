@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useGetTokenForClientQuery } from './clientsService'
 import { IDataRucbyApi } from '@/interfaces/clients/registerClients'
 import { useDebounce } from '@/components/common'
+import { config } from '@/core/constants/config'
 
 export const useGetDataClient = () => {
     const [typeDocument, setSelecTypeDocument] = useState('')
@@ -24,8 +25,18 @@ export const useGetDataClient = () => {
                 if (typeDocument && documentNumber && tokenDni) {
                     if (typeDocument === 'dni') {
                         setIsLoadingClient(true)
+                        // Usar endpoint Django con autenticación JWT
+                        const token = localStorage.getItem('token')
                         const response = await fetch(
-                            `https://casaaustin.pe/datos/api.php?dni=${documentNumber}`
+                            `${config.API_URL}/reniec/lookup/auth/`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ dni: documentNumber })
+                            }
                         )
                         const data = await response.json()
                         if (response.status === 200) {
