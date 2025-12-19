@@ -20,7 +20,6 @@ import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/es'
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-import PersonIcon from '@mui/icons-material/Person'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import PeopleIcon from '@mui/icons-material/People'
@@ -126,7 +125,9 @@ export default function MarketingTab() {
                     {/* Header */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <PersonIcon sx={{ color: '#0E6191' }} />
+                            {clientData.client.level_info?.icon && (
+                                <Typography sx={{ fontSize: '1.3rem' }}>{clientData.client.level_info.icon}</Typography>
+                            )}
                             <Typography variant="subtitle1" fontWeight={600}>
                                 {clientName || 'Sin nombre'}
                             </Typography>
@@ -210,6 +211,26 @@ export default function MarketingTab() {
                                                 <HomeIcon sx={{ fontSize: 14, color: '#666' }} />
                                                 <Typography variant="caption" color="text.secondary">
                                                     {search.property.name}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                        {search.pricing && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                                                <Chip
+                                                    label={search.pricing.available ? 'Disponible' : 'No disponible'}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: search.pricing.available ? '#4caf50' : '#f44336',
+                                                        color: 'white',
+                                                        fontSize: '10px',
+                                                        height: '18px'
+                                                    }}
+                                                />
+                                                <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
+                                                    ${search.pricing.price_usd?.toFixed(2)} USD
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    (S/ {search.pricing.price_sol?.toFixed(2)})
                                                 </Typography>
                                             </Box>
                                         )}

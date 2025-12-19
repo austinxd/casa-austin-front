@@ -12,6 +12,10 @@ export interface ISearchByClient {
         email: string
         tel_number: string
         number_doc: string
+        level_info?: {
+            name: string
+            icon: string
+        } | null
     }
     search_count: number
     searches: Array<{
@@ -23,9 +27,14 @@ export interface ISearchByClient {
             id: string
             name: string
         } | null
+        pricing?: {
+            total_nights: number
+            price_usd: number
+            price_sol: number
+            available: boolean
+        } | null
         search_timestamp: string
         ip_address: string
-        user_agent?: string
     }>
 }
 
