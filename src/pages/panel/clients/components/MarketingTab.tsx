@@ -130,8 +130,8 @@ ${propertiesList}
 ¿Te ayudo con la reserva? 😊`
         }
 
-        // Usar web.whatsapp.com para desktop (mejor soporte de emojis)
-        window.open(`https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`, '_blank')
+        // Usar api.whatsapp.com (URL oficial que maneja mejor los emojis)
+        window.open(`https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`, '_blank')
     }
 
     const handleCall = (tel: string) => {
