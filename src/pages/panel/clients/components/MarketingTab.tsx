@@ -70,56 +70,64 @@ export default function MarketingTab() {
         // Formatear fechas
         const dateRange = `${checkIn.format('D')}–${checkOut.format('D [de] MMMM')}`
 
-        // Construir lista de propiedades disponibles (con descuento si aplica)
+        // Construir lista de propiedades disponibles
         let propertiesList = ''
-        let totalSavings = 0
 
         if (search.pricing.properties && search.pricing.properties.length > 0) {
             if (discountPercent > 0) {
-                // Con descuento: mostrar precio original tachado y nuevo precio
                 propertiesList = search.pricing.properties
                     .map(p => {
                         const originalUsd = p.price_usd
+                        const originalSol = p.price_sol
                         const discountedUsd = originalUsd * (1 - discountPercent / 100)
-                        const savingsUsd = originalUsd - discountedUsd
-                        totalSavings = Math.max(totalSavings, savingsUsd)
-                        return `🏡 ${p.name}\n   ~$${originalUsd.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} USD* ✨`
+                        const discountedSol = originalSol * (1 - discountPercent / 100)
+                        return `• *${p.name}*\n  Antes: $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}\n  Ahora: *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
                     })
-                    .join('\n')
+                    .join('\n\n')
             } else {
                 propertiesList = search.pricing.properties
-                    .map(p => `🏡 ${p.name} — *$${p.price_usd.toFixed(0)} USD*`)
+                    .map(p => `• *${p.name}* — $${p.price_usd.toFixed(0)} / S/${p.price_sol.toFixed(0)}`)
                     .join('\n')
             }
         } else if (search.pricing.price_usd) {
             const originalUsd = search.pricing.price_usd
+            const originalSol = search.pricing.price_sol || 0
+            const propName = search.property?.name || 'Casa Austin'
             if (discountPercent > 0) {
                 const discountedUsd = originalUsd * (1 - discountPercent / 100)
-                totalSavings = originalUsd - discountedUsd
-                propertiesList = `🏡 ${search.property?.name || 'Casa Austin'}\n   ~$${originalUsd.toFixed(0)}~ → *$${discountedUsd.toFixed(0)} USD* ✨`
+                const discountedSol = originalSol * (1 - discountPercent / 100)
+                propertiesList = `• *${propName}*\n  Antes: $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}\n  Ahora: *$${discountedUsd.toFixed(0)} / S/${discountedSol.toFixed(0)}*`
             } else {
-                propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — *$${originalUsd.toFixed(0)} USD*`
+                propertiesList = `• *${propName}* — $${originalUsd.toFixed(0)} / S/${originalSol.toFixed(0)}`
             }
         }
 
-        // Texto de descuento con ahorro
-        let discountText = ''
+        // Mensaje según si hay descuento o no
+        let message = ''
         if (discountPercent > 0) {
-            discountText = `\n\n🔥 *¡OFERTA EXCLUSIVA: ${discountPercent}% OFF!*\n💰 Te ahorras hasta *$${totalSavings.toFixed(0)} USD*`
-        }
+            message = `Hola ${firstName}! 👋
 
-        const message = `🎉 ¡Hola ${firstName}! 🏖️
+Tenemos una *promoción especial* para ti:
 
-Vi que buscaste disponibilidad y tengo excelentes noticias:
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
+🎁 Descuento: *${discountPercent}% OFF*
 
-📅 *${dateRange}*
-👥 ${search.guests} ${search.guests === 1 ? 'persona' : 'personas'}${discountText}
-
-✅ *Opciones disponibles:*
 ${propertiesList}
 
-⏰ Esta oferta es por tiempo limitado.
-¿Reservamos tu escapada? 🌴`
+¿Te reservo? 😊`
+        } else {
+            message = `Hola ${firstName}! 👋
+
+Las fechas que buscaste están disponibles:
+
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
+
+${propertiesList}
+
+¿Te ayudo con la reserva? 😊`
+        }
 
         window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank')
     }
