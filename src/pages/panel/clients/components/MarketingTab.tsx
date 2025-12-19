@@ -226,12 +226,16 @@ export default function MarketingTab() {
                                                         height: '18px'
                                                     }}
                                                 />
-                                                <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
-                                                    ${search.pricing.price_usd?.toFixed(2)} USD
-                                                </Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    (S/ {search.pricing.price_sol?.toFixed(2)})
-                                                </Typography>
+                                                {search.pricing.price_usd != null && (
+                                                    <>
+                                                        <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
+                                                            ${search.pricing.price_usd.toFixed(2)} USD
+                                                        </Typography>
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            (S/ {search.pricing.price_sol?.toFixed(2)})
+                                                        </Typography>
+                                                    </>
+                                                )}
                                             </Box>
                                         )}
                                         <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
