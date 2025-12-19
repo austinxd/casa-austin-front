@@ -215,9 +215,13 @@ export default function MarketingTab() {
                                             </Box>
                                         )}
                                         {search.pricing && (
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
                                                 <Chip
-                                                    label={search.pricing.available ? 'Disponible' : 'No disponible'}
+                                                    label={search.pricing.available
+                                                        ? (search.pricing.available_count
+                                                            ? `${search.pricing.available_count} casas disponibles`
+                                                            : 'Disponible')
+                                                        : 'No disponible'}
                                                     size="small"
                                                     sx={{
                                                         bgcolor: search.pricing.available ? '#4caf50' : '#f44336',
@@ -226,6 +230,7 @@ export default function MarketingTab() {
                                                         height: '18px'
                                                     }}
                                                 />
+                                                {/* Precio específico de una propiedad */}
                                                 {search.pricing.price_usd != null && (
                                                     <>
                                                         <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
@@ -235,6 +240,12 @@ export default function MarketingTab() {
                                                             (S/ {search.pricing.price_sol?.toFixed(2)})
                                                         </Typography>
                                                     </>
+                                                )}
+                                                {/* Rango de precios cuando no hay propiedad específica */}
+                                                {search.pricing.min_price_usd != null && (
+                                                    <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
+                                                        ${search.pricing.min_price_usd.toFixed(0)} - ${search.pricing.max_price_usd?.toFixed(0)} USD
+                                                    </Typography>
                                                 )}
                                             </Box>
                                         )}

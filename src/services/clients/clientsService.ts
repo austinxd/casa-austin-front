@@ -29,9 +29,17 @@ export interface ISearchByClient {
         } | null
         pricing?: {
             total_nights: number
-            price_usd: number
-            price_sol: number
             available: boolean
+            // Cuando hay propiedad específica
+            price_usd?: number
+            price_sol?: number
+            // Cuando NO hay propiedad (resumen de todas)
+            available_count?: number
+            total_properties?: number
+            min_price_usd?: number
+            max_price_usd?: number
+            min_price_sol?: number
+            max_price_sol?: number
         } | null
         search_timestamp: string
         ip_address: string
