@@ -33,13 +33,13 @@ export interface ISearchByClient {
             // Cuando hay propiedad específica
             price_usd?: number
             price_sol?: number
-            // Cuando NO hay propiedad (resumen de todas)
-            available_count?: number
-            total_properties?: number
-            min_price_usd?: number
-            max_price_usd?: number
-            min_price_sol?: number
-            max_price_sol?: number
+            property_name?: string
+            // Cuando NO hay propiedad: lista de casas disponibles
+            properties?: Array<{
+                name: string
+                price_usd: number
+                price_sol: number
+            }>
         } | null
         search_timestamp: string
         ip_address: string

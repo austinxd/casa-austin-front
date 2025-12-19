@@ -215,37 +215,36 @@ export default function MarketingTab() {
                                             </Box>
                                         )}
                                         {search.pricing && (
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
-                                                <Chip
-                                                    label={search.pricing.available
-                                                        ? (search.pricing.available_count
-                                                            ? `${search.pricing.available_count} casas disponibles`
-                                                            : 'Disponible')
-                                                        : 'No disponible'}
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: search.pricing.available ? '#4caf50' : '#f44336',
-                                                        color: 'white',
-                                                        fontSize: '10px',
-                                                        height: '18px'
-                                                    }}
-                                                />
-                                                {/* Precio específico de una propiedad */}
+                                            <Box sx={{ mt: 0.5 }}>
+                                                {/* Precio de propiedad específica */}
                                                 {search.pricing.price_usd != null && (
-                                                    <>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Chip label="Disponible" size="small" sx={{ bgcolor: '#4caf50', color: 'white', fontSize: '10px', height: '18px' }} />
                                                         <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
                                                             ${search.pricing.price_usd.toFixed(2)} USD
                                                         </Typography>
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            (S/ {search.pricing.price_sol?.toFixed(2)})
-                                                        </Typography>
-                                                    </>
+                                                    </Box>
                                                 )}
-                                                {/* Rango de precios cuando no hay propiedad específica */}
-                                                {search.pricing.min_price_usd != null && (
-                                                    <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
-                                                        ${search.pricing.min_price_usd.toFixed(0)} - ${search.pricing.max_price_usd?.toFixed(0)} USD
-                                                    </Typography>
+                                                {/* Lista de casas disponibles */}
+                                                {search.pricing.properties && search.pricing.properties.length > 0 && (
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                        <Typography variant="caption" fontWeight={600} color="success.main">
+                                                            {search.pricing.properties.length} casas disponibles:
+                                                        </Typography>
+                                                        {search.pricing.properties.map((prop, idx) => (
+                                                            <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 1 }}>
+                                                                <Typography variant="caption" sx={{ color: '#333' }}>
+                                                                    • {prop.name}:
+                                                                </Typography>
+                                                                <Typography variant="caption" fontWeight={600} sx={{ color: '#0E6191' }}>
+                                                                    ${prop.price_usd.toFixed(0)} USD
+                                                                </Typography>
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    (S/ {prop.price_sol.toFixed(0)})
+                                                                </Typography>
+                                                            </Box>
+                                                        ))}
+                                                    </Box>
                                                 )}
                                             </Box>
                                         )}
