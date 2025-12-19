@@ -12,6 +12,9 @@ import {
     Grid,
     Skeleton,
     Collapse,
+    TextField,
+    MenuItem,
+    InputAdornment,
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -29,6 +32,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import SearchIcon from '@mui/icons-material/Search'
 import {
     useGetSearchesByCheckInQuery,
+    useGetAchievementsQuery,
     ISearchByClient,
 } from '@/services/clients/clientsService'
 import { useBoxShadow } from '@/core/utils'
@@ -39,10 +43,16 @@ export default function MarketingTab() {
     const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs())
     const [includeAnonymous, setIncludeAnonymous] = useState(false)
     const [expandedClients, setExpandedClients] = useState<{ [key: string]: boolean }>({})
+    const [selectedLevel, setSelectedLevel] = useState<string>('')
+    const [discountPercent, setDiscountPercent] = useState<number>(0)
+
+    // Obtener niveles/achievements
+    const { data: achievementsData } = useGetAchievementsQuery()
 
     const { data, isLoading } = useGetSearchesByCheckInQuery({
         date: selectedDate.format('YYYY-MM-DD'),
         include_anonymous: includeAnonymous,
+        ...(selectedLevel && { level: selectedLevel }),
     })
 
     const handleWhatsApp = (clientData: ISearchByClient) => {
@@ -60,20 +70,37 @@ export default function MarketingTab() {
         // Formatear fechas
         const dateRange = `${checkIn.format('D')}–${checkOut.format('D [de] MMMM')}`
 
-        // Construir lista de propiedades disponibles
+        // Calcular precios con descuento si aplica
+        const applyDiscount = (price: number) => {
+            if (discountPercent > 0) {
+                return price * (1 - discountPercent / 100)
+            }
+            return price
+        }
+
+        // Construir lista de propiedades disponibles (con descuento si aplica)
         let propertiesList = ''
         if (search.pricing.properties && search.pricing.properties.length > 0) {
             propertiesList = search.pricing.properties
-                .map(p => `🏡 ${p.name} — $${p.price_usd.toFixed(0)} / S/. ${p.price_sol.toFixed(0)}`)
+                .map(p => {
+                    const priceUsd = applyDiscount(p.price_usd)
+                    const priceSol = applyDiscount(p.price_sol)
+                    return `🏡 ${p.name} — $${priceUsd.toFixed(0)} / S/. ${priceSol.toFixed(0)}`
+                })
                 .join('\n')
         } else if (search.pricing.price_usd) {
-            propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — $${search.pricing.price_usd.toFixed(0)} / S/. ${search.pricing.price_sol?.toFixed(0)}`
+            const priceUsd = applyDiscount(search.pricing.price_usd)
+            const priceSol = applyDiscount(search.pricing.price_sol || 0)
+            propertiesList = `🏡 ${search.property?.name || 'Casa Austin'} — $${priceUsd.toFixed(0)} / S/. ${priceSol.toFixed(0)}`
         }
+
+        // Texto de descuento
+        const discountText = discountPercent > 0 ? `\n🔥 ¡${discountPercent}% de descuento aplicado!` : ''
 
         const message = `🎉 ¡Oferta especial en Casa Austin! 🏖️
 
 Hola ${firstName} 👋 Sobre tu consulta, las fechas que pediste están disponibles:
-📅 ${dateRange} | 👥 ${search.guests} personas
+📅 ${dateRange} | 👥 ${search.guests} personas${discountText}
 
 ✅ Opciones disponibles:
 ${propertiesList}
@@ -342,11 +369,11 @@ ${propertiesList}
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <Box>
-                {/* Header con selector de fecha */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+                {/* Header con selector de fecha y filtros */}
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, mb: 2, flexWrap: 'wrap' }}>
                     <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                            Buscar por fecha de check-in:
+                            Fecha de check-in:
                         </Typography>
                         <DatePicker
                             value={selectedDate}
@@ -357,9 +384,45 @@ ${propertiesList}
                             slotProps={{
                                 textField: {
                                     size: 'small',
-                                    sx: { width: 180 },
+                                    sx: { width: 160 },
                                 },
                             }}
+                        />
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                            Nivel de cliente:
+                        </Typography>
+                        <TextField
+                            select
+                            size="small"
+                            value={selectedLevel}
+                            onChange={(e) => setSelectedLevel(e.target.value)}
+                            sx={{ width: 160 }}
+                            placeholder="Todos"
+                        >
+                            <MenuItem value="">Todos los niveles</MenuItem>
+                            {achievementsData?.data?.achievements?.map((achievement) => (
+                                <MenuItem key={achievement.id} value={achievement.id}>
+                                    {achievement.icon} {achievement.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                            Descuento:
+                        </Typography>
+                        <TextField
+                            type="number"
+                            size="small"
+                            value={discountPercent}
+                            onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                            }}
+                            inputProps={{ min: 0, max: 100 }}
+                            sx={{ width: 100 }}
                         />
                     </Box>
                     <FormControlLabel
@@ -370,7 +433,8 @@ ${propertiesList}
                                 size="small"
                             />
                         }
-                        label={<Typography variant="body2">Incluir búsquedas anónimas</Typography>}
+                        label={<Typography variant="body2">Incluir anónimas</Typography>}
+                        sx={{ ml: 1 }}
                     />
                 </Box>
 

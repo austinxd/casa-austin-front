@@ -67,6 +67,26 @@ export interface ISearchesByCheckInResponse {
     }>
 }
 
+// Interfaz para achievements/niveles
+export interface IAchievement {
+    id: string
+    name: string
+    description: string
+    icon: string | null
+    required_reservations: number
+    required_referrals: number
+    required_referral_reservations: number
+    order: number
+}
+
+export interface IAchievementsResponse {
+    success: boolean
+    data: {
+        total_achievements: number
+        achievements: IAchievement[]
+    }
+}
+
 export const clientApi = createApi({
     reducerPath: 'clientApi',
     baseQuery: fetchBaseQuery({
@@ -107,16 +127,24 @@ export const clientApi = createApi({
         // Búsquedas por fecha de check-in (Marketing)
         getSearchesByCheckIn: builder.query<
             ISearchesByCheckInResponse,
-            { date: string; include_anonymous?: boolean; property_id?: string }
+            { date: string; include_anonymous?: boolean; property_id?: string; level?: string }
         >({
-            query: ({ date, include_anonymous = true, property_id }) => ({
+            query: ({ date, include_anonymous = true, property_id, level }) => ({
                 url: '/clients/searches-by-checkin/',
                 method: 'GET',
                 params: {
                     date,
                     include_anonymous: include_anonymous.toString(),
                     ...(property_id && { property_id }),
+                    ...(level && { level }),
                 },
+            }),
+        }),
+        // Obtener lista de achievements/niveles
+        getAchievements: builder.query<IAchievementsResponse, void>({
+            query: () => ({
+                url: '/clients/achievements/',
+                method: 'GET',
             }),
         }),
     }),
@@ -127,4 +155,5 @@ export const {
     useGetAllClientsQuery,
     useGetTokenForClientQuery,
     useGetSearchesByCheckInQuery,
+    useGetAchievementsQuery,
 } = clientApi
