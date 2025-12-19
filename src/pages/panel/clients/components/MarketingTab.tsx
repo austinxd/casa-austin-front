@@ -37,7 +37,7 @@ dayjs.locale('es')
 
 export default function MarketingTab() {
     const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs())
-    const [includeAnonymous, setIncludeAnonymous] = useState(true)
+    const [includeAnonymous, setIncludeAnonymous] = useState(false)
     const [expandedClients, setExpandedClients] = useState<{ [key: string]: boolean }>({})
 
     const { data, isLoading } = useGetSearchesByCheckInQuery({
