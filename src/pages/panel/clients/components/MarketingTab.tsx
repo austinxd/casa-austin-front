@@ -103,35 +103,38 @@ export default function MarketingTab() {
             }
         }
 
-        // Mensaje según si hay descuento o no (sin emojis para compatibilidad con WhatsApp Web)
+        // Mensaje con emojis
         let message = ''
         if (discountPercent > 0) {
-            message = `Hola ${firstName}!
+            message = `Hola ${firstName}! 👋
 
 Tenemos una *promoción especial* para ti:
 
-Fechas: *${dateRange}*
-Huéspedes: ${search.guests}
-Descuento: *${discountPercent}% OFF*
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
+🎁 Descuento: *${discountPercent}% OFF*
 
 ${propertiesList}
 
-¿Te reservo?`
+¿Te reservo? 😊`
         } else {
-            message = `Hola ${firstName}!
+            message = `Hola ${firstName}! 👋
 
 Las fechas que buscaste están disponibles:
 
-Fechas: *${dateRange}*
-Huéspedes: ${search.guests}
+📅 Fechas: *${dateRange}*
+👥 Huéspedes: ${search.guests}
 
 ${propertiesList}
 
-¿Te ayudo con la reserva?`
+¿Te ayudo con la reserva? 😊`
         }
 
-        // Usar api.whatsapp.com (URL oficial que maneja mejor los emojis)
-        window.open(`https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`, '_blank')
+        // Copiar mensaje al portapapeles y abrir WhatsApp
+        navigator.clipboard.writeText(message).then(() => {
+            // Abrir WhatsApp Web - el usuario solo tiene que pegar (Ctrl+V)
+            window.open(`https://web.whatsapp.com/send?phone=${formattedPhone}`, '_blank')
+        })
     }
 
     const handleCall = (tel: string) => {
