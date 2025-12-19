@@ -129,7 +129,8 @@ ${propertiesList}
 ¿Te ayudo con la reserva? 😊`
         }
 
-        window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank')
+        // Usar web.whatsapp.com para desktop (mejor soporte de emojis)
+        window.open(`https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`, '_blank')
     }
 
     const handleCall = (tel: string) => {
