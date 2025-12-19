@@ -103,31 +103,31 @@ export default function MarketingTab() {
             }
         }
 
-        // Mensaje según si hay descuento o no
+        // Mensaje según si hay descuento o no (sin emojis para compatibilidad con WhatsApp Web)
         let message = ''
         if (discountPercent > 0) {
-            message = `Hola ${firstName}! 👋
+            message = `Hola ${firstName}!
 
 Tenemos una *promoción especial* para ti:
 
-📅 Fechas: *${dateRange}*
-👥 Huéspedes: ${search.guests}
-🎁 Descuento: *${discountPercent}% OFF*
+Fechas: *${dateRange}*
+Huéspedes: ${search.guests}
+Descuento: *${discountPercent}% OFF*
 
 ${propertiesList}
 
-¿Te reservo? 😊`
+¿Te reservo?`
         } else {
-            message = `Hola ${firstName}! 👋
+            message = `Hola ${firstName}!
 
 Las fechas que buscaste están disponibles:
 
-📅 Fechas: *${dateRange}*
-👥 Huéspedes: ${search.guests}
+Fechas: *${dateRange}*
+Huéspedes: ${search.guests}
 
 ${propertiesList}
 
-¿Te ayudo con la reserva? 😊`
+¿Te ayudo con la reserva?`
         }
 
         // Usar api.whatsapp.com (URL oficial que maneja mejor los emojis)
