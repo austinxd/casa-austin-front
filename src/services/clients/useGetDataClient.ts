@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useGetTokenForClientQuery } from './clientsService'
 import { IDataRucbyApi } from '@/interfaces/clients/registerClients'
 import { useDebounce } from '@/components/common'
-import { config } from '@/core/constants/config'
+import { ENV } from '@/core/constants/config'
 
 export const useGetDataClient = () => {
     const [typeDocument, setSelecTypeDocument] = useState('')
@@ -28,7 +28,7 @@ export const useGetDataClient = () => {
                         // Usar endpoint Django con autenticación JWT
                         const token = localStorage.getItem('token')
                         const response = await fetch(
-                            `${config.API_URL}/reniec/lookup/auth/`,
+                            `${ENV.API_URL}/reniec/lookup/auth/`,
                             {
                                 method: 'POST',
                                 headers: {
