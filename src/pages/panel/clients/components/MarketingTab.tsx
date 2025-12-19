@@ -1,0 +1,353 @@
+import { useState } from 'react'
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
+    Chip,
+    IconButton,
+    Tooltip,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    Skeleton,
+    Collapse,
+} from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/es'
+import PhoneIcon from '@mui/icons-material/Phone'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import PersonIcon from '@mui/icons-material/Person'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import PeopleIcon from '@mui/icons-material/People'
+import HomeIcon from '@mui/icons-material/Home'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import SearchIcon from '@mui/icons-material/Search'
+import {
+    useGetSearchesByCheckInQuery,
+    ISearchByClient,
+} from '@/services/clients/clientsService'
+import { useBoxShadow } from '@/core/utils'
+
+dayjs.locale('es')
+
+export default function MarketingTab() {
+    const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs())
+    const [includeAnonymous, setIncludeAnonymous] = useState(true)
+    const [expandedClients, setExpandedClients] = useState<{ [key: string]: boolean }>({})
+
+    const { data, isLoading } = useGetSearchesByCheckInQuery({
+        date: selectedDate.format('YYYY-MM-DD'),
+        include_anonymous: includeAnonymous,
+    })
+
+    const handleWhatsApp = (tel: string, clientName: string) => {
+        if (!tel) return
+        const formattedPhone = tel.replace(/\D/g, '')
+        const message = encodeURIComponent(
+            `Hola ${clientName}, vi que buscaste disponibilidad para el ${selectedDate.format('DD [de] MMMM')}. ¿Te puedo ayudar con tu reserva?`
+        )
+        window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank')
+    }
+
+    const handleCall = (tel: string) => {
+        if (!tel) return
+        window.open(`tel:${tel}`, '_self')
+    }
+
+    const toggleExpand = (clientId: string) => {
+        setExpandedClients((prev) => ({
+            ...prev,
+            [clientId]: !prev[clientId],
+        }))
+    }
+
+    const formatSearchTimestamp = (timestamp: string) => {
+        return dayjs(timestamp).format('DD/MM HH:mm')
+    }
+
+    const boxShadow = useBoxShadow(true)
+
+    // Stats Cards
+    const StatsCards = () => (
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={4}>
+                <Card sx={{ boxShadow, textAlign: 'center', py: 1 }}>
+                    <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
+                        <Typography variant="h3" sx={{ fontSize: '28px', fontWeight: 700, color: '#0E6191' }}>
+                            {isLoading ? <Skeleton width={40} sx={{ mx: 'auto' }} /> : data?.total_searches || 0}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            Total búsquedas
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4}>
+                <Card sx={{ boxShadow, textAlign: 'center', py: 1 }}>
+                    <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
+                        <Typography variant="h3" sx={{ fontSize: '28px', fontWeight: 700, color: '#4caf50' }}>
+                            {isLoading ? <Skeleton width={40} sx={{ mx: 'auto' }} /> : data?.unique_clients || 0}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            Clientes únicos
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={4}>
+                <Card sx={{ boxShadow, textAlign: 'center', py: 1 }}>
+                    <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
+                        <Typography variant="h3" sx={{ fontSize: '28px', fontWeight: 700, color: '#9e9e9e' }}>
+                            {isLoading ? <Skeleton width={40} sx={{ mx: 'auto' }} /> : data?.anonymous_searches_count || 0}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            Anónimos
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Grid>
+        </Grid>
+    )
+
+    // Client Card Component
+    const ClientCard = ({ clientData }: { clientData: ISearchByClient }) => {
+        const isExpanded = expandedClients[clientData.client.id] ?? true
+        const clientName = `${clientData.client.first_name} ${clientData.client.last_name}`.trim()
+
+        return (
+            <Card sx={{ boxShadow, mb: 2 }}>
+                <CardContent>
+                    {/* Header */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <PersonIcon sx={{ color: '#0E6191' }} />
+                            <Typography variant="subtitle1" fontWeight={600}>
+                                {clientName || 'Sin nombre'}
+                            </Typography>
+                            <Chip
+                                label={`${clientData.search_count} ${clientData.search_count === 1 ? 'búsqueda' : 'búsquedas'}`}
+                                size="small"
+                                sx={{ bgcolor: '#0E6191', color: 'white', fontSize: '11px', height: '22px' }}
+                            />
+                        </Box>
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                            {clientData.client.tel_number && (
+                                <>
+                                    <Tooltip title="Llamar">
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleCall(clientData.client.tel_number)}
+                                        >
+                                            <PhoneIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="WhatsApp">
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleWhatsApp(clientData.client.tel_number, clientData.client.first_name)}
+                                            sx={{ color: '#25D366' }}
+                                        >
+                                            <WhatsAppIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </>
+                            )}
+                            <IconButton size="small" onClick={() => toggleExpand(clientData.client.id)}>
+                                {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                            </IconButton>
+                        </Box>
+                    </Box>
+
+                    {/* Client Info */}
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 1, color: 'text.secondary' }}>
+                        {clientData.client.number_doc && (
+                            <Typography variant="caption">DNI: {clientData.client.number_doc}</Typography>
+                        )}
+                        {clientData.client.tel_number && (
+                            <Typography variant="caption">Tel: +{clientData.client.tel_number}</Typography>
+                        )}
+                        {clientData.client.email && (
+                            <Typography variant="caption">{clientData.client.email}</Typography>
+                        )}
+                    </Box>
+
+                    {/* Searches List */}
+                    <Collapse in={isExpanded}>
+                        <Box sx={{ borderTop: '1px solid #eee', pt: 1.5, mt: 1 }}>
+                            <Typography variant="caption" fontWeight={600} sx={{ mb: 1, display: 'block' }}>
+                                Búsquedas realizadas:
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                {clientData.searches.map((search) => (
+                                    <Box
+                                        key={search.id}
+                                        sx={{
+                                            bgcolor: '#f5f5f5',
+                                            p: 1.5,
+                                            borderRadius: 1,
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                            <CalendarTodayIcon sx={{ fontSize: 14, color: '#0E6191' }} />
+                                            <Typography variant="caption" sx={{ color: '#0E6191', fontWeight: 500 }}>
+                                                {search.check_in_date} → {search.check_out_date}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                            <PeopleIcon sx={{ fontSize: 14, color: '#666' }} />
+                                            <Typography variant="caption" color="text.secondary">
+                                                {search.guests} {search.guests === 1 ? 'persona' : 'personas'}
+                                            </Typography>
+                                        </Box>
+                                        {search.property && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                                                <HomeIcon sx={{ fontSize: 14, color: '#666' }} />
+                                                <Typography variant="caption" color="text.secondary">
+                                                    {search.property.name}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                        <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                                            Buscó el: {formatSearchTimestamp(search.search_timestamp)}
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                    </Collapse>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    // Anonymous Card Component
+    const AnonymousCard = ({ search }: { search: any }) => (
+        <Card sx={{ boxShadow, mb: 2, opacity: 0.85, border: '1px dashed #ccc' }}>
+            <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <PersonOutlineIcon sx={{ color: '#9e9e9e' }} />
+                    <Typography variant="subtitle1" color="text.secondary">
+                        Usuario anónimo
+                    </Typography>
+                </Box>
+                <Box sx={{ bgcolor: '#f5f5f5', p: 1.5, borderRadius: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                        <CalendarTodayIcon sx={{ fontSize: 14, color: '#0E6191' }} />
+                        <Typography variant="caption" sx={{ color: '#0E6191', fontWeight: 500 }}>
+                            {search.check_in_date} → {search.check_out_date}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                        <PeopleIcon sx={{ fontSize: 14, color: '#666' }} />
+                        <Typography variant="caption" color="text.secondary">
+                            {search.guests} {search.guests === 1 ? 'persona' : 'personas'}
+                        </Typography>
+                    </Box>
+                    {search.property && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                            <HomeIcon sx={{ fontSize: 14, color: '#666' }} />
+                            <Typography variant="caption" color="text.secondary">
+                                {search.property.name}
+                            </Typography>
+                        </Box>
+                    )}
+                    <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                        IP: {search.ip_address} | {formatSearchTimestamp(search.search_timestamp)}
+                    </Typography>
+                </Box>
+            </CardContent>
+        </Card>
+    )
+
+    // Empty State
+    const EmptyState = () => (
+        <Box sx={{ textAlign: 'center', py: 6 }}>
+            <SearchIcon sx={{ fontSize: 48, color: '#ccc', mb: 2 }} />
+            <Typography color="text.secondary">
+                No hay búsquedas para esta fecha
+            </Typography>
+        </Box>
+    )
+
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+            <Box>
+                {/* Header con selector de fecha */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+                    <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
+                            Buscar por fecha de check-in:
+                        </Typography>
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={(newValue) => newValue && setSelectedDate(newValue)}
+                            format="DD/MM/YYYY"
+                            disablePast={false}
+                            disableFuture={false}
+                            slotProps={{
+                                textField: {
+                                    size: 'small',
+                                    sx: { width: 180 },
+                                },
+                            }}
+                        />
+                    </Box>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={includeAnonymous}
+                                onChange={(e) => setIncludeAnonymous(e.target.checked)}
+                                size="small"
+                            />
+                        }
+                        label={<Typography variant="body2">Incluir búsquedas anónimas</Typography>}
+                    />
+                </Box>
+
+                {/* Fecha seleccionada */}
+                <Typography variant="h2" sx={{ mb: 2, textTransform: 'capitalize' }}>
+                    {selectedDate.format('dddd, D [de] MMMM [de] YYYY')}
+                </Typography>
+
+                {/* Stats */}
+                <StatsCards />
+
+                {/* Loading */}
+                {isLoading && (
+                    <Box>
+                        {[1, 2, 3].map((i) => (
+                            <Skeleton key={i} variant="rounded" height={120} sx={{ mb: 2 }} />
+                        ))}
+                    </Box>
+                )}
+
+                {/* Results */}
+                {!isLoading && (
+                    <>
+                        {(!data?.searches_by_client?.length && !data?.anonymous_searches_detail?.length) ? (
+                            <EmptyState />
+                        ) : (
+                            <>
+                                {/* Clients with searches */}
+                                {data?.searches_by_client?.map((clientData) => (
+                                    <ClientCard key={clientData.client.id} clientData={clientData} />
+                                ))}
+
+                                {/* Anonymous searches */}
+                                {includeAnonymous && data?.anonymous_searches_detail?.map((search) => (
+                                    <AnonymousCard key={search.id} search={search} />
+                                ))}
+                            </>
+                        )}
+                    </>
+                )}
+            </Box>
+        </LocalizationProvider>
+    )
+}

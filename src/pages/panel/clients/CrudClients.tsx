@@ -1,20 +1,39 @@
-import { Box, IconButton, Menu, MenuItem, Typography, useTheme, useMediaQuery } from '@mui/material'
+import { Box, IconButton, Menu, MenuItem, Typography, useTheme, useMediaQuery, Tabs, Tab } from '@mui/material'
 import { useState } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import CommentIcon from '@mui/icons-material/Comment'
 import CloseIcon from '@mui/icons-material/Close'
+import PeopleIcon from '@mui/icons-material/People'
+import AnalyticsIcon from '@mui/icons-material/Analytics'
 import FormClients from './components/form/FormClients'
 import DeleteClient from './components/form/DeleteClient'
 import AdjustPoints from './components/form/AdjustPoints'
 import CardResponsive from './components/card/CardResponsive'
 import SearchClient from './components/form/SearchClient'
+import MarketingTab from './components/MarketingTab'
 import { useGetAllClientsQuery } from '@/services/clients/clientsService'
 import { IRegisterClient } from '@/interfaces/clients/registerClients'
 import { BasicModal, PaginationAustin, TableAustin } from '@/components/common'
 import { useBoxShadow } from '@/core/utils'
 import ClientSkelton from './components/skeleton/ClientSkelton'
 
+interface TabPanelProps {
+    children?: React.ReactNode
+    index: number
+    value: number
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props
+    return (
+        <div role="tabpanel" hidden={value !== index} {...other}>
+            {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
+        </div>
+    )
+}
+
 export default function CrudClients() {
+    const [activeTab, setActiveTab] = useState(0)
     const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({})
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState<number>(10)
@@ -243,92 +262,131 @@ export default function CrudClients() {
         setAdjustPoints(true)
     }
 
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue)
+    }
+
     return (
         <div>
-            {isLoading ? (
-                <ClientSkelton />
-            ) : (
-                <>
-                    <Typography variant="h1" mb={{ md: 3, sm: 1, xs: 1 }}>
-                        Clientes
-                    </Typography>
-                    <SearchClient
-                        pageSize={pageSize}
-                        setPageSize={setPageSize}
-                        text={'Añadir Clientes'}
-                        onSave={onCreate}
-                        setCurrentPage={setCurrentPage}
-                        setSearch={setSearch}
-                        ordering={ordering}
-                        setOrdering={setOrdering}
+            <Typography variant="h1" mb={{ md: 2, sm: 1, xs: 1 }}>
+                Clientes
+            </Typography>
+
+            {/* Tabs */}
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }}>
+                <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    sx={{
+                        '& .MuiTab-root': {
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            minHeight: 48,
+                        },
+                    }}
+                >
+                    <Tab
+                        icon={<PeopleIcon sx={{ fontSize: 20 }} />}
+                        iconPosition="start"
+                        label="Clientes"
+                        sx={{ gap: 1 }}
                     />
+                    <Tab
+                        icon={<AnalyticsIcon sx={{ fontSize: 20 }} />}
+                        iconPosition="start"
+                        label="Marketing"
+                        sx={{ gap: 1 }}
+                    />
+                </Tabs>
+            </Box>
 
-                    <Box
-                        sx={{
-                            pb: 1.5,
+            {/* Tab Panel: Clientes */}
+            <TabPanel value={activeTab} index={0}>
+                {isLoading ? (
+                    <ClientSkelton />
+                ) : (
+                    <>
+                        <SearchClient
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            text={'Añadir Clientes'}
+                            onSave={onCreate}
+                            setCurrentPage={setCurrentPage}
+                            setSearch={setSearch}
+                            ordering={ordering}
+                            setOrdering={setOrdering}
+                        />
 
-                            borderRadius: 2,
-                            mt: 2,
-                        }}
-                    >
                         <Box
                             sx={{
-                                boxShadow: useBoxShadow(true),
-                                background: palette.primary.contrastText,
+                                pb: 1.5,
+                                borderRadius: 2,
+                                mt: 2,
                             }}
                         >
-                            <TableAustin
-                                isLoading={isLoading}
-                                rows={data?.results ? data?.results : []}
-                                columns={columns}
-                            />
-                        </Box>
+                            <Box
+                                sx={{
+                                    boxShadow: useBoxShadow(true),
+                                    background: palette.primary.contrastText,
+                                }}
+                            >
+                                <TableAustin
+                                    isLoading={isLoading}
+                                    rows={data?.results ? data?.results : []}
+                                    columns={columns}
+                                />
+                            </Box>
 
-                        <Box
-                            sx={{
-                                display: 'none',
+                            <Box
+                                sx={{
+                                    display: 'none',
+                                    '@media (max-width: 1000px)': {
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 2,
+                                    },
+                                }}
+                            >
+                                {!isLoading &&
+                                    data?.results?.map((item: IRegisterClient) => (
+                                        <CardResponsive
+                                            handleComment={() => handleComment(item)}
+                                            key={item.id}
+                                            id={item.id}
+                                            first_name={item.first_name}
+                                            tel_number={item.tel_number}
+                                            number_doc={item.number_doc}
+                                            document_type={item.document_type}
+                                            email={item.email}
+                                            comment={item.comentarios_clientes}
+                                            handleEdit={() => onEdit(item)}
+                                            handleDelete={() => onDelete(item)}
+                                            handleAdjustPoints={() => onAdjustPoints(item)}
+                                            level_icon={item.level_info?.icon}
+                                            points_balance={item.points_balance}
+                                        />
+                                    ))}
+                            </Box>
+                        </Box>
+                        {data && (
+                            <Box>
+                                <PaginationAustin
+                                    pageSize={pageSize}
+                                    currentPage={currentPage}
+                                    setCurrentPage={setCurrentPage}
+                                    totalPages={data?.total_paginas}
+                                    dataCount={data.count}
+                                />
+                            </Box>
+                        )}
+                    </>
+                )}
+            </TabPanel>
 
-                                '@media (max-width: 1000px)': {
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 2,
-                                },
-                            }}
-                        >
-                            {!isLoading &&
-                                data?.results?.map((item: IRegisterClient) => (
-                                    <CardResponsive
-                                        handleComment={() => handleComment(item)}
-                                        key={item.id}
-                                        id={item.id}
-                                        first_name={item.first_name}
-                                        tel_number={item.tel_number}
-                                        number_doc={item.number_doc}
-                                        document_type={item.document_type}
-                                        email={item.email}
-                                        comment={item.comentarios_clientes}
-                                        handleEdit={() => onEdit(item)}
-                                        handleDelete={() => onDelete(item)}
-                                        handleAdjustPoints={() => onAdjustPoints(item)}
-                                        level_icon={item.level_info?.icon}
-                                        points_balance={item.points_balance}
-                                    />
-                                ))}
-                        </Box>
-                    </Box>
-                    {data && (
-                        <Box>
-                            <PaginationAustin
-                                pageSize={pageSize}
-                                currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                totalPages={data?.total_paginas}
-                                dataCount={data.count}
-                            />
-                        </Box>
-                    )}
-                </>
-            )}
+            {/* Tab Panel: Marketing */}
+            <TabPanel value={activeTab} index={1}>
+                <MarketingTab />
+            </TabPanel>
 
             <BasicModal open={del}>
                 {clienById && (
