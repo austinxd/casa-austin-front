@@ -15,6 +15,7 @@ import {
     TextField,
     MenuItem,
     InputAdornment,
+    CircularProgress,
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -49,7 +50,7 @@ export default function MarketingTab() {
     // Obtener niveles/achievements
     const { data: achievementsData } = useGetAchievementsQuery()
 
-    const { data, isLoading } = useGetSearchesByCheckInQuery({
+    const { data, isLoading, isFetching } = useGetSearchesByCheckInQuery({
         date: selectedDate.format('YYYY-MM-DD'),
         include_anonymous: includeAnonymous,
         ...(selectedLevel && { level: selectedLevel }),
@@ -462,9 +463,12 @@ ${propertiesList}
                 </Box>
 
                 {/* Fecha seleccionada */}
-                <Typography variant="h2" sx={{ mb: 2, textTransform: 'capitalize' }}>
-                    {selectedDate.format('dddd, D [de] MMMM [de] YYYY')}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                    <Typography variant="h2" sx={{ textTransform: 'capitalize' }}>
+                        {selectedDate.format('dddd, D [de] MMMM [de] YYYY')}
+                    </Typography>
+                    {isFetching && <CircularProgress size={24} />}
+                </Box>
 
                 {/* Stats */}
                 <StatsCards />
