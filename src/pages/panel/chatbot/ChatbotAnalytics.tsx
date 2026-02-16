@@ -25,6 +25,9 @@ import {
     Switch,
     Tooltip,
     Badge,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
 } from '@mui/material'
 import {
     SmartToy as SmartToyIcon,
@@ -39,6 +42,9 @@ import {
     Home as HomeIcon,
     Psychology as PsychologyIcon,
     Refresh as RefreshIcon,
+    ExpandMore as ExpandMoreIcon,
+    Code as CodeIcon,
+    Forum as ForumIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -568,67 +574,42 @@ function AnalysisPanel() {
     const boxShadow = useBoxShadow(true)
     const { data: analysis, isLoading, isFetching, refetch } = useGetChatAnalysisQuery()
 
-    return (
-        <Card sx={{ boxShadow }}>
-            <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                    <Box>
-                        <Typography variant="h6">Análisis de Conversaciones</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                            Análisis con IA de las últimas 20 conversaciones
-                        </Typography>
-                    </Box>
-                    <Tooltip title="Regenerar análisis">
-                        <IconButton onClick={() => refetch()} disabled={isFetching} color="primary">
-                            <RefreshIcon sx={{ animation: isFetching ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } } }} />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
+    const renderMarkdown = (text: string) => {
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+            .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+            .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+            .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+            .replace(/\n/g, '<br />')
+    }
 
-                {isLoading || isFetching ? (
-                    <Box display="flex" flexDirection="column" alignItems="center" py={6} gap={2}>
-                        <CircularProgress />
-                        <Typography variant="body2" color="text.secondary">
-                            Analizando conversaciones con IA...
-                        </Typography>
+    return (
+        <Box display="flex" flexDirection="column" gap={2}>
+            {/* Header */}
+            <Card sx={{ boxShadow }}>
+                <CardContent>
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Box>
+                            <Typography variant="h6">Análisis de Conversaciones</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                Análisis con IA de las últimas 20 conversaciones — detecta problemas, inconsistencias y oportunidades de mejora
+                            </Typography>
+                        </Box>
+                        <Tooltip title="Regenerar análisis">
+                            <IconButton onClick={() => refetch()} disabled={isFetching} color="primary" size="large">
+                                <RefreshIcon sx={{ animation: isFetching ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } } }} />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
-                ) : analysis?.analysis ? (
-                    <Box>
-                        <Paper
-                            variant="outlined"
-                            sx={{
-                                p: 3,
-                                backgroundColor: '#fafafa',
-                                borderRadius: 2,
-                                '& h1, & h2, & h3': { mt: 2, mb: 1, fontSize: '1.1rem', fontWeight: 600 },
-                                '& p': { mb: 1, lineHeight: 1.7 },
-                                '& ul, & ol': { pl: 3, mb: 1 },
-                                '& li': { mb: 0.5 },
-                                '& strong': { color: '#0E6191' },
-                            }}
-                        >
-                            <Typography
-                                variant="body2"
-                                sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.8 }}
-                                dangerouslySetInnerHTML={{
-                                    __html: (analysis.analysis || '')
-                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                                        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                                        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                                        .replace(/\n/g, '<br />')
-                                }}
+                    {analysis && !isLoading && !isFetching && (
+                        <Box display="flex" gap={1.5} mt={1.5}>
+                            <Chip
+                                label={`${analysis.sessions_analyzed} conversaciones`}
+                                size="small"
+                                variant="outlined"
+                                color="primary"
                             />
-                        </Paper>
-                        <Box display="flex" justifyContent="flex-end" mt={1.5} gap={2}>
-                            {analysis.sessions_analyzed > 0 && (
-                                <Chip
-                                    label={`${analysis.sessions_analyzed} conversaciones analizadas`}
-                                    size="small"
-                                    variant="outlined"
-                                    color="primary"
-                                />
-                            )}
                             {analysis.tokens_used && (
                                 <Chip
                                     label={`${analysis.tokens_used.toLocaleString()} tokens`}
@@ -636,16 +617,157 @@ function AnalysisPanel() {
                                     variant="outlined"
                                 />
                             )}
+                            {analysis.model && (
+                                <Chip
+                                    label={analysis.model}
+                                    size="small"
+                                    variant="outlined"
+                                    color="secondary"
+                                />
+                            )}
                         </Box>
-                    </Box>
-                ) : (
-                    <Box textAlign="center" py={4}>
-                        <PsychologyIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
-                        <Typography color="text.secondary" mt={1}>No hay datos para analizar</Typography>
-                    </Box>
-                )}
-            </CardContent>
-        </Card>
+                    )}
+                </CardContent>
+            </Card>
+
+            {/* Resultado del análisis */}
+            {isLoading || isFetching ? (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box display="flex" flexDirection="column" alignItems="center" py={6} gap={2}>
+                            <CircularProgress />
+                            <Typography variant="body2" color="text.secondary">
+                                Analizando conversaciones con IA...
+                            </Typography>
+                            <Typography variant="caption" color="text.disabled">
+                                Esto puede tomar unos segundos
+                            </Typography>
+                        </Box>
+                    </CardContent>
+                </Card>
+            ) : analysis?.analysis ? (
+                <>
+                    <Card sx={{ boxShadow }}>
+                        <CardContent>
+                            <Typography variant="subtitle1" fontWeight={600} mb={2} display="flex" alignItems="center" gap={1}>
+                                <PsychologyIcon color="primary" fontSize="small" />
+                                Resultado del Análisis
+                            </Typography>
+                            <Paper
+                                variant="outlined"
+                                sx={{
+                                    p: 3,
+                                    backgroundColor: '#fafafa',
+                                    borderRadius: 2,
+                                    '& h1, & h2, & h3': { mt: 2, mb: 1, fontSize: '1.1rem', fontWeight: 600, color: '#0E6191' },
+                                    '& blockquote': {
+                                        borderLeft: '3px solid #0E6191',
+                                        pl: 2, ml: 1, my: 1,
+                                        color: '#555',
+                                        backgroundColor: '#f0f7fb',
+                                        py: 0.5, pr: 1,
+                                        borderRadius: '0 4px 4px 0',
+                                    },
+                                    '& strong': { color: '#333' },
+                                }}
+                            >
+                                <Typography
+                                    variant="body2"
+                                    component="div"
+                                    sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.8 }}
+                                    dangerouslySetInnerHTML={{ __html: renderMarkdown(analysis.analysis) }}
+                                />
+                            </Paper>
+                        </CardContent>
+                    </Card>
+
+                    {/* Prompt usado */}
+                    {analysis.system_prompt && (
+                        <Accordion sx={{ boxShadow }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <CodeIcon fontSize="small" color="action" />
+                                    <Typography variant="subtitle2">Prompt utilizado para el análisis</Typography>
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{
+                                        p: 2,
+                                        backgroundColor: '#1e1e1e',
+                                        borderRadius: 1,
+                                        maxHeight: 400,
+                                        overflow: 'auto',
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontFamily: 'monospace',
+                                            fontSize: 12,
+                                            color: '#d4d4d4',
+                                            whiteSpace: 'pre-wrap',
+                                            lineHeight: 1.6,
+                                        }}
+                                    >
+                                        {analysis.system_prompt}
+                                    </Typography>
+                                </Paper>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+
+                    {/* Conversaciones enviadas */}
+                    {analysis.conversations_sent && (
+                        <Accordion sx={{ boxShadow }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <ForumIcon fontSize="small" color="action" />
+                                    <Typography variant="subtitle2">
+                                        Conversaciones enviadas al análisis ({analysis.sessions_analyzed})
+                                    </Typography>
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{
+                                        p: 2,
+                                        backgroundColor: '#fafafa',
+                                        borderRadius: 1,
+                                        maxHeight: 500,
+                                        overflow: 'auto',
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontFamily: 'monospace',
+                                            fontSize: 11,
+                                            color: '#555',
+                                            whiteSpace: 'pre-wrap',
+                                            lineHeight: 1.5,
+                                        }}
+                                    >
+                                        {analysis.conversations_sent}
+                                    </Typography>
+                                </Paper>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+                </>
+            ) : (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box textAlign="center" py={4}>
+                            <PsychologyIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
+                            <Typography color="text.secondary" mt={1}>No hay datos para analizar</Typography>
+                        </Box>
+                    </CardContent>
+                </Card>
+            )}
+        </Box>
     )
 }
 
