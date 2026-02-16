@@ -5,6 +5,8 @@ import {
     IChatSessionsResponse,
     IChatAnalytics,
     IChatMessage,
+    IPropertyVisitsResponse,
+    IChatAnalysis,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -83,6 +85,39 @@ export const chatbotService = createApi({
             }),
             invalidatesTags: ['ChatSessions'],
         }),
+
+        markAsRead: builder.mutation<
+            any,
+            { sessionId: string }
+        >({
+            query: ({ sessionId }) => ({
+                url: `/chatbot/sessions/${sessionId}/mark-read/`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['ChatSessions'],
+        }),
+
+        getPropertyVisits: builder.query<
+            IPropertyVisitsResponse,
+            { page?: number; status?: string }
+        >({
+            query: ({ page = 1, status = '' }) => ({
+                url: '/chatbot/visits/',
+                method: 'GET',
+                params: {
+                    page: page.toString(),
+                    page_size: '15',
+                    ...(status && { status }),
+                },
+            }),
+        }),
+
+        getChatAnalysis: builder.query<IChatAnalysis, void>({
+            query: () => ({
+                url: '/chatbot/analysis/',
+                method: 'GET',
+            }),
+        }),
     }),
 })
 
@@ -92,4 +127,7 @@ export const {
     useGetChatMessagesQuery,
     useSendChatMessageMutation,
     useToggleChatAIMutation,
+    useMarkAsReadMutation,
+    useGetPropertyVisitsQuery,
+    useGetChatAnalysisQuery,
 } = chatbotService

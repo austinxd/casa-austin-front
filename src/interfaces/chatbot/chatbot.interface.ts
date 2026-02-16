@@ -59,3 +59,37 @@ export interface IChatSessionsResponse {
     actual: number
     total_paginas: number
 }
+
+export interface IPropertyVisit {
+    id: string
+    created: string
+    session: string
+    property: string
+    property_name: string
+    client: string | null
+    client_name: string | null
+    session_wa_profile: string | null
+    visit_date: string
+    visit_time: string | null
+    visitor_name: string
+    visitor_phone: string
+    guests_count: number
+    notes: string
+    status: 'scheduled' | 'completed' | 'cancelled' | 'no_show'
+}
+
+export interface IPropertyVisitsResponse {
+    count: number
+    next: string | null
+    previous: string | null
+    results: IPropertyVisit[]
+    actual: number
+    total_paginas: number
+}
+
+export interface IChatAnalysis {
+    analysis: string
+    sessions_analyzed: number
+    tokens_used?: number
+    model?: string
+}

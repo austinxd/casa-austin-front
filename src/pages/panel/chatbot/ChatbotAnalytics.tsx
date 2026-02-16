@@ -36,6 +36,9 @@ import {
     Search as SearchIcon,
     Send as SendIcon,
     ChatBubbleOutline,
+    Home as HomeIcon,
+    Psychology as PsychologyIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -44,6 +47,9 @@ import {
     useGetChatMessagesQuery,
     useSendChatMessageMutation,
     useToggleChatAIMutation,
+    useMarkAsReadMutation,
+    useGetPropertyVisitsQuery,
+    useGetChatAnalysisQuery,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
 
@@ -63,6 +69,7 @@ export default function ChatbotAnalytics() {
         { page: 1, search: searchSessions },
         { pollingInterval: tab === 0 ? 10000 : undefined }
     )
+    const [markAsRead] = useMarkAsReadMutation()
 
     const boxShadow = useBoxShadow(true)
 
@@ -109,7 +116,7 @@ export default function ChatbotAnalytics() {
                 <Typography variant="h5" fontWeight={700}>
                     Austin Assistant
                 </Typography>
-                {tab > 0 && (
+                {(tab === 1 || tab === 4 || tab === 5) && (
                     <Box display="flex" gap={2}>
                         <TextField
                             type="date"
@@ -134,6 +141,8 @@ export default function ChatbotAnalytics() {
             <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
                 <Tab icon={<ChatBubbleOutline sx={{ fontSize: 18 }} />} iconPosition="start" label="Conversaciones" />
                 <Tab label="Resumen" />
+                <Tab icon={<HomeIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Visitas" />
+                <Tab icon={<PsychologyIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Análisis" />
                 <Tab label="Intenciones" />
                 <Tab label="Costos" />
             </Tabs>
@@ -176,7 +185,12 @@ export default function ChatbotAnalytics() {
                                     <ListItemButton
                                         key={session.id}
                                         selected={isSelected}
-                                        onClick={() => setSelectedSessionId(session.id)}
+                                        onClick={() => {
+                                            setSelectedSessionId(session.id)
+                                            if (session.unread_count) {
+                                                markAsRead({ sessionId: session.id })
+                                            }
+                                        }}
                                         sx={{
                                             borderBottom: '1px solid',
                                             borderColor: 'divider',
@@ -386,8 +400,14 @@ export default function ChatbotAnalytics() {
                 </Box>
             )}
 
-            {/* TAB 2: INTENCIONES */}
-            {tab === 2 && (
+            {/* TAB 2: VISITAS */}
+            {tab === 2 && <VisitsPanel />}
+
+            {/* TAB 3: ANÁLISIS */}
+            {tab === 3 && <AnalysisPanel />}
+
+            {/* TAB 4: INTENCIONES */}
+            {tab === 4 && (
                 <Card sx={{ boxShadow }}>
                     <CardContent>
                         <Typography variant="h6" mb={2}>Intenciones Detectadas</Typography>
@@ -423,8 +443,8 @@ export default function ChatbotAnalytics() {
                 </Card>
             )}
 
-            {/* TAB 3: COSTOS */}
-            {tab === 3 && (
+            {/* TAB 5: COSTOS */}
+            {tab === 5 && (
                 <Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2} mb={3}>
                         <KPICard icon={<AttachMoneyIcon />} label="Costo Total Periodo" value={`$${totals?.cost.toFixed(4) || '0.0000'}`} color="#e91e63" />
@@ -458,6 +478,174 @@ export default function ChatbotAnalytics() {
                 </Box>
             )}
         </Box>
+    )
+}
+
+// ========= Visits Panel =========
+function VisitsPanel() {
+    const boxShadow = useBoxShadow(true)
+    const { data: visitsData, isLoading } = useGetPropertyVisitsQuery({ page: 1 })
+
+    const statusLabel: Record<string, string> = {
+        scheduled: 'Programada',
+        completed: 'Realizada',
+        cancelled: 'Cancelada',
+        no_show: 'No asistió',
+    }
+    const statusColor: Record<string, 'info' | 'success' | 'error' | 'warning'> = {
+        scheduled: 'info',
+        completed: 'success',
+        cancelled: 'error',
+        no_show: 'warning',
+    }
+
+    if (isLoading) {
+        return <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
+    }
+
+    const visits = visitsData?.results || []
+
+    return (
+        <Card sx={{ boxShadow }}>
+            <CardContent>
+                <Typography variant="h6" mb={2}>Visitas Programadas</Typography>
+                {visits.length === 0 ? (
+                    <Box textAlign="center" py={4}>
+                        <HomeIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
+                        <Typography color="text.secondary" mt={1}>No hay visitas programadas</Typography>
+                    </Box>
+                ) : (
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Visitante</TableCell>
+                                <TableCell>Propiedad</TableCell>
+                                <TableCell>Fecha</TableCell>
+                                <TableCell>Hora</TableCell>
+                                <TableCell align="center">Personas</TableCell>
+                                <TableCell>Estado</TableCell>
+                                <TableCell>Notas</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {visits.map((visit) => (
+                                <TableRow key={visit.id} hover>
+                                    <TableCell>
+                                        <Box>
+                                            <Typography variant="body2" fontWeight={600}>{visit.visitor_name}</Typography>
+                                            <Typography variant="caption" color="text.secondary">{visit.visitor_phone}</Typography>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>{visit.property_name}</TableCell>
+                                    <TableCell>{visit.visit_date}</TableCell>
+                                    <TableCell>{visit.visit_time || '—'}</TableCell>
+                                    <TableCell align="center">{visit.guests_count}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={statusLabel[visit.status] || visit.status}
+                                            color={statusColor[visit.status] || 'default'}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 150, display: 'block' }}>
+                                            {visit.notes || '—'}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
+            </CardContent>
+        </Card>
+    )
+}
+
+// ========= Analysis Panel =========
+function AnalysisPanel() {
+    const boxShadow = useBoxShadow(true)
+    const { data: analysis, isLoading, isFetching, refetch } = useGetChatAnalysisQuery()
+
+    return (
+        <Card sx={{ boxShadow }}>
+            <CardContent>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Box>
+                        <Typography variant="h6">Análisis de Conversaciones</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            Análisis con IA de las últimas 20 conversaciones
+                        </Typography>
+                    </Box>
+                    <Tooltip title="Regenerar análisis">
+                        <IconButton onClick={() => refetch()} disabled={isFetching} color="primary">
+                            <RefreshIcon sx={{ animation: isFetching ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } } }} />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+
+                {isLoading || isFetching ? (
+                    <Box display="flex" flexDirection="column" alignItems="center" py={6} gap={2}>
+                        <CircularProgress />
+                        <Typography variant="body2" color="text.secondary">
+                            Analizando conversaciones con IA...
+                        </Typography>
+                    </Box>
+                ) : analysis?.analysis ? (
+                    <Box>
+                        <Paper
+                            variant="outlined"
+                            sx={{
+                                p: 3,
+                                backgroundColor: '#fafafa',
+                                borderRadius: 2,
+                                '& h1, & h2, & h3': { mt: 2, mb: 1, fontSize: '1.1rem', fontWeight: 600 },
+                                '& p': { mb: 1, lineHeight: 1.7 },
+                                '& ul, & ol': { pl: 3, mb: 1 },
+                                '& li': { mb: 0.5 },
+                                '& strong': { color: '#0E6191' },
+                            }}
+                        >
+                            <Typography
+                                variant="body2"
+                                sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.8 }}
+                                dangerouslySetInnerHTML={{
+                                    __html: (analysis.analysis || '')
+                                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                                        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                                        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                                        .replace(/\n/g, '<br />')
+                                }}
+                            />
+                        </Paper>
+                        <Box display="flex" justifyContent="flex-end" mt={1.5} gap={2}>
+                            {analysis.sessions_analyzed > 0 && (
+                                <Chip
+                                    label={`${analysis.sessions_analyzed} conversaciones analizadas`}
+                                    size="small"
+                                    variant="outlined"
+                                    color="primary"
+                                />
+                            )}
+                            {analysis.tokens_used && (
+                                <Chip
+                                    label={`${analysis.tokens_used.toLocaleString()} tokens`}
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            )}
+                        </Box>
+                    </Box>
+                ) : (
+                    <Box textAlign="center" py={4}>
+                        <PsychologyIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
+                        <Typography color="text.secondary" mt={1}>No hay datos para analizar</Typography>
+                    </Box>
+                )}
+            </CardContent>
+        </Card>
     )
 }
 
