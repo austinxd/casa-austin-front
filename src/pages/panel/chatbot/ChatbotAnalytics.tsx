@@ -22,11 +22,9 @@ import {
     AttachMoney as AttachMoneyIcon,
     Warning as WarningIcon,
     PersonSearch as PersonSearchIcon,
-    CalendarToday as CalendarIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import { useGetChatAnalyticsQuery, useGetChatSessionsQuery } from '@/services/chatbot/chatbotService'
-import { IChatAnalytics } from '@/interfaces/chatbot/chatbot.interface'
 
 export default function ChatbotAnalytics() {
     const [tab, setTab] = useState(0)
