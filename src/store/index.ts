@@ -15,6 +15,7 @@ import { searchTrackingApi } from '../services/analytics/searchTrackingService'
 import { ingresosApi } from '../services/analytics/ingresosService'
 import { newUpcomingCheckinsApi } from '../services/analytics/newUpcomingCheckinsService'
 import { pricingService } from '../services/pricing/pricingService'
+import { chatbotService } from '../services/chatbot/chatbotService'
 
 export const store = configureStore({
     reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
         [ingresosApi.reducerPath]: ingresosApi.reducer,
         [newUpcomingCheckinsApi.reducerPath]: newUpcomingCheckinsApi.reducer,
         [pricingService.reducerPath]: pricingService.reducer,
+        [chatbotService.reducerPath]: chatbotService.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -53,7 +55,8 @@ export const store = configureStore({
             searchTrackingApi.middleware,
             ingresosApi.middleware,
             newUpcomingCheckinsApi.middleware,
-            pricingService.middleware
+            pricingService.middleware,
+            chatbotService.middleware,
         ),
 })
 

@@ -8,6 +8,7 @@ import {
     Menu as MenuIcon,
     People as PeopleIcon,
     Calculate as CalculateIcon,
+    SmartToyOutlined as SmartToyOutlinedIcon,
 } from '@mui/icons-material'
 import {
     AppBar,
@@ -70,6 +71,12 @@ const menuItems = [
         text: 'Cotizador',
         icon: CalculateIcon,
         path: '/panel/cotizador',
+    },
+    {
+        id: 8,
+        text: 'Chatbot IA',
+        icon: SmartToyOutlinedIcon,
+        path: '/panel/chatbot',
     },
     {
         id: 9,
@@ -142,7 +149,7 @@ export default function Sidebar(props: Props) {
                     justifyContent: 'center',
                 }}
             >
-                {menuItems.slice(0, 8).map(({ text, icon: Icon, path, id }) => (
+                {menuItems.slice(0, 9).map(({ text, icon: Icon, path, id }) => (
                     <Box
                         key={id}
                         sx={{
@@ -177,7 +184,7 @@ export default function Sidebar(props: Props) {
                         </Typography>
                     </Box>
                 ))}
-                {menuItems.slice(8, 9).map(({ text, icon: Icon, id }) => (
+                {menuItems.slice(9, 10).map(({ text, icon: Icon, id }) => (
                     <Box
                         key={id}
                         sx={{

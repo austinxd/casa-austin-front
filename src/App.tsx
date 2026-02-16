@@ -21,6 +21,9 @@ const CotizadorPage = lazy(() => import('./pages/panel/cotizador/CotizadorPage')
 // Stats components
 const StatsPage = lazy(() => import('./pages/panel/stats/StatsPage'))
 
+// Chatbot Analytics
+const ChatbotAnalytics = lazy(() => import('./pages/panel/chatbot/ChatbotAnalytics'))
+
 function App() {
     return (
         <BrowserRouter>
@@ -124,6 +127,18 @@ function App() {
                             <Sidebar>
                                 <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando estadísticas...</div>}>
                                     <StatsPage />
+                                </Suspense>
+                            </Sidebar>
+                        </ProtectRoutes>
+                    }
+                />
+                <Route
+                    path="/panel/chatbot"
+                    element={
+                        <ProtectRoutes navigateTo="/">
+                            <Sidebar>
+                                <Suspense fallback={<div style={{padding: '20px', textAlign: 'center'}}>Cargando chatbot...</div>}>
+                                    <ChatbotAnalytics />
                                 </Suspense>
                             </Sidebar>
                         </ProtectRoutes>
