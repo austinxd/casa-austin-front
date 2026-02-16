@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { tokenValidate } from '@/services/auth/auth'
@@ -14,34 +14,25 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
   const roll = Cookies.get('rollTkn')
   const { pathname } = useLocation()
   const [checking, setChecking] = useState(Boolean(token && tokenRefresh))
+  const validated = useRef(false)
 
   useEffect(() => {
+    if (validated.current) return
+    validated.current = true
+
     let cancelled = false
-    let timeoutId: NodeJS.Timeout
-    
+
     const validate = async () => {
       if (!(token && tokenRefresh)) { setChecking(false); return }
       try {
         setChecking(true)
-        
-        // Timeout después de 8 segundos
-        timeoutId = setTimeout(() => {
-          if (!cancelled) {
-            console.warn('Token validation timed out, logging out')
-            Cookies.remove('token')
-            Cookies.remove('tokenRefresh')
-            Cookies.remove('rollTkn')
-            setChecking(false)
-          }
-        }, 8000)
-        
         const res = await tokenValidate({ refresh: tokenRefresh })
         const access = res?.data?.access
         const newRefresh = res?.data?.refresh
-        if (access && access !== token) {
+        if (access) {
           Cookies.set('token', access, { expires: 7 })
         }
-        if (newRefresh && newRefresh !== tokenRefresh) {
+        if (newRefresh) {
           Cookies.set('tokenRefresh', newRefresh, { expires: 7 })
         }
       } catch (error) {
@@ -50,24 +41,20 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
         Cookies.remove('tokenRefresh')
         Cookies.remove('rollTkn')
       } finally {
-        clearTimeout(timeoutId)
         if (!cancelled) setChecking(false)
       }
     }
-    
+
     validate()
-    return () => { 
-      cancelled = true 
-      clearTimeout(timeoutId)
-    }
-  }, [tokenRefresh])
+    return () => { cancelled = true }
+  }, [])
 
   if (checking) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         height: '100vh',
         fontSize: '16px'
       }}>
