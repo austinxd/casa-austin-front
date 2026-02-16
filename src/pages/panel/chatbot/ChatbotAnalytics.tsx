@@ -28,6 +28,8 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
+    Button,
+    TablePagination,
 } from '@mui/material'
 import {
     SmartToy as SmartToyIcon,
@@ -71,6 +73,7 @@ export default function ChatbotAnalytics() {
     const [tab, setTab] = useState(0)
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
     const [searchSessions, setSearchSessions] = useState('')
+    const [sessionsPage, setSessionsPage] = useState(1)
     const today = new Date()
     const thirtyDaysAgo = new Date(today)
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -80,7 +83,7 @@ export default function ChatbotAnalytics() {
 
     const { data: analytics, isLoading } = useGetChatAnalyticsQuery({ from: fromDate, to: toDate })
     const { data: sessionsData } = useGetChatSessionsQuery(
-        { page: 1, search: searchSessions },
+        { page: sessionsPage, search: searchSessions },
         { pollingInterval: tab === 0 ? 10000 : undefined }
     )
     const [markAsRead] = useMarkAsReadMutation()
@@ -173,7 +176,7 @@ export default function ChatbotAnalytics() {
                                 fullWidth
                                 placeholder="Buscar por nombre o teléfono..."
                                 value={searchSessions}
-                                onChange={(e) => setSearchSessions(e.target.value)}
+                                onChange={(e) => { setSearchSessions(e.target.value); setSessionsPage(1) }}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -271,6 +274,27 @@ export default function ChatbotAnalytics() {
                                 </Box>
                             )}
                         </List>
+                        {sessionsData && sessionsData.count > 15 && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 1.5, py: 0.5, borderTop: '1px solid', borderColor: 'divider' }}>
+                                <Button
+                                    size="small"
+                                    disabled={sessionsPage <= 1}
+                                    onClick={() => setSessionsPage(p => p - 1)}
+                                >
+                                    Anterior
+                                </Button>
+                                <Typography variant="caption" color="text.secondary">
+                                    {sessionsPage} / {sessionsData.total_paginas}
+                                </Typography>
+                                <Button
+                                    size="small"
+                                    disabled={!sessionsData.next}
+                                    onClick={() => setSessionsPage(p => p + 1)}
+                                >
+                                    Siguiente
+                                </Button>
+                            </Box>
+                        )}
                     </Card>
 
                     {/* Panel de chat */}
@@ -420,6 +444,17 @@ export default function ChatbotAnalytics() {
                                             )}
                                         </TableBody>
                                     </Table>
+                                    {sessionsData && sessionsData.count > 15 && (
+                                        <TablePagination
+                                            component="div"
+                                            count={sessionsData.count}
+                                            page={sessionsPage - 1}
+                                            onPageChange={(_, newPage) => setSessionsPage(newPage + 1)}
+                                            rowsPerPage={15}
+                                            rowsPerPageOptions={[15]}
+                                            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+                                        />
+                                    )}
                                 </CardContent>
                             </Card>
                         </>
