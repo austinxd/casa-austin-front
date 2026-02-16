@@ -96,3 +96,27 @@ export interface IChatAnalysis {
     chatbot_prompt?: string
     conversations_sent?: string
 }
+
+export interface IFollowupOpportunity {
+    id: string
+    wa_id: string
+    name: string
+    category: 'no_quote' | 'quoted' | 'followed_up'
+    status: string
+    ai_enabled: boolean
+    total_messages: number
+    quoted_at: string | null
+    followup_count: number
+    followup_sent_at: string | null
+    last_customer_message_at: string | null
+    hours_since_last_message: number | null
+    wa_window_remaining_hours: number | null
+    last_message_preview: string | null
+}
+
+export interface IFollowupResponse {
+    no_quote_count: number
+    quoted_count: number
+    followed_up_count: number
+    results: IFollowupOpportunity[]
+}

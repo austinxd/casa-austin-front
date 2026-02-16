@@ -45,6 +45,10 @@ import {
     ExpandMore as ExpandMoreIcon,
     Code as CodeIcon,
     Forum as ForumIcon,
+    TrackChanges as TrackChangesIcon,
+    AccessTime as AccessTimeIcon,
+    Receipt as ReceiptIcon,
+    HourglassEmpty as HourglassIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -56,6 +60,7 @@ import {
     useMarkAsReadMutation,
     useGetPropertyVisitsQuery,
     useGetChatAnalysisQuery,
+    useGetFollowupOpportunitiesQuery,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
 
@@ -122,7 +127,7 @@ export default function ChatbotAnalytics() {
                 <Typography variant="h5" fontWeight={700}>
                     Austin Assistant
                 </Typography>
-                {(tab === 1 || tab === 4 || tab === 5) && (
+                {(tab === 1 || tab === 5 || tab === 6) && (
                     <Box display="flex" gap={2}>
                         <TextField
                             type="date"
@@ -147,6 +152,7 @@ export default function ChatbotAnalytics() {
             <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
                 <Tab icon={<ChatBubbleOutline sx={{ fontSize: 18 }} />} iconPosition="start" label="Conversaciones" />
                 <Tab label="Resumen" />
+                <Tab icon={<TrackChangesIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Seguimiento" />
                 <Tab icon={<HomeIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Visitas" />
                 <Tab icon={<PsychologyIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Análisis" />
                 <Tab label="Intenciones" />
@@ -406,14 +412,17 @@ export default function ChatbotAnalytics() {
                 </Box>
             )}
 
-            {/* TAB 2: VISITAS */}
-            {tab === 2 && <VisitsPanel />}
+            {/* TAB 2: SEGUIMIENTO */}
+            {tab === 2 && <FollowupPanel />}
 
-            {/* TAB 3: ANÁLISIS */}
-            {tab === 3 && <AnalysisPanel />}
+            {/* TAB 3: VISITAS */}
+            {tab === 3 && <VisitsPanel />}
 
-            {/* TAB 4: INTENCIONES */}
-            {tab === 4 && (
+            {/* TAB 4: ANÁLISIS */}
+            {tab === 4 && <AnalysisPanel />}
+
+            {/* TAB 5: INTENCIONES */}
+            {tab === 5 && (
                 <Card sx={{ boxShadow }}>
                     <CardContent>
                         <Typography variant="h6" mb={2}>Intenciones Detectadas</Typography>
@@ -449,8 +458,8 @@ export default function ChatbotAnalytics() {
                 </Card>
             )}
 
-            {/* TAB 5: COSTOS */}
-            {tab === 5 && (
+            {/* TAB 6: COSTOS */}
+            {tab === 6 && (
                 <Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2} mb={3}>
                         <KPICard icon={<AttachMoneyIcon />} label="Costo Total Periodo" value={`$${totals?.cost.toFixed(4) || '0.0000'}`} color="#e91e63" />
@@ -482,6 +491,142 @@ export default function ChatbotAnalytics() {
                         </CardContent>
                     </Card>
                 </Box>
+            )}
+        </Box>
+    )
+}
+
+// ========= Followup Panel =========
+function FollowupPanel() {
+    const boxShadow = useBoxShadow(true)
+    const { data, isLoading } = useGetFollowupOpportunitiesQuery(undefined, { pollingInterval: 60000 })
+
+    const categoryConfig: Record<string, { label: string; color: string; icon: React.ReactNode; description: string }> = {
+        no_quote: {
+            label: 'Sin cotización',
+            color: '#ff9800',
+            icon: <HourglassIcon fontSize="small" />,
+            description: 'Escribieron pero no recibieron cotización',
+        },
+        quoted: {
+            label: 'Cotización enviada',
+            color: '#2196f3',
+            icon: <ReceiptIcon fontSize="small" />,
+            description: 'Recibieron cotización pero no reservaron',
+        },
+        followed_up: {
+            label: 'Follow-up enviado',
+            color: '#4caf50',
+            icon: <AccessTimeIcon fontSize="small" />,
+            description: 'Ya se envió un follow-up automático',
+        },
+    }
+
+    if (isLoading) {
+        return <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
+    }
+
+    const results = data?.results || []
+    const noQuote = results.filter(r => r.category === 'no_quote')
+    const quoted = results.filter(r => r.category === 'quoted')
+    const followedUp = results.filter(r => r.category === 'followed_up')
+
+    return (
+        <Box display="flex" flexDirection="column" gap={2}>
+            {/* KPIs */}
+            <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2}>
+                <KPICard icon={<HourglassIcon />} label="Sin Cotización" value={String(data?.no_quote_count || 0)} color="#ff9800" />
+                <KPICard icon={<ReceiptIcon />} label="Cotizadas sin Reserva" value={String(data?.quoted_count || 0)} color="#2196f3" />
+                <KPICard icon={<AccessTimeIcon />} label="Follow-ups Enviados" value={String(data?.followed_up_count || 0)} color="#4caf50" />
+            </Box>
+
+            {/* Tabla por categoría */}
+            {[
+                { items: noQuote, key: 'no_quote' as const },
+                { items: quoted, key: 'quoted' as const },
+                { items: followedUp, key: 'followed_up' as const },
+            ].map(({ items, key }) => {
+                const cfg = categoryConfig[key]
+                if (items.length === 0) return null
+                return (
+                    <Card key={key} sx={{ boxShadow }}>
+                        <CardContent>
+                            <Box display="flex" alignItems="center" gap={1} mb={2}>
+                                <Box sx={{ color: cfg.color }}>{cfg.icon}</Box>
+                                <Typography variant="h6" sx={{ color: cfg.color }}>{cfg.label}</Typography>
+                                <Chip label={items.length} size="small" sx={{ bgcolor: cfg.color, color: '#fff', ml: 1 }} />
+                            </Box>
+                            <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                                {cfg.description}
+                            </Typography>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Contacto</TableCell>
+                                        <TableCell>Último mensaje</TableCell>
+                                        <TableCell align="center">Hace</TableCell>
+                                        <TableCell align="center">Ventana WA</TableCell>
+                                        <TableCell align="center">Msgs</TableCell>
+                                        {key === 'followed_up' && <TableCell>Follow-up</TableCell>}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {items.map((item) => (
+                                        <TableRow key={item.id} hover>
+                                            <TableCell>
+                                                <Box>
+                                                    <Typography variant="body2" fontWeight={600}>{item.name}</Typography>
+                                                    <Typography variant="caption" color="text.secondary">{item.wa_id}</Typography>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200, display: 'block' }}>
+                                                    {item.last_message_preview || '—'}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant="body2">
+                                                    {item.hours_since_last_message != null ? `${item.hours_since_last_message}h` : '—'}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                {item.wa_window_remaining_hours != null ? (
+                                                    <Chip
+                                                        label={`${item.wa_window_remaining_hours}h`}
+                                                        size="small"
+                                                        color={item.wa_window_remaining_hours < 4 ? 'error' : item.wa_window_remaining_hours < 10 ? 'warning' : 'success'}
+                                                        variant="outlined"
+                                                    />
+                                                ) : '—'}
+                                            </TableCell>
+                                            <TableCell align="center">{item.total_messages}</TableCell>
+                                            {key === 'followed_up' && (
+                                                <TableCell>
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        {item.followup_sent_at
+                                                            ? formatTimeAgo(item.followup_sent_at)
+                                                            : '—'}
+                                                    </Typography>
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                )
+            })}
+
+            {results.length === 0 && (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box textAlign="center" py={4}>
+                            <TrackChangesIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
+                            <Typography color="text.secondary" mt={1}>No hay oportunidades de seguimiento en este momento</Typography>
+                        </Box>
+                    </CardContent>
+                </Card>
             )}
         </Box>
     )

@@ -7,6 +7,7 @@ import {
     IChatMessage,
     IPropertyVisitsResponse,
     IChatAnalysis,
+    IFollowupResponse,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -119,6 +120,13 @@ export const chatbotService = createApi({
                 method: 'GET',
             }),
         }),
+
+        getFollowupOpportunities: builder.query<IFollowupResponse, void>({
+            query: () => ({
+                url: '/chatbot/followups/',
+                method: 'GET',
+            }),
+        }),
     }),
 })
 
@@ -131,4 +139,5 @@ export const {
     useMarkAsReadMutation,
     useGetPropertyVisitsQuery,
     useGetChatAnalysisQuery,
+    useGetFollowupOpportunitiesQuery,
 } = chatbotService
