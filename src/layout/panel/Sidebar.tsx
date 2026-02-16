@@ -74,7 +74,7 @@ const menuItems = [
     },
     {
         id: 8,
-        text: 'Chatbot IA',
+        text: 'Austin Assistant',
         icon: SmartToyOutlinedIcon,
         path: '/panel/chatbot',
     },
