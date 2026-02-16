@@ -681,13 +681,50 @@ function AnalysisPanel() {
                         </CardContent>
                     </Card>
 
-                    {/* Prompt usado */}
-                    {analysis.system_prompt && (
+                    {/* Prompt actual del chatbot */}
+                    {analysis.chatbot_prompt && (
+                        <Accordion sx={{ boxShadow }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <SmartToyIcon fontSize="small" color="primary" />
+                                    <Typography variant="subtitle2">Prompt actual del Chatbot (el que usa para responder clientes)</Typography>
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{
+                                        p: 2,
+                                        backgroundColor: '#1a2332',
+                                        borderRadius: 1,
+                                        maxHeight: 500,
+                                        overflow: 'auto',
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontFamily: 'monospace',
+                                            fontSize: 12,
+                                            color: '#a8d8f0',
+                                            whiteSpace: 'pre-wrap',
+                                            lineHeight: 1.6,
+                                        }}
+                                    >
+                                        {analysis.chatbot_prompt}
+                                    </Typography>
+                                </Paper>
+                            </AccordionDetails>
+                        </Accordion>
+                    )}
+
+                    {/* Prompt del análisis */}
+                    {analysis.analysis_prompt && (
                         <Accordion sx={{ boxShadow }}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Box display="flex" alignItems="center" gap={1}>
                                     <CodeIcon fontSize="small" color="action" />
-                                    <Typography variant="subtitle2">Prompt utilizado para el análisis</Typography>
+                                    <Typography variant="subtitle2">Prompt utilizado para generar este análisis</Typography>
                                 </Box>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -711,7 +748,7 @@ function AnalysisPanel() {
                                             lineHeight: 1.6,
                                         }}
                                     >
-                                        {analysis.system_prompt}
+                                        {analysis.analysis_prompt}
                                     </Typography>
                                 </Paper>
                             </AccordionDetails>

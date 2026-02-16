@@ -92,6 +92,7 @@ export interface IChatAnalysis {
     sessions_analyzed: number
     tokens_used?: number
     model?: string
-    system_prompt?: string
+    analysis_prompt?: string
+    chatbot_prompt?: string
     conversations_sent?: string
 }
