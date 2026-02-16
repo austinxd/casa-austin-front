@@ -49,6 +49,9 @@ import {
     AccessTime as AccessTimeIcon,
     Receipt as ReceiptIcon,
     HourglassEmpty as HourglassIcon,
+    WhatsApp as WhatsAppIcon,
+    Instagram as InstagramIcon,
+    Facebook as FacebookIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -238,6 +241,13 @@ export default function ChatbotAnalytics() {
                                                         {preview}
                                                     </Typography>
                                                     <Box display="flex" alignItems="center" gap={0.5} mt={0.3}>
+                                                        {session.channel === 'instagram' ? (
+                                                            <InstagramIcon sx={{ fontSize: 13, color: '#E4405F' }} />
+                                                        ) : session.channel === 'messenger' ? (
+                                                            <FacebookIcon sx={{ fontSize: 13, color: '#1877F2' }} />
+                                                        ) : (
+                                                            <WhatsAppIcon sx={{ fontSize: 13, color: '#25D366' }} />
+                                                        )}
                                                         <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: statusColor }} />
                                                         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
                                                             {session.ai_enabled ? 'IA' : session.status === 'escalated' ? 'Escalada' : 'Pausada'}
@@ -361,7 +371,12 @@ export default function ChatbotAnalytics() {
                                                     <TableRow key={session.id} hover>
                                                         <TableCell>
                                                             <Box>
-                                                                <Typography variant="body2" fontWeight={600}>{name}</Typography>
+                                                                <Box display="flex" alignItems="center" gap={0.5}>
+                                                                    <Typography variant="body2" fontWeight={600}>{name}</Typography>
+                                                                    {session.channel === 'instagram' && <InstagramIcon sx={{ fontSize: 14, color: '#E4405F' }} />}
+                                                                    {session.channel === 'messenger' && <FacebookIcon sx={{ fontSize: 14, color: '#1877F2' }} />}
+                                                                    {(!session.channel || session.channel === 'whatsapp') && <WhatsAppIcon sx={{ fontSize: 14, color: '#25D366' }} />}
+                                                                </Box>
                                                                 <Typography variant="caption" color="text.secondary">{session.wa_id}</Typography>
                                                             </Box>
                                                         </TableCell>
@@ -1036,7 +1051,12 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                         {displayName.charAt(0).toUpperCase()}
                     </Avatar>
                     <Box>
-                        <Typography variant="subtitle2" fontWeight={600}>{displayName}</Typography>
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                            <Typography variant="subtitle2" fontWeight={600}>{displayName}</Typography>
+                            {session?.channel === 'instagram' && <InstagramIcon sx={{ fontSize: 15, color: '#E4405F' }} />}
+                            {session?.channel === 'messenger' && <FacebookIcon sx={{ fontSize: 15, color: '#1877F2' }} />}
+                            {(!session?.channel || session.channel === 'whatsapp') && <WhatsAppIcon sx={{ fontSize: 15, color: '#25D366' }} />}
+                        </Box>
                         <Typography variant="caption" color="text.secondary">{session?.wa_id}</Typography>
                     </Box>
                 </Box>

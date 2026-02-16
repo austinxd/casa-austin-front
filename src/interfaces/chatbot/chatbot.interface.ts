@@ -2,6 +2,7 @@ export interface IChatSession {
     id: string
     wa_id: string
     wa_profile_name: string | null
+    channel: 'whatsapp' | 'instagram' | 'messenger'
     client: string | null
     client_name: string | null
     status: 'active' | 'ai_paused' | 'closed' | 'escalated'
