@@ -37,8 +37,12 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
         
         const res = await tokenValidate({ refresh: tokenRefresh })
         const access = res?.data?.access
+        const newRefresh = res?.data?.refresh
         if (access && access !== token) {
           Cookies.set('token', access, { expires: 7 })
+        }
+        if (newRefresh && newRefresh !== tokenRefresh) {
+          Cookies.set('tokenRefresh', newRefresh, { expires: 7 })
         }
       } catch (error) {
         console.error('Token validation failed:', error)

@@ -38,6 +38,19 @@ export interface IChatAnalytics {
     clients_identified: number
 }
 
+export interface IChatMessage {
+    id: string
+    direction: 'inbound' | 'outbound_ai' | 'outbound_human' | 'system'
+    message_type: string
+    content: string
+    wa_status: string | null
+    intent_detected: string | null
+    ai_model: string | null
+    tokens_used: number
+    sent_by_name: string | null
+    created: string
+}
+
 export interface IChatSessionsResponse {
     count: number
     next: string | null

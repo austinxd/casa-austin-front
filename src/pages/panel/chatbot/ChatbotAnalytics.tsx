@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
     Box,
     Typography,
@@ -14,6 +14,13 @@ import {
     Chip,
     CircularProgress,
     TextField,
+    List,
+    ListItemButton,
+    ListItemAvatar,
+    ListItemText,
+    Avatar,
+    InputAdornment,
+    Paper,
 } from '@mui/material'
 import {
     SmartToy as SmartToyIcon,
@@ -22,12 +29,16 @@ import {
     AttachMoney as AttachMoneyIcon,
     Warning as WarningIcon,
     PersonSearch as PersonSearchIcon,
+    Search as SearchIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
-import { useGetChatAnalyticsQuery, useGetChatSessionsQuery } from '@/services/chatbot/chatbotService'
+import { useGetChatAnalyticsQuery, useGetChatSessionsQuery, useGetChatMessagesQuery } from '@/services/chatbot/chatbotService'
+import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
 
 export default function ChatbotAnalytics() {
     const [tab, setTab] = useState(0)
+    const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
+    const [searchSessions, setSearchSessions] = useState('')
     const today = new Date()
     const thirtyDaysAgo = new Date(today)
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -36,7 +47,7 @@ export default function ChatbotAnalytics() {
     const [toDate, setToDate] = useState(today.toISOString().split('T')[0])
 
     const { data: analytics, isLoading } = useGetChatAnalyticsQuery({ from: fromDate, to: toDate })
-    const { data: sessionsData } = useGetChatSessionsQuery({ page: 1 })
+    const { data: sessionsData } = useGetChatSessionsQuery({ page: 1, search: searchSessions })
 
     const boxShadow = useBoxShadow(true)
 
@@ -91,7 +102,7 @@ export default function ChatbotAnalytics() {
         <Box>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Typography variant="h5" fontWeight={700}>
-                    Chatbot IA — Analytics
+                    Austin Assistant
                 </Typography>
                 <Box display="flex" gap={2}>
                     <TextField
@@ -247,56 +258,82 @@ export default function ChatbotAnalytics() {
 
             {/* TAB 2: CONVERSACIONES */}
             {tab === 2 && (
-                <Card sx={{ boxShadow }}>
-                    <CardContent>
-                        <Typography variant="h6" mb={2}>Conversaciones Recientes</Typography>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Contacto</TableCell>
-                                    <TableCell>Estado</TableCell>
-                                    <TableCell align="right">Mensajes</TableCell>
-                                    <TableCell>IA</TableCell>
-                                    <TableCell>Último mensaje</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {(sessionsData?.results || []).map((session) => (
-                                    <TableRow key={session.id}>
-                                        <TableCell>
-                                            {session.client_name || session.wa_profile_name || session.wa_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={session.status}
-                                                size="small"
-                                                color={
-                                                    session.status === 'active' ? 'success' :
-                                                    session.status === 'escalated' ? 'error' :
-                                                    session.status === 'ai_paused' ? 'warning' : 'default'
-                                                }
-                                            />
-                                        </TableCell>
-                                        <TableCell align="right">{session.total_messages}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={session.ai_enabled ? 'Activa' : 'Pausada'}
-                                                size="small"
-                                                variant="outlined"
-                                                color={session.ai_enabled ? 'primary' : 'default'}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            {session.last_message_at
-                                                ? new Date(session.last_message_at).toLocaleString('es-PE')
-                                                : '-'}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                <Box display="flex" gap={2} sx={{ height: 'calc(100vh - 240px)', minHeight: 500 }}>
+                    {/* Lista de sesiones */}
+                    <Card sx={{ width: 340, minWidth: 340, boxShadow, display: 'flex', flexDirection: 'column' }}>
+                        <Box sx={{ p: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                            <TextField
+                                size="small"
+                                fullWidth
+                                placeholder="Buscar..."
+                                value={searchSessions}
+                                onChange={(e) => setSearchSessions(e.target.value)}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Box>
+                        <List sx={{ overflow: 'auto', flex: 1, p: 0 }}>
+                            {(sessionsData?.results || []).map((session) => {
+                                const name = session.client_name || session.wa_profile_name || session.wa_id
+                                const initial = name.charAt(0).toUpperCase()
+                                const statusColor =
+                                    session.ai_enabled ? '#0E6191' :
+                                    session.status === 'escalated' ? '#ff1744' : '#e67e22'
+                                const preview = session.last_message_preview?.content || 'Sin mensajes'
+                                const time = session.last_message_at
+                                    ? new Date(session.last_message_at).toLocaleString('es-PE', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })
+                                    : ''
+                                return (
+                                    <ListItemButton
+                                        key={session.id}
+                                        selected={selectedSessionId === session.id}
+                                        onClick={() => setSelectedSessionId(session.id)}
+                                        sx={{ borderBottom: '1px solid', borderColor: 'divider', py: 1.5 }}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar sx={{ bgcolor: statusColor, width: 40, height: 40, fontSize: 16 }}>
+                                                {initial}
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={
+                                                <Box display="flex" justifyContent="space-between" alignItems="center">
+                                                    <Typography variant="body2" fontWeight={600} noWrap sx={{ maxWidth: 160 }}>
+                                                        {name}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="text.secondary">{time}</Typography>
+                                                </Box>
+                                            }
+                                            secondary={
+                                                <Typography variant="caption" color="text.secondary" noWrap>
+                                                    {preview}
+                                                </Typography>
+                                            }
+                                        />
+                                    </ListItemButton>
+                                )
+                            })}
+                        </List>
+                    </Card>
+
+                    {/* Panel de chat */}
+                    <Card sx={{ flex: 1, boxShadow, display: 'flex', flexDirection: 'column' }}>
+                        {selectedSessionId ? (
+                            <ChatPanel sessionId={selectedSessionId} sessions={sessionsData?.results || []} />
+                        ) : (
+                            <Box display="flex" alignItems="center" justifyContent="center" flex={1}>
+                                <Typography color="text.secondary">
+                                    Selecciona una conversación
+                                </Typography>
+                            </Box>
+                        )}
+                    </Card>
+                </Box>
             )}
 
             {/* TAB 3: COSTOS */}
@@ -345,6 +382,120 @@ export default function ChatbotAnalytics() {
                 </Box>
             )}
         </Box>
+    )
+}
+
+// ========= Chat Panel Component =========
+function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChatSession[] }) {
+    const { data: messages, isLoading } = useGetChatMessagesQuery({ sessionId })
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const session = sessions.find(s => s.id === sessionId)
+    const displayName = session?.client_name || session?.wa_profile_name || session?.wa_id || 'Chat'
+
+    // Scroll al fondo cuando cambian los mensajes
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
+
+    // Mensajes vienen newest-first, invertir para mostrar cronológicamente
+    const sortedMessages = useMemo(() => {
+        if (!messages) return []
+        return [...messages].reverse()
+    }, [messages])
+
+    const STATUS_LABELS: Record<string, { label: string; color: 'success' | 'error' | 'warning' | 'default' }> = {
+        active: { label: 'Activa', color: 'success' },
+        escalated: { label: 'Escalada', color: 'error' },
+        ai_paused: { label: 'IA Pausada', color: 'warning' },
+        closed: { label: 'Cerrada', color: 'default' },
+    }
+
+    const statusInfo = STATUS_LABELS[session?.status || ''] || STATUS_LABELS.active
+
+    return (
+        <>
+            {/* Header */}
+            <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                    <Typography variant="subtitle1" fontWeight={600}>{displayName}</Typography>
+                    <Typography variant="caption" color="text.secondary">{session?.wa_id}</Typography>
+                </Box>
+                <Box display="flex" gap={1}>
+                    <Chip label={statusInfo.label} size="small" color={statusInfo.color} />
+                    <Chip
+                        label={session?.ai_enabled ? 'IA Activa' : 'IA Pausada'}
+                        size="small"
+                        variant="outlined"
+                        color={session?.ai_enabled ? 'primary' : 'default'}
+                    />
+                </Box>
+            </Box>
+
+            {/* Mensajes */}
+            <Box sx={{ flex: 1, overflow: 'auto', p: 2, backgroundColor: '#f5f5f5' }}>
+                {isLoading ? (
+                    <Box display="flex" justifyContent="center" mt={4}>
+                        <CircularProgress size={28} />
+                    </Box>
+                ) : sortedMessages.length === 0 ? (
+                    <Typography color="text.secondary" textAlign="center" mt={4}>
+                        Sin mensajes
+                    </Typography>
+                ) : (
+                    sortedMessages.map((msg) => {
+                        const isInbound = msg.direction === 'inbound'
+                        const isAI = msg.direction === 'outbound_ai'
+                        const bgColor = isInbound ? '#fff' : isAI ? '#0E6191' : '#e67e22'
+                        const textColor = isInbound ? '#000' : '#fff'
+                        const time = new Date(msg.created).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
+
+                        return (
+                            <Box
+                                key={msg.id}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: isInbound ? 'flex-start' : 'flex-end',
+                                    mb: 1,
+                                }}
+                            >
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        px: 2, py: 1,
+                                        maxWidth: '70%',
+                                        backgroundColor: bgColor,
+                                        color: textColor,
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    {msg.direction === 'outbound_human' && msg.sent_by_name && (
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', display: 'block', mb: 0.5 }}>
+                                            {msg.sent_by_name}
+                                        </Typography>
+                                    )}
+                                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                                        {msg.content}
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: isInbound ? 'text.secondary' : 'rgba(255,255,255,0.7)',
+                                            display: 'block',
+                                            textAlign: 'right',
+                                            mt: 0.5,
+                                        }}
+                                    >
+                                        {time}
+                                        {!isInbound && (isAI ? ' · IA' : ' · Admin')}
+                                    </Typography>
+                                </Paper>
+                            </Box>
+                        )
+                    })
+                )}
+                <div ref={messagesEndRef} />
+            </Box>
+        </>
     )
 }
 

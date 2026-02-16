@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import {
     IChatSessionsResponse,
     IChatAnalytics,
+    IChatMessage,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -45,10 +46,22 @@ export const chatbotService = createApi({
                 },
             }),
         }),
+
+        getChatMessages: builder.query<
+            IChatMessage[],
+            { sessionId: string; limit?: number }
+        >({
+            query: ({ sessionId, limit = 50 }) => ({
+                url: `/chatbot/sessions/${sessionId}/messages/`,
+                method: 'GET',
+                params: { limit: limit.toString() },
+            }),
+        }),
     }),
 })
 
 export const {
     useGetChatAnalyticsQuery,
     useGetChatSessionsQuery,
+    useGetChatMessagesQuery,
 } = chatbotService

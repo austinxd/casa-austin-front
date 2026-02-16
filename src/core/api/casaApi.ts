@@ -83,7 +83,11 @@ casaApi.interceptors.response.use(
                 refresh: refreshToken,
             })
             const newToken = res.data.access
+            const newRefresh = res.data.refresh
             Cookies.set('token', newToken, { expires: 7 })
+            if (newRefresh) {
+                Cookies.set('tokenRefresh', newRefresh, { expires: 7 })
+            }
             processQueue(null, newToken)
             originalRequest.headers.Authorization = `Bearer ${newToken}`
             return casaApi(originalRequest)
