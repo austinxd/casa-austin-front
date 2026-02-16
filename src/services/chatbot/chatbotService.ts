@@ -48,6 +48,7 @@ export const chatbotService = createApi({
                     ...(status && { status }),
                 },
             }),
+            providesTags: ['ChatSessions'],
         }),
 
         getChatMessages: builder.query<
