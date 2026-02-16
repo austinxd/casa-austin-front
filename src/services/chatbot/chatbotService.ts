@@ -16,6 +16,7 @@ export const chatbotService = createApi({
             return headers
         },
     }),
+    tagTypes: ['ChatSessions', 'ChatMessages'],
     endpoints: (builder) => ({
         getChatAnalytics: builder.query<
             IChatAnalytics[],
@@ -56,6 +57,31 @@ export const chatbotService = createApi({
                 method: 'GET',
                 params: { limit: limit.toString() },
             }),
+            providesTags: ['ChatMessages'],
+        }),
+
+        sendChatMessage: builder.mutation<
+            IChatMessage,
+            { sessionId: string; content: string }
+        >({
+            query: ({ sessionId, content }) => ({
+                url: `/chatbot/sessions/${sessionId}/send/`,
+                method: 'POST',
+                body: { content },
+            }),
+            invalidatesTags: ['ChatMessages', 'ChatSessions'],
+        }),
+
+        toggleChatAI: builder.mutation<
+            any,
+            { sessionId: string; ai_enabled: boolean }
+        >({
+            query: ({ sessionId, ai_enabled }) => ({
+                url: `/chatbot/sessions/${sessionId}/toggle-ai/`,
+                method: 'POST',
+                body: { ai_enabled },
+            }),
+            invalidatesTags: ['ChatSessions'],
         }),
     }),
 })
@@ -64,4 +90,6 @@ export const {
     useGetChatAnalyticsQuery,
     useGetChatSessionsQuery,
     useGetChatMessagesQuery,
+    useSendChatMessageMutation,
+    useToggleChatAIMutation,
 } = chatbotService
