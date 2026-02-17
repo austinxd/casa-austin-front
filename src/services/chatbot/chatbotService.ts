@@ -8,6 +8,9 @@ import {
     IPropertyVisitsResponse,
     IChatAnalysis,
     IFollowupResponse,
+    IPromoDateConfig,
+    IPromoDateSentResponse,
+    IPromoPreview,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -19,7 +22,7 @@ export const chatbotService = createApi({
             return headers
         },
     }),
-    tagTypes: ['ChatSessions', 'ChatMessages'],
+    tagTypes: ['ChatSessions', 'ChatMessages', 'PromoConfig', 'Promos'],
     endpoints: (builder) => ({
         getChatAnalytics: builder.query<
             IChatAnalytics[],
@@ -127,6 +130,49 @@ export const chatbotService = createApi({
                 method: 'GET',
             }),
         }),
+
+        getPromoConfig: builder.query<IPromoDateConfig, void>({
+            query: () => ({
+                url: '/chatbot/promo-config/',
+                method: 'GET',
+            }),
+            providesTags: ['PromoConfig'],
+        }),
+
+        updatePromoConfig: builder.mutation<
+            IPromoDateConfig,
+            Partial<IPromoDateConfig>
+        >({
+            query: (data) => ({
+                url: '/chatbot/promo-config/',
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['PromoConfig'],
+        }),
+
+        getPromos: builder.query<
+            IPromoDateSentResponse,
+            { page?: number; status?: string }
+        >({
+            query: ({ page = 1, status = '' }) => ({
+                url: '/chatbot/promos/',
+                method: 'GET',
+                params: {
+                    page: page.toString(),
+                    page_size: '15',
+                    ...(status && { status }),
+                },
+            }),
+            providesTags: ['Promos'],
+        }),
+
+        getPromoPreview: builder.query<IPromoPreview, void>({
+            query: () => ({
+                url: '/chatbot/promos/preview/',
+                method: 'GET',
+            }),
+        }),
     }),
 })
 
@@ -140,4 +186,8 @@ export const {
     useGetPropertyVisitsQuery,
     useGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
+    useGetPromoConfigQuery,
+    useUpdatePromoConfigMutation,
+    useGetPromosQuery,
+    useLazyGetPromoPreviewQuery,
 } = chatbotService

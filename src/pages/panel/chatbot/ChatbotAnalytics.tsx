@@ -66,6 +66,10 @@ import {
     useGetPropertyVisitsQuery,
     useGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
+    useGetPromoConfigQuery,
+    useUpdatePromoConfigMutation,
+    useGetPromosQuery,
+    useLazyGetPromoPreviewQuery,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
 
@@ -163,6 +167,7 @@ export default function ChatbotAnalytics() {
                 <Tab icon={<PsychologyIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Análisis" />
                 <Tab label="Intenciones" />
                 <Tab label="Costos" />
+                <Tab icon={<ReceiptIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Promos" />
             </Tabs>
 
             {/* TAB 0: CONVERSACIONES */}
@@ -542,6 +547,9 @@ export default function ChatbotAnalytics() {
                     </Card>
                 </Box>
             )}
+
+            {/* TAB 7: PROMOS */}
+            {tab === 7 && <PromosPanel />}
         </Box>
     )
 }
@@ -1248,6 +1256,287 @@ function formatTimeAgo(dateStr: string): string {
     const diffDays = Math.floor(diffHrs / 24)
     if (diffDays < 7) return `${diffDays}d`
     return d.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' })
+}
+
+// ========= Promos Panel =========
+function PromosPanel() {
+    const boxShadow = useBoxShadow(true)
+    const { data: config, isLoading: configLoading } = useGetPromoConfigQuery()
+    const [updateConfig, { isLoading: saving }] = useUpdatePromoConfigMutation()
+    const { data: promos, isLoading: promosLoading } = useGetPromosQuery({ page: 1 })
+    const [triggerPreview, { data: preview, isLoading: previewLoading }] = useLazyGetPromoPreviewQuery()
+
+    const [localConfig, setLocalConfig] = useState({
+        is_active: false,
+        days_before_checkin: 3,
+        discount_config: null as string | null,
+        wa_template_name: 'promo_fecha_disponible',
+        max_promos_per_client: 1,
+        min_search_count: 1,
+        send_hour: '09:00',
+        exclude_recent_chatters: true,
+    })
+
+    useEffect(() => {
+        if (config) {
+            setLocalConfig({
+                is_active: config.is_active,
+                days_before_checkin: config.days_before_checkin,
+                discount_config: config.discount_config,
+                wa_template_name: config.wa_template_name,
+                max_promos_per_client: config.max_promos_per_client,
+                min_search_count: config.min_search_count,
+                send_hour: config.send_hour,
+                exclude_recent_chatters: config.exclude_recent_chatters,
+            })
+        }
+    }, [config])
+
+    const handleSave = async () => {
+        try {
+            await updateConfig(localConfig).unwrap()
+        } catch { /* handled by RTK */ }
+    }
+
+    const STATUS_COLORS: Record<string, string> = {
+        sent: '#2196f3',
+        delivered: '#ff9800',
+        read: '#4caf50',
+        converted: '#9c27b0',
+        failed: '#f44336',
+    }
+    const STATUS_LABELS: Record<string, string> = {
+        sent: 'Enviado',
+        delivered: 'Entregado',
+        read: 'Leído',
+        converted: 'Convertido',
+        failed: 'Fallido',
+    }
+
+    if (configLoading) {
+        return <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
+    }
+
+    return (
+        <Box display="flex" flexDirection="column" gap={3}>
+            {/* Sección 1: Configuración */}
+            <Card sx={{ boxShadow }}>
+                <CardContent>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                        <Typography variant="h6">Configuración de Promos Automáticas</Typography>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Chip
+                                label={localConfig.is_active ? 'Activo' : 'Inactivo'}
+                                color={localConfig.is_active ? 'success' : 'default'}
+                                size="small"
+                            />
+                            <Switch
+                                checked={localConfig.is_active}
+                                onChange={(_, v) => setLocalConfig(prev => ({ ...prev, is_active: v }))}
+                                color="success"
+                            />
+                        </Box>
+                    </Box>
+
+                    <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2} mb={2}>
+                        <TextField
+                            label="Días antes del check-in"
+                            type="number"
+                            size="small"
+                            value={localConfig.days_before_checkin}
+                            onChange={(e) => setLocalConfig(prev => ({ ...prev, days_before_checkin: parseInt(e.target.value) || 3 }))}
+                            inputProps={{ min: 1, max: 14 }}
+                        />
+                        <TextField
+                            label="Max promos por cliente"
+                            type="number"
+                            size="small"
+                            value={localConfig.max_promos_per_client}
+                            onChange={(e) => setLocalConfig(prev => ({ ...prev, max_promos_per_client: parseInt(e.target.value) || 1 }))}
+                            inputProps={{ min: 1, max: 5 }}
+                        />
+                        <TextField
+                            label="Min búsquedas para calificar"
+                            type="number"
+                            size="small"
+                            value={localConfig.min_search_count}
+                            onChange={(e) => setLocalConfig(prev => ({ ...prev, min_search_count: parseInt(e.target.value) || 1 }))}
+                            inputProps={{ min: 1 }}
+                        />
+                    </Box>
+
+                    <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2} mb={2}>
+                        <TextField
+                            label="Plantilla WA"
+                            size="small"
+                            value={localConfig.wa_template_name}
+                            onChange={(e) => setLocalConfig(prev => ({ ...prev, wa_template_name: e.target.value }))}
+                        />
+                        <TextField
+                            label="Hora de envío"
+                            type="time"
+                            size="small"
+                            value={localConfig.send_hour}
+                            onChange={(e) => setLocalConfig(prev => ({ ...prev, send_hour: e.target.value }))}
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Switch
+                                checked={localConfig.exclude_recent_chatters}
+                                onChange={(_, v) => setLocalConfig(prev => ({ ...prev, exclude_recent_chatters: v }))}
+                                size="small"
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                                Excluir clientes con chat &lt;24h
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {config?.discount_config_name && (
+                        <Box mb={2}>
+                            <Chip
+                                label={`Descuento: ${config.discount_config_name} (${config.discount_percentage}%)`}
+                                color="primary"
+                                variant="outlined"
+                                size="small"
+                            />
+                        </Box>
+                    )}
+
+                    <Button
+                        variant="contained"
+                        onClick={handleSave}
+                        disabled={saving}
+                        size="small"
+                    >
+                        {saving ? 'Guardando...' : 'Guardar configuración'}
+                    </Button>
+                </CardContent>
+            </Card>
+
+            {/* Sección 2: Preview (dry-run) */}
+            <Card sx={{ boxShadow }}>
+                <CardContent>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                        <Typography variant="h6">Preview: Próximo envío</Typography>
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={previewLoading ? <CircularProgress size={16} /> : <RefreshIcon />}
+                            onClick={() => triggerPreview()}
+                            disabled={previewLoading}
+                        >
+                            Ver qué se enviaría hoy
+                        </Button>
+                    </Box>
+
+                    {preview && !preview.active && (
+                        <Typography color="text.secondary">{preview.message || 'Promo desactivada'}</Typography>
+                    )}
+
+                    {preview && preview.active && (
+                        <Box>
+                            <Box display="flex" gap={2} mb={2}>
+                                <Chip label={`Fecha objetivo: ${preview.target_date}`} size="small" />
+                                <Chip label={`${preview.total_candidates} candidatos`} color="primary" size="small" />
+                                {preview.discount_config && (
+                                    <Chip label={`${preview.discount_percentage}% desc`} color="success" size="small" variant="outlined" />
+                                )}
+                            </Box>
+
+                            {preview.candidates.length > 0 ? (
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Cliente</TableCell>
+                                            <TableCell>Teléfono</TableCell>
+                                            <TableCell>Fechas</TableCell>
+                                            <TableCell align="center">Personas</TableCell>
+                                            <TableCell align="center">Búsquedas</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {preview.candidates.map((c) => (
+                                            <TableRow key={c.client_id} hover>
+                                                <TableCell>{c.client_name}</TableCell>
+                                                <TableCell>{c.client_phone}</TableCell>
+                                                <TableCell>{c.check_in_date} → {c.check_out_date}</TableCell>
+                                                <TableCell align="center">{c.guests}</TableCell>
+                                                <TableCell align="center">{c.search_count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            ) : (
+                                <Typography color="text.secondary">No hay candidatos para enviar promos hoy</Typography>
+                            )}
+                        </Box>
+                    )}
+                </CardContent>
+            </Card>
+
+            {/* Sección 3: Historial */}
+            <Card sx={{ boxShadow }}>
+                <CardContent>
+                    <Typography variant="h6" mb={2}>Historial de Promos Enviadas</Typography>
+
+                    {promosLoading ? (
+                        <Box display="flex" justifyContent="center" py={3}><CircularProgress size={24} /></Box>
+                    ) : (promos?.results?.length || 0) === 0 ? (
+                        <Typography color="text.secondary">No se han enviado promos aún</Typography>
+                    ) : (
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Cliente</TableCell>
+                                    <TableCell>Check-in</TableCell>
+                                    <TableCell align="center">Personas</TableCell>
+                                    <TableCell>Código</TableCell>
+                                    <TableCell>Estado</TableCell>
+                                    <TableCell>Enviado</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {promos?.results.map((p) => (
+                                    <TableRow key={p.id} hover>
+                                        <TableCell>
+                                            <Box>
+                                                <Typography variant="body2" fontWeight={600}>{p.client_name}</Typography>
+                                                <Typography variant="caption" color="text.secondary">{p.client_phone}</Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>{p.check_in_date} → {p.check_out_date}</TableCell>
+                                        <TableCell align="center">{p.guests}</TableCell>
+                                        <TableCell>
+                                            {p.discount_code_str ? (
+                                                <Chip label={p.discount_code_str} size="small" variant="outlined" />
+                                            ) : '—'}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                label={STATUS_LABELS[p.status] || p.status}
+                                                size="small"
+                                                sx={{
+                                                    backgroundColor: `${STATUS_COLORS[p.status] || '#9e9e9e'}15`,
+                                                    color: STATUS_COLORS[p.status] || '#9e9e9e',
+                                                    fontWeight: 600,
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="caption">
+                                                {new Date(p.created).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
+                </CardContent>
+            </Card>
+        </Box>
+    )
 }
 
 // ========= KPI Card =========

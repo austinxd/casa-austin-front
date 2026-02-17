@@ -121,3 +121,66 @@ export interface IFollowupResponse {
     followed_up_count: number
     results: IFollowupOpportunity[]
 }
+
+export interface IPromoDateConfig {
+    id: string
+    is_active: boolean
+    days_before_checkin: number
+    discount_config: string | null
+    discount_config_name: string | null
+    discount_percentage: number | null
+    wa_template_name: string
+    wa_template_language: string
+    max_promos_per_client: number
+    min_search_count: number
+    send_hour: string
+    exclude_recent_chatters: boolean
+    created: string
+    updated: string
+}
+
+export interface IPromoDateSent {
+    id: string
+    client: string
+    client_name: string | null
+    client_phone: string | null
+    check_in_date: string
+    check_out_date: string
+    guests: number
+    discount_code: string | null
+    discount_code_str: string | null
+    wa_message_id: string | null
+    message_content: string
+    pricing_snapshot: Record<string, any>
+    status: 'sent' | 'delivered' | 'read' | 'converted' | 'failed'
+    created: string
+}
+
+export interface IPromoDateSentResponse {
+    count: number
+    next: string | null
+    previous: string | null
+    results: IPromoDateSent[]
+    actual: number
+    total_paginas: number
+}
+
+export interface IPromoPreviewCandidate {
+    client_id: string
+    client_name: string
+    client_phone: string
+    check_in_date: string
+    check_out_date: string
+    guests: number
+    search_count: number
+}
+
+export interface IPromoPreview {
+    active: boolean
+    target_date: string | null
+    discount_config: string | null
+    discount_percentage: number | null
+    candidates: IPromoPreviewCandidate[]
+    total_candidates: number
+    message?: string
+}
