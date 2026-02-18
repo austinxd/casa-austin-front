@@ -54,6 +54,7 @@ import {
     WhatsApp as WhatsAppIcon,
     Instagram as InstagramIcon,
     Facebook as FacebookIcon,
+    Phone as PhoneIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -828,9 +829,27 @@ function VisitsPanel() {
                                     )}
                                 </Box>
 
-                                {/* Teléfono */}
-                                <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, flexShrink: 0 }}>
-                                    <Typography variant="caption" color="text.secondary">{visit.visitor_phone}</Typography>
+                                {/* Botones de contacto */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, pr: 1.5, flexShrink: 0 }}>
+                                    <Tooltip title={`Llamar a ${visit.visitor_phone}`}>
+                                        <IconButton
+                                            size="small"
+                                            href={`tel:+${visit.visitor_phone.replace(/\D/g, '')}`}
+                                            sx={{ bgcolor: '#e3f2fd', '&:hover': { bgcolor: '#bbdefb' } }}
+                                        >
+                                            <PhoneIcon sx={{ fontSize: 18, color: '#1976d2' }} />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title={`WhatsApp a ${visit.visitor_phone}`}>
+                                        <IconButton
+                                            size="small"
+                                            href={`https://wa.me/${visit.visitor_phone.replace(/\D/g, '')}`}
+                                            target="_blank"
+                                            sx={{ bgcolor: '#e8f5e9', '&:hover': { bgcolor: '#c8e6c9' } }}
+                                        >
+                                            <WhatsAppIcon sx={{ fontSize: 18, color: '#25d366' }} />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
                             </Paper>
                         )
