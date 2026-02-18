@@ -700,17 +700,27 @@ function VisitsPanel() {
     const boxShadow = useBoxShadow(true)
     const { data: visitsData, isLoading } = useGetPropertyVisitsQuery({ page: 1 })
 
-    const statusLabel: Record<string, string> = {
-        scheduled: 'Programada',
-        completed: 'Realizada',
-        cancelled: 'Cancelada',
-        no_show: 'No asistió',
+    const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+        scheduled: { label: 'Programada', color: '#1976d2', bg: '#e3f2fd' },
+        completed: { label: 'Realizada', color: '#2e7d32', bg: '#e8f5e9' },
+        cancelled: { label: 'Cancelada', color: '#d32f2f', bg: '#ffebee' },
+        no_show: { label: 'No asistió', color: '#ed6c02', bg: '#fff3e0' },
     }
-    const statusColor: Record<string, 'info' | 'success' | 'error' | 'warning'> = {
-        scheduled: 'info',
-        completed: 'success',
-        cancelled: 'error',
-        no_show: 'warning',
+
+    const formatVisitDate = (dateStr: string) => {
+        const d = new Date(dateStr + 'T12:00:00')
+        const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        return { day: d.getDate(), weekday: days[d.getDay()], month: months[d.getMonth()] }
+    }
+
+    const formatTime = (time: string | null) => {
+        if (!time) return 'Por confirmar'
+        const [h, m] = time.split(':')
+        const hour = parseInt(h)
+        const ampm = hour >= 12 ? 'PM' : 'AM'
+        const h12 = hour % 12 || 12
+        return `${h12}:${m} ${ampm}`
     }
 
     if (isLoading) {
@@ -719,61 +729,115 @@ function VisitsPanel() {
 
     const visits = visitsData?.results || []
 
+    // KPIs
+    const total = visits.length
+    const scheduled = visits.filter(v => v.status === 'scheduled').length
+    const completed = visits.filter(v => v.status === 'completed').length
+    const noShow = visits.filter(v => v.status === 'no_show').length
+
     return (
-        <Card sx={{ boxShadow }}>
-            <CardContent>
-                <Typography variant="h6" mb={2}>Visitas Programadas</Typography>
-                {visits.length === 0 ? (
-                    <Box textAlign="center" py={4}>
-                        <HomeIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
-                        <Typography color="text.secondary" mt={1}>No hay visitas programadas</Typography>
-                    </Box>
-                ) : (
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Visitante</TableCell>
-                                <TableCell>Propiedad</TableCell>
-                                <TableCell>Fecha</TableCell>
-                                <TableCell>Hora</TableCell>
-                                <TableCell align="center">Personas</TableCell>
-                                <TableCell>Estado</TableCell>
-                                <TableCell>Notas</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {visits.map((visit) => (
-                                <TableRow key={visit.id} hover>
-                                    <TableCell>
-                                        <Box>
-                                            <Typography variant="body2" fontWeight={600}>{visit.visitor_name}</Typography>
-                                            <Typography variant="caption" color="text.secondary">{visit.visitor_phone}</Typography>
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell>{visit.property_name}</TableCell>
-                                    <TableCell>{visit.visit_date}</TableCell>
-                                    <TableCell>{visit.visit_time || '—'}</TableCell>
-                                    <TableCell align="center">{visit.guests_count}</TableCell>
-                                    <TableCell>
+        <Box>
+            {/* KPIs */}
+            <Box display="grid" gridTemplateColumns={{ xs: '1fr 1fr', sm: 'repeat(4, 1fr)' }} gap={2} mb={3}>
+                {[
+                    { label: 'Total', value: total, color: '#0E6191' },
+                    { label: 'Programadas', value: scheduled, color: '#1976d2' },
+                    { label: 'Realizadas', value: completed, color: '#2e7d32' },
+                    { label: 'No asistió', value: noShow, color: '#ed6c02' },
+                ].map((kpi) => (
+                    <Paper key={kpi.label} elevation={0} sx={{ boxShadow, p: 2, textAlign: 'center', borderRadius: 2 }}>
+                        <Typography variant="h4" fontWeight={700} sx={{ color: kpi.color }}>{kpi.value}</Typography>
+                        <Typography variant="caption" color="text.secondary">{kpi.label}</Typography>
+                    </Paper>
+                ))}
+            </Box>
+
+            {visits.length === 0 ? (
+                <Paper elevation={0} sx={{ boxShadow, textAlign: 'center', py: 6, borderRadius: 2 }}>
+                    <HomeIcon sx={{ fontSize: 56, color: 'text.disabled', mb: 1 }} />
+                    <Typography color="text.secondary">No hay visitas programadas</Typography>
+                    <Typography variant="caption" color="text.disabled">Las visitas agendadas desde el chatbot aparecerán aquí</Typography>
+                </Paper>
+            ) : (
+                <Box display="flex" flexDirection="column" gap={1.5}>
+                    {visits.map((visit) => {
+                        const dt = formatVisitDate(visit.visit_date)
+                        const cfg = statusConfig[visit.status] || statusConfig.scheduled
+                        const isUpcoming = visit.status === 'scheduled'
+
+                        return (
+                            <Paper
+                                key={visit.id}
+                                elevation={0}
+                                sx={{
+                                    boxShadow,
+                                    borderRadius: 2,
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    borderLeft: `4px solid ${cfg.color}`,
+                                    transition: 'transform 0.15s',
+                                    '&:hover': { transform: 'translateY(-1px)' },
+                                }}
+                            >
+                                {/* Bloque fecha */}
+                                <Box sx={{
+                                    width: 72, minHeight: 90,
+                                    display: 'flex', flexDirection: 'column',
+                                    alignItems: 'center', justifyContent: 'center',
+                                    bgcolor: isUpcoming ? '#e3f2fd' : '#f5f5f5',
+                                    flexShrink: 0,
+                                }}>
+                                    <Typography variant="caption" fontWeight={600} sx={{ color: isUpcoming ? '#1976d2' : 'text.secondary', textTransform: 'uppercase', fontSize: 11 }}>
+                                        {dt.weekday}
+                                    </Typography>
+                                    <Typography variant="h4" fontWeight={700} sx={{ color: isUpcoming ? '#1976d2' : 'text.primary', lineHeight: 1.1 }}>
+                                        {dt.day}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: isUpcoming ? '#1976d2' : 'text.secondary', fontSize: 11 }}>
+                                        {dt.month}
+                                    </Typography>
+                                </Box>
+
+                                {/* Contenido */}
+                                <Box sx={{ flex: 1, p: 1.5, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+                                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                                        <Typography variant="subtitle2" fontWeight={700} noWrap>{visit.visitor_name}</Typography>
                                         <Chip
-                                            label={statusLabel[visit.status] || visit.status}
-                                            color={statusColor[visit.status] || 'default'}
+                                            label={cfg.label}
                                             size="small"
-                                            variant="outlined"
+                                            sx={{ bgcolor: cfg.bg, color: cfg.color, fontWeight: 600, fontSize: 11, height: 22 }}
                                         />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 150, display: 'block' }}>
-                                            {visit.notes || '—'}
+                                    </Box>
+                                    <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+                                        <Box display="flex" alignItems="center" gap={0.5}>
+                                            <HomeIcon sx={{ fontSize: 15, color: 'text.secondary' }} />
+                                            <Typography variant="body2" color="text.secondary">{visit.property_name}</Typography>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" gap={0.5}>
+                                            <AccessTimeIcon sx={{ fontSize: 15, color: 'text.secondary' }} />
+                                            <Typography variant="body2" color="text.secondary">{formatTime(visit.visit_time)}</Typography>
+                                        </Box>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {visit.guests_count} persona{visit.guests_count !== 1 ? 's' : ''}
                                         </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                )}
-            </CardContent>
-        </Card>
+                                    </Box>
+                                    {visit.notes && (
+                                        <Typography variant="caption" color="text.disabled" noWrap sx={{ mt: 0.5 }}>
+                                            {visit.notes}
+                                        </Typography>
+                                    )}
+                                </Box>
+
+                                {/* Teléfono */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', pr: 2, flexShrink: 0 }}>
+                                    <Typography variant="caption" color="text.secondary">{visit.visitor_phone}</Typography>
+                                </Box>
+                            </Paper>
+                        )
+                    })}
+                </Box>
+            )}
+        </Box>
     )
 }
 
