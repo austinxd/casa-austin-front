@@ -1354,6 +1354,7 @@ function PromosPanel() {
     const { data: promos, isLoading: promosLoading } = useGetPromosQuery({ page: 1 })
     const [triggerPreview, { data: preview, isLoading: previewLoading }] = useLazyGetPromoPreviewQuery()
 
+    const [previewTab, setPreviewTab] = useState(0)
     const [localConfig, setLocalConfig] = useState({
         is_active: false,
         days_before_checkin: 3,
@@ -1502,11 +1503,11 @@ function PromosPanel() {
                 </CardContent>
             </Card>
 
-            {/* Sección 2: Preview (dry-run) */}
+            {/* Sección 2: Próximo envío */}
             <Card sx={{ boxShadow }}>
                 <CardContent>
                     <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                        <Typography variant="h6">Preview: Próximo envío</Typography>
+                        <Typography variant="h6">Próximo envío</Typography>
                         <Button
                             variant="outlined"
                             size="small"
@@ -1514,7 +1515,7 @@ function PromosPanel() {
                             onClick={() => triggerPreview()}
                             disabled={previewLoading}
                         >
-                            Ver qué se enviaría hoy
+                            Calcular
                         </Button>
                     </Box>
 
@@ -1524,40 +1525,80 @@ function PromosPanel() {
 
                     {preview && preview.active && (
                         <Box>
-                            <Box display="flex" gap={2} mb={2}>
+                            <Box display="flex" gap={2} mb={2} flexWrap="wrap">
                                 <Chip label={`Fecha objetivo: ${preview.target_date}`} size="small" />
-                                <Chip label={`${preview.total_candidates} candidatos`} color="primary" size="small" />
+                                <Chip label={`${preview.total_candidates} candidatos`} size="small" />
+                                <Chip label={`${preview.total_qualified} aplican`} color="primary" size="small" />
                                 {preview.discount_config && (
                                     <Chip label={`${preview.discount_percentage}% desc`} color="success" size="small" variant="outlined" />
                                 )}
                             </Box>
 
-                            {preview.candidates.length > 0 ? (
-                                <Table size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Cliente</TableCell>
-                                            <TableCell>Teléfono</TableCell>
-                                            <TableCell>Fechas</TableCell>
-                                            <TableCell align="center">Personas</TableCell>
-                                            <TableCell align="center">Búsquedas</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {preview.candidates.map((c) => (
-                                            <TableRow key={c.client_id} hover>
-                                                <TableCell>{c.client_name}</TableCell>
-                                                <TableCell>{c.client_phone}</TableCell>
-                                                <TableCell>{c.check_in_date} → {c.check_out_date}</TableCell>
-                                                <TableCell align="center">{c.guests}</TableCell>
-                                                <TableCell align="center">{c.search_count}</TableCell>
+                            <Tabs
+                                value={previewTab}
+                                onChange={(_, v) => setPreviewTab(v)}
+                                sx={{ mb: 2, minHeight: 36, '& .MuiTab-root': { minHeight: 36, py: 0.5, fontSize: 13 } }}
+                            >
+                                <Tab label={`Candidatos (${preview.total_candidates})`} />
+                                <Tab label={`Aplican (${preview.total_qualified})`} />
+                            </Tabs>
+
+                            {(() => {
+                                const list = previewTab === 0 ? preview.all_candidates : preview.qualified
+                                if (list.length === 0) return (
+                                    <Typography color="text.secondary">
+                                        {previewTab === 0 ? 'No hay candidatos para esta fecha' : 'Ningún candidato califica con los filtros actuales'}
+                                    </Typography>
+                                )
+                                return (
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Nombre</TableCell>
+                                                <TableCell>Teléfono</TableCell>
+                                                <TableCell>Fechas</TableCell>
+                                                <TableCell align="center">Personas</TableCell>
+                                                <TableCell align="center">Búsquedas</TableCell>
+                                                <TableCell>Origen</TableCell>
+                                                {previewTab === 0 && <TableCell>Estado</TableCell>}
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            ) : (
-                                <Typography color="text.secondary">No hay candidatos para enviar promos hoy</Typography>
-                            )}
+                                        </TableHead>
+                                        <TableBody>
+                                            {list.map((c, i) => (
+                                                <TableRow key={c.client_id || `anon-${i}`} hover sx={{
+                                                    opacity: c.exclusion_reason ? 0.55 : 1,
+                                                }}>
+                                                    <TableCell>{c.client_name}</TableCell>
+                                                    <TableCell>{c.client_phone}</TableCell>
+                                                    <TableCell>{c.check_in_date} → {c.check_out_date}</TableCell>
+                                                    <TableCell align="center">{c.guests}</TableCell>
+                                                    <TableCell align="center">{c.search_count}</TableCell>
+                                                    <TableCell>
+                                                        <Chip
+                                                            label={c.source === 'chatbot' ? 'Chatbot' : 'Web'}
+                                                            size="small"
+                                                            sx={{
+                                                                backgroundColor: c.source === 'chatbot' ? '#25d36615' : '#2196f315',
+                                                                color: c.source === 'chatbot' ? '#25d366' : '#2196f3',
+                                                                fontWeight: 600, fontSize: 11,
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                    {previewTab === 0 && (
+                                                        <TableCell>
+                                                            {c.exclusion_reason ? (
+                                                                <Chip label={c.exclusion_reason} size="small" sx={{ fontSize: 11, backgroundColor: '#f4433615', color: '#f44336' }} />
+                                                            ) : (
+                                                                <Chip label="Aplica" size="small" sx={{ fontSize: 11, backgroundColor: '#4caf5015', color: '#4caf50', fontWeight: 600 }} />
+                                                            )}
+                                                        </TableCell>
+                                                    )}
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                )
+                            })()}
                         </Box>
                     )}
                 </CardContent>

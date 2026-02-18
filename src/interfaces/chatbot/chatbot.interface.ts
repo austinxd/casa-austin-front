@@ -169,13 +169,15 @@ export interface IPromoDateSentResponse {
 }
 
 export interface IPromoPreviewCandidate {
-    client_id: string
+    client_id: string | null
     client_name: string
     client_phone: string
     check_in_date: string
     check_out_date: string
     guests: number
     search_count: number
+    source: 'web' | 'chatbot'
+    exclusion_reason: string | null
 }
 
 export interface IPromoPreview {
@@ -183,7 +185,9 @@ export interface IPromoPreview {
     target_date: string | null
     discount_config: string | null
     discount_percentage: number | null
-    candidates: IPromoPreviewCandidate[]
+    all_candidates: IPromoPreviewCandidate[]
+    qualified: IPromoPreviewCandidate[]
     total_candidates: number
+    total_qualified: number
     message?: string
 }
