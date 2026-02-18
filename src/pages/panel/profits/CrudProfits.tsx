@@ -326,7 +326,11 @@ export default function CrudProfits() {
                             {/* Error */}
                             {analysisError && (
                                 <Alert severity="error">
-                                    Error al generar el análisis. Por favor intenta nuevamente.
+                                    Error al generar el análisis: {
+                                        'data' in analysisError
+                                            ? JSON.stringify((analysisError as any).data)
+                                            : (analysisError as any).message || 'Error desconocido'
+                                    }
                                 </Alert>
                             )}
 
