@@ -1525,6 +1525,28 @@ function PromosPanel() {
 
                     {preview && preview.active && (
                         <Box>
+                            {/* Banner de disponibilidad */}
+                            <Box sx={{
+                                mb: 2, p: 1.5, borderRadius: 2,
+                                backgroundColor: preview.available_properties > 0 ? '#4caf5010' : '#f4433610',
+                                border: `1px solid ${preview.available_properties > 0 ? '#4caf5030' : '#f4433630'}`,
+                                display: 'flex', alignItems: 'center', gap: 1,
+                            }}>
+                                <HomeIcon sx={{ fontSize: 20, color: preview.available_properties > 0 ? '#4caf50' : '#f44336' }} />
+                                {preview.available_properties > 0 ? (
+                                    <Typography variant="body2" fontWeight={600} sx={{ color: '#4caf50' }}>
+                                        {preview.available_properties} de {preview.total_properties} casas disponibles para el {preview.target_date}
+                                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'text.secondary', fontWeight: 400 }}>
+                                            ({preview.available_property_names.join(', ')})
+                                        </Typography>
+                                    </Typography>
+                                ) : (
+                                    <Typography variant="body2" fontWeight={600} sx={{ color: '#f44336' }}>
+                                        Sin casas disponibles para el {preview.target_date} — no se enviarán promociones
+                                    </Typography>
+                                )}
+                            </Box>
+
                             <Box display="flex" gap={2} mb={2} flexWrap="wrap">
                                 <Chip label={`Fecha objetivo: ${preview.target_date}`} size="small" />
                                 <Chip label={`${preview.total_candidates} candidatos`} size="small" />

@@ -189,5 +189,8 @@ export interface IPromoPreview {
     qualified: IPromoPreviewCandidate[]
     total_candidates: number
     total_qualified: number
+    available_properties: number
+    available_property_names: string[]
+    total_properties: number
     message?: string
 }
