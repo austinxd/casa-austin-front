@@ -109,11 +109,15 @@ export default function ChatbotAnalytics() {
                 tokens_out: acc.tokens_out + day.total_tokens_output,
                 reservations: acc.reservations + day.reservations_created,
                 clients: acc.clients + day.clients_identified,
+                bot_leads: acc.bot_leads + (day.bot_leads || 0),
+                bot_conversions: acc.bot_conversions + (day.bot_conversions || 0),
+                returning_client_reservations: acc.returning_client_reservations + (day.returning_client_reservations || 0),
             }),
             {
                 messages_in: 0, messages_out_ai: 0, messages_out_human: 0,
                 sessions: 0, new_sessions: 0, escalations: 0, cost: 0,
                 tokens_in: 0, tokens_out: 0, reservations: 0, clients: 0,
+                bot_leads: 0, bot_conversions: 0, returning_client_reservations: 0,
             }
         )
     }, [analytics])
@@ -332,8 +336,13 @@ export default function ChatbotAnalytics() {
                                 <KPICard icon={<AttachMoneyIcon />} label="Costo USD" value={`$${totals?.cost.toFixed(2) || '0.00'}`} color="#e91e63" />
                             </Box>
                             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' }} gap={2} mb={3}>
-                                <KPICard icon={<TrendingUpIcon />} label="Reservas Atribuidas" value={totals?.reservations.toString() || '0'} color="#9c27b0" />
-                                <KPICard icon={<PersonSearchIcon />} label="Clientes Identificados" value={totals?.clients.toString() || '0'} color="#00bcd4" />
+                                <KPICard icon={<PersonSearchIcon />} label="Leads del Bot" value={totals?.bot_leads.toString() || '0'} color="#00bcd4" />
+                                <KPICard icon={<TrendingUpIcon />} label="Conversiones del Bot" value={totals?.bot_conversions.toString() || '0'} color="#9c27b0" />
+                                <KPICard icon={<MessageIcon />} label="Reservas Recurrentes" value={totals?.returning_client_reservations.toString() || '0'} color="#607d8b" />
+                            </Box>
+                            <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' }} gap={2} mb={3}>
+                                <KPICard icon={<TrendingUpIcon />} label="Reservas Atribuidas (legacy)" value={totals?.reservations.toString() || '0'} color="#9c27b0" />
+                                <KPICard icon={<PersonSearchIcon />} label="Clientes Identificados (legacy)" value={totals?.clients.toString() || '0'} color="#00bcd4" />
                                 <KPICard icon={<MessageIcon />} label="Msgs IA / Humano" value={`${totals?.messages_out_ai || 0} / ${totals?.messages_out_human || 0}`} color="#607d8b" />
                             </Box>
                             <Card sx={{ boxShadow }}>

@@ -37,6 +37,9 @@ export interface IChatAnalytics {
     estimated_cost_usd: string
     reservations_created: number
     clients_identified: number
+    bot_leads: number
+    bot_conversions: number
+    returning_client_reservations: number
 }
 
 export interface IChatMessage {
