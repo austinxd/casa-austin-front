@@ -200,6 +200,7 @@ export const {
     useGetPropertyVisitsQuery,
     useUpdateVisitStatusMutation,
     useGetChatAnalysisQuery,
+    useLazyGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
     useGetPromoConfigQuery,
     useUpdatePromoConfigMutation,

@@ -69,7 +69,7 @@ import {
     useMarkAsReadMutation,
     useGetPropertyVisitsQuery,
     useUpdateVisitStatusMutation,
-    useGetChatAnalysisQuery,
+    useLazyGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
     useGetPromoConfigQuery,
     useUpdatePromoConfigMutation,
@@ -907,7 +907,9 @@ function VisitsPanel({ onOpenChat }: { onOpenChat: (sessionId: string) => void }
 // ========= Analysis Panel =========
 function AnalysisPanel() {
     const boxShadow = useBoxShadow(true)
-    const { data: analysis, isLoading, isFetching, refetch } = useGetChatAnalysisQuery()
+    const [trigger, { data: analysis, isLoading, isFetching }] = useLazyGetChatAnalysisQuery()
+
+    const loading = isLoading || isFetching
 
     const renderMarkdown = (text: string) => {
         return text
@@ -931,13 +933,17 @@ function AnalysisPanel() {
                                 Análisis con IA de las últimas 20 conversaciones — detecta problemas, inconsistencias y oportunidades de mejora
                             </Typography>
                         </Box>
-                        <Tooltip title="Regenerar análisis">
-                            <IconButton onClick={() => refetch()} disabled={isFetching} color="primary" size="large">
-                                <RefreshIcon sx={{ animation: isFetching ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } } }} />
-                            </IconButton>
-                        </Tooltip>
+                        <Button
+                            variant={analysis ? 'outlined' : 'contained'}
+                            onClick={() => trigger()}
+                            disabled={loading}
+                            startIcon={loading ? <CircularProgress size={18} /> : <PsychologyIcon />}
+                            size="medium"
+                        >
+                            {loading ? 'Analizando...' : analysis ? 'Regenerar Análisis' : 'Generar Análisis'}
+                        </Button>
                     </Box>
-                    {analysis && !isLoading && !isFetching && (
+                    {analysis && !loading && (
                         <Box display="flex" gap={1.5} mt={1.5}>
                             <Chip
                                 label={`${analysis.sessions_analyzed} conversaciones`}
@@ -966,7 +972,7 @@ function AnalysisPanel() {
             </Card>
 
             {/* Resultado del análisis */}
-            {isLoading || isFetching ? (
+            {loading ? (
                 <Card sx={{ boxShadow }}>
                     <CardContent>
                         <Box display="flex" flexDirection="column" alignItems="center" py={6} gap={2}>
