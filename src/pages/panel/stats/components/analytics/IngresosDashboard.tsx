@@ -155,9 +155,17 @@ export default function IngresosDashboard({ year }: IngresosDashboardProps) {
         data: periods.map((p: any) => safeNumber(p?.revenue, 0))
     }]
 
-    // --- Gráfico comparativo reservas vs noches ---
-    const comparisonChartOptions: ApexOptions = {
-        chart: { type: 'line', height: 280, toolbar: { show: false } },
+    // --- Gráfico: Estadía promedio + Precio por noche por mes ---
+    const avgStayData = periods.map((p: any) => {
+        const res = safeNumber(p?.reservations_count, 0)
+        const nights = safeNumber(p?.nights_count, 0)
+        return res > 0 ? parseFloat((nights / res).toFixed(1)) : 0
+    })
+    const pricePerNightData = periods.map((p: any) => safeNumber(p?.revenue_per_night, 0))
+
+    const stayChartOptions: ApexOptions = {
+        chart: { type: 'bar', height: 280, toolbar: { show: false } },
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '50%' } },
         xaxis: {
             categories: periods.map((p: any) => {
                 const label = p?.period_label || ''
@@ -165,19 +173,23 @@ export default function IngresosDashboard({ year }: IngresosDashboardProps) {
             }),
         },
         yaxis: [
-            { title: { text: 'Reservas' }, labels: { formatter: (v: number) => `${Math.round(v)}` } },
-            { opposite: true, title: { text: 'Noches' }, labels: { formatter: (v: number) => `${Math.round(v)}` } },
+            { title: { text: 'Noches promedio' }, min: 0, labels: { formatter: (v: number) => `${v.toFixed(1)}` } },
+            { opposite: true, title: { text: 'S/ por noche' }, labels: { formatter: (v: number) => `S/${Math.round(v)}` } },
         ],
-        colors: ['#1976d2', '#ed6c02'],
-        stroke: { width: [3, 3], curve: 'smooth' },
-        markers: { size: 4 },
-        dataLabels: { enabled: false },
+        colors: ['#7c4dff', '#00bcd4'],
+        dataLabels: { enabled: true, style: { fontSize: '11px' } },
         legend: { position: 'top' },
         grid: { borderColor: '#f0f0f0' },
+        tooltip: {
+            shared: true,
+            y: { formatter: (val: number, opts: any) => {
+                return opts.seriesIndex === 0 ? `${val} noches` : `S/ ${val.toLocaleString()}`
+            }}
+        },
     }
-    const comparisonChartSeries = [
-        { name: 'Reservas', type: 'line' as const, data: periods.map((p: any) => safeNumber(p?.reservations_count, 0)) },
-        { name: 'Noches', type: 'line' as const, data: periods.map((p: any) => safeNumber(p?.nights_count, 0)) },
+    const stayChartSeries = [
+        { name: 'Estadía promedio', type: 'bar' as const, data: avgStayData },
+        { name: 'Precio por noche', type: 'line' as const, data: pricePerNightData },
     ]
 
     // --- Mejor y peor mes ---
@@ -298,10 +310,13 @@ export default function IngresosDashboard({ year }: IngresosDashboardProps) {
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={7}>
                         <Paper sx={{ p: 3, height: '100%' }}>
-                            <Typography variant="h6" fontWeight={600} mb={2}>
-                                Reservas vs Noches por Mes
+                            <Typography variant="h6" fontWeight={600} mb={0.5}>
+                                Estadía Promedio y Precio por Noche
                             </Typography>
-                            <Chart options={comparisonChartOptions} series={comparisonChartSeries} type="line" height={280} />
+                            <Typography variant="caption" color="text.secondary" mb={2} display="block">
+                                Barras = noches promedio por reserva | Línea = ingreso por noche
+                            </Typography>
+                            <Chart options={stayChartOptions} series={stayChartSeries} type="line" height={280} />
                         </Paper>
                     </Grid>
                     <Grid item xs={12} md={5}>
