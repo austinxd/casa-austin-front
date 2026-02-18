@@ -30,6 +30,8 @@ import {
     AccordionDetails,
     Button,
     TablePagination,
+    Menu,
+    MenuItem,
 } from '@mui/material'
 import {
     SmartToy as SmartToyIcon,
@@ -55,6 +57,7 @@ import {
     Instagram as InstagramIcon,
     Facebook as FacebookIcon,
     Phone as PhoneIcon,
+    ChatBubble as ChatBubbleIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -65,6 +68,7 @@ import {
     useToggleChatAIMutation,
     useMarkAsReadMutation,
     useGetPropertyVisitsQuery,
+    useUpdateVisitStatusMutation,
     useGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
     useGetPromoConfigQuery,
@@ -477,7 +481,10 @@ export default function ChatbotAnalytics() {
             {tab === 2 && <FollowupPanel />}
 
             {/* TAB 3: VISITAS */}
-            {tab === 3 && <VisitsPanel />}
+            {tab === 3 && <VisitsPanel onOpenChat={(sessionId) => {
+                setSelectedSessionId(sessionId)
+                setTab(0)
+            }} />}
 
             {/* TAB 4: ANÁLISIS */}
             {tab === 4 && <AnalysisPanel />}
@@ -697,9 +704,11 @@ function FollowupPanel() {
 }
 
 // ========= Visits Panel =========
-function VisitsPanel() {
+function VisitsPanel({ onOpenChat }: { onOpenChat: (sessionId: string) => void }) {
     const boxShadow = useBoxShadow(true)
     const { data: visitsData, isLoading } = useGetPropertyVisitsQuery({ page: 1 })
+    const [updateStatus] = useUpdateVisitStatusMutation()
+    const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; visitId: string } | null>(null)
 
     const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
         scheduled: { label: 'Programada', color: '#1976d2', bg: '#e3f2fd' },
@@ -722,6 +731,13 @@ function VisitsPanel() {
         const ampm = hour >= 12 ? 'PM' : 'AM'
         const h12 = hour % 12 || 12
         return `${h12}:${m} ${ampm}`
+    }
+
+    const handleStatusChange = async (visitId: string, newStatus: string) => {
+        setMenuAnchor(null)
+        try {
+            await updateStatus({ visitId, status: newStatus }).unwrap()
+        } catch { /* handled */ }
     }
 
     if (isLoading) {
@@ -806,7 +822,8 @@ function VisitsPanel() {
                                         <Chip
                                             label={cfg.label}
                                             size="small"
-                                            sx={{ bgcolor: cfg.bg, color: cfg.color, fontWeight: 600, fontSize: 11, height: 22 }}
+                                            onClick={(e) => setMenuAnchor({ el: e.currentTarget, visitId: visit.id })}
+                                            sx={{ bgcolor: cfg.bg, color: cfg.color, fontWeight: 600, fontSize: 11, height: 22, cursor: 'pointer' }}
                                         />
                                     </Box>
                                     <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
@@ -829,8 +846,17 @@ function VisitsPanel() {
                                     )}
                                 </Box>
 
-                                {/* Botones de contacto */}
+                                {/* Botones de acción */}
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, pr: 1.5, flexShrink: 0 }}>
+                                    <Tooltip title="Ver conversación">
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => onOpenChat(visit.session)}
+                                            sx={{ bgcolor: '#f3e5f5', '&:hover': { bgcolor: '#e1bee7' } }}
+                                        >
+                                            <ChatBubbleIcon sx={{ fontSize: 18, color: '#7b1fa2' }} />
+                                        </IconButton>
+                                    </Tooltip>
                                     <Tooltip title={`Llamar a ${visit.visitor_phone}`}>
                                         <IconButton
                                             size="small"
@@ -856,6 +882,24 @@ function VisitsPanel() {
                     })}
                 </Box>
             )}
+
+            {/* Menu de cambio de estado */}
+            <Menu
+                anchorEl={menuAnchor?.el}
+                open={Boolean(menuAnchor)}
+                onClose={() => setMenuAnchor(null)}
+            >
+                {Object.entries(statusConfig).map(([key, cfg]) => (
+                    <MenuItem
+                        key={key}
+                        onClick={() => menuAnchor && handleStatusChange(menuAnchor.visitId, key)}
+                        sx={{ fontSize: 13, gap: 1 }}
+                    >
+                        <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: cfg.color }} />
+                        {cfg.label}
+                    </MenuItem>
+                ))}
+            </Menu>
         </Box>
     )
 }

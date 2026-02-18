@@ -5,6 +5,7 @@ import {
     IChatSessionsResponse,
     IChatAnalytics,
     IChatMessage,
+    IPropertyVisit,
     IPropertyVisitsResponse,
     IChatAnalysis,
     IFollowupResponse,
@@ -22,7 +23,7 @@ export const chatbotService = createApi({
             return headers
         },
     }),
-    tagTypes: ['ChatSessions', 'ChatMessages', 'PromoConfig', 'Promos'],
+    tagTypes: ['ChatSessions', 'ChatMessages', 'PromoConfig', 'Promos', 'Visits'],
     endpoints: (builder) => ({
         getChatAnalytics: builder.query<
             IChatAnalytics[],
@@ -115,6 +116,19 @@ export const chatbotService = createApi({
                     ...(status && { status }),
                 },
             }),
+            providesTags: ['Visits'],
+        }),
+
+        updateVisitStatus: builder.mutation<
+            IPropertyVisit,
+            { visitId: string; status: string }
+        >({
+            query: ({ visitId, status }) => ({
+                url: `/chatbot/visits/${visitId}/`,
+                method: 'PATCH',
+                body: { status },
+            }),
+            invalidatesTags: ['Visits'],
         }),
 
         getChatAnalysis: builder.query<IChatAnalysis, void>({
@@ -184,6 +198,7 @@ export const {
     useToggleChatAIMutation,
     useMarkAsReadMutation,
     useGetPropertyVisitsQuery,
+    useUpdateVisitStatusMutation,
     useGetChatAnalysisQuery,
     useGetFollowupOpportunitiesQuery,
     useGetPromoConfigQuery,
