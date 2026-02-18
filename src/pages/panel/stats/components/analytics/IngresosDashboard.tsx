@@ -465,24 +465,25 @@ export default function IngresosDashboard({ year }: IngresosDashboardProps) {
                             <Typography sx={{ fontSize: 13, color: COLORS.axisLabel }}>Proyección de cierre {year}</Typography>
                             <Typography sx={{ fontSize: 28, fontWeight: 800, color: COLORS.textPrimary, mt: 0.5 }}>{fmtSoles(projectedYearTotal)}</Typography>
                             <Typography sx={{ fontSize: 13, color: COLORS.axisLabel, mt: 0.5 }}>
-                                Basado en el ritmo actual ({Math.round(paceRatio * 100)}% del ritmo de {year - 1})
+                                En Ene-{MONTH_LABELS[maxMonth - 1]} {year} llevas {fmtSoles(realTotal)} vs {fmtSoles(prevSameTotal)} en el mismo período de {year - 1}
+                                {paceRatio >= 1
+                                    ? ` — vas ${Math.round((paceRatio - 1) * 100)}% por encima`
+                                    : ` — vas ${Math.round((1 - paceRatio) * 100)}% por debajo`
+                                }
+                            </Typography>
+                            <Typography sx={{ fontSize: 12, color: COLORS.axisLabel, mt: 0.3 }}>
+                                Los meses restantes se proyectan usando los datos de {year - 1} ajustados a este ritmo
                             </Typography>
                         </Box>
                         <Stack direction="row" spacing={3}>
                             <Box textAlign="center">
-                                <Typography sx={{ fontSize: 12, color: COLORS.axisLabel }}>Total {year - 1}</Typography>
+                                <Typography sx={{ fontSize: 12, color: COLORS.axisLabel }}>Cerró {year - 1}</Typography>
                                 <Typography sx={{ fontSize: 18, fontWeight: 700, color: COLORS.textPrimary }}>{fmtSoles(prevYearFullTotal)}</Typography>
                             </Box>
                             <Box textAlign="center">
-                                <Typography sx={{ fontSize: 12, color: COLORS.axisLabel }}>vs {year - 1}</Typography>
+                                <Typography sx={{ fontSize: 12, color: COLORS.axisLabel }}>Proy. vs {year - 1}</Typography>
                                 <Typography sx={{ fontSize: 18, fontWeight: 700, color: calc(projectedYearTotal, prevYearFullTotal) >= 0 ? COLORS.green : '#e53935' }}>
                                     {fmtPct(calc(projectedYearTotal, prevYearFullTotal))}
-                                </Typography>
-                            </Box>
-                            <Box textAlign="center">
-                                <Typography sx={{ fontSize: 12, color: COLORS.axisLabel }}>Ritmo</Typography>
-                                <Typography sx={{ fontSize: 18, fontWeight: 700, color: paceRatio >= 1 ? COLORS.green : '#e53935' }}>
-                                    {Math.round(paceRatio * 100)}%
                                 </Typography>
                             </Box>
                         </Stack>
