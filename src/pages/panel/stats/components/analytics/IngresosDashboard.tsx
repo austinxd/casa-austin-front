@@ -19,12 +19,8 @@ import {
     TableRow,
 } from '@mui/material'
 import {
-    AttachMoney as MoneyIcon,
     TrendingUp as TrendingUpIcon,
     TrendingDown as TrendingDownIcon,
-    NightsStay as NightsIcon,
-    CalendarMonth as CalendarIcon,
-    BarChart as BarChartIcon,
 } from '@mui/icons-material'
 import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
@@ -139,9 +135,9 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
     ]
 
     // --- Mejor y peor mes ---
-    const bestMonth = periods.reduce((best: any, p: any) =>
+    const bestMonth: any = periods.reduce((best: any, p: any) =>
         safeNumber(p?.revenue, 0) > safeNumber(best?.revenue, 0) ? p : best, periods[0])
-    const worstMonth = periods.filter((p: any) => safeNumber(p?.revenue, 0) > 0)
+    const worstMonth: any = periods.filter((p: any) => safeNumber(p?.revenue, 0) > 0)
         .reduce((worst: any, p: any) =>
             safeNumber(p?.revenue, 0) < safeNumber(worst?.revenue, 0) ? p : worst,
             periods.find((p: any) => safeNumber(p?.revenue, 0) > 0) || periods[0])
