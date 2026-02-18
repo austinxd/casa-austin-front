@@ -130,7 +130,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
         grid: { borderColor: '#f0f0f0' },
     }
     const comparisonChartSeries = [
-        { name: 'Reservas', type: 'line', data: periods.map((p: any) => safeNumber(p?.count, 0)) },
+        { name: 'Reservas', type: 'line', data: periods.map((p: any) => safeNumber(p?.reservations_count, 0)) },
         { name: 'Noches', type: 'line', data: periods.map((p: any) => safeNumber(p?.nights_count, 0)) },
     ]
 
@@ -364,7 +364,7 @@ export default function IngresosDashboard({ filters }: IngresosDashboardProps) {
                                     <TableRow key={i} hover>
                                         <TableCell>{p?.period_label}</TableCell>
                                         <TableCell align="right" sx={{ fontWeight: 600 }}>{formatSoles(rev)}</TableCell>
-                                        <TableCell align="right">{safeNumber(p?.count, 0)}</TableCell>
+                                        <TableCell align="right">{safeNumber(p?.reservations_count, 0)}</TableCell>
                                         <TableCell align="right">{safeNumber(p?.nights_count, 0)}</TableCell>
                                         <TableCell align="right">{formatSoles(safeNumber(p?.revenue_per_night, 0))}</TableCell>
                                         <TableCell>
