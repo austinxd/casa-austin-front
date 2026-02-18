@@ -15,7 +15,6 @@ import formatRowsProfits from '@/services/profits/formatRowsProfits'
 import ProfitsSkeleton from './components/skeleton/ProfitsSkeleton'
 import { useLazyGetIngresosAnalysisQuery } from '@/services/analytics/ingresosService'
 import IngresosDashboard from '@/pages/panel/stats/components/analytics/IngresosDashboard'
-import { GlobalFilters } from '@/interfaces/analytics.interface'
 
 type MonthNameToNumber = {
     [monthName: string]: number
@@ -258,21 +257,7 @@ export default function CrudProfits() {
 
                     {/* ===== TAB 1: Stats ===== */}
                     {activeTab === 1 && (
-                        <IngresosDashboard
-                            filters={{
-                                dateRange: {
-                                    date_from: `${year}-01-01`,
-                                    date_to: `${year}-12-31`,
-                                },
-                                preset: 'year',
-                                includeClients: true,
-                                includeAnonymous: false,
-                                period: 'month',
-                                currency: 'PEN',
-                                limit: 20,
-                                daysAhead: 30,
-                            } as GlobalFilters}
-                        />
+                        <IngresosDashboard year={year} />
                     )}
 
                     {/* ===== TAB 2: Análisis IA ===== */}

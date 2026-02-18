@@ -272,7 +272,7 @@ export default function StatsPage() {
             </TabPanel>
 
             <TabPanel value={selectedTab} index={1}>
-                <IngresosDashboard filters={globalFilters} />
+                <IngresosDashboard year={new Date().getFullYear()} />
             </TabPanel>
 
             <TabPanel value={selectedTab} index={2}>
