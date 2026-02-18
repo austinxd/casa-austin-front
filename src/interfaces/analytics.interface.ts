@@ -264,6 +264,17 @@ export interface UpcomingCheckinsResponse {
 }
 
 // ========================================
+// 4. ENDPOINT: /api/v1/stats/ingresos/analysis/
+// ========================================
+
+export interface IIngresosAnalysis {
+    analysis: string
+    months_analyzed: number
+    tokens_used: number
+    model: string
+}
+
+// ========================================
 // INTERFACES COMUNES
 // ========================================
 

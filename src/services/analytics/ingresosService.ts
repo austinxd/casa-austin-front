@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IngresosResponse, IngresosParams } from '@/interfaces/analytics.interface'
+import { IngresosResponse, IngresosParams, IIngresosAnalysis } from '@/interfaces/analytics.interface'
 import { ENV } from '../../core/constants/config'
 import { cookiesGetString } from '@/core/utils/cookie-storage'
 
@@ -30,10 +30,18 @@ export const ingresosApi = createApi({
             },
             providesTags: ['Ingresos'],
         }),
+        // Análisis IA de ingresos
+        getIngresosAnalysis: builder.query<IIngresosAnalysis, void>({
+            query: () => ({
+                url: '/ingresos/analysis/',
+                method: 'GET',
+            }),
+        }),
     }),
 })
 
 export const {
     useGetIngresosQuery,
     useLazyGetIngresosQuery,
+    useLazyGetIngresosAnalysisQuery,
 } = ingresosApi
