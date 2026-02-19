@@ -199,7 +199,7 @@ ${bookingUrl}
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
                 <Grid container spacing={4}>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={5}>
                         <Paper 
                             elevation={0}
                             sx={{ 
@@ -209,64 +209,66 @@ ${bookingUrl}
                             }}
                         >
                             <Stack spacing={3}>
-                                <DatePicker
-                                    label="Check-in"
-                                    value={checkInDate}
-                                    onChange={handleCheckInChange}
-                                    minDate={today}
-                                    slotProps={{
-                                        textField: {
-                                            fullWidth: true,
-                                            error: !!checkInError,
-                                        },
-                                        day: {
-                                            sx: {
-                                                '&:not(.Mui-disabled)': {
-                                                    color: '#212121',
-                                                    fontWeight: 600,
-                                                },
-                                                '&.Mui-disabled': {
-                                                    color: '#bdbdbd',
-                                                },
-                                                '&.Mui-selected': {
-                                                    backgroundColor: '#0E6191 !important',
-                                                    color: '#ffffff !important',
-                                                    fontWeight: 700,
+                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                    <DatePicker
+                                        label="Llegada"
+                                        value={checkInDate}
+                                        onChange={handleCheckInChange}
+                                        minDate={today}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                error: !!checkInError,
+                                            },
+                                            day: {
+                                                sx: {
+                                                    '&:not(.Mui-disabled)': {
+                                                        color: '#212121',
+                                                        fontWeight: 600,
+                                                    },
+                                                    '&.Mui-disabled': {
+                                                        color: '#bdbdbd',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        backgroundColor: '#0E6191 !important',
+                                                        color: '#ffffff !important',
+                                                        fontWeight: 700,
+                                                    },
                                                 },
                                             },
-                                        },
-                                    }}
-                                />
-
-                                <DatePicker
-                                    label="Check-out"
-                                    value={checkOutDate}
-                                    onChange={(newValue) => setCheckOutDate(newValue)}
-                                    minDate={checkInDate ? checkInDate.add(1, 'day') : today.add(1, 'day')}
-                                    disabled={!checkInDate}
-                                    slotProps={{
-                                        textField: {
-                                            fullWidth: true,
-                                            error: !!checkOutError,
-                                        },
-                                        day: {
-                                            sx: {
-                                                '&:not(.Mui-disabled)': {
-                                                    color: '#212121',
-                                                    fontWeight: 600,
-                                                },
-                                                '&.Mui-disabled': {
-                                                    color: '#bdbdbd',
-                                                },
-                                                '&.Mui-selected': {
-                                                    backgroundColor: '#0E6191 !important',
-                                                    color: '#ffffff !important',
-                                                    fontWeight: 700,
+                                        }}
+                                    />
+                                    
+                                    <DatePicker
+                                        label="Salida"
+                                        value={checkOutDate}
+                                        onChange={(newValue) => setCheckOutDate(newValue)}
+                                        minDate={checkInDate ? checkInDate.add(1, 'day') : today.add(1, 'day')}
+                                        disabled={!checkInDate}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                error: !!checkOutError,
+                                            },
+                                            day: {
+                                                sx: {
+                                                    '&:not(.Mui-disabled)': {
+                                                        color: '#212121',
+                                                        fontWeight: 600,
+                                                    },
+                                                    '&.Mui-disabled': {
+                                                        color: '#bdbdbd',
+                                                    },
+                                                    '&.Mui-selected': {
+                                                        backgroundColor: '#0E6191 !important',
+                                                        color: '#ffffff !important',
+                                                        fontWeight: 700,
+                                                    },
                                                 },
                                             },
-                                        },
-                                    }}
-                                />
+                                        }}
+                                    />
+                                </Stack>
 
                                 {(checkInError || checkOutError) && (
                                     <Alert severity="error" sx={{ py: 1 }}>
@@ -377,7 +379,7 @@ ${bookingUrl}
                         </Paper>
                     </Grid>
 
-                    <Grid item xs={12}>
+                    <Grid item xs={12} md={7}>
                         {isLoading && (
                             <Box sx={{ 
                                 display: 'flex', 

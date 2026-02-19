@@ -79,7 +79,7 @@ import {
     useLazyGetPromoPreviewQuery,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
-import CotizadorCenter from '@/pages/panel/stats/components/cotizador/CotizadorCenter'
+import CotizadorChat from './CotizadorChat'
 
 export default function ChatbotAnalytics() {
     const [tab, setTab] = useState(0)
@@ -1487,7 +1487,7 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                         </IconButton>
                     </Box>
                     <Box sx={{ p: 2 }}>
-                        <CotizadorCenter />
+                        <CotizadorChat />
                     </Box>
                 </Paper>
             )}
