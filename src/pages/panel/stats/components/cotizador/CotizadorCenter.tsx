@@ -199,7 +199,7 @@ ${bookingUrl}
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
             <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
                 <Grid container spacing={4}>
-                    <Grid item xs={12} md={5}>
+                    <Grid item xs={12}>
                         <Paper 
                             elevation={0}
                             sx={{ 
@@ -377,7 +377,7 @@ ${bookingUrl}
                         </Paper>
                     </Grid>
 
-                    <Grid item xs={12} md={7}>
+                    <Grid item xs={12}>
                         {isLoading && (
                             <Box sx={{ 
                                 display: 'flex', 
