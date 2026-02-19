@@ -58,6 +58,8 @@ import {
     Facebook as FacebookIcon,
     Phone as PhoneIcon,
     ChatBubble as ChatBubbleIcon,
+    Calculate as CalculateIcon,
+    Close as CloseIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -77,6 +79,7 @@ import {
     useLazyGetPromoPreviewQuery,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
+import CotizadorCenter from '@/pages/panel/stats/components/cotizador/CotizadorCenter'
 
 export default function ChatbotAnalytics() {
     const [tab, setTab] = useState(0)
@@ -1184,6 +1187,36 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
     const [messageText, setMessageText] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
+    // Cotizador modal state
+    const [cotizadorOpen, setCotizadorOpen] = useState(false)
+    const [position, setPosition] = useState({ x: 0, y: 0 })
+    const dragging = useRef(false)
+    const dragOffset = useRef({ x: 0, y: 0 })
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!dragging.current) return
+            setPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y })
+        }
+        const handleMouseUp = () => { dragging.current = false }
+        document.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mouseup', handleMouseUp)
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+        }
+    }, [])
+
+    const handleDragStart = (e: React.MouseEvent) => {
+        dragging.current = true
+        dragOffset.current = { x: e.clientX - position.x, y: e.clientY - position.y }
+    }
+
+    const handleOpenCotizador = () => {
+        setPosition({ x: Math.max(0, (window.innerWidth - 520) / 2), y: Math.max(0, (window.innerHeight - 500) / 2) })
+        setCotizadorOpen(true)
+    }
+
     const session = sessions.find(s => s.id === sessionId)
     const displayName = session?.client_name || session?.wa_profile_name || session?.wa_id || 'Chat'
     const [aiEnabled, setAiEnabled] = useState(session?.ai_enabled ?? true)
@@ -1385,6 +1418,20 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                         },
                     }}
                 />
+                <Tooltip title="Cotizar">
+                    <IconButton
+                        onClick={handleOpenCotizador}
+                        sx={{
+                            bgcolor: '#2e7d32',
+                            color: '#fff',
+                            width: 40,
+                            height: 40,
+                            '&:hover': { bgcolor: '#1b5e20' },
+                        }}
+                    >
+                        <CalculateIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                </Tooltip>
                 <IconButton
                     color="primary"
                     onClick={handleSend}
@@ -1401,6 +1448,49 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                     {isSending ? <CircularProgress size={18} color="inherit" /> : <SendIcon sx={{ fontSize: 18 }} />}
                 </IconButton>
             </Box>
+
+            {/* Cotizador flotante draggable */}
+            {cotizadorOpen && (
+                <Paper
+                    elevation={8}
+                    sx={{
+                        position: 'fixed',
+                        left: position.x,
+                        top: position.y,
+                        width: 520,
+                        maxHeight: '80vh',
+                        overflow: 'auto',
+                        zIndex: 1300,
+                        borderRadius: 2,
+                    }}
+                >
+                    <Box
+                        onMouseDown={handleDragStart}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            bgcolor: '#212121',
+                            color: '#fff',
+                            px: 2,
+                            py: 1,
+                            cursor: 'move',
+                            userSelect: 'none',
+                            borderRadius: '8px 8px 0 0',
+                        }}
+                    >
+                        <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <CalculateIcon fontSize="small" /> Cotizador
+                        </Typography>
+                        <IconButton size="small" onClick={() => setCotizadorOpen(false)} sx={{ color: '#fff' }}>
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
+                    <Box sx={{ p: 2 }}>
+                        <CotizadorCenter />
+                    </Box>
+                </Paper>
+            )}
         </>
     )
 }
