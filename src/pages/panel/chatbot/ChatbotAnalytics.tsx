@@ -147,7 +147,31 @@ export default function ChatbotAnalytics() {
                     Austin Assistant
                 </Typography>
                 {(tab === 1 || tab === 5 || tab === 6) && (
-                    <Box display="flex" gap={2}>
+                    <Box display="flex" gap={1.5} alignItems="center">
+                        <Chip
+                            label="Hoy"
+                            size="small"
+                            onClick={() => {
+                                const t = new Date().toISOString().split('T')[0]
+                                setFromDate(t)
+                                setToDate(t)
+                            }}
+                            color={fromDate === toDate && fromDate === new Date().toISOString().split('T')[0] ? 'primary' : 'default'}
+                            variant={fromDate === toDate && fromDate === new Date().toISOString().split('T')[0] ? 'filled' : 'outlined'}
+                        />
+                        <Chip
+                            label="Ayer"
+                            size="small"
+                            onClick={() => {
+                                const y = new Date()
+                                y.setDate(y.getDate() - 1)
+                                const ys = y.toISOString().split('T')[0]
+                                setFromDate(ys)
+                                setToDate(ys)
+                            }}
+                            color={fromDate === toDate && fromDate === (() => { const y = new Date(); y.setDate(y.getDate() - 1); return y.toISOString().split('T')[0] })() ? 'primary' : 'default'}
+                            variant={fromDate === toDate && fromDate === (() => { const y = new Date(); y.setDate(y.getDate() - 1); return y.toISOString().split('T')[0] })() ? 'filled' : 'outlined'}
+                        />
                         <TextField
                             type="date"
                             label="Desde"
