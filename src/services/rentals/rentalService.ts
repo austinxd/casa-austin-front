@@ -136,6 +136,7 @@ export const {
     useGetRentalsByIdQuery,
     useGetAllRentalsQuery,
     useGetAllRentalsForEarningsQuery,
+    useLazyGetAllRentalsForEarningsQuery,
     useGetAllPropertiesQuery,
     useGetSearchRentalQuery,
     useGetRentalForFilterQuery,
