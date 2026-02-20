@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Box, Typography, Tabs, Tab, Paper, Button, Chip, CircularProgress, Alert } from '@mui/material'
-import { AutoAwesome as AiIcon, AttachMoney as MoneyIcon, Assessment as StatsIcon } from '@mui/icons-material'
+import { AutoAwesome as AiIcon, AttachMoney as MoneyIcon, Assessment as StatsIcon, Download as DownloadIcon } from '@mui/icons-material'
 import SearchProfits from './components/filter/SearchProfits'
 import CardResponsiveProfit from './components/card/CardResponsiveProfit'
 import { useLocation } from 'react-router-dom'
 import {
     useGetAllRentalsForEarningsQuery,
     useGetEarningsPerMonthQuery,
+    useLazyGetAllRentalsForEarningsQuery,
 } from '@/services/rentals/rentalService'
 import { BarChartsProfits, PaginationAustin, SelectInputs, TableAustin } from '@/components/common'
 import { yearOptions } from '@/core/utils/time-options'
@@ -15,6 +16,7 @@ import formatRowsProfits from '@/services/profits/formatRowsProfits'
 import ProfitsSkeleton from './components/skeleton/ProfitsSkeleton'
 import { useLazyGetIngresosAnalysisQuery } from '@/services/analytics/ingresosService'
 import IngresosDashboard from '@/pages/panel/stats/components/analytics/IngresosDashboard'
+import { exportRentalsToExcel } from '@/services/rentals/exportRentals'
 
 type MonthNameToNumber = {
     [monthName: string]: number
@@ -48,6 +50,42 @@ export default function CrudProfits() {
     const [typeRent, setTypeRent] = useState('')
 
     const [earningsMonth, setEarningsMonth] = useState('')
+    const [isExporting, setIsExporting] = useState(false)
+    const [triggerExportQuery] = useLazyGetAllRentalsForEarningsQuery()
+
+    const MONTH_NAMES = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+    ]
+
+    const handleExportExcel = async () => {
+        setIsExporting(true)
+        try {
+            const result = await triggerExportQuery({
+                month,
+                year,
+                page_size: 1000,
+                page: 1,
+                search: '',
+                type: '',
+                exclude: '',
+                from_check_in: true,
+            }).unwrap()
+
+            if (!result.results || result.results.length === 0) {
+                alert('No se encontraron reservas para el mes seleccionado')
+                return
+            }
+
+            const monthLabel = `${MONTH_NAMES[month - 1]}_${year}`
+            exportRentalsToExcel(result.results, monthLabel)
+        } catch (error) {
+            console.error('Error al exportar:', error)
+            alert('Error al obtener las reservas. Intente nuevamente.')
+        } finally {
+            setIsExporting(false)
+        }
+    }
 
     const { data, isLoading, refetch } = useGetAllRentalsForEarningsQuery({
         page: currentPage,
@@ -142,17 +180,29 @@ export default function CrudProfits() {
                         mb={{ md: 3, sm: 1, xs: 1 }}
                         display={'flex'}
                         justifyContent={'space-between'}
+                        alignItems={'center'}
                     >
                         <Typography variant="h1">Ingresos</Typography>
-                        <Box maxWidth={100}>
-                            <SelectInputs
-                                messageError=""
+                        <Box display="flex" alignItems="center" gap={2}>
+                            <Button
                                 variant="outlined"
-                                options={yearOptions}
-                                label={'Año'}
-                                onChange={handleYearChange}
-                                defaultValue={currentYear.toString()}
-                            />
+                                startIcon={isExporting ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon />}
+                                onClick={handleExportExcel}
+                                disabled={isExporting}
+                                size="small"
+                            >
+                                {isExporting ? 'Exportando...' : 'Exportar Excel'}
+                            </Button>
+                            <Box maxWidth={100}>
+                                <SelectInputs
+                                    messageError=""
+                                    variant="outlined"
+                                    options={yearOptions}
+                                    label={'Año'}
+                                    onChange={handleYearChange}
+                                    defaultValue={currentYear.toString()}
+                                />
+                            </Box>
                         </Box>
                     </Box>
 
