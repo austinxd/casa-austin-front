@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
     Box,
     Typography,
@@ -11,20 +11,65 @@ import {
     Autocomplete,
     Checkbox,
     FormControlLabel,
+    Chip,
 } from '@mui/material'
 import {
     Calculate as CalculateIcon,
     ContentCopy as CopyIcon,
+    CalendarMonth as CalendarIcon,
 } from '@mui/icons-material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useLazyCalculatePricingQuery, useLazyCalculateLateCheckoutQuery } from '@/services/pricing/pricingService'
+import { useLazyGetCalendarMonthQuery } from '@/services/rentals/rentalService'
 import { useGetAllClientsQuery } from '@/services/clients/clientsService'
 import { IRegisterClient } from '@/interfaces/clients/registerClients'
 import { LateCheckoutData } from '@/interfaces/pricing.interface'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/es'
+
+function getAvailableDates(reservations: any[], year: number, month: number): string[] {
+    const daysInMonth = dayjs(`${year}-${month}-01`).daysInMonth()
+    const today = dayjs().startOf('day')
+    const occupiedByProperty: Record<string, Set<string>> = {}
+
+    // Build occupied dates per property
+    for (const r of reservations) {
+        if (!r.property?.name) continue
+        if (!['approved', 'pending', 'under_review', 'incomplete'].includes(r.status)) continue
+        const propName = r.property.name
+        if (!occupiedByProperty[propName]) occupiedByProperty[propName] = new Set()
+
+        let current = dayjs(r.check_in_date)
+        const end = dayjs(r.check_out_date)
+        while (current.isBefore(end)) {
+            occupiedByProperty[propName].add(current.format('YYYY-MM-DD'))
+            current = current.add(1, 'day')
+        }
+    }
+
+    const propertyNames = Object.keys(occupiedByProperty)
+    if (propertyNames.length === 0) {
+        // No reservations = all days free
+        const dates: string[] = []
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = dayjs(`${year}-${month}-${d}`).format('YYYY-MM-DD')
+            if (!dayjs(date).isBefore(today)) dates.push(date)
+        }
+        return dates
+    }
+
+    // A date is available if at least one property is free
+    const available: string[] = []
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = dayjs(`${year}-${month}-${d}`).format('YYYY-MM-DD')
+        if (dayjs(dateStr).isBefore(today)) continue
+        const allOccupied = propertyNames.every(p => occupiedByProperty[p]?.has(dateStr))
+        if (!allOccupied) available.push(dateStr)
+    }
+    return available
+}
 
 export default function CotizadorChat() {
     const [checkInDate, setCheckInDate] = useState<Dayjs | null>(null)
@@ -40,6 +85,7 @@ export default function CotizadorChat() {
 
     const [calculatePricing, { data, isLoading, error }] = useLazyCalculatePricingQuery()
     const [calculateLateCheckout] = useLazyCalculateLateCheckoutQuery()
+    const [fetchCalendarMonth, { data: calendarData, isFetching: isLoadingCalendar }] = useLazyGetCalendarMonthQuery()
     const { data: clientsData, isFetching: isLoadingClients } = useGetAllClientsQuery({
         page: 1,
         page_size: 10,
@@ -110,13 +156,33 @@ export default function CotizadorChat() {
         navigator.clipboard.writeText(fullMessage).then(() => setShowCopySnackbar(true)).catch(console.error)
     }
 
+    // When no availability, auto-fetch calendar for the check-in month
+    const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
+    const noAvailability = data && !hasAvailableProperties
+
+    useEffect(() => {
+        if (noAvailability && checkInDate) {
+            fetchCalendarMonth({ year: checkInDate.year(), month: checkInDate.month() + 1 })
+        }
+    }, [noAvailability, checkInDate, fetchCalendarMonth])
+
+    const availableDates = useMemo(() => {
+        if (!calendarData || !checkInDate || !noAvailability) return []
+        return getAvailableDates(calendarData, checkInDate.year(), checkInDate.month() + 1)
+    }, [calendarData, checkInDate, noAvailability])
+
+    const handleSelectAlternativeDate = (dateStr: string) => {
+        const newCheckIn = dayjs(dateStr)
+        setCheckInDate(newCheckIn)
+        setCheckOutDate(newCheckIn.add(nightsCount || 1, 'day'))
+    }
+
     const today = dayjs().startOf('day')
     const checkInError = checkInDate && checkInDate.isBefore(today)
     const checkOutError = checkOutDate && checkInDate && !checkOutDate.isAfter(checkInDate)
     const isFormValid = checkInDate && checkOutDate && guests > 0 && !checkInError && !checkOutError
     const hasResultMessages = data?.data?.message1 && data?.data?.message2
     const nightsCount = checkInDate && checkOutDate ? checkOutDate.diff(checkInDate, 'day') : 0
-    const hasAvailableProperties = data?.data?.properties && data.data.properties.some(p => p.available)
 
     useEffect(() => {
         if (!hasAvailableProperties) {
@@ -284,8 +350,62 @@ export default function CotizadorChat() {
                     </Alert>
                 )}
 
-                {/* Resultado */}
-                {!isLoading && data?.data && (
+                {/* Sin disponibilidad — mostrar fechas alternativas */}
+                {!isLoading && noAvailability && (
+                    <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2 }}>
+                        <Alert severity="warning" sx={{ py: 0.5, mb: 2 }}>
+                            No hay casas disponibles para las fechas seleccionadas.
+                        </Alert>
+
+                        {isLoadingCalendar && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 1 }}>
+                                <CircularProgress size={16} />
+                                <Typography variant="body2" color="text.secondary">Buscando fechas alternativas...</Typography>
+                            </Box>
+                        )}
+
+                        {!isLoadingCalendar && availableDates.length > 0 && (
+                            <Box>
+                                <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                    <CalendarIcon sx={{ fontSize: 16 }} />
+                                    Fechas disponibles en {checkInDate?.locale('es').format('MMMM YYYY')}
+                                </Typography>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {availableDates.map(dateStr => {
+                                        const d = dayjs(dateStr)
+                                        const isWeekend = d.day() === 0 || d.day() === 5 || d.day() === 6
+                                        return (
+                                            <Chip
+                                                key={dateStr}
+                                                label={d.format('dd D')}
+                                                size="small"
+                                                onClick={() => handleSelectAlternativeDate(dateStr)}
+                                                sx={{
+                                                    fontWeight: isWeekend ? 700 : 400,
+                                                    bgcolor: isWeekend ? '#e3f2fd' : undefined,
+                                                    cursor: 'pointer',
+                                                    '&:hover': { bgcolor: '#0E6191', color: '#fff' },
+                                                }}
+                                            />
+                                        )
+                                    })}
+                                </Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                                    Click en una fecha para cotizar desde ese día
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {!isLoadingCalendar && availableDates.length === 0 && calendarData && (
+                            <Alert severity="info" sx={{ py: 0.5 }}>
+                                No hay disponibilidad en todo el mes. Prueba con otro mes.
+                            </Alert>
+                        )}
+                    </Box>
+                )}
+
+                {/* Resultado con disponibilidad */}
+                {!isLoading && data?.data && hasAvailableProperties && (
                     <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
