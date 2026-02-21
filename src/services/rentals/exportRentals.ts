@@ -18,7 +18,7 @@ export function exportRentalsToExcel(rentals: IRentalClient[], monthLabel: strin
     const rows = rentals.map((r) => ({
         Propiedad: r.property?.name ?? '',
         Cliente: `${r.client?.first_name ?? ''} ${r.client?.last_name ?? ''}`.trim(),
-        'Tipo Doc': DOC_TYPE_LABELS[r.client?.type_document] ?? r.client?.type_document ?? '',
+        'Tipo Doc': DOC_TYPE_LABELS[(r.client as any)?.document_type ?? r.client?.type_document] ?? (r.client as any)?.document_type ?? r.client?.type_document ?? '',
         'Nro Doc': r.client?.number_doc ?? '',
         Teléfono: r.tel_contact_number || r.client?.tel_number || '',
         'Check-in': r.check_in_date ?? '',
