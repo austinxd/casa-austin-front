@@ -154,6 +154,7 @@ export default function CrudProfits() {
         Julio: 7,
         Agosto: 8,
         Setiembre: 9,
+        Septiembre: 9,
         Octubre: 10,
         Noviembre: 11,
         Diciembre: 12,
