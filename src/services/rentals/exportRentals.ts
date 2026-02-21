@@ -7,11 +7,18 @@ const STATUS_LABELS: Record<string, string> = {
     approved: 'Aprobado',
 }
 
+const DOC_TYPE_LABELS: Record<string, string> = {
+    dni: 'DNI',
+    cex: 'Carnet de Extranjeria',
+    pas: 'Pasaporte',
+    ruc: 'RUC',
+}
+
 export function exportRentalsToExcel(rentals: IRentalClient[], monthLabel: string) {
     const rows = rentals.map((r) => ({
         Propiedad: r.property?.name ?? '',
         Cliente: `${r.client?.first_name ?? ''} ${r.client?.last_name ?? ''}`.trim(),
-        'Tipo Doc': r.client?.type_document ?? '',
+        'Tipo Doc': DOC_TYPE_LABELS[r.client?.type_document] ?? r.client?.type_document ?? '',
         'Nro Doc': r.client?.number_doc ?? '',
         Teléfono: r.tel_contact_number || r.client?.tel_number || '',
         'Check-in': r.check_in_date ?? '',
