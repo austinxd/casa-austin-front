@@ -152,7 +152,9 @@ export default function CotizadorChat() {
 
         const additionalInfo = `\n\n🕒 Check-in: 3:00 PM\n🕚 Check-out: 11:00 AM\n📸  Fotos y detalles⬇️\n${bookingUrl}\n🎁 Beneficios exclusivos por reservar en nuestra web:\n•  5% de puntos en cada reserva\n•  Beneficios especiales para miembros de Casa Austin\n\n⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
+        const personLabel = Number(guests) === 1 ? 'PERSONA' : 'PERSONAS'
+        const singlePersonWarning = Number(guests) === 1 ? '\n⚠️ Este precio es solo para 1 persona. Cada persona adicional tiene un costo extra por noche.\n' : ''
+        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} ${personLabel}*${singlePersonWarning}\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
         navigator.clipboard.writeText(fullMessage).then(() => setShowCopySnackbar(true)).catch(console.error)
     }
 
@@ -438,8 +440,13 @@ export default function CotizadorChat() {
 
                             <Box sx={{ p: 1.5, bgcolor: '#f5f5f5', borderRadius: 1 }}>
                                 <Typography variant="body2" sx={{ fontWeight: 600, color: '#212121', mb: 1, fontSize: '0.8rem' }}>
-                                    PRECIO PARA {guests} PERSONAS
+                                    PRECIO PARA {guests} {Number(guests) === 1 ? 'PERSONA' : 'PERSONAS'}
                                 </Typography>
+                                {Number(guests) === 1 && (
+                                    <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 600, mb: 1, fontSize: '0.75rem' }}>
+                                        ⚠️ Este precio es solo para 1 persona. Cada persona adicional tiene un costo extra por noche.
+                                    </Typography>
+                                )}
                                 <Typography variant="body2" sx={{ whiteSpace: 'pre-line', fontWeight: 600, color: '#212121', lineHeight: 1.7, fontSize: '0.8rem' }}>
                                     {data.data.message2}
                                 </Typography>

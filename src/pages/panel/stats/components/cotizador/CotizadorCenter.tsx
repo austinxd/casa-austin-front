@@ -127,7 +127,9 @@ ${bookingUrl}
 
 ⚠️ Todo visitante (día o noche) cuenta como persona adicional.`
 
-        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} PERSONAS*\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
+        const personLabel = Number(guests) === 1 ? 'PERSONA' : 'PERSONAS'
+        const singlePersonWarning = Number(guests) === 1 ? '\n⚠️ Este precio es solo para 1 persona. Cada persona adicional tiene un costo extra por noche.\n' : ''
+        const fullMessage = `${data.data.message1}\n\n*PRECIO PARA ${guests} ${personLabel}*${singlePersonWarning}\n${data.data.message2}${lateCheckoutInfo}${additionalInfo}`
         
         navigator.clipboard.writeText(fullMessage).then(() => {
             setShowCopySnackbar(true)
@@ -482,8 +484,13 @@ ${bookingUrl}
                                                 mb: 1.5,
                                             }}
                                         >
-                                            PRECIO PARA {guests} PERSONAS
+                                            PRECIO PARA {guests} {Number(guests) === 1 ? 'PERSONA' : 'PERSONAS'}
                                         </Typography>
+                                        {Number(guests) === 1 && (
+                                            <Typography variant="body2" sx={{ color: '#d32f2f', fontWeight: 600, mb: 1, fontSize: '0.85rem' }}>
+                                                ⚠️ Este precio es solo para 1 persona. Cada persona adicional tiene un costo extra por noche.
+                                            </Typography>
+                                        )}
                                         <Typography 
                                             variant="body2" 
                                             sx={{ 
