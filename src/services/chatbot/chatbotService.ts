@@ -12,6 +12,8 @@ import {
     IPromoDateConfig,
     IPromoDateSentResponse,
     IPromoPreview,
+    IUnresolvedQuestion,
+    IUnresolvedQuestionsResponse,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -23,7 +25,7 @@ export const chatbotService = createApi({
             return headers
         },
     }),
-    tagTypes: ['ChatSessions', 'ChatMessages', 'PromoConfig', 'Promos', 'Visits'],
+    tagTypes: ['ChatSessions', 'ChatMessages', 'PromoConfig', 'Promos', 'Visits', 'UnresolvedQuestions'],
     endpoints: (builder) => ({
         getChatAnalytics: builder.query<
             IChatAnalytics[],
@@ -187,6 +189,35 @@ export const chatbotService = createApi({
                 method: 'GET',
             }),
         }),
+
+        getUnresolvedQuestions: builder.query<
+            IUnresolvedQuestionsResponse,
+            { page?: number; status?: string; category?: string }
+        >({
+            query: ({ page = 1, status = '', category = '' }) => ({
+                url: '/chatbot/unresolved-questions/',
+                method: 'GET',
+                params: {
+                    page: page.toString(),
+                    page_size: '10',
+                    ...(status && { status }),
+                    ...(category && { category }),
+                },
+            }),
+            providesTags: ['UnresolvedQuestions'],
+        }),
+
+        updateUnresolvedQuestion: builder.mutation<
+            IUnresolvedQuestion,
+            { id: string; status?: string; resolution?: string }
+        >({
+            query: ({ id, ...body }) => ({
+                url: `/chatbot/unresolved-questions/${id}/`,
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: ['UnresolvedQuestions'],
+        }),
     }),
 })
 
@@ -206,4 +237,6 @@ export const {
     useUpdatePromoConfigMutation,
     useGetPromosQuery,
     useLazyGetPromoPreviewQuery,
+    useGetUnresolvedQuestionsQuery,
+    useUpdateUnresolvedQuestionMutation,
 } = chatbotService

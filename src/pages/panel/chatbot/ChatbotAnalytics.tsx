@@ -32,6 +32,9 @@ import {
     TablePagination,
     Menu,
     MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
 } from '@mui/material'
 import {
     SmartToy as SmartToyIcon,
@@ -60,6 +63,9 @@ import {
     ChatBubble as ChatBubbleIcon,
     Calculate as CalculateIcon,
     Close as CloseIcon,
+    QuestionAnswer as QuestionAnswerIcon,
+    CheckCircle as CheckCircleIcon,
+    VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -77,6 +83,8 @@ import {
     useUpdatePromoConfigMutation,
     useGetPromosQuery,
     useLazyGetPromoPreviewQuery,
+    useGetUnresolvedQuestionsQuery,
+    useUpdateUnresolvedQuestionMutation,
 } from '@/services/chatbot/chatbotService'
 import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
 import CotizadorChat from './CotizadorChat'
@@ -932,6 +940,221 @@ function VisitsPanel({ onOpenChat }: { onOpenChat: (sessionId: string) => void }
 }
 
 // ========= Analysis Panel =========
+function UnresolvedQuestionsSection() {
+    const boxShadow = useBoxShadow(true)
+    const [statusFilter, setStatusFilter] = useState('pending')
+    const [categoryFilter, setCategoryFilter] = useState('')
+    const [page, setPage] = useState(1)
+    const [editingId, setEditingId] = useState<string | null>(null)
+    const [resolution, setResolution] = useState('')
+
+    const { data, isLoading } = useGetUnresolvedQuestionsQuery({
+        page,
+        status: statusFilter,
+        category: categoryFilter,
+    })
+    const [updateQuestion, { isLoading: isUpdating }] = useUpdateUnresolvedQuestionMutation()
+
+    const categoryLabels: Record<string, string> = {
+        pricing: 'Precios',
+        policy: 'Políticas',
+        property_info: 'Propiedad',
+        service: 'Servicios',
+        location: 'Ubicación',
+        other: 'Otro',
+    }
+
+    const statusColors: Record<string, 'warning' | 'success' | 'default'> = {
+        pending: 'warning',
+        resolved: 'success',
+        ignored: 'default',
+    }
+
+    const handleResolve = async (id: string) => {
+        await updateQuestion({ id, status: 'resolved', resolution })
+        setEditingId(null)
+        setResolution('')
+    }
+
+    const handleIgnore = async (id: string) => {
+        await updateQuestion({ id, status: 'ignored' })
+    }
+
+    return (
+        <Card sx={{ boxShadow }}>
+            <CardContent>
+                <Typography variant="subtitle1" fontWeight={600} mb={2} display="flex" alignItems="center" gap={1}>
+                    <QuestionAnswerIcon color="warning" fontSize="small" />
+                    Preguntas sin resolver
+                    {data && data.count > 0 && (
+                        <Chip label={data.count} size="small" color="warning" sx={{ ml: 1 }} />
+                    )}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                    Preguntas que el bot no pudo responder. Resuélvelas para mejorar el conocimiento del bot.
+                </Typography>
+
+                {/* Filtros */}
+                <Box display="flex" gap={2} mb={2}>
+                    <FormControl size="small" sx={{ minWidth: 130 }}>
+                        <InputLabel>Estado</InputLabel>
+                        <Select
+                            value={statusFilter}
+                            label="Estado"
+                            onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
+                        >
+                            <MenuItem value="">Todos</MenuItem>
+                            <MenuItem value="pending">Pendientes</MenuItem>
+                            <MenuItem value="resolved">Resueltas</MenuItem>
+                            <MenuItem value="ignored">Ignoradas</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl size="small" sx={{ minWidth: 130 }}>
+                        <InputLabel>Categoría</InputLabel>
+                        <Select
+                            value={categoryFilter}
+                            label="Categoría"
+                            onChange={(e) => { setCategoryFilter(e.target.value); setPage(1) }}
+                        >
+                            <MenuItem value="">Todas</MenuItem>
+                            <MenuItem value="pricing">Precios</MenuItem>
+                            <MenuItem value="policy">Políticas</MenuItem>
+                            <MenuItem value="property_info">Propiedad</MenuItem>
+                            <MenuItem value="service">Servicios</MenuItem>
+                            <MenuItem value="location">Ubicación</MenuItem>
+                            <MenuItem value="other">Otro</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                {isLoading ? (
+                    <Box display="flex" justifyContent="center" py={3}>
+                        <CircularProgress size={24} />
+                    </Box>
+                ) : !data?.results?.length ? (
+                    <Box textAlign="center" py={3}>
+                        <CheckCircleIcon sx={{ fontSize: 40, color: 'text.disabled' }} />
+                        <Typography color="text.secondary" mt={1} variant="body2">
+                            No hay preguntas {statusFilter === 'pending' ? 'pendientes' : 'en esta categoría'}
+                        </Typography>
+                    </Box>
+                ) : (
+                    <>
+                        {data.results.map((q) => (
+                            <Paper
+                                key={q.id}
+                                variant="outlined"
+                                sx={{ p: 2, mb: 1.5, borderRadius: 2, borderLeft: '3px solid', borderLeftColor: q.status === 'pending' ? 'warning.main' : q.status === 'resolved' ? 'success.main' : 'grey.400' }}
+                            >
+                                <Box display="flex" justifyContent="space-between" alignItems="flex-start" gap={1}>
+                                    <Box flex={1}>
+                                        <Typography variant="body2" fontWeight={600}>
+                                            {q.question}
+                                        </Typography>
+                                        <Box display="flex" gap={1} mt={0.5} flexWrap="wrap" alignItems="center">
+                                            <Typography variant="caption" color="text.secondary">
+                                                {q.session_name} — {new Date(q.created).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                            </Typography>
+                                            {q.category && (
+                                                <Chip
+                                                    label={categoryLabels[q.category] || q.category}
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{ height: 20, fontSize: 11 }}
+                                                />
+                                            )}
+                                            <Chip
+                                                label={q.status === 'pending' ? 'Pendiente' : q.status === 'resolved' ? 'Resuelta' : 'Ignorada'}
+                                                size="small"
+                                                color={statusColors[q.status]}
+                                                sx={{ height: 20, fontSize: 11 }}
+                                            />
+                                        </Box>
+                                        {q.context && (
+                                            <Typography variant="caption" color="text.secondary" display="block" mt={0.5} sx={{ fontStyle: 'italic' }}>
+                                                Contexto: {q.context.length > 150 ? q.context.substring(0, 150) + '...' : q.context}
+                                            </Typography>
+                                        )}
+                                        {q.resolution && (
+                                            <Paper sx={{ mt: 1, p: 1, backgroundColor: '#e8f5e9', borderRadius: 1 }}>
+                                                <Typography variant="caption" fontWeight={600} color="success.dark">Resolución:</Typography>
+                                                <Typography variant="caption" display="block" color="success.dark">
+                                                    {q.resolution}
+                                                </Typography>
+                                            </Paper>
+                                        )}
+                                    </Box>
+                                    {q.status === 'pending' && (
+                                        <Box display="flex" gap={0.5} flexShrink={0}>
+                                            <Tooltip title="Resolver">
+                                                <IconButton
+                                                    size="small"
+                                                    color="success"
+                                                    onClick={() => { setEditingId(editingId === q.id ? null : q.id); setResolution('') }}
+                                                >
+                                                    <CheckCircleIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Ignorar">
+                                                <IconButton
+                                                    size="small"
+                                                    color="default"
+                                                    onClick={() => handleIgnore(q.id)}
+                                                    disabled={isUpdating}
+                                                >
+                                                    <VisibilityOffIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    )}
+                                </Box>
+                                {editingId === q.id && (
+                                    <Box mt={1.5} display="flex" gap={1} alignItems="flex-end">
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            multiline
+                                            minRows={2}
+                                            maxRows={4}
+                                            placeholder="Escribe la respuesta correcta para alimentar al bot..."
+                                            value={resolution}
+                                            onChange={(e) => setResolution(e.target.value)}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            color="success"
+                                            disabled={!resolution.trim() || isUpdating}
+                                            onClick={() => handleResolve(q.id)}
+                                            sx={{ minWidth: 80 }}
+                                        >
+                                            {isUpdating ? <CircularProgress size={16} /> : 'Guardar'}
+                                        </Button>
+                                    </Box>
+                                )}
+                            </Paper>
+                        ))}
+
+                        {data.count > 10 && (
+                            <Box display="flex" justifyContent="center" mt={1}>
+                                <TablePagination
+                                    component="div"
+                                    count={data.count}
+                                    page={page - 1}
+                                    onPageChange={(_, p) => setPage(p + 1)}
+                                    rowsPerPage={10}
+                                    rowsPerPageOptions={[10]}
+                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+                                />
+                            </Box>
+                        )}
+                    </>
+                )}
+            </CardContent>
+        </Card>
+    )
+}
+
 function AnalysisPanel() {
     const boxShadow = useBoxShadow(true)
     const [trigger, { data: analysis, isLoading, isFetching }] = useLazyGetChatAnalysisQuery()
@@ -1172,6 +1395,9 @@ function AnalysisPanel() {
                     </CardContent>
                 </Card>
             )}
+
+            {/* Preguntas sin resolver */}
+            <UnresolvedQuestionsSection />
         </Box>
     )
 }

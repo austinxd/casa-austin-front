@@ -180,6 +180,27 @@ export interface IPromoPreviewCandidate {
     exclusion_reason: string | null
 }
 
+export interface IUnresolvedQuestion {
+    id: string
+    session: string
+    session_name: string
+    question: string
+    context: string
+    category: string
+    status: 'pending' | 'resolved' | 'ignored'
+    resolution: string
+    created: string
+}
+
+export interface IUnresolvedQuestionsResponse {
+    count: number
+    next: string | null
+    previous: string | null
+    results: IUnresolvedQuestion[]
+    actual: number
+    total_paginas: number
+}
+
 export interface IPromoPreview {
     active: boolean
     target_date: string | null
