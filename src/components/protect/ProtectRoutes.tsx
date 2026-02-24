@@ -63,7 +63,7 @@ export default function ProtectRoutes({ children, navigateTo }: Props) {
     )
   }
   if (!(token && tokenRefresh)) return <Navigate to={navigateTo} replace />
-  if (roll === 'mantenimiento' && pathname !== '/panel/disponibilidad' && pathname !== '/panel/personal') {
+  if (roll === 'mantenimiento' && pathname !== '/panel/disponibilidad' && pathname !== '/panel/personal' && pathname !== '/panel/alquileres' && pathname !== '/panel/chatbot') {
     return <Navigate to="/panel/disponibilidad" replace />
   }
   return <>{children}</>
