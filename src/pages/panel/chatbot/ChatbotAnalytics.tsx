@@ -945,8 +945,6 @@ function UnresolvedQuestionsSection() {
     const [statusFilter, setStatusFilter] = useState('pending')
     const [categoryFilter, setCategoryFilter] = useState('')
     const [page, setPage] = useState(1)
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [resolution, setResolution] = useState('')
 
     const { data, isLoading } = useGetUnresolvedQuestionsQuery({
         page,
@@ -971,9 +969,7 @@ function UnresolvedQuestionsSection() {
     }
 
     const handleResolve = async (id: string) => {
-        await updateQuestion({ id, status: 'resolved', resolution })
-        setEditingId(null)
-        setResolution('')
+        await updateQuestion({ id, status: 'resolved' })
     }
 
     const handleIgnore = async (id: string) => {
@@ -991,7 +987,7 @@ function UnresolvedQuestionsSection() {
                     )}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" display="block" mb={2}>
-                    Preguntas que el bot no pudo responder. Resuélvelas para mejorar el conocimiento del bot.
+                    Preguntas que el bot no pudo responder. Márcalas como resueltas una vez que hayas actualizado el prompt.
                 </Typography>
 
                 {/* Filtros */}
@@ -1075,22 +1071,15 @@ function UnresolvedQuestionsSection() {
                                                 Contexto: {q.context.length > 150 ? q.context.substring(0, 150) + '...' : q.context}
                                             </Typography>
                                         )}
-                                        {q.resolution && (
-                                            <Paper sx={{ mt: 1, p: 1, backgroundColor: '#e8f5e9', borderRadius: 1 }}>
-                                                <Typography variant="caption" fontWeight={600} color="success.dark">Resolución:</Typography>
-                                                <Typography variant="caption" display="block" color="success.dark">
-                                                    {q.resolution}
-                                                </Typography>
-                                            </Paper>
-                                        )}
                                     </Box>
                                     {q.status === 'pending' && (
                                         <Box display="flex" gap={0.5} flexShrink={0}>
-                                            <Tooltip title="Resolver">
+                                            <Tooltip title="Marcar como resuelta">
                                                 <IconButton
                                                     size="small"
                                                     color="success"
-                                                    onClick={() => { setEditingId(editingId === q.id ? null : q.id); setResolution('') }}
+                                                    onClick={() => handleResolve(q.id)}
+                                                    disabled={isUpdating}
                                                 >
                                                     <CheckCircleIcon fontSize="small" />
                                                 </IconButton>
@@ -1108,30 +1097,6 @@ function UnresolvedQuestionsSection() {
                                         </Box>
                                     )}
                                 </Box>
-                                {editingId === q.id && (
-                                    <Box mt={1.5} display="flex" gap={1} alignItems="flex-end">
-                                        <TextField
-                                            fullWidth
-                                            size="small"
-                                            multiline
-                                            minRows={2}
-                                            maxRows={4}
-                                            placeholder="Escribe la respuesta correcta para alimentar al bot..."
-                                            value={resolution}
-                                            onChange={(e) => setResolution(e.target.value)}
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            color="success"
-                                            disabled={!resolution.trim() || isUpdating}
-                                            onClick={() => handleResolve(q.id)}
-                                            sx={{ minWidth: 80 }}
-                                        >
-                                            {isUpdating ? <CircularProgress size={16} /> : 'Guardar'}
-                                        </Button>
-                                    </Box>
-                                )}
                             </Paper>
                         ))}
 
