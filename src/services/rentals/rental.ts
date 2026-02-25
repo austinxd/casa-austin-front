@@ -52,3 +52,30 @@ export const downloadContractById = async (id: string, name: string, checkIn: st
     a.remove()
     window.URL.revokeObjectURL(urlBlob)
 }
+
+export const downloadSignedContractById = async (id: string, name: string, checkIn: string) => {
+    const token = cookiesGetString('token')
+    const url = `${ENV.API_URL}/reservations/${id}/contrato-firma/`
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok')
+    }
+
+    const blob = await response.blob()
+    const urlBlob = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = urlBlob
+    a.download = `${name}_${checkIn}_firmado.pdf`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(urlBlob)
+}

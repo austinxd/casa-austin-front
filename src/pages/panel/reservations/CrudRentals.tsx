@@ -11,7 +11,7 @@ import { useGetAllRentalsQuery } from '@/services/rentals/rentalService'
 import SearchRental from './components/form/SearchRental'
 import { BasicModal, PaginationAustin } from '@/components/common'
 import { IRentalClient } from '@/interfaces/rental/registerRental'
-import { downloadContractById } from '@/services/rentals/rental'
+import { downloadContractById, downloadSignedContractById } from '@/services/rentals/rental'
 import ReservationSkeleton from './components/skeleton/ReservationSkeleton'
 import ClientProfileTab from './components/ClientProfileTab'
 
@@ -49,6 +49,7 @@ export default function CrudRentals() {
     const [filterCreatedToday, setFilterCreatedToday] = useState('')
 
     const [isLoadingContract, setIsLoadingContract] = useState(false)
+    const [isLoadingSignedContract, setIsLoadingSignedContract] = useState(false)
 
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
@@ -95,6 +96,20 @@ export default function CrudRentals() {
     }
     const onContract = (item: IRentalClient) => {
         handleDownload(item.id.toString(), item.client.first_name, item.check_in_date)
+    }
+
+    const handleDownloadSigned = async (id: string, name: string, check_in: string) => {
+        setIsLoadingSignedContract(true)
+        try {
+            await downloadSignedContractById(id, name, check_in)
+        } catch (error) {
+            console.error('Signed contract download failed', error)
+        } finally {
+            setIsLoadingSignedContract(false)
+        }
+    }
+    const onSignedContract = (item: IRentalClient) => {
+        handleDownloadSigned(item.id.toString(), item.client.first_name, item.check_in_date)
     }
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -168,11 +183,13 @@ export default function CrudRentals() {
                                         <div key={item.id} className={style.item}>
                                             <Card
                                                 isLoadingContract={isLoadingContract}
+                                                isLoadingSignedContract={isLoadingSignedContract}
                                                 item={item}
                                                 handleDelete={() => onDelete(item)}
                                                 handleEdit={() => onEdit(item)}
                                                 handleView={() => onView(item)}
                                                 handleContract={() => onContract(item)}
+                                                handleSignedContract={() => onSignedContract(item)}
                                             />
                                         </div>
                                     ))}

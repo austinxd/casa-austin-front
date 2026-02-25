@@ -20,16 +20,20 @@ import OriginBadge from '../common/OriginBadge'
 
 interface Props {
     isLoadingContract: boolean
+    isLoadingSignedContract: boolean
     handleView: () => void
     handleEdit: () => void
     handleContract: () => void
+    handleSignedContract: () => void
     handleDelete: (e: string) => void
     item: IRentalClient
 }
 
 export default function Card({
     isLoadingContract,
+    isLoadingSignedContract,
     handleContract,
+    handleSignedContract,
     handleView,
     handleEdit,
     handleDelete,
@@ -384,6 +388,15 @@ export default function Card({
                         'Contrato'
                     )}
                 </MenuItem>
+                {item.client.type_document === 'dni' && (
+                    <MenuItem onClick={handleSignedContract} sx={{ color: '#000F08' }}>
+                        {isLoadingSignedContract ? (
+                            <CircularProgress size={24} sx={{ mx: 'auto' }} />
+                        ) : (
+                            'Contrato Firmado'
+                        )}
+                    </MenuItem>
+                )}
                 <MenuItem
                     onClick={() => handleDelete('Reyes Sanchez Jesus Alexander')}
                     sx={{ color: '#FF4C51' }}
