@@ -17,6 +17,7 @@ export const clientProfileApi = createApi({
         getClientProfile: builder.query<ClientProfileResponse, ClientProfileParams>({
             query: (params = {}) => {
                 const searchParams = new URLSearchParams()
+                if (params.mode) searchParams.append('mode', params.mode)
                 if (params.month) searchParams.append('month', params.month.toString())
                 if (params.year) searchParams.append('year', params.year.toString())
                 const queryString = searchParams.toString()

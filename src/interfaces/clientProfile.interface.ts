@@ -1,6 +1,7 @@
 export interface ClientProfileParams {
     month?: number
     year?: number
+    mode?: 'monthly' | 'annual'
 }
 
 export interface DistributionItem {
@@ -56,11 +57,20 @@ export interface IdealProfile {
     description: string
 }
 
+export interface MonthlyTrendItem {
+    month: number
+    month_name: string
+    total_clients: number
+    revenue: number
+    avg_spend: number
+}
+
 export interface ClientProfileData {
     period_info: {
-        month: number
+        mode: string
+        month: number | null
         year: number
-        month_name: string
+        month_name: string | null
     }
     summary: {
         total_clients: number
@@ -81,6 +91,7 @@ export interface ClientProfileData {
     guest_distribution: GuestDistributionItem[]
     top_clients: TopClient[]
     ideal_profile: IdealProfile
+    monthly_trend: MonthlyTrendItem[] | null
 }
 
 export interface ClientProfileResponse {
