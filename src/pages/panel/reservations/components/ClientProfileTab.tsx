@@ -113,6 +113,50 @@ export default function ClientProfileTab() {
         return Math.round(((current - previous) / previous) * 100)
     }
 
+    const genderLabel = (sex: string | null) => {
+        if (sex === 'm') return 'M'
+        if (sex === 'f') return 'F'
+        if (sex === 'e') return 'E'
+        return '-'
+    }
+
+    // --- Sorting & pagination (hooks MUST be before early returns) ---
+    const handleSort = (column: SortableColumn) => {
+        if (sortBy === column) {
+            setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortBy(column)
+            setSortDir(column === 'name' ? 'asc' : 'desc')
+        }
+        setPage(0)
+    }
+
+    const sortedClients = useMemo(() => {
+        const clients = profileData?.top_clients
+        if (!clients) return []
+        return [...clients].sort((a, b) => {
+            let cmp = 0
+            const aVal = a[sortBy]
+            const bVal = b[sortBy]
+            if (aVal == null && bVal == null) cmp = 0
+            else if (aVal == null) cmp = -1
+            else if (bVal == null) cmp = 1
+            else if (typeof aVal === 'string' && typeof bVal === 'string') cmp = aVal.localeCompare(bVal, 'es')
+            else cmp = (aVal as number) - (bVal as number)
+            return sortDir === 'asc' ? cmp : -cmp
+        })
+    }, [profileData?.top_clients, sortBy, sortDir])
+
+    const paginatedClients = sortedClients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
+    const columns: { id: SortableColumn; label: string; align?: 'right' | 'left'; render: (c: TopClient) => React.ReactNode }[] = [
+        { id: 'name', label: 'Cliente', render: (c) => c.name },
+        { id: 'reservation_count', label: 'Reservas', align: 'right', render: (c) => c.reservation_count },
+        { id: 'total_spent', label: 'Gasto Total', align: 'right', render: (c) => formatCurrency(c.total_spent) },
+        { id: 'age', label: 'Edad', render: (c) => c.age ?? '-' },
+        { id: 'sex', label: 'Sexo', render: (c) => genderLabel(c.sex) },
+    ]
+
     if (isLoading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}>
@@ -135,7 +179,6 @@ export default function ClientProfileTab() {
         age_distribution,
         document_type_distribution,
         origin_distribution,
-        top_clients,
         ideal_profile,
         monthly_trend,
     } = profileData
@@ -294,51 +337,8 @@ export default function ClientProfileTab() {
           ]
         : []
 
-    const genderLabel = (sex: string | null) => {
-        if (sex === 'm') return 'M'
-        if (sex === 'f') return 'F'
-        if (sex === 'e') return 'E'
-        return '-'
-    }
-
     const prevPeriodLabel =
         mode === 'monthly' ? 'vs mes anterior' : 'vs año anterior'
-
-    // --- Sorting & pagination for clients table ---
-    const handleSort = (column: SortableColumn) => {
-        if (sortBy === column) {
-            setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
-        } else {
-            setSortBy(column)
-            setSortDir(column === 'name' ? 'asc' : 'desc')
-        }
-        setPage(0)
-    }
-
-    const sortedClients = useMemo(() => {
-        if (!top_clients) return []
-        return [...top_clients].sort((a, b) => {
-            let cmp = 0
-            const aVal = a[sortBy]
-            const bVal = b[sortBy]
-            if (aVal == null && bVal == null) cmp = 0
-            else if (aVal == null) cmp = -1
-            else if (bVal == null) cmp = 1
-            else if (typeof aVal === 'string' && typeof bVal === 'string') cmp = aVal.localeCompare(bVal, 'es')
-            else cmp = (aVal as number) - (bVal as number)
-            return sortDir === 'asc' ? cmp : -cmp
-        })
-    }, [top_clients, sortBy, sortDir])
-
-    const paginatedClients = sortedClients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-
-    const columns: { id: SortableColumn; label: string; align?: 'right' | 'left'; render: (c: TopClient) => React.ReactNode }[] = [
-        { id: 'name', label: 'Cliente', render: (c) => c.name },
-        { id: 'reservation_count', label: 'Reservas', align: 'right', render: (c) => c.reservation_count },
-        { id: 'total_spent', label: 'Gasto Total', align: 'right', render: (c) => formatCurrency(c.total_spent) },
-        { id: 'age', label: 'Edad', render: (c) => c.age ?? '-' },
-        { id: 'sex', label: 'Sexo', render: (c) => genderLabel(c.sex) },
-    ]
 
     return (
         <Box>
