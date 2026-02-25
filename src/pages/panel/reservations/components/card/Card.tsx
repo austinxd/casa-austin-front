@@ -388,7 +388,7 @@ export default function Card({
                         'Contrato'
                     )}
                 </MenuItem>
-                {item.client.type_document === 'dni' && (
+                {item.client.document_type === 'dni' && (
                     <MenuItem onClick={handleSignedContract} sx={{ color: '#000F08' }}>
                         {isLoadingSignedContract ? (
                             <CircularProgress size={24} sx={{ mx: 'auto' }} />

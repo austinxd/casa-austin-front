@@ -63,7 +63,7 @@ export interface ISeller {
     last_name: string
     tel_number: string
     number_doc: string
-    type_document: string
+    document_type: string
     email?: string
     points_balance: string
 }

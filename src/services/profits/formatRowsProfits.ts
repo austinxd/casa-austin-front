@@ -38,7 +38,7 @@ const formatRowsProfits = ({ data }: Props) => {
                       : 'Reserva Local',
             price_sol: rental.price_sol,
             tel_number: rental.client.tel_number,
-            type_document: rental.client.type_document,
+            type_document: rental.client.document_type,
             origin: rental.origin,
         }
     })
