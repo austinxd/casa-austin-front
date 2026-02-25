@@ -31,9 +31,9 @@ interface Props {
 
 export default function Card({
     isLoadingContract,
-    isLoadingSignedContract,
+    isLoadingSignedContract: _isLoadingSignedContract,
     handleContract,
-    handleSignedContract,
+    handleSignedContract: _handleSignedContract,
     handleView,
     handleEdit,
     handleDelete,
@@ -388,15 +388,7 @@ export default function Card({
                         'Contrato'
                     )}
                 </MenuItem>
-                {item.client.document_type === 'dni' && (
-                    <MenuItem onClick={handleSignedContract} sx={{ color: '#000F08' }}>
-                        {isLoadingSignedContract ? (
-                            <CircularProgress size={24} sx={{ mx: 'auto' }} />
-                        ) : (
-                            'Contrato Firmado'
-                        )}
-                    </MenuItem>
-                )}
+                {/* TODO: Contrato Firmado - temporalmente oculto */}
                 <MenuItem
                     onClick={() => handleDelete('Reyes Sanchez Jesus Alexander')}
                     sx={{ color: '#FF4C51' }}
