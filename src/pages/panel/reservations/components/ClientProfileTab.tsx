@@ -16,6 +16,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TableSortLabel,
+    TablePagination,
     CircularProgress,
     SelectChangeEvent,
     ToggleButtonGroup,
@@ -40,13 +42,21 @@ import {
 import Chart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import { useGetClientProfileQuery } from '@/services/analytics/clientProfileService'
+import { TopClient } from '@/interfaces/clientProfile.interface'
 import { monthNames, yearOptions } from '@/core/utils/time-options'
+
+type SortableColumn = 'name' | 'reservation_count' | 'age' | 'sex' | 'total_spent'
+type SortDirection = 'asc' | 'desc'
 
 export default function ClientProfileTab() {
     const now = new Date()
     const [month, setMonth] = useState(now.getMonth() + 1)
     const [year, setYear] = useState(now.getFullYear())
     const [mode, setMode] = useState<'monthly' | 'annual'>('monthly')
+    const [sortBy, setSortBy] = useState<SortableColumn>('total_spent')
+    const [sortDir, setSortDir] = useState<SortDirection>('desc')
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
 
     // Current period query
     const currentParams = useMemo(
@@ -293,6 +303,42 @@ export default function ClientProfileTab() {
 
     const prevPeriodLabel =
         mode === 'monthly' ? 'vs mes anterior' : 'vs año anterior'
+
+    // --- Sorting & pagination for clients table ---
+    const handleSort = (column: SortableColumn) => {
+        if (sortBy === column) {
+            setSortDir(sortDir === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortBy(column)
+            setSortDir(column === 'name' ? 'asc' : 'desc')
+        }
+        setPage(0)
+    }
+
+    const sortedClients = useMemo(() => {
+        if (!top_clients) return []
+        return [...top_clients].sort((a, b) => {
+            let cmp = 0
+            const aVal = a[sortBy]
+            const bVal = b[sortBy]
+            if (aVal == null && bVal == null) cmp = 0
+            else if (aVal == null) cmp = -1
+            else if (bVal == null) cmp = 1
+            else if (typeof aVal === 'string' && typeof bVal === 'string') cmp = aVal.localeCompare(bVal, 'es')
+            else cmp = (aVal as number) - (bVal as number)
+            return sortDir === 'asc' ? cmp : -cmp
+        })
+    }, [top_clients, sortBy, sortDir])
+
+    const paginatedClients = sortedClients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
+    const columns: { id: SortableColumn; label: string; align?: 'right' | 'left'; render: (c: TopClient) => React.ReactNode }[] = [
+        { id: 'name', label: 'Cliente', render: (c) => c.name },
+        { id: 'reservation_count', label: 'Reservas', align: 'right', render: (c) => c.reservation_count },
+        { id: 'total_spent', label: 'Gasto Total', align: 'right', render: (c) => formatCurrency(c.total_spent) },
+        { id: 'age', label: 'Edad', render: (c) => c.age ?? '-' },
+        { id: 'sex', label: 'Sexo', render: (c) => genderLabel(c.sex) },
+    ]
 
     return (
         <Box>
@@ -577,42 +623,46 @@ export default function ClientProfileTab() {
                 </Grid>
             </Grid>
 
-            {/* Top Clients Table */}
+            {/* Clients Table */}
             <Paper elevation={0} sx={{ p: 2, border: '1px solid', borderColor: 'divider' }}>
                 <Typography variant="subtitle2" fontWeight={600} mb={1}>
-                    Top 10 Clientes por Gasto
+                    Ranking de Clientes
                 </Typography>
                 <TableContainer>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell>#</TableCell>
-                                <TableCell>Cliente</TableCell>
-                                <TableCell>Edad</TableCell>
-                                <TableCell>Sexo</TableCell>
-                                <TableCell align="right">Gasto Total</TableCell>
-                                <TableCell align="right">Reservas</TableCell>
+                                <TableCell sx={{ width: 40 }}>#</TableCell>
+                                {columns.map((col) => (
+                                    <TableCell key={col.id} align={col.align || 'left'}>
+                                        <TableSortLabel
+                                            active={sortBy === col.id}
+                                            direction={sortBy === col.id ? sortDir : 'asc'}
+                                            onClick={() => handleSort(col.id)}
+                                        >
+                                            {col.label}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {top_clients.map((c) => (
+                            {paginatedClients.map((c, idx) => (
                                 <TableRow
                                     key={c.client_id}
                                     sx={{ '&:hover': { bgcolor: 'action.hover' } }}
                                 >
-                                    <TableCell>{c.rank}</TableCell>
-                                    <TableCell>{c.name}</TableCell>
-                                    <TableCell>{c.age ?? '-'}</TableCell>
-                                    <TableCell>{genderLabel(c.sex)}</TableCell>
-                                    <TableCell align="right">
-                                        {formatCurrency(c.total_spent)}
-                                    </TableCell>
-                                    <TableCell align="right">{c.reservation_count}</TableCell>
+                                    <TableCell>{page * rowsPerPage + idx + 1}</TableCell>
+                                    {columns.map((col) => (
+                                        <TableCell key={col.id} align={col.align || 'left'}>
+                                            {col.render(c)}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
                             ))}
-                            {top_clients.length === 0 && (
+                            {sortedClients.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={6} align="center">
+                                    <TableCell colSpan={columns.length + 1} align="center">
                                         <Typography variant="body2" color="text.secondary">
                                             Sin datos
                                         </Typography>
@@ -622,6 +672,22 @@ export default function ClientProfileTab() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                {sortedClients.length > 0 && (
+                    <TablePagination
+                        component="div"
+                        count={sortedClients.length}
+                        page={page}
+                        onPageChange={(_, p) => setPage(p)}
+                        rowsPerPage={rowsPerPage}
+                        onRowsPerPageChange={(e) => {
+                            setRowsPerPage(parseInt(e.target.value, 10))
+                            setPage(0)
+                        }}
+                        rowsPerPageOptions={[10, 25, 50]}
+                        labelRowsPerPage="Filas por página"
+                        labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+                    />
+                )}
             </Paper>
         </Box>
     )
