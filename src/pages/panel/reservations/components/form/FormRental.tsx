@@ -113,6 +113,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
         lateCheckOut,
         setLateCheckOut,
         reservCreate,
+        setPointsChanged,
     } = useFormRentals(data, refetch, refetchEdit)
 
     useEffect(() => {
@@ -298,7 +299,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                 console.error('Error al copiar el mensaje:', error)
             })
     }
-    const maxPoints = Number(getPoints) || 0
+    const maxPoints = (Number(getPoints) || 0) + Number(pointsReserv || 0)
     return (
         <Box px={{ md: 8, sm: 4, xs: 0 }} position={'relative'}>
             <IconButton
@@ -961,24 +962,31 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         messageError={(errors.price_sol?.message ?? null) as string}
                                     />
                                 </Grid>
-                                {pointsReserv && (
+                                {pointsReserv && Number(pointsReserv) > 0 && (
                                     <Grid item md={12} xs={12} display={'flex'} gap={1}>
-                                        <SecondaryInput
-                                            value={pointsReserv}
-                                            fullWidth
-                                            inputProps={{
-                                                step: 'any',
+                                        <Box
+                                            sx={{
+                                                border: '1px solid #D1D0D4',
+                                                display: 'flex',
+                                                width: 120,
+                                                px: 1.2,
+                                                borderRadius: 2,
+                                                height: 56,
+                                                alignItems: 'start',
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
                                             }}
-                                            defaultValue={0}
-                                            type="number"
-                                            label={`Puntos usados`}
-                                            messageError={
-                                                (errors.points_to_redeem?.message ?? null) as string
-                                            }
-                                        />
+                                        >
+                                            <Typography variant="body1" fontSize={12}>
+                                                Canjeados
+                                            </Typography>
+                                            <Typography variant="body2" fontSize={13} color="#EB4C60" fontWeight={600}>
+                                                {pointsReserv} pts
+                                            </Typography>
+                                        </Box>
                                     </Grid>
                                 )}
-                                {getPoints && (
+                                {(getPoints || (dataEdit?.id && Number(pointsReserv) > 0)) && (
                                     <Grid item md={12} xs={12} display={'flex'} gap={1}>
                                         <Box
                                             sx={{
@@ -995,10 +1003,10 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             }}
                                         >
                                             <Typography variant="body1" fontSize={12}>
-                                                Puntos
+                                                Disponibles
                                             </Typography>
                                             <Typography variant="body2" fontSize={13}>
-                                                {getPoints} pts
+                                                {getPoints || dataEdit?.client?.points_balance || '0'} pts
                                             </Typography>
                                         </Box>
                                         <SecondaryInput
@@ -1013,6 +1021,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                                     value: maxPoints,
                                                     message: `No puede superar ${maxPoints} puntos`,
                                                 },
+                                                onChange: () => setPointsChanged(true),
                                             })}
                                             fullWidth
                                             inputProps={{

@@ -42,6 +42,7 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
 
     const [phoneNumber, setPhoneNumber] = useState('')
     const [emailClient, setEmailClient] = useState('')
+    const [pointsChanged, setPointsChanged] = useState(false)
 
     const { refetch: refectchForCalender } = useGetCalenderListQuery({
         year: currentYear.toString(),
@@ -120,7 +121,10 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
             formData.append('late_checkout', lateCheckOut.toString())
             formData.append('tel_contact_number', phoneNumber)
             formData.append('comentarios_reservas', data.comentarios_reservas)
-            formData.append('points_to_redeem', data.points_to_redeem)
+            // Solo enviar puntos si es creación o si el usuario los modificó
+            if (!dataEdit?.id || pointsChanged) {
+                formData.append('points_to_redeem', data.points_to_redeem)
+            }
             formData.append('status', data.status === '' ? 'pending' : data.status)
 
             formData.append(
@@ -208,5 +212,6 @@ export const useFormRentals = (dataEdit: IRentalClient | null, refetch: any, ref
         lateCheckOut,
         setLateCheckOut,
         reservCreate,
+        setPointsChanged,
     }
 }
