@@ -1378,6 +1378,17 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
     const [messageText, setMessageText] = useState('')
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
+    // Debug panel state
+    const [expandedDebug, setExpandedDebug] = useState<Set<string>>(new Set())
+    const toggleDebug = useCallback((id: string) => {
+        setExpandedDebug(prev => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+        })
+    }, [])
+
     // Cotizador modal state
     const [cotizadorOpen, setCotizadorOpen] = useState(false)
     const [position, setPosition] = useState({ x: 0, y: 0 })
@@ -1534,12 +1545,22 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                         const textColor = isInbound ? '#1a1a1a' : '#fff'
                         const time = new Date(msg.created).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
 
+                        const hasToolCalls = isAI && msg.tool_calls && msg.tool_calls.length > 0
+                        const toolCount = msg.tool_calls?.length || 0
+                        const debugExpanded = expandedDebug.has(msg.id)
+                        const debugParts: string[] = []
+                        if (hasToolCalls) debugParts.push(`🔧 ${toolCount} tool${toolCount > 1 ? 's' : ''}`)
+                        if (msg.ai_model) debugParts.push(msg.ai_model)
+                        if (msg.tokens_used) debugParts.push(`${msg.tokens_used} tk`)
+                        const debugSummary = debugParts.join(' · ')
+
                         return (
                             <Box
                                 key={msg.id}
                                 sx={{
                                     display: 'flex',
-                                    justifyContent: isInbound ? 'flex-start' : 'flex-end',
+                                    flexDirection: 'column',
+                                    alignItems: isInbound ? 'flex-start' : 'flex-end',
                                     mb: 1,
                                 }}
                             >
@@ -1576,6 +1597,95 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                                         {!isInbound && (isAI ? ' · IA' : ' · Admin')}
                                     </Typography>
                                 </Paper>
+
+                                {/* Debug panel - solo mensajes AI con info disponible */}
+                                {isAI && debugSummary && (
+                                    <Box sx={{ maxWidth: '65%', mt: 0.3 }}>
+                                        <Typography
+                                            variant="caption"
+                                            onClick={() => toggleDebug(msg.id)}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                color: '#999',
+                                                fontSize: 11,
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                '&:hover': { color: '#666' },
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {debugExpanded ? '▼' : '▶'} {debugSummary}
+                                            {msg.confidence_score != null && ` · ${Math.round(msg.confidence_score * 100)}%`}
+                                        </Typography>
+
+                                        {debugExpanded && hasToolCalls && (
+                                            <Box sx={{
+                                                mt: 0.5,
+                                                backgroundColor: '#f5f5f5',
+                                                borderRadius: 1,
+                                                border: '1px solid #e0e0e0',
+                                                overflow: 'hidden',
+                                            }}>
+                                                {msg.tool_calls!.map((tc, idx) => (
+                                                    <Box
+                                                        key={idx}
+                                                        sx={{
+                                                            px: 1.5, py: 1,
+                                                            borderTop: idx > 0 ? '1px solid #e0e0e0' : 'none',
+                                                        }}
+                                                    >
+                                                        <Chip
+                                                            label={tc.name}
+                                                            size="small"
+                                                            sx={{
+                                                                height: 20,
+                                                                fontSize: 11,
+                                                                fontWeight: 600,
+                                                                backgroundColor: '#e3f2fd',
+                                                                color: '#0E6191',
+                                                                mb: 0.5,
+                                                            }}
+                                                        />
+                                                        {tc.arguments && Object.keys(tc.arguments).length > 0 && (
+                                                            <Typography
+                                                                component="pre"
+                                                                sx={{
+                                                                    fontSize: 10,
+                                                                    fontFamily: 'monospace',
+                                                                    color: '#666',
+                                                                    margin: 0,
+                                                                    whiteSpace: 'pre-wrap',
+                                                                    wordBreak: 'break-all',
+                                                                    lineHeight: 1.4,
+                                                                }}
+                                                            >
+                                                                {JSON.stringify(tc.arguments, null, 2)}
+                                                            </Typography>
+                                                        )}
+                                                        {tc.result_preview && (
+                                                            <Typography
+                                                                sx={{
+                                                                    fontSize: 10,
+                                                                    color: '#888',
+                                                                    mt: 0.3,
+                                                                    fontStyle: 'italic',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    display: '-webkit-box',
+                                                                    WebkitLineClamp: 3,
+                                                                    WebkitBoxOrient: 'vertical',
+                                                                }}
+                                                            >
+                                                                → {tc.result_preview}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                ))}
+                                            </Box>
+                                        )}
+                                    </Box>
+                                )}
                             </Box>
                         )
                     })

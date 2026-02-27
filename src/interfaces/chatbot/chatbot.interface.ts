@@ -53,6 +53,8 @@ export interface IChatMessage {
     tokens_used: number
     sent_by_name: string | null
     created: string
+    tool_calls: Array<{ name: string; arguments: Record<string, any>; result_preview: string }> | null
+    confidence_score: number | null
 }
 
 export interface IChatSessionsResponse {
