@@ -1614,7 +1614,7 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                                             {msg.confidence_score != null && ` · ${Math.round(msg.confidence_score * 100)}%`}
                                         </Typography>
 
-                                        {debugExpanded && hasToolCalls && (
+                                        {debugExpanded && (
                                             <Box sx={{
                                                 mt: 0.5,
                                                 backgroundColor: '#f5f5f5',
@@ -1622,12 +1622,21 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                                                 border: '1px solid #e0e0e0',
                                                 overflow: 'hidden',
                                             }}>
-                                                {msg.tool_calls!.map((tc, idx) => (
+                                                {/* Info del modelo */}
+                                                <Box sx={{ px: 1.5, py: 0.8, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+                                                    {msg.ai_model && <Chip label={msg.ai_model} size="small" sx={{ height: 20, fontSize: 10, backgroundColor: '#e8e8e8' }} />}
+                                                    {msg.tokens_used > 0 && <Typography sx={{ fontSize: 10, color: '#888' }}>{msg.tokens_used} tokens</Typography>}
+                                                    {msg.intent_detected && <Typography sx={{ fontSize: 10, color: '#888' }}>intent: {msg.intent_detected}</Typography>}
+                                                    {msg.confidence_score != null && <Typography sx={{ fontSize: 10, color: '#888' }}>confianza: {Math.round(msg.confidence_score * 100)}%</Typography>}
+                                                </Box>
+
+                                                {/* Tool calls */}
+                                                {hasToolCalls && msg.tool_calls!.map((tc, idx) => (
                                                     <Box
                                                         key={idx}
                                                         sx={{
                                                             px: 1.5, py: 1,
-                                                            borderTop: idx > 0 ? '1px solid #e0e0e0' : 'none',
+                                                            borderTop: '1px solid #e0e0e0',
                                                         }}
                                                     >
                                                         <Chip
@@ -1677,6 +1686,13 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
                                                         )}
                                                     </Box>
                                                 ))}
+
+                                                {/* Sin herramientas */}
+                                                {!hasToolCalls && (
+                                                    <Box sx={{ px: 1.5, pb: 0.8 }}>
+                                                        <Typography sx={{ fontSize: 10, color: '#aaa', fontStyle: 'italic' }}>Sin herramientas usadas</Typography>
+                                                    </Box>
+                                                )}
                                             </Box>
                                         )}
                                     </Box>
