@@ -1379,14 +1379,9 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
     // Debug panel state
-    const [expandedDebug, setExpandedDebug] = useState<Set<string>>(new Set())
+    const [expandedDebug, setExpandedDebug] = useState<Record<string, boolean>>({})
     const toggleDebug = useCallback((id: string) => {
-        setExpandedDebug(prev => {
-            const next = new Set(prev)
-            if (next.has(id)) next.delete(id)
-            else next.add(id)
-            return next
-        })
+        setExpandedDebug(prev => ({ ...prev, [id]: !prev[id] }))
     }, [])
 
     // Cotizador modal state
@@ -1547,7 +1542,7 @@ function ChatPanel({ sessionId, sessions }: { sessionId: string; sessions: IChat
 
                         const hasToolCalls = isAI && msg.tool_calls && msg.tool_calls.length > 0
                         const toolCount = msg.tool_calls?.length || 0
-                        const debugExpanded = expandedDebug.has(msg.id)
+                        const debugExpanded = !!expandedDebug[msg.id]
                         const debugParts: string[] = []
                         if (hasToolCalls) debugParts.push(`🔧 ${toolCount} tool${toolCount > 1 ? 's' : ''}`)
                         if (msg.ai_model) debugParts.push(msg.ai_model)
