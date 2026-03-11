@@ -986,7 +986,7 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                         </Box>
                                     </Grid>
                                 )}
-                                {(getPoints || (dataEdit?.id && Number(pointsReserv) > 0)) && (
+                                {(getPoints || (dataEdit?.id && (Number(pointsReserv) > 0 || Number(dataEdit?.client?.points_balance) > 0))) && (
                                     <Grid item md={12} xs={12} display={'flex'} gap={1}>
                                         <Box
                                             sx={{
@@ -1027,7 +1027,6 @@ export default function FormRental({ onCancel, title, btn, data, refetch }: Prop
                                             inputProps={{
                                                 step: 'any',
                                             }}
-                                            defaultValue={0}
                                             type="number"
                                             label={`Escribe un máximo de ${maxPoints} pts`}
                                             messageError={
