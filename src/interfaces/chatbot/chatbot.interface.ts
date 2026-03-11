@@ -180,6 +180,7 @@ export interface IAnalyticsDetailLead {
 
 export interface IAnalyticsDetailConversion {
     reservation_id: string
+    session_id: string | null
     client_name: string
     property_name: string
     check_in: string

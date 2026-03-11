@@ -122,6 +122,12 @@ export default function ChatbotAnalytics() {
         fetchDetails({ from: fromDate, to: toDate, type })
     }, [expandedKPI, fromDate, toDate, fetchDetails])
 
+    const goToChat = useCallback((sessionId: string) => {
+        setSelectedSessionId(sessionId)
+        setTab(0)
+        setExpandedKPI(null)
+    }, [])
+
     const boxShadow = useBoxShadow(true)
 
     const totals = useMemo(() => {
@@ -436,6 +442,7 @@ export default function ChatbotAnalytics() {
                                                                 <TableCell>Teléfono</TableCell>
                                                                 <TableCell>Canal</TableCell>
                                                                 <TableCell>Fecha</TableCell>
+                                                                <TableCell align="center">Chat</TableCell>
                                                             </>
                                                         ) : (
                                                             <>
@@ -446,6 +453,7 @@ export default function ChatbotAnalytics() {
                                                                 <TableCell align="right">Personas</TableCell>
                                                                 <TableCell align="right">Monto USD</TableCell>
                                                                 <TableCell>Estado</TableCell>
+                                                                <TableCell align="center">Chat</TableCell>
                                                             </>
                                                         )}
                                                     </TableRow>
@@ -453,15 +461,30 @@ export default function ChatbotAnalytics() {
                                                 <TableBody>
                                                     {expandedKPI === 'leads'
                                                         ? (detailsData.results as IAnalyticsDetailLead[]).map((item, idx) => (
-                                                            <TableRow key={item.session_id || idx} hover>
+                                                            <TableRow
+                                                                key={item.session_id || idx}
+                                                                hover
+                                                                sx={{ cursor: 'pointer' }}
+                                                                onClick={() => item.session_id && goToChat(item.session_id)}
+                                                            >
                                                                 <TableCell>{item.client_name}</TableCell>
                                                                 <TableCell>{item.phone}</TableCell>
                                                                 <TableCell>{item.channel}</TableCell>
                                                                 <TableCell>{item.created ? new Date(item.created).toLocaleDateString('es-PE') : ''}</TableCell>
+                                                                <TableCell align="center">
+                                                                    <IconButton size="small" color="primary">
+                                                                        <ChatBubbleIcon fontSize="small" />
+                                                                    </IconButton>
+                                                                </TableCell>
                                                             </TableRow>
                                                         ))
                                                         : (detailsData.results as IAnalyticsDetailConversion[]).map((item, idx) => (
-                                                            <TableRow key={item.reservation_id || idx} hover>
+                                                            <TableRow
+                                                                key={item.reservation_id || idx}
+                                                                hover
+                                                                sx={{ cursor: item.session_id ? 'pointer' : 'default' }}
+                                                                onClick={() => item.session_id && goToChat(item.session_id)}
+                                                            >
                                                                 <TableCell>{item.client_name}</TableCell>
                                                                 <TableCell>{item.property_name}</TableCell>
                                                                 <TableCell>{item.check_in}</TableCell>
@@ -474,6 +497,13 @@ export default function ChatbotAnalytics() {
                                                                         size="small"
                                                                         color={item.status === 'approved' ? 'success' : item.status === 'pending' ? 'warning' : 'default'}
                                                                     />
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    {item.session_id && (
+                                                                        <IconButton size="small" color="primary">
+                                                                            <ChatBubbleIcon fontSize="small" />
+                                                                        </IconButton>
+                                                                    )}
                                                                 </TableCell>
                                                             </TableRow>
                                                         ))
