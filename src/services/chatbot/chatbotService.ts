@@ -14,6 +14,7 @@ import {
     IPromoPreview,
     IUnresolvedQuestion,
     IUnresolvedQuestionsResponse,
+    IAnalyticsDetailsResponse,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -218,6 +219,17 @@ export const chatbotService = createApi({
             }),
             invalidatesTags: ['UnresolvedQuestions'],
         }),
+
+        getAnalyticsDetails: builder.query<
+            IAnalyticsDetailsResponse,
+            { from: string; to: string; type: 'leads' | 'conversions' | 'returning' }
+        >({
+            query: ({ from, to, type }) => ({
+                url: '/chatbot/analytics/details/',
+                method: 'GET',
+                params: { from, to, type },
+            }),
+        }),
     }),
 })
 
@@ -239,4 +251,5 @@ export const {
     useLazyGetPromoPreviewQuery,
     useGetUnresolvedQuestionsQuery,
     useUpdateUnresolvedQuestionMutation,
+    useLazyGetAnalyticsDetailsQuery,
 } = chatbotService

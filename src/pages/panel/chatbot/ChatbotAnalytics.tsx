@@ -66,6 +66,8 @@ import {
     QuestionAnswer as QuestionAnswerIcon,
     CheckCircle as CheckCircleIcon,
     VisibilityOff as VisibilityOffIcon,
+    ExpandLess as ExpandLessIcon,
+    Repeat as RepeatIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -85,8 +87,9 @@ import {
     useLazyGetPromoPreviewQuery,
     useGetUnresolvedQuestionsQuery,
     useUpdateUnresolvedQuestionMutation,
+    useLazyGetAnalyticsDetailsQuery,
 } from '@/services/chatbot/chatbotService'
-import { IChatSession } from '@/interfaces/chatbot/chatbot.interface'
+import { IChatSession, IAnalyticsDetailLead, IAnalyticsDetailConversion } from '@/interfaces/chatbot/chatbot.interface'
 import CotizadorChat from './CotizadorChat'
 
 export default function ChatbotAnalytics() {
@@ -107,6 +110,17 @@ export default function ChatbotAnalytics() {
         { pollingInterval: tab === 0 ? 10000 : undefined }
     )
     const [markAsRead] = useMarkAsReadMutation()
+    const [expandedKPI, setExpandedKPI] = useState<'leads' | 'conversions' | 'returning' | null>(null)
+    const [fetchDetails, { data: detailsData, isFetching: isLoadingDetails }] = useLazyGetAnalyticsDetailsQuery()
+
+    const handleExpandKPI = useCallback((type: 'leads' | 'conversions' | 'returning') => {
+        if (expandedKPI === type) {
+            setExpandedKPI(null)
+            return
+        }
+        setExpandedKPI(type)
+        fetchDetails({ from: fromDate, to: toDate, type })
+    }, [expandedKPI, fromDate, toDate, fetchDetails])
 
     const boxShadow = useBoxShadow(true)
 
@@ -376,11 +390,104 @@ export default function ChatbotAnalytics() {
                                 <KPICard icon={<AttachMoneyIcon />} label="Costo USD" value={`$${totals?.cost.toFixed(2) || '0.00'}`} color="#e91e63" />
                             </Box>
                             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }} gap={2} mb={3}>
-                                <KPICard icon={<PersonSearchIcon />} label="Leads del Bot" value={totals?.bot_leads.toString() || '0'} color="#00bcd4" />
-                                <KPICard icon={<TrendingUpIcon />} label="Conversiones del Bot" value={totals?.bot_conversions.toString() || '0'} color="#9c27b0" />
-                                <KPICard icon={<MessageIcon />} label="Reservas Recurrentes" value={totals?.returning_client_reservations.toString() || '0'} color="#607d8b" />
+                                <ExpandableKPICard
+                                    icon={<PersonSearchIcon />}
+                                    label="Leads del Bot"
+                                    value={totals?.bot_leads.toString() || '0'}
+                                    color="#00bcd4"
+                                    expanded={expandedKPI === 'leads'}
+                                    onClick={() => handleExpandKPI('leads')}
+                                />
+                                <ExpandableKPICard
+                                    icon={<TrendingUpIcon />}
+                                    label="Conversiones del Bot"
+                                    value={totals?.bot_conversions.toString() || '0'}
+                                    color="#9c27b0"
+                                    expanded={expandedKPI === 'conversions'}
+                                    onClick={() => handleExpandKPI('conversions')}
+                                />
+                                <ExpandableKPICard
+                                    icon={<RepeatIcon />}
+                                    label="Reservas Recurrentes"
+                                    value={totals?.returning_client_reservations.toString() || '0'}
+                                    color="#607d8b"
+                                    expanded={expandedKPI === 'returning'}
+                                    onClick={() => handleExpandKPI('returning')}
+                                />
                                 <KPICard icon={<MessageIcon />} label="Msgs IA / Humano" value={`${totals?.messages_out_ai || 0} / ${totals?.messages_out_human || 0}`} color="#607d8b" />
                             </Box>
+
+                            {/* Detalle expandido de KPIs */}
+                            {expandedKPI && (
+                                <Card sx={{ boxShadow, mb: 3 }}>
+                                    <CardContent>
+                                        <Typography variant="subtitle2" mb={1.5} fontWeight={600}>
+                                            {expandedKPI === 'leads' ? 'Detalle de Leads' : expandedKPI === 'conversions' ? 'Detalle de Conversiones' : 'Detalle de Reservas Recurrentes'}
+                                        </Typography>
+                                        {isLoadingDetails ? (
+                                            <Box display="flex" justifyContent="center" py={3}><CircularProgress size={24} /></Box>
+                                        ) : detailsData?.results && detailsData.results.length > 0 ? (
+                                            <Table size="small">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        {expandedKPI === 'leads' ? (
+                                                            <>
+                                                                <TableCell>Cliente</TableCell>
+                                                                <TableCell>Teléfono</TableCell>
+                                                                <TableCell>Canal</TableCell>
+                                                                <TableCell>Fecha</TableCell>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <TableCell>Cliente</TableCell>
+                                                                <TableCell>Propiedad</TableCell>
+                                                                <TableCell>Check-in</TableCell>
+                                                                <TableCell>Check-out</TableCell>
+                                                                <TableCell align="right">Personas</TableCell>
+                                                                <TableCell align="right">Monto USD</TableCell>
+                                                                <TableCell>Estado</TableCell>
+                                                            </>
+                                                        )}
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {expandedKPI === 'leads'
+                                                        ? (detailsData.results as IAnalyticsDetailLead[]).map((item, idx) => (
+                                                            <TableRow key={item.session_id || idx} hover>
+                                                                <TableCell>{item.client_name}</TableCell>
+                                                                <TableCell>{item.phone}</TableCell>
+                                                                <TableCell>{item.channel}</TableCell>
+                                                                <TableCell>{item.created ? new Date(item.created).toLocaleDateString('es-PE') : ''}</TableCell>
+                                                            </TableRow>
+                                                        ))
+                                                        : (detailsData.results as IAnalyticsDetailConversion[]).map((item, idx) => (
+                                                            <TableRow key={item.reservation_id || idx} hover>
+                                                                <TableCell>{item.client_name}</TableCell>
+                                                                <TableCell>{item.property_name}</TableCell>
+                                                                <TableCell>{item.check_in}</TableCell>
+                                                                <TableCell>{item.check_out}</TableCell>
+                                                                <TableCell align="right">{item.guests}</TableCell>
+                                                                <TableCell align="right">${item.total_amount}</TableCell>
+                                                                <TableCell>
+                                                                    <Chip
+                                                                        label={item.status}
+                                                                        size="small"
+                                                                        color={item.status === 'approved' ? 'success' : item.status === 'pending' ? 'warning' : 'default'}
+                                                                    />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))
+                                                    }
+                                                </TableBody>
+                                            </Table>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary" textAlign="center" py={2}>
+                                                Sin datos para este período
+                                            </Typography>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            )}
                             <Card sx={{ boxShadow }}>
                                 <CardContent>
                                     <Typography variant="h6" mb={2}>Métricas por Día</Typography>
@@ -2185,6 +2292,42 @@ function KPICard({ icon, label, value, color }: { icon: React.ReactNode; label: 
                     <Typography variant="caption" color="text.secondary">{label}</Typography>
                     <Typography variant="h6" fontWeight={700}>{value}</Typography>
                 </Box>
+            </CardContent>
+        </Card>
+    )
+}
+
+function ExpandableKPICard({ icon, label, value, color, expanded, onClick }: {
+    icon: React.ReactNode; label: string; value: string; color: string
+    expanded: boolean; onClick: () => void
+}) {
+    const boxShadow = useBoxShadow(true)
+    return (
+        <Card
+            sx={{
+                boxShadow,
+                cursor: 'pointer',
+                border: expanded ? `2px solid ${color}` : '2px solid transparent',
+                transition: 'border-color 0.2s',
+                '&:hover': { borderColor: `${color}80` },
+            }}
+            onClick={onClick}
+        >
+            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                    sx={{
+                        width: 44, height: 44, borderRadius: 2,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backgroundColor: `${color}15`, color,
+                    }}
+                >
+                    {icon}
+                </Box>
+                <Box flex={1}>
+                    <Typography variant="caption" color="text.secondary">{label}</Typography>
+                    <Typography variant="h6" fontWeight={700}>{value}</Typography>
+                </Box>
+                {expanded ? <ExpandLessIcon sx={{ color: 'text.secondary' }} /> : <ExpandMoreIcon sx={{ color: 'text.secondary' }} />}
             </CardContent>
         </Card>
     )

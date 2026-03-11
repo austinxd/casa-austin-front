@@ -170,6 +170,30 @@ export interface IPromoDateSentResponse {
     total_paginas: number
 }
 
+export interface IAnalyticsDetailLead {
+    session_id: string
+    client_name: string
+    phone: string
+    channel: string
+    created: string
+}
+
+export interface IAnalyticsDetailConversion {
+    reservation_id: string
+    client_name: string
+    property_name: string
+    check_in: string
+    check_out: string
+    guests: number
+    total_amount: string
+    status: string
+    created: string
+}
+
+export interface IAnalyticsDetailsResponse {
+    results: IAnalyticsDetailLead[] | IAnalyticsDetailConversion[]
+}
+
 export interface IPromoPreviewCandidate {
     client_id: string | null
     client_name: string
