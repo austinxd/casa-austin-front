@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, Typography, Tabs, Tab, Paper, Button, Chip, CircularProgress, Alert } from '@mui/material'
-import { AutoAwesome as AiIcon, AttachMoney as MoneyIcon, Assessment as StatsIcon, Download as DownloadIcon } from '@mui/icons-material'
+import { AutoAwesome as AiIcon, AttachMoney as MoneyIcon, Assessment as StatsIcon, Download as DownloadIcon, SmartToyOutlined as SmartToyIcon } from '@mui/icons-material'
 import SearchProfits from './components/filter/SearchProfits'
 import CardResponsiveProfit from './components/card/CardResponsiveProfit'
 import { useLocation } from 'react-router-dom'
@@ -16,6 +16,7 @@ import formatRowsProfits from '@/services/profits/formatRowsProfits'
 import ProfitsSkeleton from './components/skeleton/ProfitsSkeleton'
 import { useLazyGetIngresosAnalysisQuery } from '@/services/analytics/ingresosService'
 import IngresosDashboard from '@/pages/panel/stats/components/analytics/IngresosDashboard'
+import AdminAIChat from '@/pages/panel/stats/components/admin-ai/AdminAIChat'
 import { exportRentalsToExcel } from '@/services/rentals/exportRentals'
 
 type MonthNameToNumber = {
@@ -217,6 +218,7 @@ export default function CrudProfits() {
                             <Tab label="Ingresos" icon={<MoneyIcon />} iconPosition="start" />
                             <Tab label="Stats" icon={<StatsIcon />} iconPosition="start" />
                             <Tab label="Análisis IA" icon={<AiIcon />} iconPosition="start" />
+                            <Tab label="Asistente IA" icon={<SmartToyIcon />} iconPosition="start" />
                         </Tabs>
                     </Paper>
 
@@ -417,6 +419,11 @@ export default function CrudProfits() {
                                 </Paper>
                             )}
                         </Box>
+                    )}
+
+                    {/* ===== TAB 3: Asistente IA Chat ===== */}
+                    {activeTab === 3 && (
+                        <AdminAIChat />
                     )}
                 </div>
             )}
