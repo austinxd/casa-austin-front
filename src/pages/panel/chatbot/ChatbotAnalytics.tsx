@@ -773,6 +773,65 @@ function FollowupPanel() {
     const noQuote = results.filter(r => r.category === 'no_quote')
     const quoted = results.filter(r => r.category === 'quoted')
     const followedUp = results.filter(r => r.category === 'followed_up')
+    const followedUpQuoted = followedUp.filter(r => r.quoted_at != null)
+    const followedUpNoQuote = followedUp.filter(r => r.quoted_at == null)
+
+    const renderTable = (items: typeof results, showFollowupCol: boolean) => (
+        <Table size="small">
+            <TableHead>
+                <TableRow>
+                    <TableCell>Contacto</TableCell>
+                    <TableCell>Último mensaje</TableCell>
+                    <TableCell align="center">Hace</TableCell>
+                    <TableCell align="center">Ventana WA</TableCell>
+                    <TableCell align="center">Msgs</TableCell>
+                    {showFollowupCol && <TableCell>Follow-up</TableCell>}
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {items.map((item) => (
+                    <TableRow key={item.id} hover>
+                        <TableCell>
+                            <Box>
+                                <Typography variant="body2" fontWeight={600}>{item.name}</Typography>
+                                <Typography variant="caption" color="text.secondary">{item.wa_id}</Typography>
+                            </Box>
+                        </TableCell>
+                        <TableCell>
+                            <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200, display: 'block' }}>
+                                {item.last_message_preview || '—'}
+                            </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                            <Typography variant="body2">
+                                {item.hours_since_last_message != null ? `${item.hours_since_last_message}h` : '—'}
+                            </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                            {item.wa_window_remaining_hours != null ? (
+                                <Chip
+                                    label={`${item.wa_window_remaining_hours}h`}
+                                    size="small"
+                                    color={item.wa_window_remaining_hours < 4 ? 'error' : item.wa_window_remaining_hours < 10 ? 'warning' : 'success'}
+                                    variant="outlined"
+                                />
+                            ) : '—'}
+                        </TableCell>
+                        <TableCell align="center">{item.total_messages}</TableCell>
+                        {showFollowupCol && (
+                            <TableCell>
+                                <Typography variant="caption" color="text.secondary">
+                                    {item.followup_sent_at
+                                        ? formatTimeAgo(item.followup_sent_at)
+                                        : '—'}
+                                </Typography>
+                            </TableCell>
+                        )}
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    )
 
     return (
         <Box display="flex" flexDirection="column" gap={2}>
@@ -783,83 +842,87 @@ function FollowupPanel() {
                 <KPICard icon={<AccessTimeIcon />} label="Follow-ups Enviados" value={String(data?.followed_up_count || 0)} color="#4caf50" />
             </Box>
 
-            {/* Tabla por categoría */}
-            {[
-                { items: noQuote, key: 'no_quote' as const },
-                { items: quoted, key: 'quoted' as const },
-                { items: followedUp, key: 'followed_up' as const },
-            ].map(({ items, key }) => {
-                const cfg = categoryConfig[key]
-                if (items.length === 0) return null
-                return (
-                    <Card key={key} sx={{ boxShadow }}>
-                        <CardContent>
-                            <Box display="flex" alignItems="center" gap={1} mb={2}>
-                                <Box sx={{ color: cfg.color }}>{cfg.icon}</Box>
-                                <Typography variant="h6" sx={{ color: cfg.color }}>{cfg.label}</Typography>
-                                <Chip label={items.length} size="small" sx={{ bgcolor: cfg.color, color: '#fff', ml: 1 }} />
-                            </Box>
-                            <Typography variant="caption" color="text.secondary" display="block" mb={2}>
-                                {cfg.description}
-                            </Typography>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Contacto</TableCell>
-                                        <TableCell>Último mensaje</TableCell>
-                                        <TableCell align="center">Hace</TableCell>
-                                        <TableCell align="center">Ventana WA</TableCell>
-                                        <TableCell align="center">Msgs</TableCell>
-                                        {key === 'followed_up' && <TableCell>Follow-up</TableCell>}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {items.map((item) => (
-                                        <TableRow key={item.id} hover>
-                                            <TableCell>
-                                                <Box>
-                                                    <Typography variant="body2" fontWeight={600}>{item.name}</Typography>
-                                                    <Typography variant="caption" color="text.secondary">{item.wa_id}</Typography>
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200, display: 'block' }}>
-                                                    {item.last_message_preview || '—'}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography variant="body2">
-                                                    {item.hours_since_last_message != null ? `${item.hours_since_last_message}h` : '—'}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {item.wa_window_remaining_hours != null ? (
-                                                    <Chip
-                                                        label={`${item.wa_window_remaining_hours}h`}
-                                                        size="small"
-                                                        color={item.wa_window_remaining_hours < 4 ? 'error' : item.wa_window_remaining_hours < 10 ? 'warning' : 'success'}
-                                                        variant="outlined"
-                                                    />
-                                                ) : '—'}
-                                            </TableCell>
-                                            <TableCell align="center">{item.total_messages}</TableCell>
-                                            {key === 'followed_up' && (
-                                                <TableCell>
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        {item.followup_sent_at
-                                                            ? formatTimeAgo(item.followup_sent_at)
-                                                            : '—'}
-                                                    </Typography>
-                                                </TableCell>
-                                            )}
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                    </Card>
-                )
-            })}
+            {/* Sin cotización */}
+            {noQuote.length > 0 && (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box display="flex" alignItems="center" gap={1} mb={2}>
+                            <Box sx={{ color: '#ff9800' }}><HourglassIcon fontSize="small" /></Box>
+                            <Typography variant="h6" sx={{ color: '#ff9800' }}>Sin cotización</Typography>
+                            <Chip label={noQuote.length} size="small" sx={{ bgcolor: '#ff9800', color: '#fff', ml: 1 }} />
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                            Escribieron pero no recibieron cotización
+                        </Typography>
+                        {renderTable(noQuote, false)}
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Cotización enviada */}
+            {quoted.length > 0 && (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box display="flex" alignItems="center" gap={1} mb={2}>
+                            <Box sx={{ color: '#2196f3' }}><ReceiptIcon fontSize="small" /></Box>
+                            <Typography variant="h6" sx={{ color: '#2196f3' }}>Cotización enviada</Typography>
+                            <Chip label={quoted.length} size="small" sx={{ bgcolor: '#2196f3', color: '#fff', ml: 1 }} />
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                            Recibieron cotización pero no reservaron
+                        </Typography>
+                        {renderTable(quoted, false)}
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Follow-ups enviados — con desglose */}
+            {followedUp.length > 0 && (
+                <Card sx={{ boxShadow }}>
+                    <CardContent>
+                        <Box display="flex" alignItems="center" gap={1} mb={1}>
+                            <Box sx={{ color: '#4caf50' }}><AccessTimeIcon fontSize="small" /></Box>
+                            <Typography variant="h6" sx={{ color: '#4caf50' }}>Follow-ups enviados</Typography>
+                            <Chip label={followedUp.length} size="small" sx={{ bgcolor: '#4caf50', color: '#fff', ml: 1 }} />
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" display="block" mb={2}>
+                            Ya se envió follow-up automático
+                        </Typography>
+
+                        {/* Sub-sección: Con cotización */}
+                        <Accordion defaultExpanded={followedUpQuoted.length > 0} disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important', mb: 1 }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <ReceiptIcon sx={{ fontSize: 18, color: '#2196f3' }} />
+                                    <Typography variant="body2" fontWeight={600}>Con cotización</Typography>
+                                    <Chip label={data?.followed_up_quoted_count || followedUpQuoted.length} size="small" sx={{ bgcolor: '#2196f315', color: '#2196f3', fontWeight: 700, fontSize: 12, height: 22 }} />
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails sx={{ pt: 0 }}>
+                                {followedUpQuoted.length > 0 ? renderTable(followedUpQuoted, true) : (
+                                    <Typography variant="body2" color="text.secondary">Ninguna sesión con cotización recibió follow-up</Typography>
+                                )}
+                            </AccordionDetails>
+                        </Accordion>
+
+                        {/* Sub-sección: Sin cotización */}
+                        <Accordion defaultExpanded={followedUpNoQuote.length > 0} disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important' }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <HourglassIcon sx={{ fontSize: 18, color: '#ff9800' }} />
+                                    <Typography variant="body2" fontWeight={600}>Sin cotización</Typography>
+                                    <Chip label={data?.followed_up_no_quote_count || followedUpNoQuote.length} size="small" sx={{ bgcolor: '#ff980015', color: '#ff9800', fontWeight: 700, fontSize: 12, height: 22 }} />
+                                </Box>
+                            </AccordionSummary>
+                            <AccordionDetails sx={{ pt: 0 }}>
+                                {followedUpNoQuote.length > 0 ? renderTable(followedUpNoQuote, true) : (
+                                    <Typography variant="body2" color="text.secondary">Ninguna sesión sin cotización recibió follow-up</Typography>
+                                )}
+                            </AccordionDetails>
+                        </Accordion>
+                    </CardContent>
+                </Card>
+            )}
 
             {results.length === 0 && (
                 <Card sx={{ boxShadow }}>

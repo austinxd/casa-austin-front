@@ -124,6 +124,8 @@ export interface IFollowupResponse {
     no_quote_count: number
     quoted_count: number
     followed_up_count: number
+    followed_up_quoted_count: number
+    followed_up_no_quote_count: number
     results: IFollowupOpportunity[]
 }
 
