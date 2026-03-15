@@ -1968,6 +1968,8 @@ function PromosPanel() {
     const [triggerPreview, { data: preview, isLoading: previewLoading }] = useLazyGetPromoPreviewQuery()
 
     const [previewTab, setPreviewTab] = useState(0)
+    const [numDays, setNumDays] = useState(1)
+    const [selectedDayIdx, setSelectedDayIdx] = useState(0)
     const [localConfig, setLocalConfig] = useState({
         is_active: false,
         days_before_checkin: 3,
@@ -2121,15 +2123,33 @@ function PromosPanel() {
                 <CardContent>
                     <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                         <Typography variant="h6">Próximo envío</Typography>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            startIcon={previewLoading ? <CircularProgress size={16} /> : <RefreshIcon />}
-                            onClick={() => triggerPreview()}
-                            disabled={previewLoading}
-                        >
-                            Calcular
-                        </Button>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <TextField
+                                label="Días"
+                                type="number"
+                                size="small"
+                                value={numDays}
+                                onChange={(e) => {
+                                    const v = Math.max(1, Math.min(14, parseInt(e.target.value) || 1))
+                                    setNumDays(v)
+                                    setSelectedDayIdx(0)
+                                }}
+                                inputProps={{ min: 1, max: 14 }}
+                                sx={{ width: 80 }}
+                            />
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={previewLoading ? <CircularProgress size={16} /> : <RefreshIcon />}
+                                onClick={() => {
+                                    setSelectedDayIdx(0)
+                                    triggerPreview(numDays > 1 ? { num_days: numDays } : undefined)
+                                }}
+                                disabled={previewLoading}
+                            >
+                                Calcular
+                            </Button>
+                        </Box>
                     </Box>
 
                     {preview && !preview.active && (
@@ -2138,100 +2158,130 @@ function PromosPanel() {
 
                     {preview && preview.active && (
                         <Box>
-                            {/* Banner de disponibilidad */}
-                            <Box sx={{
-                                mb: 2, p: 1.5, borderRadius: 2,
-                                backgroundColor: preview.available_properties > 0 ? '#4caf5010' : '#f4433610',
-                                border: `1px solid ${preview.available_properties > 0 ? '#4caf5030' : '#f4433630'}`,
-                                display: 'flex', alignItems: 'center', gap: 1,
-                            }}>
-                                <HomeIcon sx={{ fontSize: 20, color: preview.available_properties > 0 ? '#4caf50' : '#f44336' }} />
-                                {preview.available_properties > 0 ? (
-                                    <Typography variant="body2" fontWeight={600} sx={{ color: '#4caf50' }}>
-                                        {preview.available_properties} de {preview.total_properties} casas disponibles para el {preview.target_date}
-                                        <Typography component="span" variant="caption" sx={{ ml: 1, color: 'text.secondary', fontWeight: 400 }}>
-                                            ({preview.available_property_names.join(', ')})
-                                        </Typography>
-                                    </Typography>
-                                ) : (
-                                    <Typography variant="body2" fontWeight={600} sx={{ color: '#f44336' }}>
-                                        Sin casas disponibles para el {preview.target_date} — no se enviarán promociones
-                                    </Typography>
-                                )}
-                            </Box>
-
-                            <Box display="flex" gap={2} mb={2} flexWrap="wrap">
-                                <Chip label={`Fecha objetivo: ${preview.target_date}`} size="small" />
-                                <Chip label={`${preview.total_candidates} candidatos`} size="small" />
-                                <Chip label={`${preview.total_qualified} aplican`} color="primary" size="small" />
-                                {preview.discount_config && (
-                                    <Chip label={`${preview.discount_percentage}% desc`} color="success" size="small" variant="outlined" />
-                                )}
-                            </Box>
-
-                            <Tabs
-                                value={previewTab}
-                                onChange={(_, v) => setPreviewTab(v)}
-                                sx={{ mb: 2, minHeight: 36, '& .MuiTab-root': { minHeight: 36, py: 0.5, fontSize: 13 } }}
-                            >
-                                <Tab label={`Candidatos (${preview.total_candidates})`} />
-                                <Tab label={`Aplican (${preview.total_qualified})`} />
-                            </Tabs>
+                            {/* Resumen multi-día */}
+                            {preview.days && preview.days.length > 1 && (
+                                <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                    {preview.days.map((day, idx) => (
+                                        <Chip
+                                            key={day.target_date}
+                                            label={`${day.target_date} (${day.total_qualified})`}
+                                            size="small"
+                                            onClick={() => setSelectedDayIdx(idx)}
+                                            sx={{
+                                                fontWeight: idx === selectedDayIdx ? 700 : 400,
+                                                backgroundColor: idx === selectedDayIdx ? '#1976d215' : undefined,
+                                                border: idx === selectedDayIdx ? '1px solid #1976d2' : '1px solid #e0e0e0',
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                    ))}
+                                </Box>
+                            )}
 
                             {(() => {
-                                const list = previewTab === 0 ? preview.all_candidates : preview.qualified
-                                if (list.length === 0) return (
-                                    <Typography color="text.secondary">
-                                        {previewTab === 0 ? 'No hay candidatos para esta fecha' : 'Ningún candidato califica con los filtros actuales'}
-                                    </Typography>
-                                )
+                                const dayData = preview.days && preview.days.length > 1
+                                    ? preview.days[selectedDayIdx] || preview.days[0]
+                                    : preview
+
                                 return (
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Nombre</TableCell>
-                                                <TableCell>Teléfono</TableCell>
-                                                <TableCell>Fechas</TableCell>
-                                                <TableCell align="center">Personas</TableCell>
-                                                <TableCell align="center">Búsquedas</TableCell>
-                                                <TableCell>Origen</TableCell>
-                                                {previewTab === 0 && <TableCell>Estado</TableCell>}
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {list.map((c, i) => (
-                                                <TableRow key={c.client_id || `anon-${i}`} hover sx={{
-                                                    opacity: c.exclusion_reason ? 0.55 : 1,
-                                                }}>
-                                                    <TableCell>{c.client_name}</TableCell>
-                                                    <TableCell>{c.client_phone}</TableCell>
-                                                    <TableCell>{c.check_in_date} → {c.check_out_date}</TableCell>
-                                                    <TableCell align="center">{c.guests}</TableCell>
-                                                    <TableCell align="center">{c.search_count}</TableCell>
-                                                    <TableCell>
-                                                        <Chip
-                                                            label={c.source === 'chatbot' ? 'Chatbot' : 'Web'}
-                                                            size="small"
-                                                            sx={{
-                                                                backgroundColor: c.source === 'chatbot' ? '#25d36615' : '#2196f315',
-                                                                color: c.source === 'chatbot' ? '#25d366' : '#2196f3',
-                                                                fontWeight: 600, fontSize: 11,
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    {previewTab === 0 && (
-                                                        <TableCell>
-                                                            {c.exclusion_reason ? (
-                                                                <Chip label={c.exclusion_reason} size="small" sx={{ fontSize: 11, backgroundColor: '#f4433615', color: '#f44336' }} />
-                                                            ) : (
-                                                                <Chip label="Aplica" size="small" sx={{ fontSize: 11, backgroundColor: '#4caf5015', color: '#4caf50', fontWeight: 600 }} />
-                                                            )}
-                                                        </TableCell>
-                                                    )}
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
+                                    <>
+                                        {/* Banner de disponibilidad */}
+                                        <Box sx={{
+                                            mb: 2, p: 1.5, borderRadius: 2,
+                                            backgroundColor: dayData.available_properties > 0 ? '#4caf5010' : '#f4433610',
+                                            border: `1px solid ${dayData.available_properties > 0 ? '#4caf5030' : '#f4433630'}`,
+                                            display: 'flex', alignItems: 'center', gap: 1,
+                                        }}>
+                                            <HomeIcon sx={{ fontSize: 20, color: dayData.available_properties > 0 ? '#4caf50' : '#f44336' }} />
+                                            {dayData.available_properties > 0 ? (
+                                                <Typography variant="body2" fontWeight={600} sx={{ color: '#4caf50' }}>
+                                                    {dayData.available_properties} de {dayData.total_properties} casas disponibles para el {dayData.target_date}
+                                                    <Typography component="span" variant="caption" sx={{ ml: 1, color: 'text.secondary', fontWeight: 400 }}>
+                                                        ({dayData.available_property_names.join(', ')})
+                                                    </Typography>
+                                                </Typography>
+                                            ) : (
+                                                <Typography variant="body2" fontWeight={600} sx={{ color: '#f44336' }}>
+                                                    Sin casas disponibles para el {dayData.target_date} — no se enviarán promociones
+                                                </Typography>
+                                            )}
+                                        </Box>
+
+                                        <Box display="flex" gap={2} mb={2} flexWrap="wrap">
+                                            <Chip label={`Fecha objetivo: ${dayData.target_date}`} size="small" />
+                                            <Chip label={`${dayData.total_candidates} candidatos`} size="small" />
+                                            <Chip label={`${dayData.total_qualified} aplican`} color="primary" size="small" />
+                                            {preview.discount_config && (
+                                                <Chip label={`${preview.discount_percentage}% desc`} color="success" size="small" variant="outlined" />
+                                            )}
+                                        </Box>
+
+                                        <Tabs
+                                            value={previewTab}
+                                            onChange={(_, v) => setPreviewTab(v)}
+                                            sx={{ mb: 2, minHeight: 36, '& .MuiTab-root': { minHeight: 36, py: 0.5, fontSize: 13 } }}
+                                        >
+                                            <Tab label={`Candidatos (${dayData.total_candidates})`} />
+                                            <Tab label={`Aplican (${dayData.total_qualified})`} />
+                                        </Tabs>
+
+                                        {(() => {
+                                            const list = previewTab === 0 ? dayData.all_candidates : dayData.qualified
+                                            if (list.length === 0) return (
+                                                <Typography color="text.secondary">
+                                                    {previewTab === 0 ? 'No hay candidatos para esta fecha' : 'Ningún candidato califica con los filtros actuales'}
+                                                </Typography>
+                                            )
+                                            return (
+                                                <Table size="small">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>Nombre</TableCell>
+                                                            <TableCell>Teléfono</TableCell>
+                                                            <TableCell>Fechas</TableCell>
+                                                            <TableCell align="center">Personas</TableCell>
+                                                            <TableCell align="center">Búsquedas</TableCell>
+                                                            <TableCell>Origen</TableCell>
+                                                            {previewTab === 0 && <TableCell>Estado</TableCell>}
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {list.map((c, i) => (
+                                                            <TableRow key={c.client_id || `anon-${i}`} hover sx={{
+                                                                opacity: c.exclusion_reason ? 0.55 : 1,
+                                                            }}>
+                                                                <TableCell>{c.client_name}</TableCell>
+                                                                <TableCell>{c.client_phone}</TableCell>
+                                                                <TableCell>{c.check_in_date} → {c.check_out_date}</TableCell>
+                                                                <TableCell align="center">{c.guests}</TableCell>
+                                                                <TableCell align="center">{c.search_count}</TableCell>
+                                                                <TableCell>
+                                                                    <Chip
+                                                                        label={c.source === 'chatbot' ? 'Chatbot' : 'Web'}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            backgroundColor: c.source === 'chatbot' ? '#25d36615' : '#2196f315',
+                                                                            color: c.source === 'chatbot' ? '#25d366' : '#2196f3',
+                                                                            fontWeight: 600, fontSize: 11,
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                                {previewTab === 0 && (
+                                                                    <TableCell>
+                                                                        {c.exclusion_reason ? (
+                                                                            <Chip label={c.exclusion_reason} size="small" sx={{ fontSize: 11, backgroundColor: '#f4433615', color: '#f44336' }} />
+                                                                        ) : (
+                                                                            <Chip label="Aplica" size="small" sx={{ fontSize: 11, backgroundColor: '#4caf5015', color: '#4caf50', fontWeight: 600 }} />
+                                                                        )}
+                                                                    </TableCell>
+                                                                )}
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            )
+                                        })()}
+                                    </>
                                 )
                             })()}
                         </Box>

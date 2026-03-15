@@ -228,6 +228,17 @@ export interface IUnresolvedQuestionsResponse {
     total_paginas: number
 }
 
+export interface IPromoDaySummary {
+    target_date: string
+    all_candidates: IPromoPreviewCandidate[]
+    qualified: IPromoPreviewCandidate[]
+    total_candidates: number
+    total_qualified: number
+    available_properties: number
+    available_property_names: string[]
+    total_properties: number
+}
+
 export interface IPromoPreview {
     active: boolean
     target_date: string | null
@@ -241,4 +252,5 @@ export interface IPromoPreview {
     available_property_names: string[]
     total_properties: number
     message?: string
+    days?: IPromoDaySummary[]
 }

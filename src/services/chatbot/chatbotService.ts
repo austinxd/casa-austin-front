@@ -184,9 +184,9 @@ export const chatbotService = createApi({
             providesTags: ['Promos'],
         }),
 
-        getPromoPreview: builder.query<IPromoPreview, void>({
-            query: () => ({
-                url: '/chatbot/promos/preview/',
+        getPromoPreview: builder.query<IPromoPreview, { num_days?: number } | void>({
+            query: (params) => ({
+                url: `/chatbot/promos/preview/${params && 'num_days' in params ? `?num_days=${params.num_days}` : ''}`,
                 method: 'GET',
             }),
         }),
