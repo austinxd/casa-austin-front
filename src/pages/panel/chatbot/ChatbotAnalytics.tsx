@@ -742,7 +742,14 @@ export default function ChatbotAnalytics() {
 // ========= Followup Panel =========
 function FollowupPanel() {
     const boxShadow = useBoxShadow(true)
-    const { data, isLoading } = useGetFollowupOpportunitiesQuery(undefined, { pollingInterval: 60000 })
+    const today = new Date().toISOString().split('T')[0]
+    const [followupFrom, setFollowupFrom] = useState('')
+    const [followupTo, setFollowupTo] = useState('')
+    const hasDateFilter = followupFrom && followupTo
+    const queryParams = hasDateFilter ? { from: followupFrom, to: followupTo } : undefined
+    const { data, isLoading } = useGetFollowupOpportunitiesQuery(queryParams, {
+        pollingInterval: hasDateFilter ? 0 : 60000,
+    })
 
     const categoryConfig: Record<string, { label: string; color: string; icon: React.ReactNode; description: string }> = {
         no_quote: {
@@ -835,6 +842,44 @@ function FollowupPanel() {
 
     return (
         <Box display="flex" flexDirection="column" gap={2}>
+            {/* Date filter */}
+            <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
+                <TextField
+                    label="Desde"
+                    type="date"
+                    size="small"
+                    value={followupFrom}
+                    onChange={(e) => setFollowupFrom(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ max: today }}
+                    sx={{ width: 160 }}
+                />
+                <TextField
+                    label="Hasta"
+                    type="date"
+                    size="small"
+                    value={followupTo}
+                    onChange={(e) => setFollowupTo(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    inputProps={{ max: today }}
+                    sx={{ width: 160 }}
+                />
+                {hasDateFilter && (
+                    <Chip
+                        label="Limpiar"
+                        size="small"
+                        onDelete={() => { setFollowupFrom(''); setFollowupTo('') }}
+                        variant="outlined"
+                    />
+                )}
+                {!hasDateFilter && (
+                    <Typography variant="caption" color="text.secondary">
+                        Mostrando tiempo real (últimas 22h)
+                    </Typography>
+                )}
+                {isLoading && <CircularProgress size={18} />}
+            </Box>
+
             {/* KPIs */}
             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2}>
                 <KPICard icon={<HourglassIcon />} label="Sin Cotización" value={String(data?.no_quote_count || 0)} color="#ff9800" />

@@ -141,11 +141,17 @@ export const chatbotService = createApi({
             }),
         }),
 
-        getFollowupOpportunities: builder.query<IFollowupResponse, void>({
-            query: () => ({
-                url: '/chatbot/followups/',
-                method: 'GET',
-            }),
+        getFollowupOpportunities: builder.query<IFollowupResponse, { from?: string; to?: string } | void>({
+            query: (params) => {
+                const searchParams = new URLSearchParams()
+                if (params && 'from' in params && params.from) searchParams.set('from', params.from)
+                if (params && 'to' in params && params.to) searchParams.set('to', params.to)
+                const qs = searchParams.toString()
+                return {
+                    url: `/chatbot/followups/${qs ? `?${qs}` : ''}`,
+                    method: 'GET',
+                }
+            },
         }),
 
         getPromoConfig: builder.query<IPromoDateConfig, void>({
