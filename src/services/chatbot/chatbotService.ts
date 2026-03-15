@@ -15,6 +15,7 @@ import {
     IUnresolvedQuestion,
     IUnresolvedQuestionsResponse,
     IAnalyticsDetailsResponse,
+    ISessionsBreakdownResponse,
 } from '@/interfaces/chatbot/chatbot.interface'
 
 export const chatbotService = createApi({
@@ -236,6 +237,17 @@ export const chatbotService = createApi({
                 params: { from, to, type },
             }),
         }),
+
+        getSessionsBreakdown: builder.query<
+            ISessionsBreakdownResponse,
+            { from: string; to: string }
+        >({
+            query: ({ from, to }) => ({
+                url: '/chatbot/analytics/details/',
+                method: 'GET',
+                params: { from, to, type: 'sessions' },
+            }),
+        }),
     }),
 })
 
@@ -258,4 +270,5 @@ export const {
     useGetUnresolvedQuestionsQuery,
     useUpdateUnresolvedQuestionMutation,
     useLazyGetAnalyticsDetailsQuery,
+    useLazyGetSessionsBreakdownQuery,
 } = chatbotService

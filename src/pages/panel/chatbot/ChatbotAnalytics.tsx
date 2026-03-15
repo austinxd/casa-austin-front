@@ -88,8 +88,9 @@ import {
     useGetUnresolvedQuestionsQuery,
     useUpdateUnresolvedQuestionMutation,
     useLazyGetAnalyticsDetailsQuery,
+    useLazyGetSessionsBreakdownQuery,
 } from '@/services/chatbot/chatbotService'
-import { IChatSession, IAnalyticsDetailLead, IAnalyticsDetailConversion } from '@/interfaces/chatbot/chatbot.interface'
+import { IChatSession, IAnalyticsDetailLead, IAnalyticsDetailConversion, ISessionSummary } from '@/interfaces/chatbot/chatbot.interface'
 import CotizadorChat from './CotizadorChat'
 
 export default function ChatbotAnalytics() {
@@ -112,6 +113,8 @@ export default function ChatbotAnalytics() {
     const [markAsRead] = useMarkAsReadMutation()
     const [expandedKPI, setExpandedKPI] = useState<'leads' | 'conversions' | 'returning' | null>(null)
     const [fetchDetails, { data: detailsData, isFetching: isLoadingDetails }] = useLazyGetAnalyticsDetailsQuery()
+    const [sessionsExpanded, setSessionsExpanded] = useState(false)
+    const [fetchSessionsBreakdown, { data: sessionsBreakdown, isFetching: isLoadingSessions }] = useLazyGetSessionsBreakdownQuery()
 
     const handleExpandKPI = useCallback((type: 'leads' | 'conversions' | 'returning') => {
         if (expandedKPI === type) {
@@ -121,6 +124,15 @@ export default function ChatbotAnalytics() {
         setExpandedKPI(type)
         fetchDetails({ from: fromDate, to: toDate, type })
     }, [expandedKPI, fromDate, toDate, fetchDetails])
+
+    const handleExpandSessions = useCallback(() => {
+        if (sessionsExpanded) {
+            setSessionsExpanded(false)
+            return
+        }
+        setSessionsExpanded(true)
+        fetchSessionsBreakdown({ from: fromDate, to: toDate })
+    }, [sessionsExpanded, fromDate, toDate, fetchSessionsBreakdown])
 
     const goToChat = useCallback((sessionId: string) => {
         setSelectedSessionId(sessionId)
@@ -391,10 +403,136 @@ export default function ChatbotAnalytics() {
                         <>
                             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }} gap={2} mb={3}>
                                 <KPICard icon={<MessageIcon />} label="Mensajes Recibidos" value={totals?.messages_in.toString() || '0'} color="#0E6191" />
-                                <KPICard icon={<SmartToyIcon />} label="Sesiones" value={totals?.sessions.toString() || '0'} color="#4caf50" />
+                                <ExpandableKPICard
+                                    icon={<SmartToyIcon />}
+                                    label="Sesiones"
+                                    value={totals?.sessions.toString() || '0'}
+                                    color="#4caf50"
+                                    expanded={sessionsExpanded}
+                                    onClick={handleExpandSessions}
+                                />
                                 <KPICard icon={<WarningIcon />} label="Escalaciones" value={totals?.escalations.toString() || '0'} color="#ff9800" />
                                 <KPICard icon={<AttachMoneyIcon />} label="Costo USD" value={`$${totals?.cost.toFixed(2) || '0.00'}`} color="#e91e63" />
                             </Box>
+
+                            {/* Desglose de sesiones */}
+                            {sessionsExpanded && (
+                                <Card sx={{ boxShadow, mb: 3 }}>
+                                    <CardContent>
+                                        <Typography variant="subtitle2" mb={1.5} fontWeight={600}>
+                                            Desglose de Sesiones
+                                        </Typography>
+                                        {isLoadingSessions ? (
+                                            <Box display="flex" justifyContent="center" py={3}><CircularProgress size={24} /></Box>
+                                        ) : sessionsBreakdown ? (
+                                            <>
+                                                <Box display="flex" gap={2} mb={2} flexWrap="wrap">
+                                                    <Chip label={`Total: ${sessionsBreakdown.total}`} size="small" />
+                                                    <Chip label={`Con cotización: ${sessionsBreakdown.quoted}`} size="small" sx={{ bgcolor: '#2196f315', color: '#2196f3', fontWeight: 700 }} />
+                                                    <Chip label={`Sin cotización: ${sessionsBreakdown.not_quoted}`} size="small" sx={{ bgcolor: '#ff980015', color: '#ff9800', fontWeight: 700 }} />
+                                                    <Chip label={`Con follow-up: ${sessionsBreakdown.with_followup}`} size="small" sx={{ bgcolor: '#4caf5015', color: '#4caf50', fontWeight: 700 }} />
+                                                </Box>
+
+                                                {/* Cotizadas */}
+                                                <Accordion defaultExpanded disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important', mb: 1 }}>
+                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <ReceiptIcon sx={{ fontSize: 18, color: '#2196f3' }} />
+                                                            <Typography variant="body2" fontWeight={600}>Con cotización</Typography>
+                                                            <Chip label={sessionsBreakdown.quoted} size="small" sx={{ bgcolor: '#2196f3', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                        </Box>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails sx={{ pt: 0 }}>
+                                                        {sessionsBreakdown.quoted_sessions.length > 0 ? (
+                                                            <Table size="small">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Contacto</TableCell>
+                                                                        <TableCell align="center">Msgs</TableCell>
+                                                                        <TableCell>Cotizado</TableCell>
+                                                                        <TableCell align="center">Follow-ups</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {sessionsBreakdown.quoted_sessions.map((s: ISessionSummary) => (
+                                                                        <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                            <TableCell>
+                                                                                <Box>
+                                                                                    <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
+                                                                                    <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                </Box>
+                                                                            </TableCell>
+                                                                            <TableCell align="center">{s.total_messages}</TableCell>
+                                                                            <TableCell>
+                                                                                <Typography variant="caption" color="text.secondary">
+                                                                                    {s.quoted_at ? formatTimeAgo(s.quoted_at) : '—'}
+                                                                                </Typography>
+                                                                            </TableCell>
+                                                                            <TableCell align="center">{s.followup_count}</TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        ) : (
+                                                            <Typography variant="body2" color="text.secondary">Ninguna sesión recibió cotización</Typography>
+                                                        )}
+                                                    </AccordionDetails>
+                                                </Accordion>
+
+                                                {/* Sin cotización */}
+                                                <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important' }}>
+                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <HourglassIcon sx={{ fontSize: 18, color: '#ff9800' }} />
+                                                            <Typography variant="body2" fontWeight={600}>Sin cotización</Typography>
+                                                            <Chip label={sessionsBreakdown.not_quoted} size="small" sx={{ bgcolor: '#ff9800', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                        </Box>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails sx={{ pt: 0 }}>
+                                                        {sessionsBreakdown.not_quoted_sessions.length > 0 ? (
+                                                            <Table size="small">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Contacto</TableCell>
+                                                                        <TableCell align="center">Msgs</TableCell>
+                                                                        <TableCell>Último msg</TableCell>
+                                                                        <TableCell align="center">Follow-ups</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {sessionsBreakdown.not_quoted_sessions.map((s: ISessionSummary) => (
+                                                                        <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                            <TableCell>
+                                                                                <Box>
+                                                                                    <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
+                                                                                    <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                </Box>
+                                                                            </TableCell>
+                                                                            <TableCell align="center">{s.total_messages}</TableCell>
+                                                                            <TableCell>
+                                                                                <Typography variant="caption" color="text.secondary">
+                                                                                    {s.last_message_at ? formatTimeAgo(s.last_message_at) : '—'}
+                                                                                </Typography>
+                                                                            </TableCell>
+                                                                            <TableCell align="center">{s.followup_count}</TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        ) : (
+                                                            <Typography variant="body2" color="text.secondary">Todas las sesiones recibieron cotización</Typography>
+                                                        )}
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary" textAlign="center" py={2}>
+                                                Sin datos
+                                            </Typography>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            )}
                             <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }} gap={2} mb={3}>
                                 <ExpandableKPICard
                                     icon={<PersonSearchIcon />}

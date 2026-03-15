@@ -197,6 +197,25 @@ export interface IAnalyticsDetailsResponse {
     results: IAnalyticsDetailLead[] | IAnalyticsDetailConversion[]
 }
 
+export interface ISessionSummary {
+    session_id: string
+    name: string
+    wa_id: string
+    total_messages: number
+    quoted_at: string | null
+    followup_count: number
+    last_message_at: string | null
+}
+
+export interface ISessionsBreakdownResponse {
+    total: number
+    quoted: number
+    not_quoted: number
+    with_followup: number
+    quoted_sessions: ISessionSummary[]
+    not_quoted_sessions: ISessionSummary[]
+}
+
 export interface IPromoPreviewCandidate {
     client_id: string | null
     client_name: string
