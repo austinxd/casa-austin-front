@@ -751,27 +751,6 @@ function FollowupPanel() {
         pollingInterval: hasDateFilter ? 0 : 60000,
     })
 
-    const categoryConfig: Record<string, { label: string; color: string; icon: React.ReactNode; description: string }> = {
-        no_quote: {
-            label: 'Sin cotización',
-            color: '#ff9800',
-            icon: <HourglassIcon fontSize="small" />,
-            description: 'Escribieron pero no recibieron cotización',
-        },
-        quoted: {
-            label: 'Cotización enviada',
-            color: '#2196f3',
-            icon: <ReceiptIcon fontSize="small" />,
-            description: 'Recibieron cotización pero no reservaron',
-        },
-        followed_up: {
-            label: 'Follow-up enviado',
-            color: '#4caf50',
-            icon: <AccessTimeIcon fontSize="small" />,
-            description: 'Ya se envió un follow-up automático',
-        },
-    }
-
     if (isLoading) {
         return <Box display="flex" justifyContent="center" mt={6}><CircularProgress /></Box>
     }
