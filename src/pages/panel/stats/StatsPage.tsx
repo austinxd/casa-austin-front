@@ -21,6 +21,7 @@ import {
     CalendarToday as CalendarIcon,
     DateRange as DateRangeIcon,
     Refresh as RefreshIcon,
+    SmartToyOutlined as SmartToyIcon,
 } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
@@ -28,6 +29,7 @@ import dayjs from 'dayjs'
 import SearchDashboard from '@/pages/panel/stats/components/analytics/SearchDashboard'
 import IngresosDashboard from '@/pages/panel/stats/components/analytics/IngresosDashboard'
 import CheckinsDashboard from '@/pages/panel/stats/components/analytics/CheckinsDashboard'
+import AdminAIChat from '@/pages/panel/stats/components/admin-ai/AdminAIChat'
 
 // Interfaces
 import { GlobalFilters, FilterPreset } from '@/interfaces/analytics.interface'
@@ -257,10 +259,16 @@ export default function StatsPage() {
                         {...a11yProps(1)} 
                         iconPosition="start"
                     />
-                    <Tab 
-                        icon={<CalendarIcon />} 
-                        label="Check-ins Próximos" 
-                        {...a11yProps(2)} 
+                    <Tab
+                        icon={<CalendarIcon />}
+                        label="Check-ins Próximos"
+                        {...a11yProps(2)}
+                        iconPosition="start"
+                    />
+                    <Tab
+                        icon={<SmartToyIcon />}
+                        label="Asistente IA"
+                        {...a11yProps(3)}
                         iconPosition="start"
                     />
                 </Tabs>
@@ -277,6 +285,10 @@ export default function StatsPage() {
 
             <TabPanel value={selectedTab} index={2}>
                 <CheckinsDashboard filters={globalFilters} />
+            </TabPanel>
+
+            <TabPanel value={selectedTab} index={3}>
+                <AdminAIChat />
             </TabPanel>
         </Container>
     )

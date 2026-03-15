@@ -17,6 +17,7 @@ import { newUpcomingCheckinsApi } from '../services/analytics/newUpcomingCheckin
 import { pricingService } from '../services/pricing/pricingService'
 import { chatbotService } from '../services/chatbot/chatbotService'
 import { clientProfileApi } from '../services/analytics/clientProfileService'
+import { adminAiService } from '../services/admin-ai/adminAiService'
 
 export const store = configureStore({
     reducer: {
@@ -39,6 +40,7 @@ export const store = configureStore({
         [pricingService.reducerPath]: pricingService.reducer,
         [chatbotService.reducerPath]: chatbotService.reducer,
         [clientProfileApi.reducerPath]: clientProfileApi.reducer,
+        [adminAiService.reducerPath]: adminAiService.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>
@@ -60,6 +62,7 @@ export const store = configureStore({
             pricingService.middleware,
             chatbotService.middleware,
             clientProfileApi.middleware,
+            adminAiService.middleware,
         ),
 })
 
