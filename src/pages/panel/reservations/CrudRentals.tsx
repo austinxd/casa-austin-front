@@ -1,6 +1,7 @@
-import { Box, Typography, Tabs, Tab } from '@mui/material'
+import { Box, Typography, Tabs, Tab, Button, TextField, CircularProgress } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import AnalyticsIcon from '@mui/icons-material/Analytics'
+import FolderZipOutlinedIcon from '@mui/icons-material/FolderZipOutlined'
 import style from './rental.module.css'
 import Card from './components/card/Card'
 import FormRental from './components/form/FormRental'
@@ -11,7 +12,7 @@ import { useGetAllRentalsQuery } from '@/services/rentals/rentalService'
 import SearchRental from './components/form/SearchRental'
 import { BasicModal, PaginationAustin } from '@/components/common'
 import { IRentalClient } from '@/interfaces/rental/registerRental'
-import { downloadContractById, downloadSignedContractById } from '@/services/rentals/rental'
+import { downloadContractById, downloadSignedContractById, downloadContractsZip } from '@/services/rentals/rental'
 import ReservationSkeleton from './components/skeleton/ReservationSkeleton'
 import ClientProfileTab from './components/ClientProfileTab'
 
@@ -50,6 +51,11 @@ export default function CrudRentals() {
 
     const [isLoadingContract, setIsLoadingContract] = useState(false)
     const [isLoadingSignedContract, setIsLoadingSignedContract] = useState(false)
+    const [isLoadingZip, setIsLoadingZip] = useState(false)
+    const [zipMonth, setZipMonth] = useState(() => {
+        const now = new Date()
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    })
 
     const { data, isLoading, refetch } = useGetAllRentalsQuery({
         page: currentPage,
@@ -112,6 +118,17 @@ export default function CrudRentals() {
         handleDownloadSigned(item.id.toString(), item.client.first_name, item.check_in_date)
     }
 
+    const handleDownloadZip = async () => {
+        setIsLoadingZip(true)
+        try {
+            await downloadContractsZip(zipMonth)
+        } catch (error: any) {
+            alert(error.message || 'Error al descargar contratos')
+        } finally {
+            setIsLoadingZip(false)
+        }
+    }
+
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue)
     }
@@ -156,6 +173,26 @@ export default function CrudRentals() {
                     <ReservationSkeleton />
                 ) : (
                     <>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1, mb: 1 }}>
+                            <TextField
+                                type="month"
+                                size="small"
+                                value={zipMonth}
+                                onChange={(e) => setZipMonth(e.target.value)}
+                                sx={{ width: 180 }}
+                                InputLabelProps={{ shrink: true }}
+                            />
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={isLoadingZip ? <CircularProgress size={16} /> : <FolderZipOutlinedIcon />}
+                                onClick={handleDownloadZip}
+                                disabled={isLoadingZip}
+                                sx={{ textTransform: 'none', whiteSpace: 'nowrap' }}
+                            >
+                                {isLoadingZip ? 'Generando...' : 'Exportar contratos'}
+                            </Button>
+                        </Box>
                         <SearchRental
                             pageSize={pageSize}
                             setPageSize={setPageSize}

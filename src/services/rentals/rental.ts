@@ -53,6 +53,33 @@ export const downloadContractById = async (id: string, name: string, checkIn: st
     window.URL.revokeObjectURL(urlBlob)
 }
 
+export const downloadContractsZip = async (month: string) => {
+    const token = cookiesGetString('token')
+    const url = `${ENV.API_URL}/reservations/contratos-zip/?month=${month}`
+
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Error al descargar' }))
+        throw new Error(error.error || 'Error al descargar contratos')
+    }
+
+    const blob = await response.blob()
+    const urlBlob = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = urlBlob
+    a.download = `contratos_${month}.zip`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(urlBlob)
+}
+
 export const downloadSignedContractById = async (id: string, name: string, checkIn: string) => {
     const token = cookiesGetString('token')
     const url = `${ENV.API_URL}/reservations/${id}/contrato-firma/`
