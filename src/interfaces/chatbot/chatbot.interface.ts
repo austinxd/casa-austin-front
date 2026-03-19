@@ -215,8 +215,14 @@ export interface ISessionsBreakdownResponse {
     with_followup: number
     promo: number
     organic: number
-    quoted_sessions: ISessionSummary[]
-    not_quoted_sessions: ISessionSummary[]
+    organic_quoted: number
+    organic_not_quoted: number
+    promo_quoted: number
+    promo_not_quoted: number
+    organic_quoted_sessions: ISessionSummary[]
+    organic_not_quoted_sessions: ISessionSummary[]
+    promo_quoted_sessions: ISessionSummary[]
+    promo_not_quoted_sessions: ISessionSummary[]
 }
 
 export interface IPromoPreviewCandidate {

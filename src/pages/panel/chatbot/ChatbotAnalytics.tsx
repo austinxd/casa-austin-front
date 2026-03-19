@@ -68,6 +68,7 @@ import {
     VisibilityOff as VisibilityOffIcon,
     ExpandLess as ExpandLessIcon,
     Repeat as RepeatIcon,
+    Campaign as CampaignIcon,
 } from '@mui/icons-material'
 import { useBoxShadow } from '@/core/utils'
 import {
@@ -428,112 +429,144 @@ export default function ChatbotAnalytics() {
                                             <>
                                                 <Box display="flex" gap={2} mb={2} flexWrap="wrap">
                                                     <Chip label={`Total: ${sessionsBreakdown.total}`} size="small" />
-                                                    <Chip label={`Orgánicas: ${sessionsBreakdown.organic ?? 0}`} size="small" sx={{ bgcolor: '#00bcd415', color: '#00bcd4', fontWeight: 700 }} />
-                                                    <Chip label={`Por Promo: ${sessionsBreakdown.promo ?? 0}`} size="small" sx={{ bgcolor: '#9c27b015', color: '#9c27b0', fontWeight: 700 }} />
-                                                    <Chip label={`Con cotización: ${sessionsBreakdown.quoted}`} size="small" sx={{ bgcolor: '#2196f315', color: '#2196f3', fontWeight: 700 }} />
-                                                    <Chip label={`Sin cotización: ${sessionsBreakdown.not_quoted}`} size="small" sx={{ bgcolor: '#ff980015', color: '#ff9800', fontWeight: 700 }} />
                                                     <Chip label={`Con follow-up: ${sessionsBreakdown.with_followup}`} size="small" sx={{ bgcolor: '#4caf5015', color: '#4caf50', fontWeight: 700 }} />
                                                 </Box>
 
-                                                {/* Cotizadas */}
-                                                <Accordion defaultExpanded disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important', mb: 1 }}>
-                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                                {/* === ORGÁNICAS === */}
+                                                <Accordion defaultExpanded disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #00bcd4', borderRadius: '8px !important', mb: 1.5 }}>
+                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, bgcolor: '#00bcd408', '& .MuiAccordionSummary-content': { my: 0.5 } }}>
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <ReceiptIcon sx={{ fontSize: 18, color: '#2196f3' }} />
-                                                            <Typography variant="body2" fontWeight={600}>Con cotización</Typography>
-                                                            <Chip label={sessionsBreakdown.quoted} size="small" sx={{ bgcolor: '#2196f3', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                            <PersonSearchIcon sx={{ fontSize: 18, color: '#00bcd4' }} />
+                                                            <Typography variant="body2" fontWeight={600}>Orgánicas</Typography>
+                                                            <Chip label={sessionsBreakdown.organic ?? 0} size="small" sx={{ bgcolor: '#00bcd4', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                            <Chip label={`${sessionsBreakdown.organic_quoted ?? 0} cotizadas`} size="small" variant="outlined" sx={{ color: '#2196f3', borderColor: '#2196f3', fontWeight: 600, height: 20, fontSize: '0.7rem' }} />
+                                                            <Chip label={`${sessionsBreakdown.organic_not_quoted ?? 0} sin cotizar`} size="small" variant="outlined" sx={{ color: '#ff9800', borderColor: '#ff9800', fontWeight: 600, height: 20, fontSize: '0.7rem' }} />
                                                         </Box>
                                                     </AccordionSummary>
                                                     <AccordionDetails sx={{ pt: 0 }}>
-                                                        {sessionsBreakdown.quoted_sessions.length > 0 ? (
-                                                            <Table size="small">
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        <TableCell>Contacto</TableCell>
-                                                                        <TableCell align="center">Msgs</TableCell>
-                                                                        <TableCell>Cotizado</TableCell>
-                                                                        <TableCell align="center">Follow-ups</TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                                <TableBody>
-                                                                    {sessionsBreakdown.quoted_sessions.map((s: ISessionSummary) => (
-                                                                        <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
-                                                                            <TableCell>
-                                                                                <Box display="flex" alignItems="center" gap={1}>
-                                                                                    <Box>
-                                                                                        <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
-                                                                                        <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
-                                                                                    </Box>
-                                                                                    {s.source === 'promo' && (
-                                                                                        <Chip label="PROMO" size="small" sx={{ bgcolor: '#9c27b0', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.65rem' }} />
-                                                                                    )}
-                                                                                </Box>
-                                                                            </TableCell>
-                                                                            <TableCell align="center">{s.total_messages}</TableCell>
-                                                                            <TableCell>
-                                                                                <Typography variant="caption" color="text.secondary">
-                                                                                    {s.quoted_at ? formatTimeAgo(s.quoted_at) : '—'}
-                                                                                </Typography>
-                                                                            </TableCell>
-                                                                            <TableCell align="center">{s.followup_count}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        ) : (
-                                                            <Typography variant="body2" color="text.secondary">Ninguna sesión recibió cotización</Typography>
-                                                        )}
+                                                        {/* Orgánicas cotizadas */}
+                                                        <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, mb: 0.5 }}>
+                                                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 36, '& .MuiAccordionSummary-content': { my: 0.3 } }}>
+                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                    <ReceiptIcon sx={{ fontSize: 16, color: '#2196f3' }} />
+                                                                    <Typography variant="caption" fontWeight={600}>Con cotización</Typography>
+                                                                    <Chip label={sessionsBreakdown.organic_quoted ?? 0} size="small" sx={{ bgcolor: '#2196f3', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.7rem' }} />
+                                                                </Box>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails sx={{ pt: 0 }}>
+                                                                {(sessionsBreakdown.organic_quoted_sessions ?? []).length > 0 ? (
+                                                                    <Table size="small">
+                                                                        <TableHead><TableRow><TableCell>Contacto</TableCell><TableCell align="center">Msgs</TableCell><TableCell>Cotizado</TableCell><TableCell align="center">F-ups</TableCell></TableRow></TableHead>
+                                                                        <TableBody>
+                                                                            {(sessionsBreakdown.organic_quoted_sessions ?? []).map((s: ISessionSummary) => (
+                                                                                <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                                    <TableCell><Box><Typography variant="body2" fontWeight={600}>{s.name}</Typography><Typography variant="caption" color="text.secondary">{s.wa_id}</Typography></Box></TableCell>
+                                                                                    <TableCell align="center">{s.total_messages}</TableCell>
+                                                                                    <TableCell><Typography variant="caption" color="text.secondary">{s.quoted_at ? formatTimeAgo(s.quoted_at) : '—'}</Typography></TableCell>
+                                                                                    <TableCell align="center">{s.followup_count}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : <Typography variant="body2" color="text.secondary" py={1}>Ninguna</Typography>}
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        {/* Orgánicas sin cotización */}
+                                                        <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' } }}>
+                                                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 36, '& .MuiAccordionSummary-content': { my: 0.3 } }}>
+                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                    <HourglassIcon sx={{ fontSize: 16, color: '#ff9800' }} />
+                                                                    <Typography variant="caption" fontWeight={600}>Sin cotización</Typography>
+                                                                    <Chip label={sessionsBreakdown.organic_not_quoted ?? 0} size="small" sx={{ bgcolor: '#ff9800', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.7rem' }} />
+                                                                </Box>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails sx={{ pt: 0 }}>
+                                                                {(sessionsBreakdown.organic_not_quoted_sessions ?? []).length > 0 ? (
+                                                                    <Table size="small">
+                                                                        <TableHead><TableRow><TableCell>Contacto</TableCell><TableCell align="center">Msgs</TableCell><TableCell>Último msg</TableCell><TableCell align="center">F-ups</TableCell></TableRow></TableHead>
+                                                                        <TableBody>
+                                                                            {(sessionsBreakdown.organic_not_quoted_sessions ?? []).map((s: ISessionSummary) => (
+                                                                                <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                                    <TableCell><Box><Typography variant="body2" fontWeight={600}>{s.name}</Typography><Typography variant="caption" color="text.secondary">{s.wa_id}</Typography></Box></TableCell>
+                                                                                    <TableCell align="center">{s.total_messages}</TableCell>
+                                                                                    <TableCell><Typography variant="caption" color="text.secondary">{s.last_message_at ? formatTimeAgo(s.last_message_at) : '—'}</Typography></TableCell>
+                                                                                    <TableCell align="center">{s.followup_count}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : <Typography variant="body2" color="text.secondary" py={1}>Ninguna</Typography>}
+                                                            </AccordionDetails>
+                                                        </Accordion>
                                                     </AccordionDetails>
                                                 </Accordion>
 
-                                                {/* Sin cotización */}
-                                                <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #e0e0e0', borderRadius: '8px !important' }}>
-                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, '& .MuiAccordionSummary-content': { my: 0.5 } }}>
+                                                {/* === POR PROMO === */}
+                                                <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, border: '1px solid #9c27b0', borderRadius: '8px !important' }}>
+                                                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 42, bgcolor: '#9c27b008', '& .MuiAccordionSummary-content': { my: 0.5 } }}>
                                                         <Box display="flex" alignItems="center" gap={1}>
-                                                            <HourglassIcon sx={{ fontSize: 18, color: '#ff9800' }} />
-                                                            <Typography variant="body2" fontWeight={600}>Sin cotización</Typography>
-                                                            <Chip label={sessionsBreakdown.not_quoted} size="small" sx={{ bgcolor: '#ff9800', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                            <CampaignIcon sx={{ fontSize: 18, color: '#9c27b0' }} />
+                                                            <Typography variant="body2" fontWeight={600}>Por Promo</Typography>
+                                                            <Chip label={sessionsBreakdown.promo ?? 0} size="small" sx={{ bgcolor: '#9c27b0', color: '#fff', fontWeight: 700, height: 22 }} />
+                                                            <Chip label={`${sessionsBreakdown.promo_quoted ?? 0} cotizadas`} size="small" variant="outlined" sx={{ color: '#2196f3', borderColor: '#2196f3', fontWeight: 600, height: 20, fontSize: '0.7rem' }} />
+                                                            <Chip label={`${sessionsBreakdown.promo_not_quoted ?? 0} sin cotizar`} size="small" variant="outlined" sx={{ color: '#ff9800', borderColor: '#ff9800', fontWeight: 600, height: 20, fontSize: '0.7rem' }} />
                                                         </Box>
                                                     </AccordionSummary>
                                                     <AccordionDetails sx={{ pt: 0 }}>
-                                                        {sessionsBreakdown.not_quoted_sessions.length > 0 ? (
-                                                            <Table size="small">
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        <TableCell>Contacto</TableCell>
-                                                                        <TableCell align="center">Msgs</TableCell>
-                                                                        <TableCell>Último msg</TableCell>
-                                                                        <TableCell align="center">Follow-ups</TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                                <TableBody>
-                                                                    {sessionsBreakdown.not_quoted_sessions.map((s: ISessionSummary) => (
-                                                                        <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
-                                                                            <TableCell>
-                                                                                <Box display="flex" alignItems="center" gap={1}>
-                                                                                    <Box>
-                                                                                        <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
-                                                                                        <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
-                                                                                    </Box>
-                                                                                    {s.source === 'promo' && (
-                                                                                        <Chip label="PROMO" size="small" sx={{ bgcolor: '#9c27b0', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.65rem' }} />
-                                                                                    )}
-                                                                                </Box>
-                                                                            </TableCell>
-                                                                            <TableCell align="center">{s.total_messages}</TableCell>
-                                                                            <TableCell>
-                                                                                <Typography variant="caption" color="text.secondary">
-                                                                                    {s.last_message_at ? formatTimeAgo(s.last_message_at) : '—'}
-                                                                                </Typography>
-                                                                            </TableCell>
-                                                                            <TableCell align="center">{s.followup_count}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        ) : (
-                                                            <Typography variant="body2" color="text.secondary">Todas las sesiones recibieron cotización</Typography>
-                                                        )}
+                                                        {/* Promo cotizadas */}
+                                                        <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' }, mb: 0.5 }}>
+                                                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 36, '& .MuiAccordionSummary-content': { my: 0.3 } }}>
+                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                    <ReceiptIcon sx={{ fontSize: 16, color: '#2196f3' }} />
+                                                                    <Typography variant="caption" fontWeight={600}>Con cotización</Typography>
+                                                                    <Chip label={sessionsBreakdown.promo_quoted ?? 0} size="small" sx={{ bgcolor: '#2196f3', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.7rem' }} />
+                                                                </Box>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails sx={{ pt: 0 }}>
+                                                                {(sessionsBreakdown.promo_quoted_sessions ?? []).length > 0 ? (
+                                                                    <Table size="small">
+                                                                        <TableHead><TableRow><TableCell>Contacto</TableCell><TableCell align="center">Msgs</TableCell><TableCell>Cotizado</TableCell><TableCell align="center">F-ups</TableCell></TableRow></TableHead>
+                                                                        <TableBody>
+                                                                            {(sessionsBreakdown.promo_quoted_sessions ?? []).map((s: ISessionSummary) => (
+                                                                                <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                                    <TableCell><Box><Typography variant="body2" fontWeight={600}>{s.name}</Typography><Typography variant="caption" color="text.secondary">{s.wa_id}</Typography></Box></TableCell>
+                                                                                    <TableCell align="center">{s.total_messages}</TableCell>
+                                                                                    <TableCell><Typography variant="caption" color="text.secondary">{s.quoted_at ? formatTimeAgo(s.quoted_at) : '—'}</Typography></TableCell>
+                                                                                    <TableCell align="center">{s.followup_count}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : <Typography variant="body2" color="text.secondary" py={1}>Ninguna</Typography>}
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        {/* Promo sin cotización */}
+                                                        <Accordion disableGutters elevation={0} sx={{ '&:before': { display: 'none' } }}>
+                                                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ minHeight: 36, '& .MuiAccordionSummary-content': { my: 0.3 } }}>
+                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                    <HourglassIcon sx={{ fontSize: 16, color: '#ff9800' }} />
+                                                                    <Typography variant="caption" fontWeight={600}>Sin cotización</Typography>
+                                                                    <Chip label={sessionsBreakdown.promo_not_quoted ?? 0} size="small" sx={{ bgcolor: '#ff9800', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.7rem' }} />
+                                                                </Box>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails sx={{ pt: 0 }}>
+                                                                {(sessionsBreakdown.promo_not_quoted_sessions ?? []).length > 0 ? (
+                                                                    <Table size="small">
+                                                                        <TableHead><TableRow><TableCell>Contacto</TableCell><TableCell align="center">Msgs</TableCell><TableCell>Último msg</TableCell><TableCell align="center">F-ups</TableCell></TableRow></TableHead>
+                                                                        <TableBody>
+                                                                            {(sessionsBreakdown.promo_not_quoted_sessions ?? []).map((s: ISessionSummary) => (
+                                                                                <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
+                                                                                    <TableCell><Box><Typography variant="body2" fontWeight={600}>{s.name}</Typography><Typography variant="caption" color="text.secondary">{s.wa_id}</Typography></Box></TableCell>
+                                                                                    <TableCell align="center">{s.total_messages}</TableCell>
+                                                                                    <TableCell><Typography variant="caption" color="text.secondary">{s.last_message_at ? formatTimeAgo(s.last_message_at) : '—'}</Typography></TableCell>
+                                                                                    <TableCell align="center">{s.followup_count}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : <Typography variant="body2" color="text.secondary" py={1}>Ninguna</Typography>}
+                                                            </AccordionDetails>
+                                                        </Accordion>
                                                     </AccordionDetails>
                                                 </Accordion>
                                             </>
