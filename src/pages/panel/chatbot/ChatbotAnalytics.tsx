@@ -428,6 +428,8 @@ export default function ChatbotAnalytics() {
                                             <>
                                                 <Box display="flex" gap={2} mb={2} flexWrap="wrap">
                                                     <Chip label={`Total: ${sessionsBreakdown.total}`} size="small" />
+                                                    <Chip label={`Orgánicas: ${sessionsBreakdown.organic ?? 0}`} size="small" sx={{ bgcolor: '#00bcd415', color: '#00bcd4', fontWeight: 700 }} />
+                                                    <Chip label={`Por Promo: ${sessionsBreakdown.promo ?? 0}`} size="small" sx={{ bgcolor: '#9c27b015', color: '#9c27b0', fontWeight: 700 }} />
                                                     <Chip label={`Con cotización: ${sessionsBreakdown.quoted}`} size="small" sx={{ bgcolor: '#2196f315', color: '#2196f3', fontWeight: 700 }} />
                                                     <Chip label={`Sin cotización: ${sessionsBreakdown.not_quoted}`} size="small" sx={{ bgcolor: '#ff980015', color: '#ff9800', fontWeight: 700 }} />
                                                     <Chip label={`Con follow-up: ${sessionsBreakdown.with_followup}`} size="small" sx={{ bgcolor: '#4caf5015', color: '#4caf50', fontWeight: 700 }} />
@@ -457,9 +459,14 @@ export default function ChatbotAnalytics() {
                                                                     {sessionsBreakdown.quoted_sessions.map((s: ISessionSummary) => (
                                                                         <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
                                                                             <TableCell>
-                                                                                <Box>
-                                                                                    <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
-                                                                                    <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                                    <Box>
+                                                                                        <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
+                                                                                        <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                    </Box>
+                                                                                    {s.source === 'promo' && (
+                                                                                        <Chip label="PROMO" size="small" sx={{ bgcolor: '#9c27b0', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.65rem' }} />
+                                                                                    )}
                                                                                 </Box>
                                                                             </TableCell>
                                                                             <TableCell align="center">{s.total_messages}</TableCell>
@@ -503,9 +510,14 @@ export default function ChatbotAnalytics() {
                                                                     {sessionsBreakdown.not_quoted_sessions.map((s: ISessionSummary) => (
                                                                         <TableRow key={s.session_id} hover sx={{ cursor: 'pointer' }} onClick={() => goToChat(s.session_id)}>
                                                                             <TableCell>
-                                                                                <Box>
-                                                                                    <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
-                                                                                    <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                <Box display="flex" alignItems="center" gap={1}>
+                                                                                    <Box>
+                                                                                        <Typography variant="body2" fontWeight={600}>{s.name}</Typography>
+                                                                                        <Typography variant="caption" color="text.secondary">{s.wa_id}</Typography>
+                                                                                    </Box>
+                                                                                    {s.source === 'promo' && (
+                                                                                        <Chip label="PROMO" size="small" sx={{ bgcolor: '#9c27b0', color: '#fff', fontWeight: 700, height: 20, fontSize: '0.65rem' }} />
+                                                                                    )}
                                                                                 </Box>
                                                                             </TableCell>
                                                                             <TableCell align="center">{s.total_messages}</TableCell>

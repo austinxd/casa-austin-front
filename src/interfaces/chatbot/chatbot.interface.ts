@@ -205,6 +205,7 @@ export interface ISessionSummary {
     quoted_at: string | null
     followup_count: number
     last_message_at: string | null
+    source: 'promo' | 'organic'
 }
 
 export interface ISessionsBreakdownResponse {
@@ -212,6 +213,8 @@ export interface ISessionsBreakdownResponse {
     quoted: number
     not_quoted: number
     with_followup: number
+    promo: number
+    organic: number
     quoted_sessions: ISessionSummary[]
     not_quoted_sessions: ISessionSummary[]
 }
