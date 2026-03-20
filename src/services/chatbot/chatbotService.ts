@@ -45,9 +45,9 @@ export const chatbotService = createApi({
 
         getChatSessions: builder.query<
             IChatSessionsResponse,
-            { page?: number; search?: string; status?: string }
+            { page?: number; search?: string; status?: string; client_filter?: string }
         >({
-            query: ({ page = 1, search = '', status = '' }) => ({
+            query: ({ page = 1, search = '', status = '', client_filter = '' }) => ({
                 url: '/chatbot/sessions/',
                 method: 'GET',
                 params: {
@@ -55,6 +55,7 @@ export const chatbotService = createApi({
                     page_size: '15',
                     ...(search && { search }),
                     ...(status && { status }),
+                    ...(client_filter && { client_filter }),
                 },
             }),
             providesTags: ['ChatSessions'],

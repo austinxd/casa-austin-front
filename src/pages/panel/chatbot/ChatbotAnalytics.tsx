@@ -99,6 +99,7 @@ export default function ChatbotAnalytics() {
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
     const [searchSessions, setSearchSessions] = useState('')
     const [sessionsPage, setSessionsPage] = useState(1)
+    const [clientFilter, setClientFilter] = useState('')
     const today = new Date()
     const thirtyDaysAgo = new Date(today)
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -108,7 +109,7 @@ export default function ChatbotAnalytics() {
 
     const { data: analytics, isLoading } = useGetChatAnalyticsQuery({ from: fromDate, to: toDate })
     const { data: sessionsData } = useGetChatSessionsQuery(
-        { page: sessionsPage, search: searchSessions },
+        { page: sessionsPage, search: searchSessions, client_filter: clientFilter },
         { pollingInterval: tab === 0 ? 10000 : undefined }
     )
     const [markAsRead] = useMarkAsReadMutation()
@@ -268,6 +269,24 @@ export default function ChatbotAnalytics() {
                                 }}
                                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3, backgroundColor: '#f5f5f5' } }}
                             />
+                            <Box display="flex" gap={0.5} mt={1}>
+                                <Chip
+                                    label="Todos"
+                                    size="small"
+                                    variant={clientFilter === '' ? 'filled' : 'outlined'}
+                                    color={clientFilter === '' ? 'primary' : 'default'}
+                                    onClick={() => { setClientFilter(''); setSessionsPage(1) }}
+                                    sx={{ fontWeight: clientFilter === '' ? 700 : 400 }}
+                                />
+                                <Chip
+                                    label="Clientes"
+                                    size="small"
+                                    variant={clientFilter === 'clients' ? 'filled' : 'outlined'}
+                                    color={clientFilter === 'clients' ? 'primary' : 'default'}
+                                    onClick={() => { setClientFilter('clients'); setSessionsPage(1) }}
+                                    sx={{ fontWeight: clientFilter === 'clients' ? 700 : 400 }}
+                                />
+                            </Box>
                         </Box>
                         <List sx={{ overflow: 'auto', flex: 1, p: 0 }}>
                             {(sessionsData?.results || []).map((session) => {
