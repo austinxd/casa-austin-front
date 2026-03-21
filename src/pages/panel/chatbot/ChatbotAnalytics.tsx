@@ -655,6 +655,7 @@ export default function ChatbotAnalytics() {
                                                                 <TableCell align="right">Personas</TableCell>
                                                                 <TableCell align="right">Monto USD</TableCell>
                                                                 <TableCell>Estado</TableCell>
+                                                                <TableCell>Reservado</TableCell>
                                                                 <TableCell align="center">Chat</TableCell>
                                                             </>
                                                         )}
@@ -700,6 +701,7 @@ export default function ChatbotAnalytics() {
                                                                         color={item.status === 'approved' ? 'success' : item.status === 'pending' ? 'warning' : 'default'}
                                                                     />
                                                                 </TableCell>
+                                                                <TableCell>{item.created ? new Date(item.created).toLocaleDateString('es-PE') : ''}</TableCell>
                                                                 <TableCell align="center">
                                                                     {item.session_id && (
                                                                         <IconButton size="small" color="primary">
